@@ -1,0 +1,2706 @@
+/*! normalize.css v2.0.1 | MIT License | git.io/normalize */
+.game,sub,sup {
+    position: relative
+}
+
+.clearfix:after,.slick-track:after {
+    clear: both
+}
+
+.slick-slider,body,html {
+    -webkit-tap-highlight-color: transparent
+}
+
+.disabled,.slick-slide.dragging img {
+    pointer-events: none
+}
+
+.hidden,.invisible,.slick-loading .slick-slide,.slick-loading .slick-track,html.fullscreen #main_page {
+    visibility: hidden
+}
+
+article,aside,canvas,details,figcaption,figure,footer,header,hgroup,nav,section,summary {
+    display: block
+}
+
+audio,video {
+    display: inline-block
+}
+
+audio:not([controls]) {
+    display: none;
+    height: 0
+}
+
+[hidden] {
+    display: none
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%
+}
+
+body,figure,p {
+    margin: 0
+}
+
+a:focus {
+    outline: dotted thin
+}
+
+a:active,a:hover {
+    outline: 0
+}
+
+h1,h2,h3,h4,h5 {
+    font-size: 2em;
+    font-weight: 400
+}
+
+abbr[title] {
+    border-bottom: 1px dotted
+}
+
+dfn {
+    font-style: italic
+}
+
+mark {
+    background: #ff0;
+    color: #000
+}
+
+code,kbd,pre,samp {
+    font-family: monospace,serif;
+    font-size: 1em
+}
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word
+}
+
+q {
+    quotes: "\201C" "\201D" "\2018" "\2019"
+}
+
+small {
+    font-size: 80%
+}
+
+sub,sup {
+    font-size: 75%;
+    line-height: 0;
+    vertical-align: baseline
+}
+
+sup {
+    top: -.5em
+}
+
+sub {
+    bottom: -.25em
+}
+
+img {
+    border: 0
+}
+
+svg:not(:root) {
+    overflow: hidden
+}
+
+fieldset {
+    border: 1px solid silver;
+    margin: 0 2px;
+    padding: .35em .625em .75em
+}
+
+.visuallyhidden,legend {
+    border: 0;
+    padding: 0
+}
+
+button,input,textarea {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+}
+
+select {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+    margin-left: 2px;
+}
+
+button,input {
+    line-height: normal
+}
+
+button,html input[type=button],input[type=reset],input[type=submit] {
+    -webkit-appearance: button;
+    cursor: pointer
+}
+
+.disabled,button[disabled],canvas,input[disabled] {
+    cursor: default
+}
+
+input[type=checkbox],input[type=radio] {
+    box-sizing: border-box;
+    padding: 0
+}
+
+input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration {
+    -webkit-appearance: none
+}
+
+button::-moz-focus-inner,input::-moz-focus-inner {
+    border: 0;
+    padding: 0
+}
+
+textarea {
+    overflow: auto;
+    vertical-align: top;
+    resize: none
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+*,:after,:before {
+    box-sizing: border-box
+}
+
+.ir {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block
+}
+
+.ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%
+}
+
+.hidden {
+    display: none!important
+}
+
+.visuallyhidden {
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px
+}
+
+.visuallyhidden.focusable:active,.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto
+}
+
+.clearfix:after,.clearfix:before {
+    content: " ";
+    display: table
+}
+
+.break {
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto
+}
+
+body,html {
+    font-size: 1em;
+    overflow: hidden;
+    background: #FFF
+}
+
+input,textarea {
+    border: none;
+    padding: .2em .2em;
+    margin: 0;
+    display: block;
+    background: 0 0;
+    outline: 0!important;
+    min-height: 1.4em;
+    line-height: 1.4em;
+    font-size: 1em;
+    width: 100%;
+    -webkit-appearance: none
+} 
+
+input,textarea#color {
+    appearance: auto;
+    box-sizing: border-box;
+    align-items: center;
+    -webkit-rtl-ordering: logical;
+    color: fieldtext;
+    background-color: field;
+    cursor: default;
+    white-space: pre;
+    border-width: 1px;
+    border-style: solid;
+    border-color: light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+    border-image: initial;
+    border-radius: 0px;
+    width: 100px;
+    height: 21px;
+    font-size: 11pt;
+}
+
+.coin_icons,.core_icons,.keyboard_keys,.mobile_rotate,.points_icons,.share_icons {
+    display: inline-block;
+    background-repeat: no-repeat;
+    overflow: hidden
+}
+
+@font-face {
+    font-family: icomoon;
+    src: url(/draw/assets/fonts/icons/v23/icomoon.eot);
+    src: url(/draw/assets/fonts/icons/v23/icomoon.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/icons/v23/icomoon.woff2) format("woff2"),url(/draw/assets/fonts/icons/v23/icomoon.woff) format("woff"),url(/draw/assets/fonts/icons/v23/icomoon.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal
+}
+
+.ico_moon {
+    font-family: icomoon;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale
+}
+
+.bottomMenu-bold,.bottomMenu-button-active>.name {
+    font-weight: 700
+}
+
+.icon-check-square-o:before {
+    content: "\e600"
+}
+
+.icon-fire:before {
+    content: "\e000"
+}
+
+.icon-home:before {
+    content: "\e001"
+}
+
+.icon-clock:before {
+    content: "\e002"
+}
+
+.icon-heart:before {
+    content: "\e003"
+}
+
+.icon-stats:before {
+    content: "\e004"
+}
+
+.icon-calendar:before {
+    content: "\e005"
+}
+
+.icon-warning:before {
+    content: "\e006"
+}
+
+.icon-shuffle:before {
+    content: "\e007"
+}
+
+.icon-star:before {
+    content: "\e008"
+}
+
+.icon-trophy:before {
+    content: "\e009"
+}
+
+.icon-flag:before {
+    content: "\e00a"
+}
+
+.icon-tags:before {
+    content: "\e00b"
+}
+
+.icon-list:before {
+    content: "\e00c"
+}
+
+.icon-cog:before {
+    content: "\e00d"
+}
+
+.icon-arrow-up:before {
+    content: "\e00e"
+}
+
+.icon-checkmark:before {
+    content: "\e00f"
+}
+
+.icon-close:before {
+    content: "\e010"
+}
+
+.icon-search:before {
+    content: "\e011"
+}
+
+.icon-alarm:before {
+    content: "\e012"
+}
+
+.icon-user:before {
+    content: "\e013"
+}
+
+.icon-facebook:before {
+    content: "\e014"
+}
+
+.icon-google:before {
+    content: "\e015"
+}
+
+.icon-google-plus:before {
+    content: "\e016"
+}
+
+.icon-loop:before {
+    content: "\e017"
+}
+
+.icon-twitter:before {
+    content: "\e018"
+}
+
+.icon-play-alt:before {
+    content: "\e019"
+}
+
+.icon-fullscreen:before {
+    content: "\e01a"
+}
+
+.icon-fullscreen-exit:before {
+    content: "\e01b"
+}
+
+.icon-volume:before {
+    content: "\e01c"
+}
+
+.icon-volume-2:before {
+    content: "\e01d"
+}
+
+.icon-arrow-left:before {
+    content: "\e01e"
+}
+
+.icon-stopwatch:before {
+    content: "\e01f"
+}
+
+.icon-arrow-right:before {
+    content: "\e020"
+}
+
+.icon-upload:before {
+    content: "\e021"
+}
+
+.icon-pencil:before {
+    content: "\e022"
+}
+
+.icon-download:before {
+    content: "\e023"
+}
+
+.icon-arrow-left-2:before {
+    content: "\e024"
+}
+
+.icon-edit:before {
+    content: "\e025"
+}
+
+.icon-phone-landscape:before {
+    content: "\e026"
+}
+
+.icon-phone-portrait:before {
+    content: "\e027"
+}
+
+.icon-phone:before {
+    content: "\e028"
+}
+
+.icon-thumbs-up:before {
+    content: "\e029"
+}
+
+.icon-thumbs-down:before {
+    content: "\e02a"
+}
+
+.icon-mail:before {
+    content: "\e02b"
+}
+
+.icon-screen:before {
+    content: "\e02c"
+}
+
+.icon-tablet:before {
+    content: "\e02d"
+}
+
+.icon-html5:before {
+    content: "\e601"
+}
+
+.icon-chrome:before {
+    content: "\e602"
+}
+
+.icon-reddit:before {
+    content: "\e603"
+}
+
+.icon-play:before {
+    content: "\e604"
+}
+
+.icon-pause:before {
+    content: "\e605"
+}
+
+.icon-indent-increase:before {
+    content: "\e606"
+}
+
+.icon-indent-decrease:before {
+    content: "\e607"
+}
+
+.icon-badge:before {
+    content: "\e608"
+}
+
+.icon-world:before {
+    content: "\e609"
+}
+
+.icon-cart:before {
+    content: "\e60a"
+}
+
+.icon-last:before {
+    content: "\e60b"
+}
+
+.icon-first:before {
+    content: "\e60c"
+}
+
+.icon-facebook-2:before {
+    content: "\e60d"
+}
+
+.icon-featured-2:before {
+    content: "\e60e"
+}
+
+.icon-featured:before {
+    content: "\e60f"
+}
+
+.icon-chart-bar:before {
+    content: "\e610"
+}
+
+.icon-info-with-circle:before {
+    content: "\e611"
+}
+
+.icon-share:before {
+    content: "\f045"
+}
+
+.icon-plus-sign:before {
+    content: "\f055"
+}
+
+.icon-minus-sign:before {
+    content: "\f056"
+}
+
+.icon-group:before {
+    content: "\f0c0"
+}
+
+.icon-flag-checkered:before {
+    content: "\f11e"
+}
+
+.icon-question:before {
+    content: "\f128"
+}
+
+.icon-youtube:before {
+    content: "\f167"
+}
+
+.icon-database:before {
+    content: "\f1c0"
+}
+
+.icon-wheel:before {
+    content: "\f228"
+}
+
+.icon-trophy-2:before {
+    content: "\f2d7"
+}
+
+@font-face {
+    font-family: roboto_regular;
+    src: url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    -webkit-font-smoothing:antialiased;font-smooth:never;-webkit-font-smoothing:none}
+
+@font-face {
+    font-family: roboto_condensed_bold;
+    src: url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    -webkit-font-smoothing:antialiased;font-smooth:never;-webkit-font-smoothing:none}
+
+@font-face {
+    font-family: roboto_bold;
+    src: url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    -webkit-font-smoothing:antialiased}
+
+@font-face {
+    font-family: roboto_medium;
+    src: url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    -webkit-font-smoothing:antialiased}
+
+@font-face {
+    font-family: helsinki;
+    src: url(/draw/assets/fonts/helsinki/helsinki-webfont.eot);
+    src: url(/draw/assets/fonts/helsinki/helsinki-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/helsinki/helsinki-webfont.woff2) format("woff2"),url(/draw/assets/fonts/helsinki/helsinki-webfont.woff) format("woff"),url(/draw/assets/fonts/helsinki/helsinki-webfont.ttf) format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    -webkit-font-smoothing:antialiased;font-smooth:never;-webkit-font-smoothing:none}
+
+.mobile_rotate {
+    background-image: url(/draw/assets/images/icons/mobile_rotate.png);
+    background-size: 73px
+}
+
+.mobile_rotate-rotate_landscape {
+    width: 42px;
+    height: 42px;
+    background-position: -1px -1px
+}
+
+.mobile_rotate-rotate_portrait {
+    width: 28px;
+    height: 30px;
+    background-position: -44px -1px
+}
+
+.share_icons {
+    background-image: url(/draw/assets/images/icons/share_icons.png);
+    background-size: 316px
+}
+
+.share_icons-share_twitter {
+    width: 44px;
+    height: 44px;
+    background-position: -1px -1px
+}
+
+.share_icons-share_stumbleupon {
+    width: 44px;
+    height: 44px;
+    background-position: -46px -1px
+}
+
+.share_icons-share_reddit {
+    width: 44px;
+    height: 44px;
+    background-position: -91px -1px
+}
+
+.share_icons-share_mail {
+    width: 44px;
+    height: 44px;
+    background-position: -136px -1px
+}
+
+.share_icons-share_google {
+    width: 44px;
+    height: 44px;
+    background-position: -181px -1px
+}
+
+.share_icons-share_gmail {
+    width: 44px;
+    height: 44px;
+    background-position: -226px -1px
+}
+
+.share_icons-share_facebook {
+    width: 44px;
+    height: 44px;
+    background-position: -271px -1px
+}
+
+.coin_icons {
+    background-image: url(/draw/assets/images/icons/coin_icons.png);
+    background-size: 22px
+}
+
+.coin_icons-coin_icon_sm {
+    width: 20px;
+    height: 20px;
+    background-position: -1px -1px
+}
+
+.points_icons {
+    background-image: url(/draw/assets/images/icons/points_icons.png);
+    background-size: 51px
+}
+
+.points_icons-points_icon_blk_sm {
+    width: 28px;
+    height: 28px;
+    background-position: -1px -1px
+}
+
+.points_icons-points_icon_sm {
+    width: 20px;
+    height: 20px;
+    background-position: -30px -1px
+}
+
+.keyboard_keys {
+    background-image: url(/draw/assets/images/icons/keyboard_keys_v2.png);
+    background-size: 128px
+}
+
+.keyboard_keys-pause_key_small {
+    width: 79px;
+    height: 34px;
+    background-position: -1px -1px
+}
+
+.keyboard_keys-zoom_out_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -81px -1px
+}
+
+.keyboard_keys-zoom_in_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -81px -35px
+}
+
+.keyboard_keys-cancel_checkpoint_key_small {
+    width: 78px;
+    height: 33px;
+    background-position: -1px -36px
+}
+
+.keyboard_keys-vehicle_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -80px -69px
+}
+
+.keyboard_keys-zoom_in_out_key_small {
+    width: 67px;
+    height: 33px;
+    background-position: -1px -70px
+}
+
+.keyboard_keys-scroll_wheel {
+    width: 58px;
+    height: 33px;
+    background-position: -69px -103px
+}
+
+.keyboard_keys-tab_key_small {
+    width: 56px;
+    height: 34px;
+    background-position: -1px -104px
+}
+
+.keyboard_keys-enter_key_small {
+    width: 56px;
+    height: 34px;
+    background-position: -58px -137px
+}
+
+.keyboard_keys-right_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -1px -139px
+}
+
+.keyboard_keys-crouch_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -1px -173px
+}
+
+.keyboard_keys-left_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -1px -207px
+}
+
+.keyboard_keys-change_direction_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -35px -172px
+}
+
+.keyboard_keys-brake_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -35px -206px
+}
+
+.keyboard_keys-accelerate_key_small {
+    width: 33px;
+    height: 33px;
+    background-position: -69px -172px
+}
+
+.core_icons {
+    background-image: url(/draw/assets/images/icons/core_icons.png);
+    background-size: 85px
+}
+
+.core_icons-points_icon_sm {
+    width: 20px;
+    height: 20px;
+    background-position: -1px -1px
+}
+
+.core_icons-help_icon_sm {
+    width: 20px;
+    height: 20px;
+    background-position: -22px -1px
+}
+
+.core_icons-coin_icon_sm {
+    width: 20px;
+    height: 20px;
+    background-position: -43px -1px
+}
+
+.core_icons-add_coins_icon_sm {
+    width: 20px;
+    height: 20px;
+    background-position: -64px -1px
+}
+
+body,html {
+    font-family: roboto_regular,Arial,Helvetica,sans-serif
+}
+
+.gameFocusOverlay,.gameLoading-name,.primary-button {
+    font-family: helsinki,Arial,Helvetica,sans-serif
+}
+
+.link,a {
+    color: #1F80C3;
+    text-decoration: none
+}
+
+.link:hover,a:hover {
+    color: #3899DC
+}
+
+canvas {
+    display: block;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.float-right {
+    float: right
+}
+
+.float-left {
+    float: left
+}
+
+.margin-0-5 {
+    margin: 0 5px
+}
+
+.margin-bottom-10 {
+    margin-bottom: 10px
+}
+
+.disabled {
+    opacity: .2
+}
+
+.loading-hourglass {
+    background-image: url(/draw/assets/images/loading_gifs/hourglass.gif);
+    background-size: 32px 32px;
+    display: inline-block;
+    width: 32px;
+    height: 32px
+}
+
+.loading-spinner_sm {
+    background-image: url(/draw/assets/images/loading_gifs/spinner-loader-med.gif);
+    background-size: 16px 16px;
+    display: inline-block;
+    width: 16px;
+    height: 16px
+}
+
+.select-dropdown {
+    appearance: button;
+    -moz-appearance: button;
+    -webkit-appearance: button;
+    padding: 8px 25px;
+    border-radius: 30px;
+    background: #FFF;
+    border: 1px solid #C2C2C2
+}
+
+html.fullscreen {
+    overflow: hidden
+}
+
+html.fullscreen #main_page {
+    display: none
+}
+
+.primary-button,.primary-select,.primary-switch {
+    display: inline-block
+}
+
+.game {
+    background: #FFF;
+    border: 1px solid #000;
+    height: 420px
+}
+
+.game-fullscreen {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    border: none;
+    z-index: 30000
+}
+
+.primary-button {
+    border-radius: 30px;
+    padding: 10px 15px;
+    border: 2px solid #000;
+    color: #FFF;
+    text-shadow: 1px 1px 0 #000;
+    cursor: pointer
+}
+
+.primary-button-bike {
+    border: 2px solid #000;
+    color: #FFF;
+    text-shadow: 1px 1px 0 #000;
+    cursor: pointer
+}
+
+.primary-button-green {
+    background: #5DB019
+}
+
+.primary-button-green:hover {
+    background: #75C624
+}
+
+.primary-button-blue {
+    background: #1F80C3
+}
+
+.primary-button-blue:hover {
+    background: #3899DC
+}
+
+.primary-button-black {
+    background: #404040
+}
+
+.primary-button-black:hover,.primary-select {
+    background: #595959
+}
+
+.primary-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-shadow: none;
+    padding: 5px 29px 6px 10px;
+    cursor: pointer;
+    border: 2px solid #000;
+    text-align: center;
+    margin-left: 4px;
+    border-radius: 30px;
+    color: #FFF
+}
+
+.primary-switch .primary-switch-toggle {
+    position: absolute;
+    margin-left: 9999px;
+    visibility: hidden
+}
+
+.primary-switch .primary-switch-toggle+label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    outline: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.primary-switch input.primary-switch-toggle+label {
+    padding: 2px;
+    width: 85px;
+    height: 39px;
+    background-color: #000;
+    border-radius: 60px
+}
+
+.primary-switch input.primary-switch-toggle+label:after,.primary-switch input.primary-switch-toggle+label:before {
+    display: block;
+    position: absolute;
+    content: ""
+}
+
+.primary-switch input.primary-switch-toggle+label:before {
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+    right: 2px;
+    background-color: #E2E2E2;
+    border-radius: 60px;
+    -webkit-transition: background .2s;
+    transition: background .2s
+}
+
+.primary-switch input.primary-switch-toggle+label:after {
+    top: 4px;
+    left: 4px;
+    bottom: 4px;
+    width: 30px;
+    background-color: #FFF;
+    border-radius: 52px;
+    border: 2px solid #000;
+    -webkit-transition: margin .2s;
+    transition: margin .2s
+}
+
+.primary-switch input.primary-switch-toggle:checked+label:before {
+    background-color: #75C624
+}
+
+.primary-switch input.primary-switch-toggle:checked+label:after {
+    margin-left: 47px
+}
+
+.gameLoading {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(255,255,255,.9);
+    padding: 30px
+}
+
+.gameLoading-container {
+    height: 50px;
+    max-width: 400px;
+    margin: -25px auto auto;
+    top: 50%;
+    position: relative
+}
+
+.gameLoading-bar {
+    width: 100%;
+    height: 10px;
+    background: #FFF;
+    border-radius: 30px;
+    border: 2px solid #000
+}
+
+.gameLoading-progress {
+    height: 100%;
+    background: #649AE0;
+    border-radius: 30px;
+    width: 0;
+    -webkit-transition: width .5s ease-out;
+    transition: width .5s ease-out
+}
+
+.gameLoading-name {
+    color: #2D2D2D;
+    font-size: .8em;
+    text-align: center;
+    margin-top: 5px
+}
+
+.gameFocusOverlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(255,255,255,.9);
+    z-index: 2
+}
+
+.bottomMenu,.editorDialog-titleBar,.topMenu {
+    font-family: roboto_condensed_bold,Arial,Helvetica,sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.gameFocusOverlay .text {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    margin-top: -35px
+}
+
+.profileImage {
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    overflow: hidden;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    border: 1px solid #000
+}
+
+.profileImage img {
+    opacity: 0
+}
+
+.editorgui_icons2 {
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url(/draw/assets/images/editor/gui/editorgui_icons_v7.png);
+    background-size: 512px 164px
+}
+
+.editorgui_icons2.editorgui_icons-antigravity {
+    width: 44px;
+    height: 44px;
+    background-position: 0 0
+}
+
+.editorgui_icons2.editorgui_icons-balloon {
+    width: 44px;
+    height: 44px;
+    background-position: 0 -44px
+}
+
+.editorgui_icons2.editorgui_icons-portal {
+    width: 44px;
+    height: 44px;
+    background-position: -264px -44px
+}
+
+.editorgui_icons2.editorgui_icons-blob {
+    width: 44px;
+    height: 44px;
+    background-position: 0 -88px
+}
+
+.editorgui_icons2.editorgui_icons-bomb {
+    width: 44px;
+    height: 44px;
+    background-position: -44px 0
+}
+
+.editorgui_icons2.editorgui_icons-checkpoint {
+    width: 44px;
+    height: 44px;
+    background-position: -44px -44px
+}
+
+.editorgui_icons2.editorgui_icons-gravity {
+    width: 44px;
+    height: 44px;
+    background-position: -88px 0
+}
+
+.editorgui_icons2.editorgui_icons-helicopter {
+    width: 44px;
+    height: 44px;
+    background-position: -88px -44px
+}
+
+.editorgui_icons2.editorgui_icons-slowmotion {
+    width: 44px;
+    height: 44px;
+    background-position: -264px -88px
+}
+
+.editorgui_icons2.editorgui_icons-truck {
+    width: 44px;
+    height: 44px;
+    background-position: -308px -44px
+}
+
+.editorgui_icons {
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url(/draw/assets/images/editor/gui/editorgui_icons_v8.png);
+    background-size: 778px
+}
+
+.editorgui_icons-circle {
+    width: 44px;
+    height: 44px;
+    background-position: -682px -1px
+}
+
+.editorgui_icons-mushroom {
+    width: 44px;
+    height: 44px;
+    background-position: -1px -1px
+}
+
+.editorgui_icons-truck {
+    width: 44px;
+    height: 44px;
+    background-position: -52px -1px
+}
+
+.editorgui_icons-speed {
+    width: 44px;
+    height: 44px;
+    background-position: -97px -1px
+}
+
+.editorgui_icons-slowmotion {
+    width: 44px;
+    height: 44px;
+    background-position: -142px -1px
+}
+
+.editorgui_icons-icon_vehicle_swap {
+    width: 44px;
+    height: 44px;
+    background-position: -187px -1px
+}
+
+.editorgui_icons-icon_snap_on {
+    width: 44px;
+    height: 44px;
+    background-position: -232px -1px
+}
+
+.editorgui_icons-icon_snap {
+    width: 44px;
+    height: 44px;
+    background-position: -277px -1px
+}
+
+.editorgui_icons-icon_select {
+    width: 44px;
+    height: 44px;
+    background-position: -322px -1px
+}
+
+.editorgui_icons-icon_scenery {
+    width: 44px;
+    height: 44px;
+    background-position: -367px -1px
+}
+
+.editorgui_icons-icon_powerups {
+    width: 44px;
+    height: 44px;
+    background-position: -412px -1px
+}
+
+.editorgui_icons-icon_physics {
+    width: 44px;
+    height: 44px;
+    background-position: -457px -1px
+}
+
+.editorgui_icons-icon_line {
+    width: 44px;
+    height: 44px;
+    background-position: -502px -1px
+}
+
+.editorgui_icons-icon_eraser {
+    width: 44px;
+    height: 44px;
+    background-position: -547px -1px
+}
+
+.editorgui_icons-icon_curve {
+    width: 44px;
+    height: 44px;
+    background-position: -592px -1px
+}
+
+.editorgui_icons-icon_camera {
+    width: 44px;
+    height: 44px;
+    background-position: -637px -1px
+}
+
+.editorgui_icons-icon_brush {
+    width: 44px;
+    height: 44px;
+    background-position: -1px -52px
+}
+
+.editorgui_icons-helicopter {
+    width: 44px;
+    height: 44px;
+    background-position: -727px -1px
+}
+
+.editorgui_icons-icon_mtb {
+    width: 47px;
+    height: 32px;
+    background-position: -52px -46px
+}
+
+.editorgui_icons-gravity {
+    width: 44px;
+    height: 44px;
+    background-position: -46px -79px
+}
+
+.editorgui_icons-goal {
+    width: 44px;
+    height: 44px;
+    background-position: -91px -79px
+}
+
+.editorgui_icons-icon_mtb:hover {
+    width: 47px;
+    height: 32px;
+    background-position: -100px -46px
+}
+
+.editorgui_icons-checkpoint {
+    width: 44px;
+    height: 44px;
+    background-position: -136px -79px
+}
+
+.editorgui_icons-icon_bmx {
+    width: 47px;
+    height: 32px;
+    background-position: -148px -46px
+}
+
+.editorgui_icons-bomb {
+    width: 44px;
+    height: 44px;
+    background-position: -181px -79px
+}
+
+.editorgui_icons-icon_bmx:hover {
+    width: 47px;
+    height: 32px;
+    background-position: -196px -46px
+}
+
+.editorgui_icons-blob {
+    width: 44px;
+    height: 44px;
+    background-position: -226px -79px
+}
+
+.editorgui_icons-icon_zoom_out {
+    width: 32px;
+    height: 32px;
+    background-position: -244px -46px
+}
+
+.editorgui_icons-balloon {
+    width: 44px;
+    height: 44px;
+    background-position: -271px -79px
+}
+
+.editorgui_icons-icon_zoom_out:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -277px -46px
+}
+
+.editorgui_icons-icon_zoom_in {
+    width: 32px;
+    height: 32px;
+    background-position: -310px -46px
+}
+
+.editorgui_icons-icon_zoom_in:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -343px -46px
+}
+
+.editorgui_icons-icon_upload {
+    width: 0px;
+    height: 0px;
+    background-position: -316px -79px
+}
+
+.editorgui_icons-icon_upload:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -376px -46px
+}
+
+.editorgui_icons-icon_elle {
+    width: 44px;
+    height: 44px;
+    background-position: -344px -74px
+}
+
+.editorgui_icons-icon_mario {
+    width: 32px;
+    height: 32px;
+    background-position: -411px -47px
+}
+
+.editorgui_icons-icon_import {
+    width: 32px;
+    height: 32px;
+    background-position: -382px -79px
+}
+
+.editorgui_icons-icon_import:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -442px -46px
+}
+
+.editorgui_icons-icon_hotkeys {
+    width: 32px;
+    height: 32px;
+    background-position: -415px -79px
+}
+
+.editorgui_icons-icon_hotkeys:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -475px -46px
+}
+
+.editorgui_icons-icon_grid_on {
+    width: 32px;
+    height: 32px;
+    background-position: -448px -79px
+}
+
+.editorgui_icons-icon_grid_on:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -508px -46px
+}
+
+.editorgui_icons-icon_grid_off {
+    width: 32px;
+    height: 32px;
+    background-position: -481px -79px
+}
+
+.editorgui_icons-icon_grid_off:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -541px -46px
+}
+
+.editorgui_icons-icon_fullscreen {
+    width: 32px;
+    height: 32px;
+    background-position: -514px -79px
+}
+
+.editorgui_icons-icon_fullscreen:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -574px -46px
+}
+
+.editorgui_icons-icon_export {
+    width: 32px;
+    height: 32px;
+    background-position: -547px -79px
+}
+
+.editorgui_icons-icon_export:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -607px -46px
+}
+
+.editorgui_icons-icon_exit_fullscreen {
+    width: 32px;
+    height: 32px;
+    background-position: -580px -79px
+}
+
+.editorgui_icons-icon_exit_fullscreen:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -640px -46px
+}
+
+.editorgui_icons-icon_controls {
+    width: 32px;
+    height: 32px;
+    background-position: -613px -79px
+}
+
+.editorgui_icons-icon_controls:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -673px -46px
+}
+
+.editorgui_icons-icon_clear_track {
+    width: 32px;
+    height: 32px;
+    background-position: -646px -79px
+}
+
+.editorgui_icons-icon_clear_track:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -706px -46px
+}
+
+.editorgui_icons-icon_camera_lock_on {
+    width: 32px;
+    height: 32px;
+    background-position: -679px -79px
+}
+
+.editorgui_icons-icon_camera_lock_on:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -739px -46px
+}
+
+.editorgui_icons-icon_camera_lock_off {
+    width: 32px;
+    height: 32px;
+    background-position: -712px -79px
+}
+
+.editorgui_icons-icon_camera_lock_off:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -745px -79px
+}
+
+.topMenu {
+    width: 100%;
+    height: 45px;
+    background: #FFF;
+    border-bottom: 1px solid #000
+}
+
+.topMenu-button {
+    text-transform: uppercase;
+    line-height: 44px;
+    display: inline-block;
+    padding: 0 10px;
+    font-size: .65em;
+    cursor: pointer
+}
+
+.topMenu-button .text {
+    position: relative;
+    top: 2px;
+    padding: 0 1px;
+    display: none
+}
+
+.topMenu-button:hover {
+    background: #CCC
+}
+
+.topMenu-button:active {
+    background: #333;
+    color: #FFF
+}
+
+.topMenu-button.disabled {
+    color: #CCC;
+    cursor: not-allowed
+}
+
+.topMenu-button-right {
+    float: right
+}
+
+.topMenu-button_return {
+    position: fixed;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.topMenu-button_zoom {
+    width: 50px;
+    text-align: center
+}
+
+@media screen and (min-width: 900px) {
+    .topMenu-button .text {
+        display:inline
+    }
+}
+
+.horizontal-slider-container {
+    display: inline-block;
+    float: left
+}
+
+.horizontal-slider-label {
+    float: left;
+    font-weight: 700
+}
+
+.horizontal-slider-label-2 {
+    float: left;
+    font-weight: 700;
+    margin-left: 20px
+}
+
+.horizontal-slider {
+    position: relative;
+    width: 100px;
+    height: 5px;
+    background: #9B9B9B;
+    border-radius: 30px;
+    float: left
+}
+
+.horizontal-slider .bar {
+    height: 100%
+}
+
+.horizontal-slider .bar-0 {
+    background: #000;
+    border-radius: 30px
+}
+
+.horizontal-slider .handle {
+    width: 25px;
+    height: 25px;
+    background: #FFF;
+    border: 2px solid #000;
+    border-radius: 30px;
+    margin-top: -10px
+}
+
+.bottomMenu {
+    width: 100%;
+    border-top: 1px solid #000;
+    position: absolute;
+    bottom: 0;
+    line-height: 45px;
+    font-size: .55em;
+    text-transform: uppercase;
+    background: #E2E2E2
+}
+
+.bottomMenu-button {
+    display: flex; /* This will ensure the elements are in a row */
+    align-items: center;
+    padding: 0 10px;
+    cursor: pointer
+}
+
+.bottomMenu-button>.name {
+    margin-left: 5px
+}
+
+.bottomMenu-button:hover {
+    background: #CCC
+}
+
+.bottomMenu-button:active {
+    background: #333;
+    color: #FFF
+}
+
+.bottomMenu-button.disabled {
+    color: #CCC;
+    cursor: not-allowed
+}
+
+.editorDialog-close,.sideButton {
+    cursor: pointer;
+    text-align: center
+}
+
+.bottomMenu-button-right {
+    float: right
+}
+
+.bottomMenu-button_ridestyle {
+    min-width: 105px;
+    padding: 0 0px,
+}
+
+.bottomMenu-button_grid {
+    min-width: 105px
+}
+
+.bottomMenu-button_cameralock {
+    min-width: 150px
+}
+
+.bottomMenu-button_cameralock>.icon {
+    position: relative;
+    top: -4px
+}
+
+.bottomMenu .divider {
+    height: 100%;
+    border-right: 1px solid #000;
+    width: 1px;
+    float: right
+}
+
+.bottomMenu .horizontal-slider {
+    top: 19px;
+    margin: 0 15px
+}
+
+.bottomToolOptions {
+    float: left;
+    margin-left: 40px;
+}
+
+.bottomToolOptions-toolTitle {
+    display: inline-block;
+    float: left;
+    margin-right: 25px;
+}
+
+.bottomToolOptions-toolTitle .toolName {
+    margin-right: 9px
+}
+
+.bottomToolOptions-input {
+    float: left;
+    background: #FFF;
+    border: 1px solid #000;
+    text-align: center;
+    margin-top: 9px;
+    border-radius: 5px
+}
+
+.bottomToolOptions-input_vehiclepoweruptime {
+    width: 40px;
+    height: 25px;
+    margin-right: 10px
+}
+
+.sideButton {
+    line-height: 39px;
+    margin: 2px;
+    border: 1px solid #FFF
+}
+
+.sideButton:hover {
+    background: #EEE;
+    border: 1px solid #000
+}
+
+.sideButton.active {
+    border: 1px solid #000;
+    background: #CACACA
+}
+
+.leftMenu,.rightMenu {
+    top: 50%;
+    background: #FFF;
+    opacity: .95;
+    position: absolute
+}
+
+.leftMenu {
+    margin-top: -170px;
+    left: 0;
+    border: 1px solid #000;
+    border-left: none
+}
+
+.rightMenu {
+    right: 0;
+    border: 1px solid #000;
+    border-right: 0
+}
+
+.editorDialog {
+    width: 100%;
+    height: 90%;
+    position: absolute;
+    top: 5%;
+    background: rgba(0,0,0,0);
+    z-index: 2
+}
+
+.editorDialog-bike {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 25%;
+    right: -65%;
+    background: rgba(0,0,0,0);
+    z-index: 2
+}
+
+.editorDialog-close {
+    position: absolute;
+    right: 5px;
+    top: 2px;
+    line-height: 30px;
+    width: 30px;
+    font-size: 1.5em
+}
+
+.editorDialog-close:hover {
+    color: #3899DC
+}
+
+.editorDialog-content {
+    width: 530px;
+    background: #FFF;
+    border: 1px solid #C2C2C2;
+    margin: -190px auto auto;
+    top: 50%;
+    position: relative;
+    box-shadow: 0 0 1px #DDD
+}
+
+.editorDialog-titleBar {
+    line-height: 38px;
+    padding: 0 13px;
+    border-bottom: 1px solid #C2C2C2;
+    color: #2D2D2D
+}
+
+.editorDialog-bottomBar {
+    background: #F8F8F8;
+    padding: 12px
+}
+
+.editorDialog-bottomBar.error {
+    color: #E5302F;
+    background: #F4D0D0;
+    border: 1px solid #E5302F
+}
+
+.editorDialog-content-title {
+    font-size: 1em;
+    font-weight: 400;
+    margin: 0
+}
+
+.editorDialog-content_clearDialog {
+    width: 400px
+}
+
+.editorDialog-content_clearDialog .editorDialog-centerContent {
+    padding: 10px
+}
+
+.editorDialog-content_clearDialog .editorDialog-bottomBar {
+    border-top: 1px solid #CCC
+}
+
+.exportDialog-code,.importDialog-code {
+    border: 1px solid #CCC;
+    border-radius: 6px;
+    padding: 10px;
+    height: 210px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 2;
+    resize: none;
+    font-size: .9em
+}
+
+.editorDialog-codeContainer,.importDialog-codeContainer {
+    position: relative;
+    padding: 18px;
+}
+
+.importDialog-button {
+    float: right
+}
+
+.importDialog-dropFile {
+    display: none;
+    position: absolute;
+    top: 110px;
+    text-align: center;
+    width: 100%;
+    left: 0;
+    color: #3899DC
+}
+
+.importDialog-placeholder {
+    font-size: 14px;
+    padding: 14PX;
+    position: absolute;
+    width: 486px
+}
+
+.exportDialog-saveAsFile,.importDialog-openFile {
+    color: #3B99FC;
+    font-size: .7em;
+    padding: 10px;
+    cursor: pointer
+}
+
+.importDialog-openFile {
+    position: absolute;
+    z-index: 3;
+    right: 60px;
+    top: 2px
+}
+
+.editorDialog-content-dragActive .importDialog-code {
+    background: #FFF;
+    border: 2px dashed #000
+}
+
+.ud-uploading-cost {
+    width: 260px;
+    float: left;
+    font-size: .9em
+}
+
+.ud-uploading-cost .core_icons {
+    vertical-align: middle;
+    position: relative;
+    bottom: 2px;
+    margin-left: 2px;
+    margin-right: 5px
+}
+
+.ud-uploading-cost .num {
+    font-family: roboto_bold,Arial,Helvetica,sans-serif;
+    font-weight: 700
+}
+
+.ud-form-input>.title,.ud-upload-complete-balance>.balance,.ud-upload-complete-message>.track-title,.ud-upload-complete-share>.title {
+    font-family: roboto_medium,Arial,Helvetica,sans-serif
+}
+
+.ud-form {
+    padding: 18px;
+    border-bottom: 1px solid #C2C2C2;
+    position: relative
+}
+
+.ud-form-input {
+    margin: 5px 0
+}
+
+.ud-form-input>.title {
+    font-size: .9em;
+    margin-bottom: 5px
+}
+
+.ud-form-input>.char-left,.ud-form-input>.input-desc {
+    color: #595959;
+    font-size: .8em
+}
+
+.ud-form-text-input {
+    border: 1px solid #C2C2C2;
+    border-radius: 11px
+}
+
+.ud-form-vehicles>.ud-form-input {
+    width: 50%
+}
+
+.ud-form-checkbox {
+    margin: 5px 0;
+    cursor: pointer
+}
+
+.ud-form-checkbox>.checkbox {
+    background: #FFF;
+    border-radius: 50%;
+    text-align: center;
+    width: 24px;
+    height: 24px;
+    color: #FFF;
+    line-height: 18px;
+    border: 1px solid #000;
+    display: inline-block
+}
+
+.ud-form-checkbox.checked>.checkbox {
+    background: #1F80C3
+}
+
+.ud-form-checkbox>.name {
+    padding-left: 5px;
+    font-size: .9em
+}
+
+.ud-form-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFF;
+    opacity: .7
+}
+
+.ud-bottom-message {
+    font-size: .8em;
+    width: 270px;
+    display: inline-block
+}
+
+.ud-exporting-track {
+    padding: 18px;
+    border-bottom: 1px solid #C2C2C2;
+    font-size: .9em
+}
+
+.ud-exporting-track>.warning {
+    font-size: .9em
+}
+
+.ud-uploading-message {
+    display: inline-block;
+    position: relative;
+    top: 12px
+}
+
+.ud-uploading-message>.loading-hourglass {
+    position: absolute;
+    top: -5px;
+    left: 0
+}
+
+.ud-uploading-message>.text {
+    padding-left: 34px;
+    font-size: .9em
+}
+
+.ud-upload-complete {
+    padding: 18px;
+    border-bottom: 1px solid #C2C2C2
+}
+
+.ud-upload-complete-share>.title {
+    margin-bottom: 10px
+}
+
+.ud-upload-complete-share .share_icons {
+    margin-right: 15px
+}
+
+.ud-upload-complete-link-input {
+    border: 1px solid #C2C2C2;
+    border-radius: 11px
+}
+
+.editorDialog-content_helpDialog {
+    width: 640px
+}
+
+.editorDialog-content_helpDialog .hotkeys {
+    padding: 10px;
+    clear: both
+}
+
+.editorDialog-content_helpDialog .hotkey {
+    margin: 5px 0
+}
+
+.editorDialog-content_helpDialog .hotkeys-title {
+    font-size: 13px;
+    margin: 10px 0 5px;
+    font-family: roboto_condensed_bold,Arial,Helvetica,sans-serif;
+    text-transform: uppercase;
+    color: #595959
+}
+
+.helpDialog-hotkey {
+    box-shadow: inset 0 1px 0 0 #fff;
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(.05,#f9f9f9),color-stop(1,#e9e9e9));
+    background: -webkit-linear-gradient(top,#f9f9f9 5%,#e9e9e9 100%);
+    background: -webkit-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background: linear-gradient(to bottom,#f9f9f9 5%,#e9e9e9 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9', GradientType=0);
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    cursor: pointer;
+    color: #666;
+    font-family: arial;
+    font-weight: 700;
+    padding: 6px;
+    font-size: .7em;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #fff;
+    min-width: 27px;
+    text-align: center
+}
+
+.helpDialog-hotkey-name {
+    font-size: .7em;
+    margin-left: 10px
+}
+
+.hotkeys_tools {
+    float: left;
+    width: 205px
+}
+
+.hotkeys_powerups {
+    float: left;
+    width: 180px
+}
+
+.hotkeys_more {
+    float: left
+}
+
+.helpDialog-advanced_settings.link {
+    font-size: .8em;
+    padding: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0
+}
+
+.helpDialogAdvanced {
+    font-size: .75em;
+    padding: 10px;
+    min-height: 200px
+}
+
+.helpDialogAdvanced .settingTitle {
+    width: 200px
+}
+
+.helpDialogAdvanced .name {
+    padding-left: 10px
+}
+
+.helpDialogAdvanced input[type=checkbox] {
+    -webkit-appearance: checkbox;
+    display: inline-block;
+    width: inherit
+}
+
+.editorDialog-content_changeLog {
+    margin-top: -189px
+}
+
+.editorDialog-content_changeLog .editorDialog-content-title {
+    text-align: center
+}
+
+.editorDialog-content_changeLog .line {
+    margin: 10px 0;
+    font-size: .9em
+}
+
+.editorDialog-content_changeLog .box {
+    padding: 5px
+}
+
+.editorDialog-content_changeLog ul {
+    list-style: none;
+    font-size: .8em;
+    font-weight: 700;
+    padding: 0 5px 5px
+}
+
+.editorDialog-content_controlsDialog {
+    width: 600px
+}
+
+.editorDialog-content_controlsDialog .keyboard_keys {
+    vertical-align: middle
+}
+
+.editorDialog-content_controlsDialog .keysContainer {
+    padding: 10px
+}
+
+.editorDialog-content_controlsDialog table {
+    width: 100%;
+}
+
+.editorDialog-content_controlsDialog table .keyname {
+    padding-left: 5px;
+    font-family: Helvetica,sans-serif
+}
+
+.offlineeditorpromo-dialog {
+    font-family: roboto_medium,Arial,Helvetica,sans-serif
+}
+
+.offlineeditorpromo-dialog .middle {
+    padding: 20px
+}
+
+.offlineeditorpromo-dialog .middle p {
+    font-size: 14px;
+    margin-bottom: 10px
+}
+
+.offlineeditorpromo-dialog .middle h3 {
+    font-size: 16px;
+    font-family: roboto_bold,Arial,Helvetica,sans-serif;
+    font-weight: 700;
+    margin: 2px
+}
+
+.offlineeditorpromo-dialog .middle .promoButton {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px
+}
+
+.offlineeditorpromo-dialog .middle .promoButton .install {
+    background: #F8F8F8;
+    border: 2px solid #000;
+    display: inline-block;
+    border-radius: 10px;
+    text-align: left;
+    padding: 10px
+}
+
+.offlineeditorpromo-dialog .middle .promoButton .install .icon {
+    float: left
+}
+
+.offlineeditorpromo-dialog .middle .promoButton .install .text {
+    overflow: hidden;
+    color: #000;
+    font-size: .8em;
+    position: relative;
+    top: 5px
+}
+
+.offlineeditorpromo-dialog .middle .promoButton .install .text h3 {
+    font-family: helsinki,Arial,Helvetica,sans-serif;
+    font-size: 13px;
+    color: #1F80C3
+}
+
+.offlineeditorpromo-dialog .bottom {
+    background: #F8F8F8;
+    height: 60px;
+    border-top: 1px solid #C2C2C2;
+    font-size: 13px
+}
+
+.offlineeditorpromo-dialog .bottom p {
+    padding: 10px
+}
+
+.chromeapp_icons {
+    display: inline-block;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url(/draw/assets/images/icons/chromeapp_icons.png);
+    background-size: 215px 170px
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),only screen and (-moz-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2),only screen and (min-resolution:192dpi),only screen and (min-resolution:2dppx) {
+    .chromeapp_icons {
+        background-image:url(/draw/assets/images/icons/chromeapp_icons@2x.png)
+    }
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 3),only screen and (-moz-min-device-pixel-ratio:3),only screen and (-o-min-device-pixel-ratio:3 / 1),only screen and (min-device-pixel-ratio:3) {
+    .chromeapp_icons {
+        background-image:url(/draw/assets/images/icons/chromeapp_icons@3x.png)
+    }
+}
+
+.chromeapp_icons.chromeapp_icons-offline_editor {
+    width: 145px;
+    height: 20px;
+    background-position: 0 0
+}
+
+.chromeapp_icons.chromeapp_icons-chrome_promo_icon {
+    width: 50px;
+    height: 50px;
+    background-position: 0 -20px
+}
+
+.chromeapp_icons.chromeapp_icons-community_icon {
+    width: 50px;
+    height: 50px;
+    background-position: 0 -70px
+}
+
+.chromeapp_icons.chromeapp_icons-fb_btn_icon {
+    width: 50px;
+    height: 50px;
+    background-position: 0 -120px
+}
+
+.chromeapp_icons.chromeapp_icons-fb_like_promo_icon {
+    width: 50px;
+    height: 50px;
+    background-position: -50px -20px
+}
+
+.chromeapp_icons.chromeapp_icons-mobile-icon {
+    width: 50px;
+    height: 50px;
+    background-position: -50px -70px
+}
+
+.chromeapp_icons.chromeapp_icons-rate_promo_icon {
+    width: 50px;
+    height: 50px;
+    background-position: -50px -120px
+}
+
+.chromeapp_icons.chromeapp_icons-twitter_icon {
+    width: 50px;
+    height: 50px;
+    background-position: -100px -20px
+}
+
+.chromeapp_icons.chromeapp_icons-web_btn_icon {
+    width: 50px;
+    height: 50px;
+    background-position: -100px -70px
+}
+
+.chromeapp_icons.chromeapp_icons-web_promo_icon {
+    width: 50px;
+    height: 50px;
+    background-position: -100px -120px
+}
+
+.chromeapp_icons.chromeapp_icons-editor {
+    width: 70px;
+    height: 20px;
+    background-position: -145px 0
+}
+
+.chromeapp_icons.chromeapp_icons-youtube_promo_icon {
+    width: 50px;
+    height: 50px;
+    background-position: -150px -20px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_close:active {
+    width: 24px;
+    height: 24px;
+    background-position: -150px -70px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_close {
+    width: 24px;
+    height: 24px;
+    background-position: -150px -94px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_info:active {
+    width: 24px;
+    height: 24px;
+    background-position: -174px -70px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_info {
+    width: 24px;
+    height: 24px;
+    background-position: -150px -118px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_max:active {
+    width: 24px;
+    height: 24px;
+    background-position: -174px -94px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_max {
+    width: 24px;
+    height: 24px;
+    background-position: -150px -142px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_min:active {
+    width: 24px;
+    height: 24px;
+    background-position: -174px -118px
+}
+
+.chromeapp_icons.chromeapp_icons-btn_min {
+    width: 24px;
+    height: 24px;
+    background-position: -174px -142px
+}
+
+#header {
+    height: 0px;
+    width: 100%;
+    background: #222;
+    text-align: center;
+    padding-top: 0px;
+    -webkit-app-region: drag
+}
+
+#header .controls,#header .info {
+    position: absolute;
+    top: 11px;
+    z-index: 100;
+    -webkit-app-region: no-drag
+}
+
+#header .chromeapp_icons {
+    display: none;
+    vertical-align: middle
+}
+
+#header .logo {
+    margin-right: 8px;
+    cursor: pointer
+}
+
+#header .info {
+    left: 12px
+}
+
+#header .controls {
+    right: 12px
+}
+
+#header .controls .chromeapp_icons {
+    margin-left: 5px
+}
+
+.buttomMenuChrome {
+    height: 0px;
+    background: #CCC;
+    border-top: 1px solid #2D2D2D;
+    font-size: 13px;
+    line-height: 13px;
+    color: #2D2D2D
+}
+
+.buttomMenuChrome a {
+    color: #2D2D2D;
+    text-decoration: none
+}
+
+.buttomMenuChrome a:active,.buttomMenuChrome a:hover,.buttomMenuChrome a:link,.buttomMenuChrome a:visited {
+    color: #2D2D2D
+}
+
+.buttomMenuChrome .promoCard {
+    height: 0%;
+    float: left;
+    width: 25%;
+    padding-left: 17px;
+    display: table!important
+}
+
+.buttomMenuChrome .promoCard .part {
+    display: table-cell;
+    vertical-align: middle
+}
+
+.buttomMenuChrome .promoCard .icon {
+    text-align: center;
+    width: 70px
+}
+
+.buttomMenuChrome .promoCard .text {
+    padding-right: 10px
+}
+
+.buttomMenuChrome .promoCard:hover {
+    background: #B9B8B8
+}
+
+.buttomMenuChrome .content {
+    width: calc(100% - 60px);
+    float: left;
+    height: 100%
+}
+
+.buttomMenuChrome .content .slick-list {
+    height: 100%;
+    overflow: hidden
+}
+
+.buttomMenuChrome .content .slick-track {
+    height: 100%
+}
+
+.buttomMenuChrome .sliderButton {
+    width: 30px;
+    height: 100%;
+    font-size: 28px;
+    cursor: pointer
+}
+
+.buttomMenuChrome .sliderButton .ico_moon {
+    position: relative;
+    top: 15px
+}
+
+.buttomMenuChrome .sliderButton:hover {
+    color: #1F80C3
+}
+
+.buttomMenuChrome .slick-disabled,.buttomMenuChrome .slick-disabled:hover,.buttomMenuChrome .slick-hidden,.buttomMenuChrome .slick-hidden:hover {
+    color: #C2C2C2
+}
+
+.buttomMenuChrome .leftButton {
+    float: left
+}
+
+.buttomMenuChrome .rightButton {
+    float: right
+}
+
+.chromeinfo-dialog .middle {
+    padding: 20px
+}
+
+.chromeinfo-dialog .middle p {
+    font-size: 14px;
+    margin-bottom: 10px
+}
+
+.chromeinfo-dialog .middle h3 {
+    font-size: 16px;
+    font-family: roboto_bold,Arial,Helvetica,sans-serif;
+    font-weight: 700;
+    margin: 2px
+}
+
+.chromeUpload-dialog .middle {
+    padding: 16px
+}
+
+.chromeUpload-dialog .middle .blurb {
+    font-size: 14px
+}
+
+.chromeUpload-dialog .middle .buttons {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 5px
+}
+
+.chromeUpload-dialog .middle .buttons .promoButton {
+    font-family: helsinki,Arial,Helvetica,sans-serif;
+    border: 2px solid #000;
+    width: 225px;
+    text-align: left;
+    border-radius: 10px;
+    padding: 3px;
+    display: inline-block;
+    font-size: 14px
+}
+
+.chromeUpload-dialog .middle .buttons .promoButton .wrap {
+    padding: 5px
+}
+
+.chromeUpload-dialog .middle .buttons .promoButton .wrap .part {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 10px
+}
+
+.slick-list,.slick-slider,.slick-track {
+    position: relative;
+    display: block
+}
+
+.chromeUpload-dialog .middle .buttons .promoButton.left {
+    margin-right: 10px
+}
+
+.chromeUpload-dialog .middle .buttons .promoButton.right {
+    margin-left: 10px
+}
+
+.chromeUpload-dialog .middle .buttons a.promoButton:link {
+    text-decoration: none;
+    color: #1F80C3
+}
+
+.chromeUpload-dialog .bottom {
+    background: #F8F8F8;
+    border-top: 1px solid #C2C2C2;
+    padding: 15px
+}
+
+.chromeUpload-dialog .bottom .text {
+    font-size: 14px;
+    margin-bottom: 10px
+}
+
+.chromeUpload-dialog .bottom .exportButton {
+    text-align: center
+}
+
+.slick-slider {
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -ms-touch-action: pan-y;
+    touch-action: pan-y
+}
+
+.slick-list {
+    margin: 0;
+    padding: 0
+}
+
+.slick-list:focus {
+    outline: 0
+}
+
+.slick-list.dragging {
+    cursor: pointer;
+    cursor: hand
+}
+
+.slick-slider .slick-list,.slick-slider .slick-track {
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0)
+}
+
+.slick-track {
+    top: 0;
+    left: 0
+}
+
+.slick-track:after,.slick-track:before {
+    display: table;
+    content: ''
+}
+
+.slick-slide {
+    float: left;
+    min-height: 1px
+}
+
+[dir=rtl] .slick-slide {
+    float: right
+}
+
+.slick-slide img {
+    display: block
+}
+
+.slick-slide.slick-loading img {
+    display: none
+}
+
+.slick-initialized .slick-slide {
+    display: block
+}
+
+.slick-vertical .slick-slide {
+    display: block;
+    height: auto;
+    border: 1px solid transparent
+}

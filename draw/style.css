@@ -1,0 +1,73 @@
+:root {
+	--accent-color: #2D2D2D;
+	--background-color: #1B1B1B;
+	--text-color: #FDFDFD;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--accent-color: #EBEBEB;
+		--background-color: #FDFDFD;
+		--text-color: #1B1B1B;
+	}
+}
+
+html {
+	background-color: var(--background-color);
+	color: var(--text-color);
+}
+
+button, .button {
+	-webkit-user-select: none;
+	border-radius: 4px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: smaller;
+	padding: 0 1rem;
+	text-align: center;
+	user-select: none;
+}
+
+button,
+input,
+select,
+textarea {
+	background-color: var(--accent-color);
+	border: none;
+	border-radius: 4px;
+	color: var(--text-color);
+	outline: none;
+}
+
+select {
+	border-right: 1rem solid transparent;
+}
+
+select,
+textarea {
+	padding: 1rem;
+}
+
+.ripple {
+	overflow: hidden;
+	position: relative;
+}
+
+.ripple::before {
+	background-color: #808080;
+	border-radius: 50%;
+	content: "";
+	opacity: 0;
+	left: calc(var(--offsetX) * 1px);
+	padding: 50%;
+	position: absolute;
+	scale: 2;
+	top: calc(var(--offsetY) * 1px);
+	transition: opacity 1s, scale 800ms ease-out;
+	translate: -50% -50%;
+}
+
+.ripple:not(.focus):hover:active::before {
+	opacity: 0.5;
+    scale: 0;
+	transition: 0s;
+}
