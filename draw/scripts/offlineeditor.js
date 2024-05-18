@@ -3768,7 +3768,7 @@
                   className: e,
                   onClick: this.changePowerup
               }, n.createElement("span", {
-                  className: "editorgui_icons2 editorgui_icons-portal",
+                  className: "editorgui_icons editorgui_icons-portal",
                   title: t
               }))
           }
@@ -3794,7 +3794,7 @@
                   className: e,
                   onClick: this.changePowerup
               }, n.createElement("span", {
-                  className: "editorgui_icons2 editorgui_icons-antigravity"
+                  className: "editorgui_icons editorgui_icons-antigravity"
               }))
           }
       });
@@ -4446,7 +4446,7 @@
                   "div",
                   { className: e, onClick: this.changePowerup },
                   n.createElement("span", {
-                    className: "editorgui_icons2 editorgui_icons-balloon",
+                    className: "editorgui_icons editorgui_icons-balloon",
                   })
                 )
               );
@@ -4474,7 +4474,7 @@
                   "div",
                   { className: e, onClick: this.changePowerup },
                   n.createElement("span", {
-                    className: "editorgui_icons2 editorgui_icons-blob",
+                    className: "editorgui_icons editorgui_icons-blob",
                   })
                 )
               );
@@ -4533,7 +4533,7 @@
                   className: e,
                   onClick: this.changePowerup
               }, n.createElement("span", {
-                  className: "editorgui_icons2 editorgui_icons-truck"
+                  className: "editorgui_icons editorgui_icons-truck"
               }))
           }
       });

@@ -1,29 +1,51 @@
 /*! normalize.css v2.0.1 | MIT License | git.io/normalize */
-.game,sub,sup {
+.game,
+sub,
+sup {
     position: relative
 }
 
-.clearfix:after,.slick-track:after {
+.clearfix:after,
+.slick-track:after {
     clear: both
 }
 
-.slick-slider,body,html {
+.slick-slider,
+body,
+html {
     -webkit-tap-highlight-color: transparent
 }
 
-.disabled,.slick-slide.dragging img {
+.disabled,
+.slick-slide.dragging img {
     pointer-events: none
 }
 
-.hidden,.invisible,.slick-loading .slick-slide,.slick-loading .slick-track,html.fullscreen #main_page {
+.hidden,
+.invisible,
+.slick-loading .slick-slide,
+.slick-loading .slick-track,
+html.fullscreen #main_page {
     visibility: hidden
 }
 
-article,aside,canvas,details,figcaption,figure,footer,header,hgroup,nav,section,summary {
+article,
+aside,
+canvas,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section,
+summary {
     display: block
 }
 
-audio,video {
+audio,
+video {
     display: inline-block
 }
 
@@ -41,7 +63,9 @@ html {
     -ms-text-size-adjust: 100%
 }
 
-body,figure,p {
+body,
+figure,
+p {
     margin: 0
 }
 
@@ -49,11 +73,16 @@ a:focus {
     outline: dotted thin
 }
 
-a:active,a:hover {
+a:active,
+a:hover {
     outline: 0
 }
 
-h1,h2,h3,h4,h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
     font-size: 2em;
     font-weight: 400
 }
@@ -71,8 +100,11 @@ mark {
     color: #000
 }
 
-code,kbd,pre,samp {
-    font-family: monospace,serif;
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
     font-size: 1em
 }
 
@@ -90,7 +122,8 @@ small {
     font-size: 80%
 }
 
-sub,sup {
+sub,
+sup {
     font-size: 75%;
     line-height: 0;
     vertical-align: baseline
@@ -118,12 +151,15 @@ fieldset {
     padding: .35em .625em .75em
 }
 
-.visuallyhidden,legend {
+.visuallyhidden,
+legend {
     border: 0;
     padding: 0
 }
 
-button,input,textarea {
+button,
+input,
+textarea {
     font-family: inherit;
     font-size: 100%;
     margin: 0;
@@ -136,29 +172,39 @@ select {
     margin-left: 2px;
 }
 
-button,input {
+button,
+input {
     line-height: normal
 }
 
-button,html input[type=button],input[type=reset],input[type=submit] {
+button,
+html input[type=button],
+input[type=reset],
+input[type=submit] {
     -webkit-appearance: button;
     cursor: pointer
 }
 
-.disabled,button[disabled],canvas,input[disabled] {
+.disabled,
+button[disabled],
+canvas,
+input[disabled] {
     cursor: default
 }
 
-input[type=checkbox],input[type=radio] {
+input[type=checkbox],
+input[type=radio] {
     box-sizing: border-box;
     padding: 0
 }
 
-input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration {
+input[type=search]::-webkit-search-cancel-button,
+input[type=search]::-webkit-search-decoration {
     -webkit-appearance: none
 }
 
-button::-moz-focus-inner,input::-moz-focus-inner {
+button::-moz-focus-inner,
+input::-moz-focus-inner {
     border: 0;
     padding: 0
 }
@@ -174,7 +220,9 @@ table {
     border-spacing: 0
 }
 
-*,:after,:before {
+*,
+:after,
+:before {
     box-sizing: border-box
 }
 
@@ -193,7 +241,7 @@ table {
 }
 
 .hidden {
-    display: none!important
+    display: none !important
 }
 
 .visuallyhidden {
@@ -205,7 +253,8 @@ table {
     width: 1px
 }
 
-.visuallyhidden.focusable:active,.visuallyhidden.focusable:focus {
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
     clip: auto;
     height: auto;
     margin: 0;
@@ -214,7 +263,8 @@ table {
     width: auto
 }
 
-.clearfix:after,.clearfix:before {
+.clearfix:after,
+.clearfix:before {
     content: " ";
     display: table
 }
@@ -229,27 +279,30 @@ table {
     hyphens: auto
 }
 
-body,html {
+body,
+html {
     font-size: 1em;
     overflow: hidden;
     background: #FFF
 }
 
-input,textarea {
+input,
+textarea {
     border: none;
     padding: .2em .2em;
     margin: 0;
     display: block;
     background: 0 0;
-    outline: 0!important;
+    outline: 0 !important;
     min-height: 1.4em;
     line-height: 1.4em;
     font-size: 1em;
     width: 100%;
     -webkit-appearance: none
-} 
+}
 
-input,textarea#color {
+input,
+textarea#color {
     appearance: auto;
     box-sizing: border-box;
     align-items: center;
@@ -268,7 +321,12 @@ input,textarea#color {
     font-size: 11pt;
 }
 
-.coin_icons,.core_icons,.keyboard_keys,.mobile_rotate,.points_icons,.share_icons {
+.coin_icons,
+.core_icons,
+.keyboard_keys,
+.mobile_rotate,
+.points_icons,
+.share_icons {
     display: inline-block;
     background-repeat: no-repeat;
     overflow: hidden
@@ -277,7 +335,7 @@ input,textarea#color {
 @font-face {
     font-family: icomoon;
     src: url(/draw/assets/fonts/icons/v23/icomoon.eot);
-    src: url(/draw/assets/fonts/icons/v23/icomoon.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/icons/v23/icomoon.woff2) format("woff2"),url(/draw/assets/fonts/icons/v23/icomoon.woff) format("woff"),url(/draw/assets/fonts/icons/v23/icomoon.ttf) format("truetype");
+    src: url(/draw/assets/fonts/icons/v23/icomoon.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/icons/v23/icomoon.woff2) format("woff2"), url(/draw/assets/fonts/icons/v23/icomoon.woff) format("woff"), url(/draw/assets/fonts/icons/v23/icomoon.ttf) format("truetype");
     font-weight: 400;
     font-style: normal
 }
@@ -294,7 +352,8 @@ input,textarea#color {
     -moz-osx-font-smoothing: grayscale
 }
 
-.bottomMenu-bold,.bottomMenu-button-active>.name {
+.bottomMenu-bold,
+.bottomMenu-button-active>.name {
     font-weight: 700
 }
 
@@ -597,42 +656,53 @@ input,textarea#color {
 @font-face {
     font-family: roboto_regular;
     src: url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot);
-    src: url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
-    -webkit-font-smoothing:antialiased;font-smooth:never;-webkit-font-smoothing:none}
+    -webkit-font-smoothing: antialiased;
+    font-smooth: never;
+    -webkit-font-smoothing: none
+}
 
 @font-face {
     font-family: roboto_condensed_bold;
     src: url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot);
-    src: url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
-    -webkit-font-smoothing:antialiased;font-smooth:never;-webkit-font-smoothing:none}
+    -webkit-font-smoothing: antialiased;
+    font-smooth: never;
+    -webkit-font-smoothing: none
+}
 
 @font-face {
     font-family: roboto_bold;
     src: url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot);
-    src: url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
-    -webkit-font-smoothing:antialiased}
+    -webkit-font-smoothing: antialiased
+}
 
 @font-face {
     font-family: roboto_medium;
     src: url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot);
-    src: url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff2) format("woff2"),url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff) format("woff"),url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
-    -webkit-font-smoothing:antialiased}
+    -webkit-font-smoothing: antialiased
+}
 
 @font-face {
     font-family: helsinki;
     src: url(/draw/assets/fonts/helsinki/helsinki-webfont.eot);
-    src: url(/draw/assets/fonts/helsinki/helsinki-webfont.eot#iefix) format("embedded-opentype"),url(/draw/assets/fonts/helsinki/helsinki-webfont.woff2) format("woff2"),url(/draw/assets/fonts/helsinki/helsinki-webfont.woff) format("woff"),url(/draw/assets/fonts/helsinki/helsinki-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/helsinki/helsinki-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/helsinki/helsinki-webfont.woff2) format("woff2"), url(/draw/assets/fonts/helsinki/helsinki-webfont.woff) format("woff"), url(/draw/assets/fonts/helsinki/helsinki-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
-    -webkit-font-smoothing:antialiased;font-smooth:never;-webkit-font-smoothing:none}
+    -webkit-font-smoothing: antialiased;
+    font-smooth: never;
+    -webkit-font-smoothing: none
+}
 
 .mobile_rotate {
     background-image: url(/draw/assets/images/icons/mobile_rotate.png);
@@ -727,7 +797,7 @@ input,textarea#color {
 }
 
 .keyboard_keys {
-    background-image: url(/draw/assets/images/icons/keyboard_keys_v2.png);
+    background-image: url(/draw/assets/images/editor/icons/keyboard_keys_v2.png);
     background-size: 128px
 }
 
@@ -850,20 +920,25 @@ input,textarea#color {
     background-position: -64px -1px
 }
 
-body,html {
-    font-family: roboto_regular,Arial,Helvetica,sans-serif
+body,
+html {
+    font-family: roboto_regular, Arial, Helvetica, sans-serif
 }
 
-.gameFocusOverlay,.gameLoading-name,.primary-button {
-    font-family: helsinki,Arial,Helvetica,sans-serif
+.gameFocusOverlay,
+.gameLoading-name,
+.primary-button {
+    font-family: helsinki, Arial, Helvetica, sans-serif
 }
 
-.link,a {
+.link,
+a {
     color: #1F80C3;
     text-decoration: none
 }
 
-.link:hover,a:hover {
+.link:hover,
+a:hover {
     color: #3899DC
 }
 
@@ -929,7 +1004,9 @@ html.fullscreen #main_page {
     display: none
 }
 
-.primary-button,.primary-select,.primary-switch {
+.primary-button,
+.primary-select,
+.primary-switch {
     display: inline-block
 }
 
@@ -983,7 +1060,8 @@ html.fullscreen #main_page {
     background: #404040
 }
 
-.primary-button-black:hover,.primary-select {
+.primary-button-black:hover,
+.primary-select {
     background: #595959
 }
 
@@ -1025,7 +1103,8 @@ html.fullscreen #main_page {
     border-radius: 60px
 }
 
-.primary-switch input.primary-switch-toggle+label:after,.primary-switch input.primary-switch-toggle+label:before {
+.primary-switch input.primary-switch-toggle+label:after,
+.primary-switch input.primary-switch-toggle+label:before {
     display: block;
     position: absolute;
     content: ""
@@ -1068,7 +1147,7 @@ html.fullscreen #main_page {
     position: absolute;
     top: 0;
     left: 0;
-    background: rgba(255,255,255,.9);
+    background: rgba(255, 255, 255, .9);
     padding: 30px
 }
 
@@ -1110,12 +1189,14 @@ html.fullscreen #main_page {
     position: absolute;
     top: 0;
     left: 0;
-    background: rgba(255,255,255,.9);
+    background: rgba(255, 255, 255, .9);
     z-index: 2
 }
 
-.bottomMenu,.editorDialog-titleBar,.topMenu {
-    font-family: roboto_condensed_bold,Arial,Helvetica,sans-serif;
+.bottomMenu,
+.editorDialog-titleBar,
+.topMenu {
+    font-family: roboto_condensed_bold, Arial, Helvetica, sans-serif;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -1145,7 +1226,7 @@ html.fullscreen #main_page {
     opacity: 0
 }
 
-.editorgui_icons2 {
+.editorgui_icons {
     display: inline-block;
     vertical-align: middle;
     overflow: hidden;
@@ -1154,421 +1235,346 @@ html.fullscreen #main_page {
     background-size: 512px 164px
 }
 
-.editorgui_icons2.editorgui_icons-antigravity {
+.editorgui_icons-circle {
+    width: 44px;
+    height: 44px;
+    background-position: -470px -122px
+}
+
+.editorgui_icons-antigravity {
     width: 44px;
     height: 44px;
     background-position: 0 0
 }
 
-.editorgui_icons2.editorgui_icons-balloon {
+.editorgui_icons-balloon {
     width: 44px;
     height: 44px;
     background-position: 0 -44px
 }
 
-.editorgui_icons2.editorgui_icons-portal {
-    width: 44px;
-    height: 44px;
-    background-position: -264px -44px
-}
-
-.editorgui_icons2.editorgui_icons-blob {
+.editorgui_icons-blob {
     width: 44px;
     height: 44px;
     background-position: 0 -88px
 }
 
-.editorgui_icons2.editorgui_icons-bomb {
-    width: 44px;
-    height: 44px;
-    background-position: -44px 0
-}
-
-.editorgui_icons2.editorgui_icons-checkpoint {
-    width: 44px;
-    height: 44px;
-    background-position: -44px -44px
-}
-
-.editorgui_icons2.editorgui_icons-gravity {
-    width: 44px;
-    height: 44px;
-    background-position: -88px 0
-}
-
-.editorgui_icons2.editorgui_icons-helicopter {
-    width: 44px;
-    height: 44px;
-    background-position: -88px -44px
-}
-
-.editorgui_icons2.editorgui_icons-slowmotion {
-    width: 44px;
-    height: 44px;
-    background-position: -264px -88px
-}
-
-.editorgui_icons2.editorgui_icons-truck {
-    width: 44px;
-    height: 44px;
-    background-position: -308px -44px
-}
-
-.editorgui_icons {
-    display: inline-block;
-    vertical-align: middle;
-    overflow: hidden;
-    background-repeat: no-repeat;
-    background-image: url(/draw/assets/images/editor/gui/editorgui_icons_v8.png);
-    background-size: 778px
-}
-
-.editorgui_icons-circle {
-    width: 44px;
-    height: 44px;
-    background-position: -682px -1px
-}
-
-.editorgui_icons-mushroom {
-    width: 44px;
-    height: 44px;
-    background-position: -1px -1px
-}
-
-.editorgui_icons-truck {
-    width: 44px;
-    height: 44px;
-    background-position: -52px -1px
-}
-
-.editorgui_icons-speed {
-    width: 44px;
-    height: 44px;
-    background-position: -97px -1px
-}
-
-.editorgui_icons-slowmotion {
-    width: 44px;
-    height: 44px;
-    background-position: -142px -1px
-}
-
-.editorgui_icons-icon_vehicle_swap {
-    width: 44px;
-    height: 44px;
-    background-position: -187px -1px
-}
-
-.editorgui_icons-icon_snap_on {
-    width: 44px;
-    height: 44px;
-    background-position: -232px -1px
-}
-
-.editorgui_icons-icon_snap {
-    width: 44px;
-    height: 44px;
-    background-position: -277px -1px
-}
-
-.editorgui_icons-icon_select {
-    width: 44px;
-    height: 44px;
-    background-position: -322px -1px
-}
-
-.editorgui_icons-icon_scenery {
-    width: 44px;
-    height: 44px;
-    background-position: -367px -1px
-}
-
-.editorgui_icons-icon_powerups {
-    width: 44px;
-    height: 44px;
-    background-position: -412px -1px
-}
-
-.editorgui_icons-icon_physics {
-    width: 44px;
-    height: 44px;
-    background-position: -457px -1px
-}
-
-.editorgui_icons-icon_line {
-    width: 44px;
-    height: 44px;
-    background-position: -502px -1px
-}
-
-.editorgui_icons-icon_eraser {
-    width: 44px;
-    height: 44px;
-    background-position: -547px -1px
-}
-
-.editorgui_icons-icon_curve {
-    width: 44px;
-    height: 44px;
-    background-position: -592px -1px
-}
-
-.editorgui_icons-icon_camera {
-    width: 44px;
-    height: 44px;
-    background-position: -637px -1px
-}
-
-.editorgui_icons-icon_brush {
-    width: 44px;
-    height: 44px;
-    background-position: -1px -52px
-}
-
-.editorgui_icons-helicopter {
-    width: 44px;
-    height: 44px;
-    background-position: -727px -1px
-}
-
-.editorgui_icons-icon_mtb {
+.editorgui_icons-icon_bmx:hover {
     width: 47px;
     height: 32px;
-    background-position: -52px -46px
-}
-
-.editorgui_icons-gravity {
-    width: 44px;
-    height: 44px;
-    background-position: -46px -79px
-}
-
-.editorgui_icons-goal {
-    width: 44px;
-    height: 44px;
-    background-position: -91px -79px
-}
-
-.editorgui_icons-icon_mtb:hover {
-    width: 47px;
-    height: 32px;
-    background-position: -100px -46px
-}
-
-.editorgui_icons-checkpoint {
-    width: 44px;
-    height: 44px;
-    background-position: -136px -79px
-}
-
-.editorgui_icons-icon_bmx {
-    width: 47px;
-    height: 32px;
-    background-position: -148px -46px
+    background-position: 0 -132px
 }
 
 .editorgui_icons-bomb {
     width: 44px;
     height: 44px;
-    background-position: -181px -79px
+    background-position: -44px 0
 }
 
-.editorgui_icons-icon_bmx:hover {
+.editorgui_icons-checkpoint {
+    width: 44px;
+    height: 44px;
+    background-position: -44px -44px
+}
+
+.editorgui_icons-goal {
+    width: 44px;
+    height: 44px;
+    background-position: -44px -88px
+}
+
+.editorgui_icons-icon_bmx {
     width: 47px;
     height: 32px;
-    background-position: -196px -46px
+    background-position: -47px -132px
 }
 
-.editorgui_icons-blob {
+.editorgui_icons-gravity {
     width: 44px;
     height: 44px;
-    background-position: -226px -79px
+    background-position: -88px 0
 }
 
-.editorgui_icons-icon_zoom_out {
-    width: 32px;
-    height: 32px;
-    background-position: -244px -46px
-}
-
-.editorgui_icons-balloon {
+.editorgui_icons-helicopter {
     width: 44px;
     height: 44px;
-    background-position: -271px -79px
+    background-position: -89px -44px
 }
 
-.editorgui_icons-icon_zoom_out:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -277px -46px
-}
-
-.editorgui_icons-icon_zoom_in {
-    width: 32px;
-    height: 32px;
-    background-position: -310px -46px
-}
-
-.editorgui_icons-icon_zoom_in:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -343px -46px
-}
-
-.editorgui_icons-icon_upload {
-    width: 0px;
-    height: 0px;
-    background-position: -316px -79px
-}
-
-.editorgui_icons-icon_upload:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -376px -46px
-}
-
-.editorgui_icons-icon_elle {
+.editorgui_icons-icon_brush {
     width: 44px;
     height: 44px;
-    background-position: -344px -74px
+    background-position: -88px -88px
 }
 
-.editorgui_icons-icon_mario {
-    width: 32px;
+.editorgui_icons-icon_mtb:hover {
+    width: 47px;
     height: 32px;
-    background-position: -411px -47px
+    background-position: -94px -132px
 }
 
-.editorgui_icons-icon_import {
-    width: 32px;
-    height: 32px;
-    background-position: -382px -79px
+.editorgui_icons-icon_camera {
+    width: 44px;
+    height: 44px;
+    background-position: -132px 0
 }
 
-.editorgui_icons-icon_import:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -442px -46px
+.editorgui_icons-icon_curve {
+    width: 44px;
+    height: 44px;
+    background-position: -132px -44px
 }
 
-.editorgui_icons-icon_hotkeys {
-    width: 32px;
-    height: 32px;
-    background-position: -415px -79px
+.editorgui_icons-icon_eraser {
+    width: 44px;
+    height: 44px;
+    background-position: -132px -88px
 }
 
-.editorgui_icons-icon_hotkeys:hover {
-    width: 32px;
+.editorgui_icons-icon_mtb {
+    width: 47px;
     height: 32px;
-    background-position: -475px -46px
+    background-position: -141px -132px
 }
 
-.editorgui_icons-icon_grid_on {
-    width: 32px;
-    height: 32px;
-    background-position: -448px -79px
+.editorgui_icons-icon_line {
+    width: 44px;
+    height: 44px;
+    background-position: -176px 0
 }
 
-.editorgui_icons-icon_grid_on:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -508px -46px
+.editorgui_icons-icon_physics {
+    width: 44px;
+    height: 44px;
+    background-position: -176px -44px
 }
 
-.editorgui_icons-icon_grid_off {
-    width: 32px;
-    height: 32px;
-    background-position: -481px -79px
-}
-
-.editorgui_icons-icon_grid_off:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -541px -46px
-}
-
-.editorgui_icons-icon_fullscreen {
-    width: 32px;
-    height: 32px;
-    background-position: -514px -79px
-}
-
-.editorgui_icons-icon_fullscreen:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -574px -46px
-}
-
-.editorgui_icons-icon_export {
-    width: 32px;
-    height: 32px;
-    background-position: -547px -79px
-}
-
-.editorgui_icons-icon_export:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -607px -46px
-}
-
-.editorgui_icons-icon_exit_fullscreen {
-    width: 32px;
-    height: 32px;
-    background-position: -580px -79px
-}
-
-.editorgui_icons-icon_exit_fullscreen:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -640px -46px
-}
-
-.editorgui_icons-icon_controls {
-    width: 32px;
-    height: 32px;
-    background-position: -613px -79px
-}
-
-.editorgui_icons-icon_controls:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -673px -46px
-}
-
-.editorgui_icons-icon_clear_track {
-    width: 32px;
-    height: 32px;
-    background-position: -646px -79px
-}
-
-.editorgui_icons-icon_clear_track:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -706px -46px
-}
-
-.editorgui_icons-icon_camera_lock_on {
-    width: 32px;
-    height: 32px;
-    background-position: -679px -79px
-}
-
-.editorgui_icons-icon_camera_lock_on:hover {
-    width: 32px;
-    height: 32px;
-    background-position: -739px -46px
-}
-
-.editorgui_icons-icon_camera_lock_off {
-    width: 32px;
-    height: 32px;
-    background-position: -712px -79px
+.editorgui_icons-icon_powerups {
+    width: 44px;
+    height: 44px;
+    background-position: -176px -88px
 }
 
 .editorgui_icons-icon_camera_lock_off:hover {
     width: 32px;
     height: 32px;
-    background-position: -745px -79px
+    background-position: -188px -132px
+}
+
+.editorgui_icons-icon_scenery {
+    width: 44px;
+    height: 44px;
+    background-position: -220px 0
+}
+
+.editorgui_icons-icon_snap {
+    width: 44px;
+    height: 44px;
+    background-position: -220px -44px
+}
+
+.editorgui_icons-icon_snap_on {
+    width: 44px;
+    height: 44px;
+    background-position: -220px -88px
+}
+
+.editorgui_icons-icon_camera_lock_off {
+    width: 32px;
+    height: 32px;
+    background-position: -220px -132px
+}
+
+.editorgui_icons-icon_camera_lock_on:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -252px -132px
+}
+
+.editorgui_icons-icon_vehicle_swap {
+    width: 44px;
+    height: 44px;
+    background-position: -264px 0
+}
+
+.editorgui_icons-portal {
+    width: 44px;
+    height: 44px;
+    background-position: -264px -44px
+}
+
+.editorgui_icons-slowmotion {
+    width: 44px;
+    height: 44px;
+    background-position: -264px -88px
+}
+
+.editorgui_icons-icon_camera_lock_on {
+    width: 32px;
+    height: 32px;
+    background-position: -284px -132px
+}
+
+.editorgui_icons-speed {
+    width: 44px;
+    height: 44px;
+    background-position: -308px 0
+}
+
+.editorgui_icons-truck {
+    width: 44px;
+    height: 44px;
+    background-position: -308px -44px
+}
+
+.editorgui_icons-icon_clear_track:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -308px -88px
+}
+
+.editorgui_icons-icon_clear_track {
+    width: 32px;
+    height: 32px;
+    background-position: -316px -120px
+}
+
+.editorgui_icons-icon_controls {
+    width: 32px;
+    height: 32px;
+    background-position: -340px -88px
+}
+
+.editorgui_icons-icon_exit_fullscreen:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -348px -120px
+}
+
+.editorgui_icons-icon_exit_fullscreen {
+    width: 32px;
+    height: 32px;
+    background-position: -352px 0
+}
+
+.editorgui_icons-icon_export:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -352px -32px
+}
+
+.editorgui_icons-icon_export {
+    width: 32px;
+    height: 32px;
+    background-position: -372px -64px
+}
+
+.editorgui_icons-icon_fullscreen:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -384px 0
+}
+
+.editorgui_icons-icon_fullscreen {
+    width: 32px;
+    height: 32px;
+    background-position: -384px -32px
+}
+
+.editorgui_icons-icon_grid_off:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -380px -96px
+}
+
+.editorgui_icons-icon_grid_off {
+    width: 32px;
+    height: 32px;
+    background-position: -404px -64px
+}
+
+.editorgui_icons-icon_grid_on:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -380px -128px
+}
+
+.editorgui_icons-icon_grid_on {
+    width: 32px;
+    height: 32px;
+    background-position: -416px 0
+}
+
+.editorgui_icons-icon_hotkeys:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -416px -32px
+}
+
+.editorgui_icons-icon_hotkeys {
+    width: 32px;
+    height: 32px;
+    background-position: -412px -96px
+}
+
+.editorgui_icons-icon_import:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -436px -64px
+}
+
+.editorgui_icons-icon_import {
+    width: 32px;
+    height: 32px;
+    background-position: -412px -128px
+}
+
+.editorgui_icons-icon_offline_editor:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -448px 0
+}
+
+.editorgui_icons-icon_offline_editor {
+    width: 32px;
+    height: 32px;
+    background-position: -448px -32px
+}
+
+.editorgui_icons-icon_upload {
+    width: 44px;
+    height: 44px;
+    background-position: -444px -96px
+}
+
+.editorgui_icons-icon_select {
+    width: 44px;
+    height: 44px;
+    background-position: -471px -58px;
+}
+
+.editorgui_icons-icon_zoom_in:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -444px -128px
+}
+
+.editorgui_icons-icon_zoom_in {
+    width: 32px;
+    height: 32px;
+    background-position: -480px 0
+}
+
+.editorgui_icons-icon_zoom_out:hover {
+    width: 32px;
+    height: 32px;
+    background-position: -480px -32px
+}
+
+.editorgui_icons-icon_zoom_out {
+    width: 32px;
+    height: 32px;
+    background-position: -476px -96px
 }
 
 .topMenu {
@@ -1626,7 +1632,7 @@ html.fullscreen #main_page {
 
 @media screen and (min-width: 900px) {
     .topMenu-button .text {
-        display:inline
+        display: inline
     }
 }
 
@@ -1685,7 +1691,8 @@ html.fullscreen #main_page {
 }
 
 .bottomMenu-button {
-    display: flex; /* This will ensure the elements are in a row */
+    display: flex;
+    /* This will ensure the elements are in a row */
     align-items: center;
     padding: 0 10px;
     cursor: pointer
@@ -1709,7 +1716,8 @@ html.fullscreen #main_page {
     cursor: not-allowed
 }
 
-.editorDialog-close,.sideButton {
+.editorDialog-close,
+.sideButton {
     cursor: pointer;
     text-align: center
 }
@@ -1794,7 +1802,8 @@ html.fullscreen #main_page {
     background: #CACACA
 }
 
-.leftMenu,.rightMenu {
+.leftMenu,
+.rightMenu {
     top: 50%;
     background: #FFF;
     opacity: .95;
@@ -1819,7 +1828,7 @@ html.fullscreen #main_page {
     height: 90%;
     position: absolute;
     top: 5%;
-    background: rgba(0,0,0,0);
+    background: rgba(0, 0, 0, 0);
     z-index: 2
 }
 
@@ -1829,7 +1838,7 @@ html.fullscreen #main_page {
     position: absolute;
     top: 25%;
     right: -65%;
-    background: rgba(0,0,0,0);
+    background: rgba(0, 0, 0, 0);
     z-index: 2
 }
 
@@ -1892,7 +1901,8 @@ html.fullscreen #main_page {
     border-top: 1px solid #CCC
 }
 
-.exportDialog-code,.importDialog-code {
+.exportDialog-code,
+.importDialog-code {
     border: 1px solid #CCC;
     border-radius: 6px;
     padding: 10px;
@@ -1904,7 +1914,8 @@ html.fullscreen #main_page {
     font-size: .9em
 }
 
-.editorDialog-codeContainer,.importDialog-codeContainer {
+.editorDialog-codeContainer,
+.importDialog-codeContainer {
     position: relative;
     padding: 18px;
 }
@@ -1930,7 +1941,8 @@ html.fullscreen #main_page {
     width: 486px
 }
 
-.exportDialog-saveAsFile,.importDialog-openFile {
+.exportDialog-saveAsFile,
+.importDialog-openFile {
     color: #3B99FC;
     font-size: .7em;
     padding: 10px;
@@ -1964,12 +1976,15 @@ html.fullscreen #main_page {
 }
 
 .ud-uploading-cost .num {
-    font-family: roboto_bold,Arial,Helvetica,sans-serif;
+    font-family: roboto_bold, Arial, Helvetica, sans-serif;
     font-weight: 700
 }
 
-.ud-form-input>.title,.ud-upload-complete-balance>.balance,.ud-upload-complete-message>.track-title,.ud-upload-complete-share>.title {
-    font-family: roboto_medium,Arial,Helvetica,sans-serif
+.ud-form-input>.title,
+.ud-upload-complete-balance>.balance,
+.ud-upload-complete-message>.track-title,
+.ud-upload-complete-share>.title {
+    font-family: roboto_medium, Arial, Helvetica, sans-serif
 }
 
 .ud-form {
@@ -1987,7 +2002,8 @@ html.fullscreen #main_page {
     margin-bottom: 5px
 }
 
-.ud-form-input>.char-left,.ud-form-input>.input-desc {
+.ud-form-input>.char-left,
+.ud-form-input>.input-desc {
     color: #595959;
     font-size: .8em
 }
@@ -2104,17 +2120,17 @@ html.fullscreen #main_page {
 .editorDialog-content_helpDialog .hotkeys-title {
     font-size: 13px;
     margin: 10px 0 5px;
-    font-family: roboto_condensed_bold,Arial,Helvetica,sans-serif;
+    font-family: roboto_condensed_bold, Arial, Helvetica, sans-serif;
     text-transform: uppercase;
     color: #595959
 }
 
 .helpDialog-hotkey {
     box-shadow: inset 0 1px 0 0 #fff;
-    background: -webkit-gradient(linear,left top,left bottom,color-stop(.05,#f9f9f9),color-stop(1,#e9e9e9));
-    background: -webkit-linear-gradient(top,#f9f9f9 5%,#e9e9e9 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(.05, #f9f9f9), color-stop(1, #e9e9e9));
     background: -webkit-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
-    background: linear-gradient(to bottom,#f9f9f9 5%,#e9e9e9 100%);
+    background: -webkit-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9', GradientType=0);
     background-color: #f9f9f9;
     border-radius: 6px;
@@ -2221,11 +2237,11 @@ html.fullscreen #main_page {
 
 .editorDialog-content_controlsDialog table .keyname {
     padding-left: 5px;
-    font-family: Helvetica,sans-serif
+    font-family: Helvetica, sans-serif
 }
 
 .offlineeditorpromo-dialog {
-    font-family: roboto_medium,Arial,Helvetica,sans-serif
+    font-family: roboto_medium, Arial, Helvetica, sans-serif
 }
 
 .offlineeditorpromo-dialog .middle {
@@ -2239,7 +2255,7 @@ html.fullscreen #main_page {
 
 .offlineeditorpromo-dialog .middle h3 {
     font-size: 16px;
-    font-family: roboto_bold,Arial,Helvetica,sans-serif;
+    font-family: roboto_bold, Arial, Helvetica, sans-serif;
     font-weight: 700;
     margin: 2px
 }
@@ -2272,7 +2288,7 @@ html.fullscreen #main_page {
 }
 
 .offlineeditorpromo-dialog .middle .promoButton .install .text h3 {
-    font-family: helsinki,Arial,Helvetica,sans-serif;
+    font-family: helsinki, Arial, Helvetica, sans-serif;
     font-size: 13px;
     color: #1F80C3
 }
@@ -2296,15 +2312,22 @@ html.fullscreen #main_page {
     background-size: 215px 170px
 }
 
-@media only screen and (-webkit-min-device-pixel-ratio: 2),only screen and (-moz-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2),only screen and (min-resolution:192dpi),only screen and (min-resolution:2dppx) {
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (-moz-min-device-pixel-ratio:2),
+only screen and (min-device-pixel-ratio:2),
+only screen and (min-resolution:192dpi),
+only screen and (min-resolution:2dppx) {
     .chromeapp_icons {
-        background-image:url(/draw/assets/images/icons/chromeapp_icons@2x.png)
+        background-image: url(/draw/assets/images/icons/chromeapp_icons@2x.png)
     }
 }
 
-@media only screen and (-webkit-min-device-pixel-ratio: 3),only screen and (-moz-min-device-pixel-ratio:3),only screen and (-o-min-device-pixel-ratio:3 / 1),only screen and (min-device-pixel-ratio:3) {
+@media only screen and (-webkit-min-device-pixel-ratio: 3),
+only screen and (-moz-min-device-pixel-ratio:3),
+only screen and (-o-min-device-pixel-ratio:3 / 1),
+only screen and (min-device-pixel-ratio:3) {
     .chromeapp_icons {
-        background-image:url(/draw/assets/images/icons/chromeapp_icons@3x.png)
+        background-image: url(/draw/assets/images/icons/chromeapp_icons@3x.png)
     }
 }
 
@@ -2437,7 +2460,8 @@ html.fullscreen #main_page {
     -webkit-app-region: drag
 }
 
-#header .controls,#header .info {
+#header .controls,
+#header .info {
     position: absolute;
     top: 11px;
     z-index: 100;
@@ -2480,7 +2504,10 @@ html.fullscreen #main_page {
     text-decoration: none
 }
 
-.buttomMenuChrome a:active,.buttomMenuChrome a:hover,.buttomMenuChrome a:link,.buttomMenuChrome a:visited {
+.buttomMenuChrome a:active,
+.buttomMenuChrome a:hover,
+.buttomMenuChrome a:link,
+.buttomMenuChrome a:visited {
     color: #2D2D2D
 }
 
@@ -2489,7 +2516,7 @@ html.fullscreen #main_page {
     float: left;
     width: 25%;
     padding-left: 17px;
-    display: table!important
+    display: table !important
 }
 
 .buttomMenuChrome .promoCard .part {
@@ -2541,7 +2568,10 @@ html.fullscreen #main_page {
     color: #1F80C3
 }
 
-.buttomMenuChrome .slick-disabled,.buttomMenuChrome .slick-disabled:hover,.buttomMenuChrome .slick-hidden,.buttomMenuChrome .slick-hidden:hover {
+.buttomMenuChrome .slick-disabled,
+.buttomMenuChrome .slick-disabled:hover,
+.buttomMenuChrome .slick-hidden,
+.buttomMenuChrome .slick-hidden:hover {
     color: #C2C2C2
 }
 
@@ -2564,7 +2594,7 @@ html.fullscreen #main_page {
 
 .chromeinfo-dialog .middle h3 {
     font-size: 16px;
-    font-family: roboto_bold,Arial,Helvetica,sans-serif;
+    font-family: roboto_bold, Arial, Helvetica, sans-serif;
     font-weight: 700;
     margin: 2px
 }
@@ -2584,7 +2614,7 @@ html.fullscreen #main_page {
 }
 
 .chromeUpload-dialog .middle .buttons .promoButton {
-    font-family: helsinki,Arial,Helvetica,sans-serif;
+    font-family: helsinki, Arial, Helvetica, sans-serif;
     border: 2px solid #000;
     width: 225px;
     text-align: left;
@@ -2604,7 +2634,9 @@ html.fullscreen #main_page {
     padding-left: 10px
 }
 
-.slick-list,.slick-slider,.slick-track {
+.slick-list,
+.slick-slider,
+.slick-track {
     position: relative;
     display: block
 }
@@ -2663,9 +2695,10 @@ html.fullscreen #main_page {
     cursor: hand
 }
 
-.slick-slider .slick-list,.slick-slider .slick-track {
-    -webkit-transform: translate3d(0,0,0);
-    transform: translate3d(0,0,0)
+.slick-slider .slick-list,
+.slick-slider .slick-track {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0)
 }
 
 .slick-track {
@@ -2673,7 +2706,8 @@ html.fullscreen #main_page {
     left: 0
 }
 
-.slick-track:after,.slick-track:before {
+.slick-track:after,
+.slick-track:before {
     display: table;
     content: ''
 }

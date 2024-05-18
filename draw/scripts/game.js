@@ -9544,7 +9544,7 @@
             this.mainResize();
           }),
           (r.setZoomControlsVisibilty = function (t) {
-            this.zoomControlsContainer.visible = t;
+            this.zoomControlsContainer.visible = true;
           }),
           (r.update = function () {
             var t = this.scene;
@@ -10055,7 +10055,7 @@
                 o = e - i;
               return n * n >= r * r + o * o;
             }
-            collide(t) { //line physics
+            collide(t) { //line physics frhd
               if (!this.collided) {
                 this.collided = !0;
                 const e = t.pos,
@@ -10069,7 +10069,7 @@
                   u = this.len,
                   d = (h * c.x + l * c.y) / u / u;
                 if (d >= 0 && d <= 1) {
-                  const o = (h * c.y - l * c.x) * ((h - s.x) * c.y - (l - s.y) * c.x) < 0 ? -1 : 1,
+                  const o = (h * c.y - l * c.x) * ((h - s.x) * c.y - (l - s.y) * c.x) < 0 ? -1 : 1, // .5 for sticky lines
                     a = h - c.x * d,
                     u = l - c.y * d;
                   let p = n(r(a, 2) + r(u, 2));
@@ -10843,18 +10843,17 @@
               , i = new createjs.Container
               , n = "helsinki"
               , r = new createjs.Text("00:00.00","40px " + n,"#000000")
-              , o = new createjs.Text("TIME:","20px " + n,"#999999")
+              , o = new createjs.Text("units / second","20px " + n,"#999999")
               , a = this.get_timer_sprite()
               , h = new createjs.Text(" -- : --.--","35px " + n,"#999999")
               , l = new createjs.Text("BEST:","20px " + n,"#999999")
               , c = new createjs.Text("0/0","40px " + n,"#000000")
               , u = new createjs.Bitmap(t.assets.getResult("targets_icon"))
+              , x = new createjs.Text("00.0","40px " + n,"#000000")
               , d = e / 2.5;
             s.mobile && (d = e / 2.5),
             r.y = 18,
             r.x = 240,
-            o.y = -100,
-            o.x = -100,
             a.y = 5,
             a.x = 170,
             c.x = 80,
@@ -10864,9 +10863,12 @@
             h.y = -100,
             h.x = -100,
             l.y = -100,
-            l.x = -100;
+            l.x = -100,
+            x.y = 80,
+            x.x = 10,
+            o.y = 95,
+            o.x = 95;
             
-            //i.addChild(o),
             //i.addChild(h),
             //i.addChild(l),
 
@@ -10874,7 +10876,9 @@
             i.addChild(a),
             i.addChild(r),
             i.addChild(c),
-            i.addChild(u);}
+            i.addChild(u);
+            i.addChild(x),
+            i.addChild(o);}
 
             i.scaleX = i.scaleY = d,
             i.y = (10 + this.offset.y) * d,
@@ -10884,6 +10888,7 @@
             this.container = i,
             this.time = r,
             this.goals = c,
+            this.speed = x,
             this.best_time = h,
             this.stage.addChild(i)
         }
@@ -10903,7 +10908,16 @@
             this.goals.text = h + "/" + a;
             var l = " -- : --.--";
             s.isCampaign && s.campaignData.user.best_time ? l = s.campaignData.user.best_time : s.userTrackStats && s.userTrackStats.best_time && (l = s.userTrackStats.best_time),
-            this.best_time.text = l,
+            this.best_time.text = l;
+
+            var speed = GameSettings.speed.toFixed(0).padStart(3, '0');
+            this.speed.text = speed;
+            var maxSpeed = 200;
+            var normalizedSpeed = Math.min(speed / maxSpeed, 1);
+            var redValue = Math.round(normalizedSpeed * 255);
+            var color = `rgb(${redValue}, 0, 0)`;
+            this.speed.color = color;
+            
             s.mobile && this.center_container()
         }
         ,
@@ -12215,6 +12229,7 @@
             (this.collide = !0),
             (this.contact = !1),
             (this.scene = s.scene),
+            (this.speed = 0)
             this.pos.equ(e),
             this.old.equ(e);
         }
@@ -12233,6 +12248,7 @@
             this.collide && this.scene.track.collide(this)};
             t.equ(this.pos.sub(this.old)),
             this.old.equ(this.pos);
+            GameSettings.speed = (Math.sqrt(Math.pow(t.x, 2) + Math.pow(t.y, 2))) * 6;
         }
         draw() {
           const t = this.pos.toScreen(this.scene),
@@ -12486,7 +12502,7 @@
               (this.scene = e._scene),
               (this.gamepad = e._gamepad),
               (this.settings = e._settings),
-              (this.gravity = new t.Z(0, 0.3)),
+              (this.gravity = new t.Z(0, 0.3)), // can change to 0.15 for moon gravity
               (this.complete = !1),
               (this.alive = !0),
               (this.crashed = !1),
@@ -13281,10 +13297,12 @@
                   i = P.transform(0.05, 1.11),
                   n = P.transform(0.25, 1.35),
                   r = P.transform(-0.03, 1.3);
-            
+
                 y.beginPath();
                 y.moveTo(a.x + 5 * v, a.y);
+                this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = "rgb(255, 255, 255)",
                 y.arc(a.x, a.y, 5 * v, 0, 2 * Math.PI);
+                y.fill(),
                 y.lineWidth = 2 * v;
                 y.stroke();
                 y.beginPath();
@@ -13298,9 +13316,29 @@
                 y.stroke();
                 y.fill();
               } else { // crhead bmx
+                  this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = "rgb(255, 255, 255)",
+                  y.beginPath(),
+                  y.arc(a.x, a.y, 4 * v, 0, 2 * Math.PI);
+                  y.fill(),
+                  y.closePath(),
                   y.strokeStyle = e.game.mod.getVar("hatColor"),
                   this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = GameSettings.hatColor;
                   y.lineWidth = 2 * v;
+                  if (!this.drawHeadAngle) {
+                    y.beginPath();
+                    y.arc(a.x, a.y, 5 * v, 1 * Math.PI - 8 * Math.PI / 180, -24 * Math.PI / 180);
+                    y.fill();
+                  }  
+                  if (this.dir < 0 ) {
+                    y.beginPath();
+                    y.arc(a.x, a.y, 5 * v, this.drawHeadAngle + 1 * Math.PI + 24 * Math.PI / 180 + Math.PI, this.drawHeadAngle + 8 * Math.PI / 180 + Math.PI);
+                    y.fill();
+                  }
+                  else {
+                    y.beginPath();
+                    y.arc(a.x, a.y, 5 * v, this.drawHeadAngle + 1 * Math.PI - 8 * Math.PI / 180, this.drawHeadAngle - 24 * Math.PI / 180);
+                    y.fill();}
+                
                   y.beginPath();
                   y.moveTo(a.x + 5 * v, a.y);
                   y.arc(a.x, a.y, 5 * v, 0, 2 * Math.PI);
@@ -13311,29 +13349,13 @@
                   y.moveTo(h.x, h.y);
                   y.lineTo(l.x, l.y);
                   y.stroke();
-
-                if (!this.drawHeadAngle) {
-                  y.beginPath();
-                  y.arc(a.x, a.y, 4 * v, 1.1 * Math.PI - 8 * Math.PI / 180, -24 * Math.PI / 180);
-                  y.fill();
-                }
-                  
-                if (this.dir < 0 ) {
-                  y.beginPath();
-                  y.arc(a.x, a.y, 4 * v, this.drawHeadAngle + 1.1 * Math.PI + 8 * Math.PI / 180 + Math.PI, this.drawHeadAngle - 8 * Math.PI / 180 + Math.PI);
-                  y.fill();
-                }
-                
-                else {
-                  y.beginPath();
-                  y.arc(a.x, a.y, 4 * v, this.drawHeadAngle + 1.1 * Math.PI - 8 * Math.PI / 180, this.drawHeadAngle - 24 * Math.PI / 180);
-                  y.fill();}
                 }
             } else {
               GameInventoryManager.getItem(this.cosmetics.head).draw(y, a.x, a.y, this.drawHeadAngle, v, this.dir);
             }
             y.globalAlpha = 1;
           }
+          y.strokeStyle = "#000";
         }
         clone() {
           const e = new ht(this.player, new t.Z(0, 0), 1, new t.Z(0, 0));
@@ -14465,8 +14487,10 @@
               if (o)
                 u.beginPath(),
                   (u.lineWidth = 2 * c),
-                  (u.fillStyle = u.strokeStyle),
+                  this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgba(0,0,0,0)" : u.fillStyle = "rgb(255, 255, 255)",
                   u.arc(z.x, z.y, 5 * c, 0, 2 * Math.PI),
+                  u.fill(),
+                  (u.fillStyle = u.strokeStyle),
                   u.stroke(),
                   u.beginPath(),
                   u.moveTo(..._.transform(0.37, 1.19).toArray()),
@@ -14480,31 +14504,35 @@
               else { // crhead mtb
                 const t = _.transform(0.4, 1.15),
                   e = _.transform(0.1, 1.05);
-                  this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgba(0,0,0,0)" : u.fillStyle = GameSettings.hatColor;
+                this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgba(0,0,0,0)" : u.fillStyle = "rgb(255, 255, 255)",
                   u.beginPath(),
+                  u.arc(z.x, z.y, 4 * c, 0, 2 * Math.PI),
+                  u.fill(),
+                  u.closePath(),
+                  this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgba(0,0,0,0)" : u.fillStyle = GameSettings.hatColor;
+                if (!this.drawHeadAngle) {
+                  u.beginPath();
+                  u.arc(z.x, z.y, 4.2 * c, Math.PI - 13 * Math.PI / 180, -18 * Math.PI / 180);
+                  u.fill();
+                }
+                if (this.dir < 0) {
+                  u.beginPath();
+                  u.arc(z.x, z.y, 4.2 * c, this.drawHeadAngle + Math.PI + 18 * Math.PI / 180 + Math.PI, this.drawHeadAngle + 13 * Math.PI / 180 + Math.PI);
+                  u.fill();
+                }
+                else {
+                  u.beginPath();
+                  u.arc(z.x, z.y, 4.2 * c, this.drawHeadAngle + Math.PI - 13 * Math.PI / 180, this.drawHeadAngle - 18 * Math.PI / 180);
+                  u.fill();
+                }
+                u.beginPath(),
                   u.arc(z.x, z.y, 5 * c, 0, 2 * Math.PI),
                   u.moveTo(t.x, t.y),
                   u.lineTo(e.x, e.y),
                   (u.lineWidth = 2 * c),
                   u.stroke();
-
-                  u.closePath();
-
-                  if (!this.drawHeadAngle) {
-                  u.beginPath();
-                      u.arc(z.x, z.y, 4.2 * c, Math.PI - 13 * Math.PI / 180, -18 * Math.PI / 180);
-                      u.fill();
-                  }
-                  if (this.dir < 0 ) {
-                    u.beginPath();
-                    u.arc(z.x, z.y, 4.2 * c, this.drawHeadAngle + Math.PI + 18 * Math.PI / 180 + Math.PI, this.drawHeadAngle + 13 * Math.PI / 180 + Math.PI);
-                    u.fill();
-                  }
-                  else { u.beginPath();
-                      u.arc(z.x, z.y, 4.2 * c, this.drawHeadAngle + Math.PI - 13 * Math.PI / 180, this.drawHeadAngle - 18 * Math.PI / 180);
-                      u.fill();
-                  }
-            }
+                u.closePath()
+              }
             else {
               const t = GameInventoryManager.getItem(this.cosmetics.head),
                 e = this.drawHeadAngle;
@@ -14512,6 +14540,7 @@
             }
             u.globalAlpha = 1;
           }
+          u.strokeStyle = "#000";
         }
         clone() {
           const e = new Et(this.player, new t.Z(0, 0), 1, new t.Z(0, 0));
@@ -22164,7 +22193,7 @@
           },
           hatColor: {
             type: "color",
-            default: [0, 0, 0],
+            default: [255, 255, 255],
             set(t) {
               GameSettings.hatColor = `rgb(${t.join(", ")})`;
             },
@@ -23349,7 +23378,6 @@ function load() {
               type: 'flip',
               objects: this.selected,
               flipVertically: flipVertically,
-              flipHorizontally: flipHorizontally,
               applied: true
           };
       
