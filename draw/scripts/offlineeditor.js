@@ -1018,8 +1018,8 @@
             render: function () {
               var e =
                   "bottomMenu-button bottomMenu-button-right bottomMenu-button_vehicle ",
-                t = "editorgui_icons editorgui_icons-icon_mtb",
-                r = "MTB";
+                t = "editorgui_icons editorgui_icons-icon_bmx",
+                r = "BMX";
               return (
                 this.props.vehicle &&
                   ((r = this.props.vehicle.toLowerCase()),
@@ -2129,6 +2129,14 @@
                                 className: "helpDialog-hotkey-name"
                             }, "Powerups")),
 
+                            n.createElement("div", {
+                              className: "hotkey"
+                          }, n.createElement("span", {
+                              className: "helpDialog-hotkey helpDialog-hotkey_light"
+                          }, "O"), n.createElement("span", {
+                              className: "helpDialog-hotkey-name"
+                          }, "Vehicle Powerups")),
+
                             
 
                             n.createElement("div", {
@@ -2581,7 +2589,7 @@
                 (r = n.createElement(
                   "span",
                   null,
-                  ",or ",
+                  "or ",
                   n.createElement(
                     "span",
                     { className: "link", onClick: this.openFileDialog },
@@ -2595,7 +2603,7 @@
                   ref: "placeholder",
                   "data-ignoredragleave": "true",
                 },
-                "Paste track code, drag and drop text files here ",
+                "Paste track code, drag and drop text files here, ",
                 r,
                 " to import"
               );

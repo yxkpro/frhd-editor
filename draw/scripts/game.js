@@ -9544,7 +9544,7 @@
             this.mainResize();
           }),
           (r.setZoomControlsVisibilty = function (t) {
-            this.zoomControlsContainer.visible = true;
+            this.zoomControlsContainer.visible = t;
           }),
           (r.update = function () {
             var t = this.scene;
@@ -21298,7 +21298,7 @@
         (Mn.oldState = null),
         (Mn.stateDirty = !0),
         (Mn.onStateChange = null),
-        (Mn.vehicle = "MTB"),
+        (Mn.vehicle = "BMX"),
         (Mn.showDialog = !1),
         (Mn.dialogOptions = !1),
         (Mn.importCode = !1),
@@ -22012,7 +22012,7 @@
         (Gn.lineJoin = "round"),
         Gn.stroke(),
         (Gn.lineWidth = 4),
-        (Gn.strokeStyle = "#a1e1f6"),
+        (Gn.strokeStyle = "#1884cf"),
         Gn.stroke();
       const Kn = qn.toDataURL();
       (qn.width = qn.height = 44 * devicePixelRatio),
