@@ -13131,7 +13131,7 @@
   
               t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
               t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
-              t.strokeText(vel.toFixed(0), s.x + textOffsetX, s.y + textOffsetY + 80);
+              t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
               //t.strokeText(up + down + left + right + x + z, s.x + textOffsetX, s.y + textOffsetY + 110);
   
               t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
@@ -14338,7 +14338,7 @@
 
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
             t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
-            t.strokeText(vel.toFixed(0), s.x + textOffsetX, s.y + textOffsetY + 80);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
             t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
