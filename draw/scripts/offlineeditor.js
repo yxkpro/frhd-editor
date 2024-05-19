@@ -1102,6 +1102,7 @@
                       type: "text",
                       className:
                         "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
+                      readOnly: true,
                       value: i,
                     }),
                     n.createElement(

@@ -1909,7 +1909,7 @@
               : document.createElement("canvas");
             s.getContext &&
               ((t._hitTestCanvas = s),
-              (t._hitTestContext = s.getContext("2d")),
+              (t._hitTestContext = s.getContext("2d", { willReadFrequently: true })),
               (s.width = s.height = 1)),
               (t._nextCacheID = 1),
               (e.getStage = function () {
@@ -2626,7 +2626,7 @@
               }),
               (e.toDataURL = function (t, e) {
                 var s,
-                  i = this.canvas.getContext("2d"),
+                  i = this.canvas.getContext("2d", { willReadFrequently: true }),
                   n = this.canvas.width,
                   r = this.canvas.height;
                 if (t) {
@@ -3552,7 +3552,7 @@
               : document.createElement("canvas");
             e.getContext &&
               ((t._workingCanvas = e),
-              (t._workingContext = e.getContext("2d")),
+              (t._workingContext = e.getContext("2d", { willReadFrequently: true })),
               (e.width = e.height = 1)),
               (t.addFlippedFrames = function (e, s, i, n) {
                 if (s || i || n) {
@@ -3591,7 +3591,7 @@
                     : document.createElement("canvas")),
                   (s.width = Math.max(e.width, t.width)),
                   (s.height = Math.max(e.height, t.height));
-                var i = s.getContext("2d");
+                var i = s.getContext("2d", { willReadFrequently: true });
                 return (
                   i.save(),
                   i.drawImage(t, 0, 0),
@@ -3905,7 +3905,7 @@
                   e = t.scale * this._scale,
                   s = t.rect,
                   i = t.sourceRect,
-                  n = this._data.images[t.img].getContext("2d");
+                  n = this._data.images[t.img].getContext("2d", { willReadFrequently: true });
                 return (
                   t.funct && t.funct(t.source, t.data),
                   n.save(),
@@ -4295,7 +4295,7 @@
                       ? createjs.createCanvas()
                       : document.createElement("canvas")).width = e.width),
                     (s.height = e.height),
-                    (t = s.getContext("2d")).drawImage(e, 0, 0));
+                    (t = s.getContext("2d", { willReadFrequently: true })).drawImage(e, 0, 0));
                 try {
                   var i = t.getImageData(0, 0, e.width, e.height);
                 } catch (t) {
@@ -22209,6 +22209,18 @@
               this.set(t, null, !1);
             },
           },
+          darkenColors: {
+            default: !1,
+            set(t, e, s) {
+              t !== s &&
+                (t
+                  ? document.head.appendChild(zr)
+                  : document.head.removeChild(zr));
+            },
+            initialize(t) {
+              this.set(t, null, !1);
+            },
+          },
           lineShadow: {
             default: !1,
             set(t, e) {
@@ -22268,6 +22280,9 @@
         ir = document.createElement("style");
       ir.innerHTML =
         "html{filter:invert(1)}";
+        const zr = document.createElement("style");
+      zr.innerHTML =
+        "html{filter:brightness(0.5)}";
       const nr = document.createElement("style"),
         rr = sr;
       class or {
@@ -22579,6 +22594,12 @@
                 title: "Invert Colors",
                 description:
                   "Inverts the colors of the entire game as a post-processing effect. This includes everything, including powerups and the menu.",
+              },
+              {
+                key: "darkenColors",
+                title: "Darken Colors",
+                description:
+                  "Darkens the colors of the game, similar to invert.",
               },
               {
                 key: "customColors",
