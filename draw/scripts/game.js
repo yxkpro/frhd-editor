@@ -9707,7 +9707,7 @@
           const headgear = GameSettings.head;
           const fileName = `${headgear}.js`;
           try {
-            await import(`/draw/assets/js/${fileName}`);
+            await import(`../assets/js/${fileName}`);
             console.log('Head loaded:', fileName)
           }
           catch (error) {
@@ -9715,7 +9715,7 @@
             GameSettings.head = "cowboy";
             const headgearDefault = "cowboy";
             const fileNameDefault = `${headgearDefault}.js`;
-            await import(`/draw/assets/js/${fileNameDefault}`);
+            await import(`../assets/js/${fileNameDefault}`);
           }
         })();
       },
