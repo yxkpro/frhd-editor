@@ -10820,139 +10820,113 @@
           }),
           (t.exports = i);
       },
-      742: (t,e,s)=>{
+      742: (t, e, s) => {
         function i(t) {
-            this.scene = t,
-            this.stage = t.game.stage,
-            this.build_interface()
+          (this.scene = t), (this.stage = t.game.stage), this.build_interface();
         }
-        var n = s(609).Z
-          , r = i.prototype;
-        r.container = null,
-        r.cached = !1,
-        r.scene = null,
-        r.state = null,
-        r.offset = {
-            y: 0,
-            x: 0
-        },
-        r.build_interface = function() {
-            var t = this.scene
-              , e = t.game.pixelRatio
-              , s = t.settings
-              , i = new createjs.Container
-              , n = "helsinki"
-              , r = new createjs.Text("00:00.00","40px " + n,"#000000")
-              , o = new createjs.Text("units / second","20px " + n,"#999999")
-              , a = this.get_timer_sprite()
-              , h = new createjs.Text(" -- : --.--","35px " + n,"#999999")
-              , l = new createjs.Text("BEST:","20px " + n,"#999999")
-              , c = new createjs.Text("0/0","40px " + n,"#000000")
-              , u = new createjs.Bitmap(t.assets.getResult("targets_icon"))
-              , x = new createjs.Text("00.0","40px " + n,"#000000")
-              , d = e / 2.5;
+        var n = s(609).Z,
+          r = i.prototype;
+        (r.container = null),
+          (r.cached = !1),
+          (r.scene = null),
+          (r.state = null),
+          (r.offset = { y: 0, x: 0 }),
+          (r.build_interface = function () {
+            var t = this.scene,
+              e = t.game.pixelRatio,
+              s = t.settings,
+              i = new createjs.Container(),
+              n = "helsinki",
+              r = new createjs.Text("00:00.00", "40px " + n, "#000000"),
+              o = new createjs.Text("TIME:", "20px " + n, "#999999"),
+              a = this.get_timer_sprite(),
+              h = new createjs.Text(" -- : --.--", "35px " + n, "#999999"),
+              l = new createjs.Text("BEST:", "20px " + n, "#999999"),
+              c = new createjs.Text("0/0", "40px " + n, "#000000"),
+              u = new createjs.Bitmap(t.assets.getResult("targets_icon")),
+              d = e / 2.5;
             s.mobile && (d = e / 2.5),
-            r.y = 18,
-            r.x = 240,
-            a.y = 5,
-            a.x = 170,
-            c.x = 80,
-            c.y = 18,
-            u.x = 10,
-            u.y = 5,
-            h.y = -100,
-            h.x = -100,
-            l.y = -100,
-            l.x = -100,
-            x.y = 80,
-            x.x = 10,
-            o.y = 95,
-            o.x = 95;
-            
-            //i.addChild(h),
-            //i.addChild(l),
-
-            if (s.visibleUI) {
-            i.addChild(a),
-            i.addChild(r),
-            i.addChild(c),
-            i.addChild(u);
-            i.addChild(x),
-            i.addChild(o);}
-
-            i.scaleX = i.scaleY = d,
-            i.y = (10 + this.offset.y) * d,
-            i.x = 10 * d,
-            this.best_time_title = l,
-            this.time_title = o,
-            this.container = i,
-            this.time = r,
-            this.goals = c,
-            this.speed = x,
-            this.best_time = h,
-            this.stage.addChild(i)
-        }
-        ,
-        r.update = function() {
-            var t = this.scene
-              , e = t.ticks
-              , s = t.settings
-              , i = t.track
-              , r = t.playerManager.firstPlayer;
-            !1 === this.cached && e > 50 && (this.cached = !0,
-            this.cache_fixed_text());
+              (o.y = 3),
+              (o.x = 59),
+              (h.x = 237),
+              (h.y = 21),
+              (l.x = 240),
+              (l.y = 3),
+              r.y = 18,
+              r.x = 240,
+              a.y = 5,
+              a.x = 170,
+              c.x = 80,
+              c.y = 18,
+              u.x = 10,
+              u.y = 5,
+              i.addChild(r),
+              i.addChild(a),
+              i.addChild(c),
+              i.addChild(u),
+              //i.addChild(o),
+              //i.addChild(h),
+              //i.addChild(l),
+              (i.scaleX = i.scaleY = d),
+              (i.y = (10 + this.offset.y) * d),
+              (i.x = 10 * d),
+              (this.best_time_title = l),
+              (this.time_title = o),
+              (this.container = i),
+              (this.time = r),
+              (this.goals = c),
+              (this.best_time = h),
+              this.stage.addChild(i);
+          }),
+          (r.update = function () {
+            var t = this.scene,
+              e = t.ticks,
+              s = t.settings,
+              i = t.track,
+              r = t.playerManager.firstPlayer;
+            !1 === this.cached &&
+              e > 50 &&
+              ((this.cached = !0), this.cache_fixed_text());
             var o = e / s.drawFPS;
             this.time.text = n(1e3 * o);
-            var a = i.targetCount
-              , h = r.getTargetsHit();
+            var a = i.targetCount,
+              h = r.getTargetsHit();
             this.goals.text = h + "/" + a;
             var l = " -- : --.--";
-            s.isCampaign && s.campaignData.user.best_time ? l = s.campaignData.user.best_time : s.userTrackStats && s.userTrackStats.best_time && (l = s.userTrackStats.best_time),
-            this.best_time.text = l;
-
-            var speed = GameSettings.speed.toFixed(0).padStart(3, '0');
-            this.speed.text = speed;
-            var maxSpeed = 200;
-            var normalizedSpeed = Math.min(speed / maxSpeed, 1);
-            var redValue = Math.round(normalizedSpeed * 255);
-            var color = `rgb(${redValue}, 0, 0)`;
-            this.speed.color = color;
-            
-            s.mobile && this.center_container()
-        }
-        ,
-        r.center_container = function() {
-            var t = this.container
-              , e = t.getBounds()
-              , s = this.scene.screen
-              , i = this.scene.game.pixelRatio;
-            t.x = s.width / 2 - e.width / 2 * t.scaleY,
-            t.y = 10 * i
-        }
-        ,
-        r.cache_fixed_text = function() {
-            var t, e = this.best_time_title, s = this.time_title;
-            t = e.getBounds(),
-            e.cache(t.x, t.y, t.width, t.height + 10),
-            t = s.getBounds(),
-            s.cache(t.x, t.y, t.width, t.height + 10)
-        }
-        ,
-        r.get_timer_sprite = function() {
+            s.isCampaign && s.campaignData.user.best_time
+              ? (l = s.campaignData.user.best_time)
+              : s.userTrackStats &&
+                s.userTrackStats.best_time &&
+                (l = s.userTrackStats.best_time),
+              (this.best_time.text = l),
+              s.mobile && this.center_container();
+          }),
+          (r.center_container = function () {
+            var t = this.container,
+              e = t.getBounds(),
+              s = this.scene.screen,
+              i = this.scene.game.pixelRatio;
+            (t.x = s.width / 2 - (e.width / 2) * t.scaleY), (t.y = 10 * i);
+          }),
+          (r.cache_fixed_text = function () {
+            var t,
+              e = this.best_time_title,
+              s = this.time_title;
+            (t = e.getBounds()),
+              e.cache(t.x, t.y, t.width, t.height + 10),
+              (t = s.getBounds()),
+              s.cache(t.x, t.y, t.width, t.height + 10);
+          }),
+          (r.get_timer_sprite = function () {
             var t = {
                 images: [this.scene.assets.getResult("time_icon")],
-                frames: {
-                    width: 60,
-                    height: 60
-                }
-            }
-              , e = new createjs.SpriteSheet(t);
-            return new createjs.Sprite(e)
-        }
-        ,
-        t.exports = i
-    }
-    ,
+                frames: { width: 60, height: 60 },
+              },
+              e = new createjs.SpriteSheet(t);
+            return new createjs.Sprite(e);
+          }),
+          (t.exports = i);
+      },
       80: (t) => {
         var e =
           e ||
@@ -12852,548 +12826,597 @@
         rt = Math.floor,
         ot = Math.random,
         at = Math.min;
-      class ht extends q {
-        constructor(t, e, s, i) {
-          super(),
-            super.init(t),
-            this.createMasses(e, i),
-            this.createSprings(),
-            this.updateCameraFocalPoint(),
-            this.stopSounds(),
-            this.mini = this.scene.game.mod.getVar("mini");
-            this.propeller = 0,
-            -1 === s && this.swap();
-        }
-        createMasses(e, s) {
-          this.masses = [];
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
-          const i = new A(),
-            n = new X(new t.Z(e.x + 21 * mini, e.y + 3), this),
-            r = new X(new t.Z(e.x + -21 * mini, e.y + 3), this);
-          i.init(new t.Z(e.x, e.y - 36 * mini), this);
-            i.drive = this.createRagdoll.bind(this);
-            (r.radius = 11.7 * mini),
-            (n.radius = 11.7 * mini),
-            (i.radius = 14 * mini),
-            i.vel.equ(s),
-            r.vel.equ(s),
-            n.vel.equ(s),
-            this.masses.push(i, r, n),
-            (this.head = i),
-            (this.frontWheel = n),
-            (this.rearWheel = r),
-            (this.rotor = 0);
-        }
-        createSprings() {
-          this.springs = [];
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
-          const t = new N(this.head, this.rearWheel, this),
-            e = new N(this.rearWheel, this.frontWheel, this),
-            s = new N(this.frontWheel, this.head, this);
-            (e.lrest = 42 * mini),
-            (e.leff = 42 * mini),
-            (e.springConstant = 0.35),
-            (e.dampConstant = 0.3),
-            (t.lrest = 45 * mini),
-            (t.leff = 45 * mini),
-            (t.springConstant = 0.35),
-            (t.dampConstant = 0.3),
-            (s.lrest = 45 * mini),
-            (s.leff = 45 * mini),
-            (s.springConstant = 0.35),
-            (s.dampConstant = 0.3),
-            this.springs.push(t, e, s),
-            (this.rearSpring = t),
-            (this.chasse = e),
-            (this.frontSpring = s);
-        }
-        updateMasses() {
-          const mini = 0.7;
-          if (this.scene.game.mod.getVar("mini")) {
-          for (let mass of this.masses) {
-            mass.radius = mass.radius * mini;
-          }}
-          if (!this.scene.game.mod.getVar("mini")) {
+        class ht extends q {
+          constructor(t, e, s, i) {
+            super(),
+              super.init(t),
+              this.createMasses(e, i),
+              this.createSprings(),
+              this.updateCameraFocalPoint(),
+              this.stopSounds(),
+              this.mini = this.scene.game.mod.getVar("mini"),
+              this.propeller = 0,
+              this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
+              -1 === s && this.swap();
+          }
+          createMasses(e, s) {
+            this.masses = [];
+            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const i = new A(),
+              n = new X(new t.Z(e.x + 21 * mini, e.y + 3), this),
+              r = new X(new t.Z(e.x + -21 * mini, e.y + 3), this);
+            i.init(new t.Z(e.x, e.y - 36 * mini), this);
+              i.drive = this.createRagdoll.bind(this);
+              (r.radius = 11.7 * mini),
+              (n.radius = 11.7 * mini),
+              (i.radius = 14 * mini),
+              i.vel.equ(s),
+              r.vel.equ(s),
+              n.vel.equ(s),
+              this.masses.push(i, r, n),
+              (this.head = i),
+              (this.frontWheel = n),
+              (this.rearWheel = r),
+              (this.rotor = 0);
+          }
+          createSprings() {
+            this.springs = [];
+            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const t = new N(this.head, this.rearWheel, this),
+              e = new N(this.rearWheel, this.frontWheel, this),
+              s = new N(this.frontWheel, this.head, this);
+              (e.lrest = 42 * mini),
+              (e.leff = 42 * mini),
+              (e.springConstant = 0.35),
+              (e.dampConstant = 0.3),
+              (t.lrest = 45 * mini),
+              (t.leff = 45 * mini),
+              (t.springConstant = 0.35),
+              (t.dampConstant = 0.3),
+              (s.lrest = 45 * mini),
+              (s.leff = 45 * mini),
+              (s.springConstant = 0.35),
+              (s.dampConstant = 0.3),
+              this.springs.push(t, e, s),
+              (this.rearSpring = t),
+              (this.chasse = e),
+              (this.frontSpring = s);
+          }
+          updateMasses() {
+            const mini = 0.7;
+            if (this.scene.game.mod.getVar("mini")) {
             for (let mass of this.masses) {
-              mass.radius = mass.radius / mini;
+              mass.radius = mass.radius * mini;
             }}
-        }
-        updateSprings() {
-          const mini = 0.7;
-          if (this.scene.game.mod.getVar("mini")) {
-          for (let spring of this.springs) {
-            spring.lrest = spring.lrest * mini;
-            spring.leff = spring.leff * mini;
-          }}
-          if (!this.scene.game.mod.getVar("mini")) {
+            if (!this.scene.game.mod.getVar("mini")) {
+              for (let mass of this.masses) {
+                mass.radius = mass.radius / mini;
+              }}
+          }
+          updateSprings() {
+            const mini = 0.7;
+            if (this.scene.game.mod.getVar("mini")) {
             for (let spring of this.springs) {
-              spring.lrest = spring.lrest / mini;
-              spring.leff = spring.leff / mini;
+              spring.lrest = spring.lrest * mini;
+              spring.leff = spring.leff * mini;
             }}
-        }
-        createRagdoll() {//invincibility mod bmx
-          if (!this.scene.game.mod.getVar("invincibility")) {
-          (this.ragdoll = new it(this.getStickMan(), this)),
-            this.ragdoll.zero(this.head.vel, this.rearWheel.vel),
-            (this.ragdoll.dir = this.dir),
-            (this.rearWheel.motor = 0),
-            (this.rearWheel.brake = !1),
-            (this.frontWheel.brake = !1),
-            (this.head.collide = !1),
-            this.updateCameraFocalPoint(),
-            this.player.isInFocus() && !this.ignore && this.playBailSound(),
-            this.dead();}
-        }
-        stopSounds() {
-          const t = this.scene.sound;
-          t.stop(lt.BIKE_AIR), t.stop(lt.BIKE_GROUND);
-        }
-        playBailSound() {
-          const t = this.scene.sound,
-            e = at(this.speed / 50, 1);
-          switch (rt(3 * ot()) + 1) {
-            case 1:
-              t.play(lt.BIKE_FALL_1, e);
-              break;
-            case 2:
-              t.play(lt.BIKE_FALL_2, e);
-              break;
-            case 3:
-              t.play(lt.BIKE_FALL_3, e);
+            if (!this.scene.game.mod.getVar("mini")) {
+              for (let spring of this.springs) {
+                spring.lrest = spring.lrest / mini;
+                spring.leff = spring.leff / mini;
+              }}
           }
-        }
-        updateCameraFocalPoint() {
-          this.focalPoint = this.ragdoll ? this.ragdoll.head : this.head;
-        }
-        getStickMan() {
-          const e = this.dir,
-            s = this.head,
-            i = this.frontWheel,
-            n = this.rearWheel,
-            r = this.pedala,
-            o = i.pos.sub(n.pos),
-            a = s.pos.sub(i.pos.add(n.pos).factor(0.5)),
-            h = new t.Z(o.y * e, -o.x * e),
-            l = {};
-          (l.head = n.pos.add(o.factor(0.35)).add(a.factor(1.2))),
-            (l.lHand = l.rHand = n.pos.add(o.factor(0.8)).add(h.factor(0.68)));
-          let c = l.head.sub(l.lHand);
-          (c = new t.Z(c.y * e, -c.x * e)),
-            (l.lElbow = l.rElbow =
-              l.head
-                .add(l.lHand)
+          createRagdoll() {//invincibility mod bmx
+            if (!this.scene.game.mod.getVar("invincibility")) {
+            (this.ragdoll = new it(this.getStickMan(), this)),
+              this.ragdoll.zero(this.head.vel, this.rearWheel.vel),
+              (this.ragdoll.dir = this.dir),
+              (this.rearWheel.motor = 0),
+              (this.rearWheel.brake = !1),
+              (this.frontWheel.brake = !1),
+              (this.head.collide = !1),
+              this.updateCameraFocalPoint(),
+              this.player.isInFocus() && !this.ignore && this.playBailSound(),
+              this.dead();}
+          }
+          stopSounds() {
+            const t = this.scene.sound;
+            t.stop(lt.BIKE_AIR), t.stop(lt.BIKE_GROUND);
+          }
+          playBailSound() {
+            const t = this.scene.sound,
+              e = at(this.speed / 50, 1);
+            switch (rt(3 * ot()) + 1) {
+              case 1:
+                t.play(lt.BIKE_FALL_1, e);
+                break;
+              case 2:
+                t.play(lt.BIKE_FALL_2, e);
+                break;
+              case 3:
+                t.play(lt.BIKE_FALL_3, e);
+            }
+          }
+          updateCameraFocalPoint() {
+            this.focalPoint = this.ragdoll ? this.ragdoll.head : this.head;
+          }
+          getStickMan() {
+            const e = this.dir,
+              s = this.head,
+              i = this.frontWheel,
+              n = this.rearWheel,
+              r = this.pedala,
+              o = i.pos.sub(n.pos),
+              a = s.pos.sub(i.pos.add(n.pos).factor(0.5)),
+              h = new t.Z(o.y * e, -o.x * e),
+              l = {};
+            (l.head = n.pos.add(o.factor(0.35)).add(a.factor(1.2))),
+              (l.lHand = l.rHand = n.pos.add(o.factor(0.8)).add(h.factor(0.68)));
+            let c = l.head.sub(l.lHand);
+            (c = new t.Z(c.y * e, -c.x * e)),
+              (l.lElbow = l.rElbow =
+                l.head
+                  .add(l.lHand)
+                  .factor(0.5)
+                  .add(c.factor(130 / c.lenSqr()))),
+              (l.waist = n.pos.add(o.factor(0.2)).add(h.factor(0.5)));
+            const u = new t.Z(6 * Math.cos(r), 6 * Math.sin(r));
+            l.lFoot = n.pos.add(o.factor(0.4)).add(h.factor(0.05)).add(u);
+            let d = l.waist.sub(l.lFoot);
+            return (
+              (d = new t.Z(-d.y * e, d.x * e)),
+              (l.lKnee = l.waist
+                .add(l.lFoot)
                 .factor(0.5)
-                .add(c.factor(130 / c.lenSqr()))),
-            (l.waist = n.pos.add(o.factor(0.2)).add(h.factor(0.5)));
-          const u = new t.Z(6 * Math.cos(r), 6 * Math.sin(r));
-          l.lFoot = n.pos.add(o.factor(0.4)).add(h.factor(0.05)).add(u);
-          let d = l.waist.sub(l.lFoot);
-          return (
-            (d = new t.Z(-d.y * e, d.x * e)),
-            (l.lKnee = l.waist
-              .add(l.lFoot)
-              .factor(0.5)
-              .add(d.factor(160 / d.lenSqr()))),
-            (l.rFoot = n.pos.add(o.factor(0.4)).add(h.factor(0.05)).sub(u)),
-            (d = l.waist.sub(l.rFoot)),
-            (d = new t.Z(-d.y * e, d.x * e)),
-            (l.rKnee = l.waist
-              .add(l.rFoot)
-              .factor(0.5)
-              .add(d.factor(160 / d.lenSqr()))),
-            l
-          );
-        }
-        update() {
-          if (this.mini !== this.scene.game.mod.getVar("mini")) {
-            this.updateSprings();
-            this.updateMasses();
-            this.mini = this.scene.game.mod.getVar("mini"); // Store the current state of mini
+                .add(d.factor(160 / d.lenSqr()))),
+              (l.rFoot = n.pos.add(o.factor(0.4)).add(h.factor(0.05)).sub(u)),
+              (d = l.waist.sub(l.rFoot)),
+              (d = new t.Z(-d.y * e, d.x * e)),
+              (l.rKnee = l.waist
+                .add(l.rFoot)
+                .factor(0.5)
+                .add(d.factor(160 / d.lenSqr()))),
+              l
+            );
           }
-          if (
-            (this.crashed || (this.updateSound(), this.control()),
-            this.explosion)
-          )
-            this.explosion.update();
-          else {
-            const t = this.springs,
-              e = this.masses;
-            for (let e = t.length - 1; e >= 0; e--) t[e].update();
-            for (let t = e.length - 1; t >= 0; t--) e[t].update();
+          update() {
+            if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
+              this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"); // Store the current state of mini
+            }
+            if (this.mini !== this.scene.game.mod.getVar("mini")) {
+              this.updateSprings();
+              this.updateMasses();
+              this.mini = this.scene.game.mod.getVar("mini"); // Store the current state of mini
+            }
             if (
-              (this.rearWheel.contact &&
-                this.frontWheel.contact &&
-                (this.slow = !1),
-              !this.slow)
-            ) {
-              this.crashed || this.control();
+              (this.crashed || (this.updateSound(), this.control()),
+              this.explosion)
+            )
+              this.explosion.update();
+            else {
+              const t = this.springs,
+                e = this.masses;
               for (let e = t.length - 1; e >= 0; e--) t[e].update();
               for (let t = e.length - 1; t >= 0; t--) e[t].update();
+              if (
+                (this.rearWheel.contact &&
+                  this.frontWheel.contact &&
+                  (this.slow = !1),
+                !this.slow)
+              ) {
+                this.crashed || this.control();
+                for (let e = t.length - 1; e >= 0; e--) t[e].update();
+                for (let t = e.length - 1; t >= 0; t--) e[t].update();
+              }
+              this.ragdoll ? this.ragdoll.update() : this.updateDrawHeadAngle();
             }
-            this.ragdoll ? this.ragdoll.update() : this.updateDrawHeadAngle();
+            this.updateCameraFocalPoint();
           }
-          this.updateCameraFocalPoint();
-        }
-        updateSound() {
-          if (this.player.isInFocus() && !this.ignore) {
-            this.updateSpeed();
-            const t = at(this.speed / 50, 1),
-              e = this.scene.sound;
-            this.rearWheel.contact || this.frontWheel.contact
-              ? (e.play(lt.BIKE_GROUND, t), e.stop(lt.BIKE_AIR))
-              : (e.play(lt.BIKE_AIR, t), e.stop(lt.BIKE_GROUND));
-          }
-        }
-        swap() {
-          (this.dir *= -1), this.chasse.swap();
-          const t = this.rearSpring.leff;
-          (this.rearSpring.leff = this.frontSpring.leff),
-            (this.frontSpring.leff = t);
-        }
-        control() {
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
-          const t = this.gamepad,
-            e = t.isButtonDown("up"),
-            s = t.isButtonDown("down"),
-            i = t.isButtonDown("left"),
-            n = t.isButtonDown("right"),
-            x = t.isButtonDown("x") && (this.scene.game.mod.getVar("crouch") || this.scene.game.mod.getVar("propeller")),
-            r = t.isButtonDown("z"),
-            o = e ? 1 : 0,
-            a = this.rearWheel;
-
-            if (this.scene.game.mod.getVar("propeller")) {
-              let angle = this.frontWheel.pos.sub(this.rearWheel.pos);
-                let angleX = angle.x / angle.len();
-                let angleY = angle.y / angle.len();
-
-                this.propeller = x ? GameSettings.propeller * 0.3 : 0; // 0.3 allows GameSettings.propeller = 1 to be equal to gravity forces
-                this.windspeed = x ? GameSettings.windspeed : 0;
-                
-                let wind = 0.01 / GameSettings.propeller; // 0.01 allows wind lift to be equal to gravity forces at max velocity.x
-
-                this.head.pos.x += this.propeller * angleX; // thrust
-                this.head.pos.y += this.propeller * angleY;
-                this.rearWheel.pos.x += this.propeller * 2 * angleX;
-                this.rearWheel.pos.y += this.propeller * 2 * angleY;
-
-                this.head.pos.y -= this.windspeed * this.head.vel.x * angleX * wind; // wind
-                this.frontWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
-                this.rearWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
+          updateSound() {
+            if (this.player.isInFocus() && !this.ignore) {
+              this.updateSpeed();
+              const t = at(this.speed / 50, 1),
+                e = this.scene.sound;
+              this.rearWheel.contact || this.frontWheel.contact
+                ? (e.play(lt.BIKE_GROUND, t), e.stop(lt.BIKE_AIR))
+                : (e.play(lt.BIKE_AIR, t), e.stop(lt.BIKE_GROUND));
             }
-
-          (a.motor += ((o - a.motor) / 10) * mini),
-            r && !this.swapped && (this.swap(), (this.swapped = !0)),
-            r || (this.swapped = !1),
-            e && (this.pedala += this.rearWheel.speed / 5),
-            (a.brake = s),
-            s && this.frontSpring.contract(-10, 10),
-            (1 === this.dir && (n || this.scene.game.mod.getVar("frontBrake")) && s) || (-1 === this.dir && (i || this.scene.game.mod.getVar("frontBrake")) && s)
-              ? (this.frontWheel.brake = !0)
-              : (this.frontWheel.brake = !1);
-          let h = i ? 1 : 0;
-          (h += n ? -1 : 0),
-            this.rearSpring.contract(5 * h * this.dir, 5),
-            this.frontSpring.contract(5 * -h * this.dir, 5),
-            this.chasse.rotate(h / 6),
-            !h && !x && e && (this.rearSpring.contract(-7, 5),
-              this.frontSpring.contract(7, 5)),
-              this.scene.game.mod.getVar("crouch") && x && (this.rearSpring.contract(-25, -20),
-              this.frontSpring.contract(-25, -20));
-        }
-        draw() {
-          if (this.explosion) this.explosion.draw();
-          else {
-            const t = this.scene.game.canvas.getContext("2d");
-            if (
-              ((t.imageSmoothingEnabled = !0),
-              (t.webkitImageSmoothingEnabled = !0),
-              (t.mozImageSmoothingEnabled = !0),
-              this.settings.developerMode)
-            )
-              for (const t of this.masses) t.draw();
-            this.drawBikeFrame();
           }
-        }
-        updateDrawHeadAngle() {
-          const t = this.frontWheel.pos.sub(this.rearWheel.pos);
-          this.drawHeadAngle = -(nt(t.x, t.y) - Math.PI / 2);
+          swap() {
+            (this.dir *= -1), this.chasse.swap();
+            const t = this.rearSpring.leff;
+            (this.rearSpring.leff = this.frontSpring.leff),
+              (this.frontSpring.leff = t);
+          }
+          control() {
+            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const t = this.gamepad,
+              e = t.isButtonDown("up"),
+              s = t.isButtonDown("down"),
+              i = t.isButtonDown("left"),
+              n = t.isButtonDown("right"),
+              x = t.isButtonDown("x") && (this.scene.game.mod.getVar("crouch") || this.scene.game.mod.getVar("propeller")),
+              r = t.isButtonDown("z"),
+              o = e ? 1 : 0,
+              a = this.rearWheel;
+  
+              if (this.scene.game.mod.getVar("propeller")) {
+                let angle = this.frontWheel.pos.sub(this.rearWheel.pos);
+                  let angleX = angle.x / angle.len();
+                  let angleY = angle.y / angle.len();
+  
+                  this.propeller = x ? GameSettings.propeller * 0.3 : 0; // 0.3 allows GameSettings.propeller = 1 to be equal to gravity forces
+                  this.windspeed = x ? GameSettings.windspeed : 0;
+                  
+                  let wind = 0.01 / GameSettings.propeller; // 0.01 allows wind lift to be equal to gravity forces at max velocity.x
+  
+                  this.head.pos.x += this.propeller * angleX; // thrust
+                  this.head.pos.y += this.propeller * angleY;
+                  this.rearWheel.pos.x += this.propeller * 2 * angleX;
+                  this.rearWheel.pos.y += this.propeller * 2 * angleY;
+  
+                  this.head.pos.y -= this.windspeed * this.head.vel.x * angleX * wind; // wind
+                  this.frontWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
+                  this.rearWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
+              }
+  
+            (a.motor += ((o - a.motor) / 10) * mini),
+              r && !this.swapped && (this.swap(), (this.swapped = !0)),
+              r || (this.swapped = !1),
+              e && (this.pedala += this.rearWheel.speed / 5),
+              (a.brake = s),
+              s && this.frontSpring.contract(-10, 10),
+              (1 === this.dir && (n || this.scene.game.mod.getVar("frontBrake")) && s) || (-1 === this.dir && (i || this.scene.game.mod.getVar("frontBrake")) && s)
+                ? (this.frontWheel.brake = !0)
+                : (this.frontWheel.brake = !1);
+            let h = i ? 1 : 0;
+            (h += n ? -1 : 0),
+              this.rearSpring.contract(5 * h * this.dir, 5),
+              this.frontSpring.contract(5 * -h * this.dir, 5),
+              this.chasse.rotate(h / 6),
+              !h && !x && e && (this.rearSpring.contract(-7, 5),
+                this.frontSpring.contract(7, 5)),
+                this.scene.game.mod.getVar("crouch") && x && (this.rearSpring.contract(-25, -20),
+                this.frontSpring.contract(-25, -20));
+          }
+          draw() {
+            if (this.explosion) this.explosion.draw();
+            else {
+              const t = this.scene.game.canvas.getContext("2d");
+              if (
+                ((t.imageSmoothingEnabled = !0),
+                (t.webkitImageSmoothingEnabled = !0),
+                (t.mozImageSmoothingEnabled = !0),
+                this.settings.developerMode)
+              )
+                for (const t of this.masses) t.draw();
+              this.drawBikeFrame();
+              this.drawBikeData(t);
+            }
+          }
+          updateDrawHeadAngle() {
+            const t = this.frontWheel.pos.sub(this.rearWheel.pos);
+            this.drawHeadAngle = -(nt(t.x, t.y) - Math.PI / 2);
+          }
+          drawBikeData(t) {
+            if (this.shouldDrawMetadata) {
+              const s = this.head.pos.toScreenSnapped(this.scene);
+              const i = this.scene.game.pixelRatio;
+
+              const e = this.gamepad,
+              up = e.isButtonDown("up") ? "^" : "-",
+              down = e.isButtonDown("down") ? "\/" : "-",
+              left = e.isButtonDown("left") ? "<" : "-",
+              right = e.isButtonDown("right") ? ">" : "-",
+              x = e.isButtonDown("x") ? "x" : "-",
+              z = e.isButtonDown("z") ? "z" : "-";
+  
+              const posX = (this.head.pos.x + this.frontWheel.pos.x + this.rearWheel.pos.x) / 3;
+              const posY = (this.head.pos.y + this.frontWheel.pos.y + this.rearWheel.pos.y) / 3;
+              const vel = GameSettings.speed;
+              let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
+              angle = ((angle + 180) % 360) - 180;
+  
+              let textOffsetX = 70;
+              let textOffsetY = -70;
+              t.textAlign = "left";
+  
+              const speed = Math.round(vel);
+              const color = `rgb(${speed}, 0, 0)`;
+  
+              (t.fillStyle = "#000000"),
+              (t.strokeStyle = "#ffffff"),
+              (t.font = "bold " + 10 * i + "pt arial"),
+              (t.lineWidth = 5 * i);
+  
+              t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
+              t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+              t.strokeText(vel.toFixed(0), s.x + textOffsetX, s.y + textOffsetY + 80);
+              //t.strokeText(up + down + left + right + x + z, s.x + textOffsetX, s.y + textOffsetY + 110);
+  
+              t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
+              t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+              t.fillStyle = color;
+              t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+              //t.fillText(up + down + left + right + x + z, s.x + textOffsetX, s.y + textOffsetY + 110);
+              t.strokeStyle = "#000";
+            }
         }
         drawBikeFrame() {
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
-          const e = this.scene,
-            s = e.game.mod.getVar("crBmx"),
-            i = e.game.mod.getVar("crHead"),
-            n = e.game.mod.getVar("customColors"),
-            r = n ? Q(e.game.mod.getVar("vehicleColor")) : "#000",
-            o = e.game.mod.getVar("blackHat"),
-            a = this.rearWheel.pos.toScreen(e),
-            h = this.frontWheel.pos.toScreen(e),
-            l = this.head.pos.toScreen(e),
-            c = this.player._opacity;
-          let u = h.sub(a),
-            d = new t.Z(u.y * this.dir, -u.x * this.dir);
-          const p = new W(a, u, d),
-            f = this.pedala,
-            g = Math.atan2(u.y, u.x),
-            m = this.dir,
-            v = e.camera.zoom,
-            y = e.game.canvas.getContext("2d"),
-            w = s ? 3.5 : 3,
-            x = s ? 10 : 10.5;
-            
-            
-            (y.globalAlpha = c),
-            (y.strokeStyle = "rgba(0,0,0,1)"),
-            (y.lineWidth = w * v),
-            (y.lineCap = "round"),
-            (y.lineJoin = "round"),
-            (y.fillStyle = "rgba(200,200, 200, 0.2)"),
-            y.beginPath(),
-            y.arc(h.x, h.y, x * v * mini, 0, 2 * Math.PI, !1),
-            y.moveTo(a.x + x * v * mini, a.y),
-            y.arc(a.x, a.y, x * v * mini, 0, 2 * Math.PI, !1),
-            s || y.fill(),
-            y.stroke();
-          const b = p.transform(0.3, 0.25),
-            _ = p.transform(0.4, 0.05),
-            T = p.transform(0.84, 0.42),
-            C = p.transform(0.84, 0.37),
-            k = new t.Z(6 * Math.cos(f + g) * v * mini, 6 * Math.sin(f + g) * v * mini),
-            S = _.add(k),
-            A = _.sub(k);
-          d = l.sub(a.add(u.factor(0.5)));
-
-          const masses = this.masses;
-            const nn = this.dir;
-            let rotor = this.rotor;
-            let dd = masses[1].pos.add(masses[2].pos).factor(.5);
-                dd =  masses[0].pos.sub(dd).factor(v);
-
-            let pp = new t.Z(-dd.y * nn,dd.x * nn);
-
-          const ff = masses[2].pos.toScreen(e);
-                  rotor += 2 * this.propeller + .1, // this.propeller or masses[1].motor
-                  rotor > 6.2831 && (rotor -= 6.2831),
-                  this.rotor = rotor;
-
-          const gg = new W(ff,pp,dd);             
-
-          const mm = (.25) * Math.cos(rotor); // propeller
-          if (this.scene.game.mod.getVar("propeller")) {
-                  y.beginPath();  
-                  y.strokeStyle = "#000000",
-                  y.lineWidth = 3 * v,
-                  y.lineJoin = y.lineCap = "round",
-                  y.moveTo(...gg.transform(0.5, .5 + mm).toArray()),
-                  y.lineTo(...gg.transform(0.5, 0.5 + -mm).toArray());    
-                  y.stroke();
-                  y.closePath();}
-
-
-          const P = new W(b, u, d),
-            M = P.transform(-0.1, 0.3);
-          let I = S.sub(M),
-            B = new t.Z(I.y * m, -I.x * m);
-          B = B.factor(v * v);
-          const D = M.add(I.factor(0.5)).add(B.factor(200 / I.lenSqr())),
-            E = S.add(I.factor(0.12)).add(B.factor(50 / I.lenSqr()));
-          (I = A.sub(M)),
-            (B = new t.Z(I.y * m, -I.x * m)),
-            (B = B.factor(v * v));
-          const L = M.add(I.factor(0.5)).add(B.factor(200 / I.lenSqr())),
-            z = A.add(I.factor(0.12)).add(B.factor(50 / I.lenSqr()));
-          this.crashed ||
-            ((y.strokeStyle = n
-              ? tt([...e.game.mod.getVar("riderColor"), 0.5])
-              : (e.game.mod.getVar("invisibleRider")) ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.5)"),
-            (y.lineWidth = 6 * v),
-            y.beginPath(),
-            y.moveTo(A.x, A.y),
-            y.lineTo(L.x, L.y),
-            y.lineTo(M.x, M.y),
-            y.stroke(),
-            s ||
-              ((y.lineWidth = 4 * v),
+            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const e = this.scene,
+              s = e.game.mod.getVar("crBmx"),
+              i = e.game.mod.getVar("crHead"),
+              n = e.game.mod.getVar("customColors"),
+              r = n ? Q(e.game.mod.getVar("vehicleColor")) : "#000",
+              o = e.game.mod.getVar("blackHat"),
+              a = this.rearWheel.pos.toScreen(e),
+              h = this.frontWheel.pos.toScreen(e),
+              l = this.head.pos.toScreen(e),
+              c = this.player._opacity;
+            let u = h.sub(a),
+              d = new t.Z(u.y * this.dir, -u.x * this.dir);
+            const p = new W(a, u, d),
+              f = this.pedala,
+              g = Math.atan2(u.y, u.x),
+              m = this.dir,
+              v = e.camera.zoom,
+              y = e.game.canvas.getContext("2d"),
+              w = s ? 3.5 : 3,
+              x = s ? 10 : 10.5;
+              
+              
+              (y.globalAlpha = c),
+              (y.strokeStyle = "rgba(0,0,0,1)"),
+              (y.lineWidth = w * v),
+              (y.lineCap = "round"),
+              (y.lineJoin = "round"),
+              (y.fillStyle = "rgba(200,200, 200, 0.2)"),
+              y.beginPath(),
+              y.arc(h.x, h.y, x * v * mini, 0, 2 * Math.PI, !1),
+              y.moveTo(a.x + x * v * mini, a.y),
+              y.arc(a.x, a.y, x * v * mini, 0, 2 * Math.PI, !1),
+              s || y.fill(),
+              y.stroke();
+            const b = p.transform(0.3, 0.25),
+              _ = p.transform(0.4, 0.05),
+              T = p.transform(0.84, 0.42),
+              C = p.transform(0.84, 0.37),
+              k = new t.Z(6 * Math.cos(f + g) * v * mini, 6 * Math.sin(f + g) * v * mini),
+              S = _.add(k),
+              A = _.sub(k);
+            d = l.sub(a.add(u.factor(0.5)));
+  
+            const masses = this.masses;
+              const nn = this.dir;
+              let rotor = this.rotor;
+              let dd = masses[1].pos.add(masses[2].pos).factor(.5);
+                  dd =  masses[0].pos.sub(dd).factor(v);
+  
+              let pp = new t.Z(-dd.y * nn,dd.x * nn);
+  
+            const ff = masses[2].pos.toScreen(e);
+                    rotor += 2 * this.propeller + .1, // this.propeller or masses[1].motor
+                    rotor > 6.2831 && (rotor -= 6.2831),
+                    this.rotor = rotor;
+  
+            const gg = new W(ff,pp,dd);             
+  
+            const mm = (.25) * Math.cos(rotor); // propeller
+            if (this.scene.game.mod.getVar("propeller")) {
+                    y.beginPath();  
+                    y.strokeStyle = "#000000",
+                    y.lineWidth = 3 * v,
+                    y.lineJoin = y.lineCap = "round",
+                    y.moveTo(...gg.transform(0.5, .5 + mm).toArray()),
+                    y.lineTo(...gg.transform(0.5, 0.5 + -mm).toArray());    
+                    y.stroke();
+                    y.closePath();}
+  
+  
+            const P = new W(b, u, d),
+              M = P.transform(-0.1, 0.3);
+            let I = S.sub(M),
+              B = new t.Z(I.y * m, -I.x * m);
+            B = B.factor(v * v);
+            const D = M.add(I.factor(0.5)).add(B.factor(200 / I.lenSqr())),
+              E = S.add(I.factor(0.12)).add(B.factor(50 / I.lenSqr()));
+            (I = A.sub(M)),
+              (B = new t.Z(I.y * m, -I.x * m)),
+              (B = B.factor(v * v));
+            const L = M.add(I.factor(0.5)).add(B.factor(200 / I.lenSqr())),
+              z = A.add(I.factor(0.12)).add(B.factor(50 / I.lenSqr()));
+            this.crashed ||
+              ((y.strokeStyle = n
+                ? tt([...e.game.mod.getVar("riderColor"), 0.5])
+                : (e.game.mod.getVar("invisibleRider")) ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.5)"),
+              (y.lineWidth = 6 * v),
               y.beginPath(),
               y.moveTo(A.x, A.y),
-              y.lineTo(z.x, z.y),
-              y.stroke())),
-            y.beginPath(),
-            (y.strokeStyle = r || "#000000"),
-            (y.lineWidth = 3 * v),
-            y.moveTo(T.x, T.y),
-            y.lineTo(b.x, b.y),
-            y.lineTo(a.x, a.y),
-            y.lineTo(_.x, _.y),
-            y.lineTo(C.x, C.y),
-            y.stroke(),
-            s ||
-              (y.beginPath(),
-              (y.lineWidth = Math.max(1 * v, 0.5)),
-              y.arc(_.x, _.y, 3 * v, 0, 2 * Math.PI, !1),
-              y.stroke()),
-            y.beginPath(),
-            (y.lineWidth = s ? 3 * v : Math.max(1 * v, 0.5)),
-            y.moveTo(S.x, S.y),
-            y.lineTo(A.x, A.y),
-            y.stroke();
-          const O = p.transform(0.25, 0.4),
-            F = p.transform(0.17, 0.38),
-            j = p.transform(0.3, 0.45),
-            R = p.transform(0.97, 0),
-            V = p.transform(0.8, 0.48),
-            H = p.transform(0.86, 0.5),
-            N = p.transform(0.82, 0.65),
-            Z = p.transform(0.78, 0.67);
-          if (
-            (y.beginPath(),
-            (y.lineWidth = 3 * v),
-            y.moveTo(F.x, F.y),
-            y.lineTo(j.x, j.y),
-            y.moveTo(_.x, _.y),
-            y.lineTo(O.x, O.y),
-            y.moveTo(h.x, h.y),
-            y.lineTo(R.x, R.y),
-            y.lineTo(V.x, V.y),
-            y.lineTo(H.x, H.y),
-            y.lineTo(N.x, N.y),
-            y.lineTo(Z.x, Z.y),
-            y.stroke(),
-            this.crashed && this.ragdoll)
-          )
-            this.ragdoll.draw();
-          else {
-            (y.lineWidth = 6 * v),
-              (y.strokeStyle = n ? Q(e.game.mod.getVar("riderColor")) : (e.game.mod.getVar("invisibleRider")) ? "rgba(0,0,0,0)" : "#000"),
-              y.beginPath(),
-              y.moveTo(S.x, S.y),
-              y.lineTo(D.x, D.y),
+              y.lineTo(L.x, L.y),
               y.lineTo(M.x, M.y),
               y.stroke(),
               s ||
-                (y.beginPath(),
-                y.moveTo(S.x, S.y),
-                y.lineTo(E.x, E.y),
-                y.stroke());
-            const r = P.transform(0.05, 0.9);
-            (y.lineWidth = 8 * v),
+                ((y.lineWidth = 4 * v),
+                y.beginPath(),
+                y.moveTo(A.x, A.y),
+                y.lineTo(z.x, z.y),
+                y.stroke())),
               y.beginPath(),
-              y.moveTo(M.x, M.y),
-              y.lineTo(r.x, r.y),
+              (y.strokeStyle = r || "#000000"),
+              (y.lineWidth = 3 * v),
+              y.moveTo(T.x, T.y),
+              y.lineTo(b.x, b.y),
+              y.lineTo(a.x, a.y),
+              y.lineTo(_.x, _.y),
+              y.lineTo(C.x, C.y),
+              y.stroke(),
+              s ||
+                (y.beginPath(),
+                (y.lineWidth = Math.max(1 * v, 0.5)),
+                y.arc(_.x, _.y, 3 * v, 0, 2 * Math.PI, !1),
+                y.stroke()),
+              y.beginPath(),
+              (y.lineWidth = s ? 3 * v : Math.max(1 * v, 0.5)),
+              y.moveTo(S.x, S.y),
+              y.lineTo(A.x, A.y),
               y.stroke();
-            const a = P.transform(0.15, 1.05),
-              h = P.transform(0.4, 1.1),
-              l = P.transform(0.05, 1.05);
-            (u = r.sub(Z)),
-              (d = new t.Z(u.y * m, -u.x * m)),
-              (d = d.factor(v * v));
-            const c = Z.add(u.factor(0.4)).add(d.factor(130 / u.lenSqr()));
-            if ((y.lineWidth = 5 * v, y.beginPath(), y.moveTo(r.x, r.y), y.lineTo(c.x, c.y), y.lineTo(Z.x, Z.y), y.stroke(), i || o)) {
-              if (o) {
-                const t = P.transform(0.35, 1.15),
-                  e = P.transform(-0.05, 1.1),
-                  s = P.transform(0.25, 1.13),
-                  i = P.transform(0.05, 1.11),
-                  n = P.transform(0.25, 1.35),
-                  r = P.transform(-0.03, 1.3);
-
-                y.beginPath();
-                y.moveTo(a.x + 5 * v, a.y);
-                this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = "rgb(255, 255, 255)",
-                y.arc(a.x, a.y, 5 * v, 0, 2 * Math.PI);
-                y.fill(),
-                y.lineWidth = 2 * v;
+            const O = p.transform(0.25, 0.4),
+              F = p.transform(0.17, 0.38),
+              j = p.transform(0.3, 0.45),
+              R = p.transform(0.97, 0),
+              V = p.transform(0.8, 0.48),
+              H = p.transform(0.86, 0.5),
+              N = p.transform(0.82, 0.65),
+              Z = p.transform(0.78, 0.67);
+            if (
+              (y.beginPath(),
+              (y.lineWidth = 3 * v),
+              y.moveTo(F.x, F.y),
+              y.lineTo(j.x, j.y),
+              y.moveTo(_.x, _.y),
+              y.lineTo(O.x, O.y),
+              y.moveTo(h.x, h.y),
+              y.lineTo(R.x, R.y),
+              y.lineTo(V.x, V.y),
+              y.lineTo(H.x, H.y),
+              y.lineTo(N.x, N.y),
+              y.lineTo(Z.x, Z.y),
+              y.stroke(),
+              this.crashed && this.ragdoll)
+            )
+              this.ragdoll.draw();
+            else {
+              (y.lineWidth = 6 * v),
+                (y.strokeStyle = n ? Q(e.game.mod.getVar("riderColor")) : (e.game.mod.getVar("invisibleRider")) ? "rgba(0,0,0,0)" : "#000"),
+                y.beginPath(),
+                y.moveTo(S.x, S.y),
+                y.lineTo(D.x, D.y),
+                y.lineTo(M.x, M.y),
+                y.stroke(),
+                s ||
+                  (y.beginPath(),
+                  y.moveTo(S.x, S.y),
+                  y.lineTo(E.x, E.y),
+                  y.stroke());
+              const r = P.transform(0.05, 0.9);
+              (y.lineWidth = 8 * v),
+                y.beginPath(),
+                y.moveTo(M.x, M.y),
+                y.lineTo(r.x, r.y),
                 y.stroke();
-                y.beginPath();
-                y.moveTo(t.x, t.y);
-                y.lineTo(s.x, s.y);
-                y.lineTo(n.x, n.y);
-                y.lineTo(r.x, r.y);
-                y.lineTo(i.x, i.y);
-                y.lineTo(e.x, e.y);
-                y.fillStyle = y.strokeStyle;
-                y.stroke();
-                y.fill();
-              } else { // crhead bmx
-                  this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = "rgb(255, 255, 255)",
-                  y.beginPath(),
-                  y.arc(a.x, a.y, 4 * v, 0, 2 * Math.PI);
-                  y.fill(),
-                  y.closePath(),
-                  y.strokeStyle = e.game.mod.getVar("hatColor"),
-                  this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = GameSettings.hatColor;
-                  y.lineWidth = 2 * v;
-                  if (!this.drawHeadAngle) {
-                    y.beginPath();
-                    y.arc(a.x, a.y, 5 * v, 1 * Math.PI - 8 * Math.PI / 180, -24 * Math.PI / 180);
-                    y.fill();
-                  }  
-                  if (this.dir < 0 ) {
-                    y.beginPath();
-                    y.arc(a.x, a.y, 5 * v, this.drawHeadAngle + 1 * Math.PI + 24 * Math.PI / 180 + Math.PI, this.drawHeadAngle + 8 * Math.PI / 180 + Math.PI);
-                    y.fill();
-                  }
-                  else {
-                    y.beginPath();
-                    y.arc(a.x, a.y, 5 * v, this.drawHeadAngle + 1 * Math.PI - 8 * Math.PI / 180, this.drawHeadAngle - 24 * Math.PI / 180);
-                    y.fill();}
-                
+              const a = P.transform(0.15, 1.05),
+                h = P.transform(0.4, 1.1),
+                l = P.transform(0.05, 1.05);
+              (u = r.sub(Z)),
+                (d = new t.Z(u.y * m, -u.x * m)),
+                (d = d.factor(v * v));
+              const c = Z.add(u.factor(0.4)).add(d.factor(130 / u.lenSqr()));
+              if ((y.lineWidth = 5 * v, y.beginPath(), y.moveTo(r.x, r.y), y.lineTo(c.x, c.y), y.lineTo(Z.x, Z.y), y.stroke(), i || o)) {
+                if (o) {
+                  const t = P.transform(0.35, 1.15),
+                    e = P.transform(-0.05, 1.1),
+                    s = P.transform(0.25, 1.13),
+                    i = P.transform(0.05, 1.11),
+                    n = P.transform(0.25, 1.35),
+                    r = P.transform(-0.03, 1.3);
+  
                   y.beginPath();
                   y.moveTo(a.x + 5 * v, a.y);
+                  this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = "rgb(255, 255, 255)",
                   y.arc(a.x, a.y, 5 * v, 0, 2 * Math.PI);
+                  y.fill(),
+                  y.lineWidth = 2 * v;
                   y.stroke();
-                  y.closePath();
-                
                   y.beginPath();
-                  y.moveTo(h.x, h.y);
-                  y.lineTo(l.x, l.y);
+                  y.moveTo(t.x, t.y);
+                  y.lineTo(s.x, s.y);
+                  y.lineTo(n.x, n.y);
+                  y.lineTo(r.x, r.y);
+                  y.lineTo(i.x, i.y);
+                  y.lineTo(e.x, e.y);
+                  y.fillStyle = y.strokeStyle;
                   y.stroke();
-                }
-            } else {
-              GameInventoryManager.getItem(this.cosmetics.head).draw(y, a.x, a.y, this.drawHeadAngle, v, this.dir);
+                  y.fill();
+                } else { // crhead bmx
+                    this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = "rgb(255, 255, 255)",
+                    y.beginPath(),
+                    y.arc(a.x, a.y, 4 * v, 0, 2 * Math.PI);
+                    y.fill(),
+                    y.closePath(),
+                    y.strokeStyle = e.game.mod.getVar("hatColor"),
+                    this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = GameSettings.hatColor;
+                    y.lineWidth = 2 * v;
+                    if (!this.drawHeadAngle) {
+                      y.beginPath();
+                      y.arc(a.x, a.y, 5 * v, 1 * Math.PI - 8 * Math.PI / 180, -24 * Math.PI / 180);
+                      y.fill();
+                    }  
+                    if (this.dir < 0 ) {
+                      y.beginPath();
+                      y.arc(a.x, a.y, 5 * v, this.drawHeadAngle + 1 * Math.PI + 24 * Math.PI / 180 + Math.PI, this.drawHeadAngle + 8 * Math.PI / 180 + Math.PI);
+                      y.fill();
+                    }
+                    else {
+                      y.beginPath();
+                      y.arc(a.x, a.y, 5 * v, this.drawHeadAngle + 1 * Math.PI - 8 * Math.PI / 180, this.drawHeadAngle - 24 * Math.PI / 180);
+                      y.fill();}
+                  
+                    y.beginPath();
+                    y.moveTo(a.x + 5 * v, a.y);
+                    y.arc(a.x, a.y, 5 * v, 0, 2 * Math.PI);
+                    y.stroke();
+                    y.closePath();
+                  
+                    y.beginPath();
+                    y.moveTo(h.x, h.y);
+                    y.lineTo(l.x, l.y);
+                    y.stroke();
+                  }
+              } else {
+                GameInventoryManager.getItem(this.cosmetics.head).draw(y, a.x, a.y, this.drawHeadAngle, v, this.dir);
+              }
+              y.globalAlpha = 1;
             }
-            y.globalAlpha = 1;
+            y.strokeStyle = "#000";
           }
-          y.strokeStyle = "#000";
+          clone() {
+            const e = new ht(this.player, new t.Z(0, 0), 1, new t.Z(0, 0));
+            return (
+              e.frontWheel.pos.equ(this.frontWheel.pos),
+              e.frontWheel.vel.equ(this.frontWheel.vel),
+              e.frontWheel.old.equ(this.frontWheel.old),
+              e.rearWheel.pos.equ(this.rearWheel.pos),
+              e.rearWheel.vel.equ(this.rearWheel.vel),
+              e.rearWheel.old.equ(this.rearWheel.old),
+              e.head.pos.equ(this.head.pos),
+              e.head.vel.equ(this.head.vel),
+              e.head.old.equ(this.head.old),
+              (e.masses = [e.head, e.rearWheel, e.frontWheel]),
+              e
+            );
+          }
         }
-        clone() {
-          const e = new ht(this.player, new t.Z(0, 0), 1, new t.Z(0, 0));
-          return (
-            e.frontWheel.pos.equ(this.frontWheel.pos),
-            e.frontWheel.vel.equ(this.frontWheel.vel),
-            e.frontWheel.old.equ(this.frontWheel.old),
-            e.rearWheel.pos.equ(this.rearWheel.pos),
-            e.rearWheel.vel.equ(this.rearWheel.vel),
-            e.rearWheel.old.equ(this.rearWheel.old),
-            e.head.pos.equ(this.head.pos),
-            e.head.vel.equ(this.head.vel),
-            e.head.old.equ(this.head.old),
-            (e.masses = [e.head, e.rearWheel, e.frontWheel]),
-            e
-          );
-        }
-      }
-      const lt = {
-          BIKE_GROUND: "bike_ground",
-          BIKE_AIR: "bike_air",
-          BIKE_FALL_1: "bike_fall_1",
-          BIKE_FALL_2: "bike_fall_2",
-          BIKE_FALL_3: "bike_fall_3",
-        },
-        ct = ht.prototype;
-      (ct.vehicleName = "BMX"),
-        (ct.masses = null),
-        (ct.springs = null),
-        (ct.cosmetics = null),
-        (ct.slow = !1),
-        (ct.pedala = 0),
-        (ct.cosmeticHead = null),
-        (ct.cosmeticRearWheel = null),
-        (ct.cosmeticFrontWheel = null),
-        (ct.swapped = !1),
-        (ct.ragdoll = null);
-      const ut = ht;
+        const lt = {
+            BIKE_GROUND: "bike_ground",
+            BIKE_AIR: "bike_air",
+            BIKE_FALL_1: "bike_fall_1",
+            BIKE_FALL_2: "bike_fall_2",
+            BIKE_FALL_3: "bike_fall_3",
+          },
+          ct = ht.prototype;
+        (ct.vehicleName = "BMX"),
+          (ct.masses = null),
+          (ct.springs = null),
+          (ct.cosmetics = null),
+          (ct.slow = !1),
+          (ct.pedala = 0),
+          (ct.cosmeticHead = null),
+          (ct.cosmeticRearWheel = null),
+          (ct.cosmeticFrontWheel = null),
+          (ct.swapped = !1),
+          (ct.ragdoll = null);
+        const ut = ht;
       class dt extends A {
         constructor(e, s) {
           super(),
@@ -14023,8 +14046,9 @@
             this.createSprings(),
             this.updateCameraFocalPoint(),
             this.stopSounds(),
-            this.mini = this.scene.game.mod.getVar("mini");
+            this.mini = this.scene.game.mod.getVar("mini"),
             this.propeller = 0,
+            this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
             -1 === s && this.swap();
         }
         createMasses(e, s) {
@@ -14167,6 +14191,9 @@
           );
         }
         update() {
+          if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
+            this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"); // Store the current state of mini
+          }
           if (this.mini !== this.scene.game.mod.getVar("mini")) {
             this.updateSprings();
             this.updateMasses();
@@ -14283,8 +14310,43 @@
             )
               for (const t of this.masses) t.draw();
             this.drawBikeFrame();
+            this.drawBikeData(t);
           }
         }
+        drawBikeData(t) {
+          if (this.shouldDrawMetadata) {
+            const s = this.head.pos.toScreenSnapped(this.scene);
+            const i = this.scene.game.pixelRatio;
+
+            const posX = (this.head.pos.x + this.frontWheel.pos.x + this.rearWheel.pos.x) / 3;
+            const posY = (this.head.pos.y + this.frontWheel.pos.y + this.rearWheel.pos.y) / 3;
+            const vel = GameSettings.speed;
+            let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
+            angle = ((angle + 180) % 360) - 180;
+
+            let textOffsetX = 70;
+            let textOffsetY = -70;
+            t.textAlign = "left";
+
+            const speed = Math.round(vel);
+            const color = `rgb(${speed}, 0, 0)`;
+
+            (t.fillStyle = "#000000"),
+            (t.strokeStyle = "#ffffff"),
+            (t.font = "bold " + 10 * i + "pt arial"),
+            (t.lineWidth = 5 * i);
+
+            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
+            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+            t.strokeText(vel.toFixed(0), s.x + textOffsetX, s.y + textOffsetY + 80);
+
+            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
+            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+            t.fillStyle = color;
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            t.strokeStyle = "#000";
+          }
+      }
         drawBikeFrame() {
           const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
           const e = this.scene,
@@ -22117,6 +22179,7 @@
           propeller: { default: !1 },
           crouch: { default: !1 },
           frontBrake: { default: !1 },
+          bikeData: { default: !1 },
           accurateEraser: { default: !1 },
           keepDeadRiders: {
             default: !1,
@@ -22499,6 +22562,12 @@
             title: "Old-School Front Brake",
             description:
               "Front brake is engaged when pressing down arrow key.",
+          },
+          {
+            key: "bikeData",
+            title: "Bike Data",
+            description:
+              "Shows the metadata about the rider, including head angle, position, and velocity.",
           },
           {
             type: "folder",
