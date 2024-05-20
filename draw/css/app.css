@@ -334,8 +334,8 @@ textarea#color {
 
 @font-face {
     font-family: icomoon;
-    src: url(../assets/fonts/icons/v23/icomoon.eot);
-    src: url(../assets/fonts/icons/v23/icomoon.eot#iefix) format("embedded-opentype"), url(../assets/fonts/icons/v23/icomoon.woff2) format("woff2"), url(../assets/fonts/icons/v23/icomoon.woff) format("woff"), url(../assets/fonts/icons/v23/icomoon.ttf) format("truetype");
+    src: url(/draw/assets/fonts/icons/v23/icomoon.eot);
+    src: url(/draw/assets/fonts/icons/v23/icomoon.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/icons/v23/icomoon.woff2) format("woff2"), url(/draw/assets/fonts/icons/v23/icomoon.woff) format("woff"), url(/draw/assets/fonts/icons/v23/icomoon.ttf) format("truetype");
     font-weight: 400;
     font-style: normal
 }
@@ -655,8 +655,8 @@ textarea#color {
 
 @font-face {
     font-family: roboto_regular;
-    src: url(../assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot);
-    src: url(../assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot#iefix) format("embedded-opentype"), url(../assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff2) format("woff2"), url(../assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff) format("woff"), url(../assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_regular_macroman/Roboto-Regular-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
@@ -666,8 +666,8 @@ textarea#color {
 
 @font-face {
     font-family: roboto_condensed_bold;
-    src: url(../assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot);
-    src: url(../assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot#iefix) format("embedded-opentype"), url(../assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff2) format("woff2"), url(../assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff) format("woff"), url(../assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_boldcondensed_macroman/RobotoCondensed-Bold-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
@@ -677,8 +677,8 @@ textarea#color {
 
 @font-face {
     font-family: roboto_bold;
-    src: url(../assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot);
-    src: url(../assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot#iefix) format("embedded-opentype"), url(../assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff2) format("woff2"), url(../assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff) format("woff"), url(../assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_bold_macroman/Roboto-Bold-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
     -webkit-font-smoothing: antialiased
@@ -686,8 +686,8 @@ textarea#color {
 
 @font-face {
     font-family: roboto_medium;
-    src: url(../assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot);
-    src: url(../assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot#iefix) format("embedded-opentype"), url(../assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff2) format("woff2"), url(../assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff) format("woff"), url(../assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot);
+    src: url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff2) format("woff2"), url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.woff) format("woff"), url(/draw/assets/fonts/roboto_medium_macroman/Roboto-Medium-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
     -webkit-font-smoothing: antialiased
@@ -695,8 +695,8 @@ textarea#color {
 
 @font-face {
     font-family: helsinki;
-    src: url(../assets/fonts/helsinki/helsinki-webfont.eot);
-    src: url(../assets/fonts/helsinki/helsinki-webfont.eot#iefix) format("embedded-opentype"), url(../assets/fonts/helsinki/helsinki-webfont.woff2) format("woff2"), url(../assets/fonts/helsinki/helsinki-webfont.woff) format("woff"), url(../assets/fonts/helsinki/helsinki-webfont.ttf) format("truetype");
+    src: url(/draw/assets/fonts/helsinki/helsinki-webfont.eot);
+    src: url(/draw/assets/fonts/helsinki/helsinki-webfont.eot#iefix) format("embedded-opentype"), url(/draw/assets/fonts/helsinki/helsinki-webfont.woff2) format("woff2"), url(/draw/assets/fonts/helsinki/helsinki-webfont.woff) format("woff"), url(/draw/assets/fonts/helsinki/helsinki-webfont.ttf) format("truetype");
     font-weight: 400;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
@@ -705,7 +705,7 @@ textarea#color {
 }
 
 .mobile_rotate {
-    background-image: url(../assets/images/icons/mobile_rotate.png);
+    background-image: url(/draw/assets/images/icons/mobile_rotate.png);
     background-size: 73px
 }
 
@@ -722,7 +722,7 @@ textarea#color {
 }
 
 .share_icons {
-    background-image: url(../assets/images/icons/share_icons.png);
+    background-image: url(/draw/assets/images/icons/share_icons.png);
     background-size: 316px
 }
 
@@ -769,7 +769,7 @@ textarea#color {
 }
 
 .coin_icons {
-    background-image: url(../assets/images/icons/coin_icons.png);
+    background-image: url(/draw/assets/images/icons/coin_icons.png);
     background-size: 22px
 }
 
@@ -780,7 +780,7 @@ textarea#color {
 }
 
 .points_icons {
-    background-image: url(../assets/images/icons/points_icons.png);
+    background-image: url(/draw/assets/images/icons/points_icons.png);
     background-size: 51px
 }
 
@@ -797,7 +797,7 @@ textarea#color {
 }
 
 .keyboard_keys {
-    background-image: url(../assets/images/editor/icons/keyboard_keys_v2.png);
+    background-image: url(/draw/assets/images/editor/icons/keyboard_keys_v2.png);
     background-size: 128px
 }
 
@@ -892,7 +892,7 @@ textarea#color {
 }
 
 .core_icons {
-    background-image: url(../assets/images/icons/core_icons.png);
+    background-image: url(/draw/assets/images/icons/core_icons.png);
     background-size: 85px
 }
 
@@ -971,7 +971,7 @@ canvas {
 }
 
 .loading-hourglass {
-    background-image: url(../assets/images/loading_gifs/hourglass.gif);
+    background-image: url(/draw/assets/images/loading_gifs/hourglass.gif);
     background-size: 32px 32px;
     display: inline-block;
     width: 32px;
@@ -979,7 +979,7 @@ canvas {
 }
 
 .loading-spinner_sm {
-    background-image: url(../assets/images/loading_gifs/spinner-loader-med.gif);
+    background-image: url(/draw/assets/images/loading_gifs/spinner-loader-med.gif);
     background-size: 16px 16px;
     display: inline-block;
     width: 16px;
@@ -1231,7 +1231,7 @@ html.fullscreen #main_page {
     vertical-align: middle;
     overflow: hidden;
     background-repeat: no-repeat;
-    background-image: url(../assets/images/editor/gui/editorgui_icons_v7.png);
+    background-image: url(/draw/assets/images/editor/gui/editorgui_icons_v7.png);
     background-size: 512px 164px
 }
 
@@ -2308,7 +2308,7 @@ html.fullscreen #main_page {
     display: inline-block;
     overflow: hidden;
     background-repeat: no-repeat;
-    background-image: url(../assets/images/icons/chromeapp_icons.png);
+    background-image: url(/draw/assets/images/icons/chromeapp_icons.png);
     background-size: 215px 170px
 }
 
@@ -2318,7 +2318,7 @@ only screen and (min-device-pixel-ratio:2),
 only screen and (min-resolution:192dpi),
 only screen and (min-resolution:2dppx) {
     .chromeapp_icons {
-        background-image: url(../assets/images/icons/chromeapp_icons@2x.png)
+        background-image: url(/draw/assets/images/icons/chromeapp_icons@2x.png)
     }
 }
 
@@ -2327,7 +2327,7 @@ only screen and (-moz-min-device-pixel-ratio:3),
 only screen and (-o-min-device-pixel-ratio:3 / 1),
 only screen and (min-device-pixel-ratio:3) {
     .chromeapp_icons {
-        background-image: url(../assets/images/icons/chromeapp_icons@3x.png)
+        background-image: url(/draw/assets/images/icons/chromeapp_icons@3x.png)
     }
 }
 

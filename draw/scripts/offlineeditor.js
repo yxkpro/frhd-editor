@@ -1974,7 +1974,6 @@
               console.error("There was a problem saving your file");
             },
             selectAllText: function () {
-              console.log("select all text");
               var e = this.refs.code.getDOMNode();
               e.focus(), e.select();
             },
@@ -2028,6 +2027,7 @@
                       defaultValue: "",
                       autoComplete: "false",
                       spellCheck: "false",
+                      readOnly: true,
                       value: t,
                       onClick: this.selectAllText,
                     })
