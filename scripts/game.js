@@ -11624,9 +11624,9 @@
             (this.mouseDownListener = n),
             (this.mouseUpListener = r);
           const o = (0, e.throttle)(this.onMouseWheel, 0);
-          s.addEventListener("mousewheel", o.bind(this)),
-            s.addEventListener("wheel", o.bind(this)),
-            s.addEventListener("DOMMouseScroll", o.bind(this)),
+            s.addEventListener("mousewheel", o.bind(this), { passive: false }),
+            s.addEventListener("wheel", o.bind(this)), { passive: false },
+            s.addEventListener("DOMMouseScroll", o.bind(this)), { passive: false },
             (this.mouseWheelListener = o);
         }
         onMouseDown(t) {

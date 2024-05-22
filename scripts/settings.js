@@ -16,7 +16,7 @@ var GameSettings = {
     "height": 500,
     "fullscreen": false,
     "editorFullscreen": true,
-    "drawSectorSize": 100,
+    "drawSectorSize": 300,
     "physicsSectorSize": 100,
     "startVehicle": "BMX",
     "startTool": "straightline",

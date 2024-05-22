@@ -797,7 +797,7 @@ textarea#color {
 }
 
 .keyboard_keys {
-    background-image: url(assets/images/editor/icons/keyboard_keys_v2.png);
+    background-image: url(assets/images/icons/keyboard_keys.png);
     background-size: 128px
 }
 
@@ -1231,7 +1231,7 @@ html.fullscreen #main_page {
     vertical-align: middle;
     overflow: hidden;
     background-repeat: no-repeat;
-    background-image: url(assets/images/editor/gui/editorgui_icons_v7.png);
+    background-image: url(assets/images/gui/editor_gui.png);
     background-size: 512px 164px
 }
 
