@@ -12837,6 +12837,7 @@
               this.mini = this.scene.game.mod.getVar("mini"),
               this.propeller = 0,
               this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
+              this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
               -1 === s && this.swap();
           }
           createMasses(e, s) {
@@ -12906,7 +12907,7 @@
                 spring.leff = spring.leff / mini;
               }}
           }
-          createRagdoll() {//invincibility mod bmx
+          createRagdoll() {
             if (!this.scene.game.mod.getVar("invincibility")) {
             (this.ragdoll = new it(this.getStickMan(), this)),
               this.ragdoll.zero(this.head.vel, this.rearWheel.vel),
@@ -12981,12 +12982,16 @@
           }
           update() {
             if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
-              this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"); // Store the current state of mini
+              this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");
             }
+            if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
+              this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
+            }
+
             if (this.mini !== this.scene.game.mod.getVar("mini")) {
               this.updateSprings();
               this.updateMasses();
-              this.mini = this.scene.game.mod.getVar("mini"); // Store the current state of mini
+              this.mini = this.scene.game.mod.getVar("mini");
             }
             if (
               (this.crashed || (this.updateSound(), this.control()),
@@ -13092,6 +13097,7 @@
                 for (const t of this.masses) t.draw();
               this.drawBikeFrame();
               this.drawBikeData(t);
+              this.drawInputDisplay(t);
             }
           }
           updateDrawHeadAngle() {
@@ -13103,45 +13109,101 @@
               const s = this.head.pos.toScreenSnapped(this.scene);
               const i = this.scene.game.pixelRatio;
 
-              const e = this.gamepad,
-              up = e.isButtonDown("up") ? "^" : "-",
-              down = e.isButtonDown("down") ? "\/" : "-",
-              left = e.isButtonDown("left") ? "<" : "-",
-              right = e.isButtonDown("right") ? ">" : "-",
-              x = e.isButtonDown("x") ? "x" : "-",
-              z = e.isButtonDown("z") ? "z" : "-";
-  
               const posX = (this.head.pos.x + this.frontWheel.pos.x + this.rearWheel.pos.x) / 3;
               const posY = (this.head.pos.y + this.frontWheel.pos.y + this.rearWheel.pos.y) / 3;
               const vel = GameSettings.speed;
-              let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
+              let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
               angle = ((angle + 180) % 360) - 180;
-  
+
               let textOffsetX = 70;
               let textOffsetY = -70;
               t.textAlign = "left";
-  
+
               const speed = Math.round(vel);
               const color = `rgb(${speed}, 0, 0)`;
-  
+
               (t.fillStyle = "#000000"),
-              (t.strokeStyle = "#ffffff"),
-              (t.font = "bold " + 10 * i + "pt arial"),
-              (t.lineWidth = 5 * i);
-  
+                (t.strokeStyle = "#ffffff"),
+                (t.font = "bold " + 10 * i + "pt arial"),
+                (t.lineWidth = 5 * i);
+
               t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
               t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
               t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
-              //t.strokeText(up + down + left + right + x + z, s.x + textOffsetX, s.y + textOffsetY + 110);
-  
+
               t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
               t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
               t.fillStyle = color;
               t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
-              //t.fillText(up + down + left + right + x + z, s.x + textOffsetX, s.y + textOffsetY + 110);
               t.strokeStyle = "#000";
             }
-        }
+          }
+          drawInputDisplay(t) {
+            if (this.shouldDrawInputDisplay) {
+            let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
+                this.scene.camera.focusIndex
+              )._gamepad,
+              s = 10,
+              i = { x: s, y: t.canvas.height - 10 * s };
+              
+              (t.fillStyle = GameSettings.sceneryLineColor),
+              (t.lineWidth = s / 2),
+              (t.strokeStyle = GameSettings.physicsLineColor);
+            let o = s / 2,
+              a = 4 * s;
+              t.beginPath(),
+              t.roundRect(i.x + 10 * s, i.y, a, a, o),
+              e.x && t.fill(),
+              t.stroke(),
+              t.beginPath(),
+              t.roundRect(i.x, i.y, a, a, o),
+              e.z && t.fill(),
+              t.stroke(),
+              t.beginPath(),
+              t.roundRect(i.x + 5 * s, i.y, a, a, o),
+              e.up && t.fill(),
+              t.stroke(),
+              t.beginPath(),
+              t.roundRect(i.x, i.y + 5 * s, a, a, o),
+              e.left && t.fill(),
+              t.stroke(),
+              t.beginPath(),
+              t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
+              e.down && t.fill(),
+              t.stroke(),
+              t.beginPath(),
+              t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
+              e.right && t.fill(),
+              t.stroke(),
+              (t.lineWidth = s / 3),
+              t.beginPath(),
+              t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
+              t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
+              t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
+              t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
+
+              t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
+              t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
+              t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
+              t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
+
+              t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
+              t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
+              t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
+              t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
+              t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
+              t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
+              t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
+              t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
+              t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
+              t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
+              t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
+              t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
+              t.stroke(),
+              t.restore(),
+              (t.globalCompositeOperation = "source-over");
+          }
+          }
         drawBikeFrame() {
             const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
             const e = this.scene,
@@ -14049,6 +14111,7 @@
             this.mini = this.scene.game.mod.getVar("mini"),
             this.propeller = 0,
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
+            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
             -1 === s && this.swap();
         }
         createMasses(e, s) {
@@ -14192,7 +14255,10 @@
         }
         update() {
           if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
-            this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"); // Store the current state of mini
+            this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");
+          }
+          if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
+            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
           }
           if (this.mini !== this.scene.game.mod.getVar("mini")) {
             this.updateSprings();
@@ -14311,6 +14377,7 @@
               for (const t of this.masses) t.draw();
             this.drawBikeFrame();
             this.drawBikeData(t);
+            this.drawInputDisplay(t);
           }
         }
         drawBikeData(t) {
@@ -14346,6 +14413,71 @@
             t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
             t.strokeStyle = "#000";
           }
+      }
+      drawInputDisplay(t) {
+        if (this.shouldDrawInputDisplay) {
+        let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
+            this.scene.camera.focusIndex
+          )._gamepad,
+          s = 10,
+          i = { x: s, y: t.canvas.height - 10 * s };
+          (t.fillStyle = GameSettings.sceneryLineColor),
+          (t.lineWidth = s / 2),
+          (t.strokeStyle = GameSettings.physicsLineColor);
+        let o = s / 2,
+          a = 4 * s;
+          t.beginPath(),
+          t.roundRect(i.x + 10 * s, i.y, a, a, o),
+          e.x && t.fill(),
+          t.stroke(),
+          t.beginPath(),
+          t.roundRect(i.x, i.y, a, a, o),
+          e.z && t.fill(),
+          t.stroke(),
+          t.beginPath(),
+          t.roundRect(i.x + 5 * s, i.y, a, a, o),
+          e.up && t.fill(),
+          t.stroke(),
+          t.beginPath(),
+          t.roundRect(i.x, i.y + 5 * s, a, a, o),
+          e.left && t.fill(),
+          t.stroke(),
+          t.beginPath(),
+          t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
+          e.down && t.fill(),
+          t.stroke(),
+          t.beginPath(),
+          t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
+          e.right && t.fill(),
+          t.stroke(),
+          (t.lineWidth = s / 3),
+          t.beginPath(),
+          t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
+          t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
+          t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
+          t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
+
+          t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
+          t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
+          t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
+          t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
+
+          t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
+          t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
+          t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
+          t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
+          t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
+          t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
+          t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
+          t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
+          t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
+          t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
+          t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
+          t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
+          t.stroke(),
+          t.restore(),
+          (t.globalCompositeOperation = "source-over");
+      }
       }
         drawBikeFrame() {
           const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
@@ -16396,35 +16528,35 @@
                   Math.pow(this.p1.y - this.p2.y, 2)
               ) / 10;
             n = n.toFixed(2);
-            let r = 10;
+            let r = 30;
             this.p2.x < this.p1.x && ((r = -10), (t.textAlign = "right")),
               (t.fillStyle = "#000000"),
               (t.strokeStyle = "#ffffff"),
               (t.font = "bold " + 10 * i + "pt arial"),
               (t.lineWidth = 5 * i),
               t.strokeText(e + "°", s.x + r, s.y + 10),
-              t.strokeText(n + " units", s.x + r, s.y + 30),
+              t.strokeText(n + " units", s.x + r, s.y + 40),
               t.strokeText(
                 "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 50
+                s.y + 70
               ),
               t.strokeText(
                 "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 65
+                s.y + 100
               ),
               t.fillText(e + "°", s.x + r, s.y + 10),
-              t.fillText(n + " units", s.x + r, s.y + 30),
+              t.fillText(n + " units", s.x + r, s.y + 40),
               t.fillText(
                 "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 50
+                s.y + 70
               ),
               t.fillText(
                 "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 65
+                s.y + 100
               );
           }
         }
@@ -16838,7 +16970,7 @@
                     , i = this.game.pixelRatio;
                   let n = Math.sqrt(Math.pow(this.p1.x - this.p2.x, 2) + Math.pow(this.p1.y - this.p2.y, 2)) / 10;
                   n = n.toFixed(2);
-                  let r = 10;
+                  let r = 30;
                   this.p2.x < this.p1.x && (r = -10,
                   t.textAlign = "right"),
                   t.fillStyle = "#000000",
@@ -16846,13 +16978,13 @@
                   t.font = "bold " + 10 * i + "pt arial",
                   t.lineWidth = 5 * i,
                   t.strokeText(e + "°", s.x + r, s.y + 10),
-                  t.strokeText(n + " units", s.x + r, s.y + 30),
-                  t.strokeText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 50),
-                  t.strokeText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 65),
+                  t.strokeText(n + " units", s.x + r, s.y + 40),
+                  t.strokeText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 70),
+                  t.strokeText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 100),
                   t.fillText(e + "°", s.x + r, s.y + 10),
-                  t.fillText(n + " units", s.x + r, s.y + 30),
-                  t.fillText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 50),
-                  t.fillText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 65)
+                  t.fillText(n + " units", s.x + r, s.y + 40),
+                  t.fillText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 70),
+                  t.fillText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 100)
               }
           }
           drawLine(t, e) {
@@ -17185,7 +17317,7 @@
         (Qe.p1 = null),
         (Qe.p2 = null),
         (Qe.active = !1),
-        (Qe.shouldDrawMetadata = !1);
+        (Qe.shouldDrawMetadata = !1); // metadata copy teleport
       const ts = $e;
       class es extends ts {
         constructor(t) {
@@ -18933,7 +19065,7 @@
         }
       }
       Gs.drawData = {
-        canvas: document.createElement("canvas"),
+        canvas: document.createElement("canvas"), // draw metadata copy teleport
         dirty: !0,
         width: 29,
         height: 32,
@@ -18964,8 +19096,11 @@
         }
         hold() {
           this.p2.equ(this.mouse.touch.real);
+          this.shouldDrawMetadata =
+            this.toolHandler.gamepad.isButtonDown("ctrl");
         }
         release() {
+          this.shouldDrawMetadata = !1;
           if (this.p2.sub(this.p1).len() > 40) {
             const t = this.scene.track;
             (this.portal2 = new Xs(this.p2.x, this.p2.y, t)),
@@ -19004,12 +19139,13 @@
               (t.globalAlpha = 1);
           } else if ("desktop" === this.scene.settings.device) {
             const i = this.mouse.touch.real,
-              n = s.realToScreen(i.x, "x"),
-              r = s.realToScreen(i.y, "y");
+                n = s.realToScreen(i.x, "x"),
+                r = s.realToScreen(i.y, "y");
             (t.globalAlpha = 0.8),
-              this.powerup.draw(n, r, e, t),
-              (t.globalAlpha = 1);
+            this.powerup.draw(n, r, e, t),
+            (t.globalAlpha = 1);
           }
+          this.shouldDrawMetadata && this.drawPointData(t, this.p1, this.p2); // Ensures metadata is drawn only when shouldDrawMetadata is true and portal1 is defined
         }
         drawPathToMouse(t) {
           const e = this.p1,
@@ -19023,11 +19159,26 @@
             t.stroke(),
             t.closePath();
         }
+        drawPointData(t) {
+          const s = this.p2.toScreen(this.scene),
+            n = this.game.pixelRatio;
+          let r = 30;
+            (t.textAlign = "left"),
+            (t.fillStyle = "#000000"),
+            (t.strokeStyle = "#ffffff"),
+            (t.font = "bold " + 10 * n + "pt arial"),
+            (t.lineWidth = 5 * n),
+            t.strokeText("p1: (" + this.p1.x + "," + this.p1.y + ")", s.x + r, s.y),
+            t.strokeText("p2: (" + this.p2.x + "," + this.p2.y + ")", s.x + r, s.y + 30),
+            t.fillText("p1: (" + this.p1.x + "," + this.p1.y + ")", s.x + r, s.y),
+            t.fillText("p2: (" + this.p2.x + "," + this.p2.y + ")", s.x + r, s.y + 30);
+        }
       }
       const $s = Js.prototype;
       ($s.powerup = null),
         ($s.portal1 = null),
         ($s.name = "teleport"),
+        ($s.shouldDrawMetadata = !1),
         ($s.p1 = null),
         ($s.p2 = null),
         ($s.active = !1);
@@ -22180,6 +22331,7 @@
           crouch: { default: !1 },
           frontBrake: { default: !1 },
           bikeData: { default: !1 },
+          inputDisplay: { default: !1 },
           accurateEraser: { default: !1 },
           keepDeadRiders: {
             default: !1,
@@ -22583,6 +22735,12 @@
             title: "Bike Data",
             description:
               "Shows the metadata about the rider, including head angle, position, and velocity.",
+          },
+          {
+            key: "inputDisplay",
+            title: "Input Display",
+            description:
+              "Shows the keys that are pressed.",
           },
           {
             type: "folder",

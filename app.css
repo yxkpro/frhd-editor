@@ -1235,6 +1235,15 @@ html.fullscreen #main_page {
     background-size: 512px 164px
 }
 
+.editorgui_icons_bottom {
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url(assets/images/gui/editor_gui.png);
+    background-size: 512px 164px
+}
+
 .editorgui_icons-circle {
     width: 44px;
     height: 44px;
@@ -1680,6 +1689,8 @@ html.fullscreen #main_page {
 }
 
 .bottomMenu {
+    height: 45px;
+    vertical-align: top;
     width: 100%;
     border-top: 1px solid #000;
     position: absolute;

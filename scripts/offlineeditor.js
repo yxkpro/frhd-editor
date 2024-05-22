@@ -474,7 +474,7 @@
                     "div",
                     { className: "bottomToolOptions-toolTitle" },
                     n.createElement("span", {
-                      className: "editorgui_icons editorgui_icons-icon_brush",
+                      className: "editorgui_icons_bottom editorgui_icons-icon_brush",
                     }),
                     n.createElement(
                       "span",
@@ -557,7 +557,7 @@
               }, n.createElement("div", {
                   className: "bottomToolOptions-toolTitle"
               }, n.createElement("span", {
-                  className: "editorgui_icons editorgui_icons-circle"
+                  className: "editorgui_icons_bottom editorgui_icons-circle"
               }), n.createElement("span", {
                   className: "toolName"
               }, "CIRCLE : ", n.createElement("span", {
@@ -631,7 +631,7 @@
                   }, n.createElement("div", {
                       className: "bottomToolOptions-toolTitle"
                   }, n.createElement("span", {
-                      className: "editorgui_icons editorgui_icons-icon_camera"
+                      className: "editorgui_icons_bottom editorgui_icons-icon_camera"
                   }), n.createElement("span", {
                       className: "toolName"
                   }, "Camera : ", n.createElement("span", {},
@@ -675,7 +675,7 @@
                     }, n.createElement("div", {
                         className: "bottomToolOptions-toolTitle"
                     }, n.createElement("span", {
-                        className: "editorgui_icons editorgui_icons-icon_select"
+                        className: "editorgui_icons_bottom editorgui_icons-icon_select"
                     }), n.createElement("span", {
                         className: "toolName"
                     }, "Select : ", n.createElement("span", {},
@@ -744,10 +744,10 @@
             render: function () {
               var e =
                   "bottomMenu-button bottomMenu-button-right bottomMenu-button_cameralock",
-                t = "editorgui_icons editorgui_icons-icon_camera_lock_off icon";
+                t = "editorgui_icons_bottom editorgui_icons-icon_camera_lock_off icon";
               this.props.active &&
                 (t =
-                  "editorgui_icons editorgui_icons-icon_camera_lock_on icon");
+                  "editorgui_icons_bottom editorgui_icons-icon_camera_lock_on icon");
               var r = this.props.active ? "on" : "off";
               return n.createElement(
                 "div",
@@ -780,7 +780,7 @@
                   "div",
                   { className: "bottomToolOptions-toolTitle" },
                   n.createElement("span", {
-                    className: "editorgui_icons editorgui_icons-icon_curve",
+                    className: "editorgui_icons_bottom editorgui_icons-icon_curve",
                   }),
                   n.createElement(
                     "span",
@@ -830,7 +830,7 @@
                     "div",
                     { className: "bottomToolOptions-toolTitle" },
                     n.createElement("span", {
-                      className: "editorgui_icons editorgui_icons-icon_eraser",
+                      className: "editorgui_icons_bottom editorgui_icons-icon_eraser",
                     }),
                     n.createElement("span", { className: "toolName" }, "ERASER")
                   ),
@@ -917,7 +917,7 @@
           },
               render: function() {
                   var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_grid ",
-                      t = "editorgui_icons editorgui_icons-icon_grid_off",
+                      t = "editorgui_icons_bottom editorgui_icons-icon_grid_off",
                       a = this.props.active;
                   a && (e += " bottomMenu-button-active",
                   t = "editorgui_icons editorgui_icons-icon_grid_on");
@@ -950,7 +950,7 @@
                   "div",
                   { className: "bottomToolOptions-toolTitle" },
                   n.createElement("span", {
-                    className: "editorgui_icons editorgui_icons-icon_powerups",
+                    className: "editorgui_icons_bottom editorgui_icons-icon_powerups",
                   }),
                   n.createElement(
                     "span",
@@ -986,7 +986,7 @@
                   "div",
                   { className: "bottomToolOptions-toolTitle" },
                   n.createElement("span", {
-                    className: "editorgui_icons editorgui_icons-icon_line",
+                    className: "editorgui_icons_bottom editorgui_icons-icon_line",
                   }),
                   n.createElement(
                     "span",
@@ -1023,7 +1023,7 @@
               return (
                 this.props.vehicle &&
                   ((r = this.props.vehicle.toLowerCase()),
-                  (t = "editorgui_icons editorgui_icons-icon_" + r)),
+                  (t = "editorgui_icons_bottom editorgui_icons-icon_" + r)),
                 n.createElement(
                   "div",
                   { className: e, onClick: this.toggleVehicle },
@@ -1072,7 +1072,7 @@
                     { className: "bottomToolOptions-toolTitle" },
                     n.createElement("span", {
                       className:
-                        "editorgui_icons editorgui_icons-icon_vehicle_swap",
+                        "editorgui_icons_bottom editorgui_icons-icon_vehicle_swap",
                     }),
                     n.createElement(
                       "span",
