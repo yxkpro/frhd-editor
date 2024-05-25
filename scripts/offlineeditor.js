@@ -769,10 +769,23 @@
     8: [
       function (e, t) {
         var n = e("react"),
+          z = e("react-slider"),
           r = n.createClass({
             displayName: "CurvedLineBottomToolOptions",
+            getInitialState: function() {
+              return { SegmentLength: 0.5 };
+            },
+            handleLengthChange: function(length) {
+              this.setState({ curveSegmentLength: length });
+              GameSettings.curveSegmentLength = length;
+            },
             render: function () {
-              var e = this.props.options;
+              var e = this.props.options
+              , s = 0
+              , l = 0
+              , c = 100
+              , u = 1
+              , d = 0;
               return n.createElement(
                 "div",
                 { className: "bottomToolOptions bottomToolOptions_curvedline" },
@@ -792,13 +805,32 @@
                       e.lineType
                     )
                   )
-                )
+                ), 
+                n.createElement("div", {
+                  className: "horizontal-slider-container"
+              }, n.createElement("span", {
+                  className: "horizontal-slider-label"
+              }, "Segment Ratio"), n.createElement(z, {
+                  withBars: !0,
+                  className: "horizontal-slider Circle-slider_SegmentLength",
+                  onChange: this.handleLengthChange,
+                  defaultValue: GameSettings.curveSegmentLength || 1,
+                  max: 10,
+                  min: 1,
+                  step: 1,
+                  value: GameSettings.curveSegmentLength || this.state.curveSegmentLength
+              })), n.createElement("input", {
+                  type: "text",
+                  className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
+                  value: (0.1 * GameSettings.curveSegmentLength).toFixed(1),
+                  readOnly: true
+              }),
               );
             },
           });
         t.exports = r;
       },
-      { react: 230 },
+      { react: 230, "react-slider": 75},
     ],
     9: [
       function (e, t) {
@@ -2404,7 +2436,7 @@
                                 className: "settingTitle"
                             }, n.createElement("span", {
                                 className: "name"
-                            }, "Right Click Camera Move")), n.createElement("td", {
+                            }, "Shift Key to Toggle Snap")), n.createElement("td", {
                                 className: "settingInput"
                             }, n.createElement("input", {
                                 type: "checkbox",
@@ -2510,10 +2542,35 @@
             importTrack: function () {
               var e = this.refs.code.getDOMNode(),
                 t = e.getAttribute("data-paste-code"),
-                n = e.value;
+                n = e.value,
+                trackName = e.value,
+                url = `assets/tracks/${trackName}.txt`;
+
+                if (!e.value.includes('#') && !t) {
+  
+                fetch(url)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('No track ID found, loading as code.');
+                    }
+                    return response.text();
+                  })
+                  .then(data => {
+                    this.processTrackData(data);
+                  })
+                  .catch(error => {
+                    console.error(error);
+                  });
+                }
+                
               t && (n = t),
                 "undefined" != typeof GameManager &&
                   GameManager.command("import", n, !0);
+            },
+            processTrackData(data) {
+              if ("undefined" != typeof GameManager) {
+                GameManager.command("import", data, true);
+              }
             },
             onDragLeave: function (e) {
               var t = e.target;

@@ -61,6 +61,7 @@ var GameSettings = {
     "speed": 0,
     "gravityX": 0,
     "gravityY": 0.3,
+    "curveSegmentLength": 4,
     "raceColors": ["rgba(57,185,117,1)", "rgba(0,152,189,1)", "rgba(151,95,162,1)", "rgba(253,85,91,1)", "rgba(245,126,64,1)", "rgba(247,212,62,1)", "rgba(170,221,114,1)", "rgba(72,217,207,1)", "rgba(0,124,212,1)", "rgba(226,108,216,1)"],
     "toolHandler": {
         "snap": false,
@@ -130,7 +131,6 @@ var GameSettings = {
         "zoom_decrease": 189,
         "zoom_100": 48,
         "change_vehicle": 86,
-        "fullscreen": 65,
         "exit_fullscreen": 27,
         "settings": 220
     },
@@ -172,8 +172,7 @@ var GameSettings = {
         "zoom_100": 48,
         "bikesettings": 191,
         "select" : 68,
-        "circle" : 84,
-        "fullscreen": 65
+        "circle" : 84
     },
     "keysToRecord": ["up", "down", "left", "right", "enter", "backspace", "z"],
     "user": {

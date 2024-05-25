@@ -9016,7 +9016,7 @@
           o = s.n(r)()(n());
         o.push([
           t.id,
-          ".mod-menu-container {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    z-index: 11;\r\n    opacity: 1;\r\n    background-color: white;\r\n    border: 1px solid black;\r\n    min-height: 250px;\r\n\r\n    user-select: none; /* supported by Chrome and Opera */\r\n    -webkit-user-select: none; /* Safari */\r\n    -khtml-user-select: none; /* Konqueror HTML */\r\n    -moz-user-select: none; /* Firefox */\r\n    -ms-user-select: none; /* Internet Explorer/Edge */\r\n}\r\n\r\n.mod-v-seperator {\r\n    background-color: black;\r\n    margin-top: 6px;\r\n    margin-bottom: 6px;\r\n    width: 1px;\r\n}\r\n\r\n.mod-list-container {\r\n    display: grid;\r\n    grid-template-columns: auto auto auto;\r\n}\r\n\r\n.mod-section-title {\r\n    font-size: 13pt;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    padding-bottom: 10px;\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n}\r\n\r\n.mod-menu {\r\n    padding-top: 14px;\r\n    padding-bottom: 14px;\r\n}\r\n\r\n.mod-menu-option {\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n    display: flex; font-size: 13px; align-items: center;\r\n    font-family: roboto_medium, Arial, Helvetica, sans-serif;\r\n    color: #1B5264;\r\n}\r\n.mod-menu-option:hover, .mod-menu-option.opened {\r\n    background-color: rgb(236, 236, 236);\r\n}\r\n\r\n.mod-clickable:hover {\r\n    cursor: pointer;\r\n}\r\n.mod-clickable.mod-disabled:hover {\r\n    cursor: auto;\r\n    background-color: unset;\r\n}\r\n\r\n.mod-description-container {\r\n    max-width: 200px;\r\n    min-width: 200px;\r\n    padding: 14px;\r\n}\r\n\r\n.mod-setting-description {\r\n    font-size: 13px;\r\n}\r\n\r\n.mod-title {\r\n    text-align: center;\r\n    display: flex;\r\n    flex-direction: column;\r\n    height: 100%;\r\n    cursor: pointer;\r\n}\r\n\r\n.invisible {\r\n    display: none;\r\n}\r\n\r\n.mod-menu-container input {\r\n    width: 13px; margin-right: 4px; height: auto;\r\n}\r\n\r\n\r\n\r\n.mod-icon {\r\n    position: fixed;\r\n    background-size: 32px 32px;\r\n    margin: 7px;\r\n    z-index: 10;\r\n    width: 32px;\r\n    height: 32px;\r\n    bottom: 0;\r\n    left: 0;\r\n}\r\n.mod-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.mod-update-notification {\r\n    width: 100%;\r\n    height: 50px;\r\n    background-color: rgb(43, 184, 43);\r\n    color: white;\r\n    border: 2px solid rgb(3, 141, 3);\r\n    position: fixed;\r\n    top: 0;\r\n    z-index: 1002;\r\n    text-align: center;\r\n    line-height: 46px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mod-dismiss-button {\r\n    height: 30px;\r\n    background-color: rgb(39, 206, 53);\r\n    border: none;\r\n    border-radius: 4px;\r\n    color: white;\r\n}\r\n.mod-dismiss-button:hover {\r\n    background-color: rgb(20, 167, 32);\r\n}\r\n\r\n\r\n\r\n\r\n\r\n.shade-indicator {\r\n    width: 6px;\r\n    height: 6px;\r\n    border: 2px solid black;\r\n    box-sizing: unset;\r\n    border-radius: 6px;\r\n    pointer-events: none;\r\n    \r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n  }\r\n  \r\n.shade-picker-container {\r\n    position: relative;\r\n}\r\n.shade-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.hue-picker-container {\r\n    position: relative;\r\n    margin-left: 10px;\r\n}\r\n.hue-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n.hue-indicator {\r\n    position: absolute;\r\n    box-sizing: unset;\r\n    width: 28px;\r\n    height: 6px;\r\n    left: -4px;\r\n    border: 1px solid black;\r\n    border-left: none;\r\n    border-right: none;\r\n    pointer-events: none;\r\n}\r\n\r\n.color-picker-container {\r\n    padding: 10px;\r\n    width: fit-content;\r\n}\r\n\r\n.color-picker-container .graphic-container {\r\n    display: flex;\r\n    width: fit-content;\r\n    margin-bottom: 10px;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n}\r\n\r\n.textbox-container {\r\n    display: flex;\r\n}\r\n\r\n.color-box {\r\n    flex: 1;\r\n    width: 0;\r\n    padding: 2px;\r\n    margin-left: 10px;\r\n    font-size: 13px;\r\n    text-align: center;\r\n}\r\n\r\n.red-box {\r\n    margin-left: 0;\r\n    border-bottom: 4px solid red;\r\n}\r\n\r\n.green-box {\r\n    border-bottom: 4px solid green;\r\n}\r\n\r\n.blue-box {\r\n    border-bottom: 4px solid blue;\r\n}",
+          ".mod-menu-container {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    z-index: 11;\r\n    opacity: 1;\r\n    background-color: white;\r\n    border: 1px solid black;\r\n    min-height: 250px;\r\n\r\n    user-select: none; /* supported by Chrome and Opera */\r\n    -webkit-user-select: none; /* Safari */\r\n    -khtml-user-select: none; /* Konqueror HTML */\r\n    -moz-user-select: none; /* Firefox */\r\n    -ms-user-select: none; /* Internet Explorer/Edge */\r\n}\r\n\r\n.mod-v-seperator {\r\n    background-color: black;\r\n    margin-top: 6px;\r\n    margin-bottom: 6px;\r\n    width: 1px;\r\n}\r\n\r\n.mod-list-container {\r\n    display: grid;\r\n    grid-template-columns: auto auto auto;\r\n}\r\n\r\n.mod-section-title {\r\n    font-size: 13pt;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    padding-bottom: 10px;\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n}\r\n\r\n.mod-menu {\r\n    padding-top: 14px;\r\n    padding-bottom: 14px;\r\n}\r\n\r\n.mod-menu-option {\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n    display: flex; font-size: 13px; align-items: center;\r\n    font-family: roboto_medium, Arial, Helvetica, sans-serif;\r\n    color: #1B5264;\r\n}\r\n.mod-menu-option:hover, .mod-menu-option.opened {\r\n    background-color: rgb(236, 236, 236);\r\n}\r\n\r\n.mod-clickable:hover {\r\n    cursor: pointer;\r\n}\r\n.mod-clickable.mod-disabled:hover {\r\n    cursor: auto;\r\n    background-color: unset;\r\n}\r\n\r\n.mod-description-container {\r\n    max-width: 200px;\r\n    min-width: 200px;\r\n    padding: 14px;\r\n}\r\n\r\n.mod-setting-description {\r\n    font-size: 13px;\r\n}\r\n\r\n.mod-title {\r\n    text-align: center;\r\n    display: flex;\r\n    flex-direction: column;\r\n    height: 100%;\r\n    cursor: pointer;\r\n}\r\n\r\n.invisible {\r\n    display: none;\r\n}\r\n\r\n.mod-menu-container input {\r\n    width: 13px; margin-right: 4px; height: auto;\r\n}\r\n\r\n\r\n\r\n.mod-icon {\r\n    position: fixed;\r\n    background-size: 32px 32px;\r\n    margin: 6px 7px;\r\n    z-index: 10;\r\n    width: 32px;\r\n    height: 32px;\r\n    bottom: 0;\r\n    left: 0;\r\n}\r\n.mod-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.mod-update-notification {\r\n    width: 100%;\r\n    height: 50px;\r\n    background-color: rgb(43, 184, 43);\r\n    color: white;\r\n    border: 2px solid rgb(3, 141, 3);\r\n    position: fixed;\r\n    top: 0;\r\n    z-index: 1002;\r\n    text-align: center;\r\n    line-height: 46px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mod-dismiss-button {\r\n    height: 30px;\r\n    background-color: rgb(39, 206, 53);\r\n    border: none;\r\n    border-radius: 4px;\r\n    color: white;\r\n}\r\n.mod-dismiss-button:hover {\r\n    background-color: rgb(20, 167, 32);\r\n}\r\n\r\n\r\n\r\n\r\n\r\n.shade-indicator {\r\n    width: 6px;\r\n    height: 6px;\r\n    border: 2px solid black;\r\n    box-sizing: unset;\r\n    border-radius: 6px;\r\n    pointer-events: none;\r\n    \r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n  }\r\n  \r\n.shade-picker-container {\r\n    position: relative;\r\n}\r\n.shade-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.hue-picker-container {\r\n    position: relative;\r\n    margin-left: 10px;\r\n}\r\n.hue-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n.hue-indicator {\r\n    position: absolute;\r\n    box-sizing: unset;\r\n    width: 28px;\r\n    height: 6px;\r\n    left: -4px;\r\n    border: 1px solid black;\r\n    border-left: none;\r\n    border-right: none;\r\n    pointer-events: none;\r\n}\r\n\r\n.color-picker-container {\r\n    padding: 10px;\r\n    width: fit-content;\r\n}\r\n\r\n.color-picker-container .graphic-container {\r\n    display: flex;\r\n    width: fit-content;\r\n    margin-bottom: 10px;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n}\r\n\r\n.textbox-container {\r\n    display: flex;\r\n}\r\n\r\n.color-box {\r\n    flex: 1;\r\n    width: 0;\r\n    padding: 2px;\r\n    margin-left: 10px;\r\n    font-size: 13px;\r\n    text-align: center;\r\n}\r\n\r\n.red-box {\r\n    margin-left: 0;\r\n    border-bottom: 4px solid red;\r\n}\r\n\r\n.green-box {\r\n    border-bottom: 4px solid green;\r\n}\r\n\r\n.blue-box {\r\n    border-bottom: 4px solid blue;\r\n}",
           "",
           {
             version: 3,
@@ -9972,11 +9972,12 @@
             u = r.x,
             d = r.y,
             p = [],
-            f = 0.25,
+            f = 0.1 * Math.exp(GameSettings.curveSegmentLength),
             g = 10,
             m = 1e-30,
             v = 0,
             y = 0.01;
+            console.log('curveSegmentLength:', f.toFixed(1));
           return (
             (function (t, e, s, i, n, r) {
               p.push(t, e), o(t, e, s, i, n, r, 0), p.push(n, r);
@@ -10406,6 +10407,7 @@
           press() {}
           hold() {}
           release() {}
+          /*
           update() {
             const t = this.mouse,
               e = t.touch,
@@ -10416,6 +10418,22 @@
             n.rightClickMove && (r = s.old.down),
               r
                 ? (e.old.down || n.rightClickMove) && this.moveCamera()
+                : (e.press && this.press(), e.old.down && this.hold()),
+              e.release && this.release(),
+              t.mousewheel &&
+                !i.isButtonDown("shift") &&
+                this.mousewheel(t.mousewheel);
+          }*/
+          update() {
+            const t = this.mouse,
+              e = t.touch,
+              s = t.secondaryTouch,
+              i = this.toolHandler.gamepad,
+              n = this.toolHandler.options;
+            let r = (s.old.down || i.isButtonDown("shift")) && !i.isButtonDown("ctrl");
+            n.rightClickMove && (r = s.old.down),
+            r
+                ? (s.old.down || e.old.down) && this.moveCamera()
                 : (e.press && this.press(), e.old.down && this.hold()),
               e.release && this.release(),
               t.mousewheel &&
@@ -13003,10 +13021,11 @@
                 e = this.masses;
               for (let e = t.length - 1; e >= 0; e--) t[e].update();
               for (let t = e.length - 1; t >= 0; t--) e[t].update();
+              if (this.scene.game.mod.getVar("slowmo")) {this.slow = !0}
               if (
-                (this.rearWheel.contact &&
-                  this.frontWheel.contact &&
-                  (this.slow = !1),
+              ((this.rearWheel.contact &&
+                  this.frontWheel.contact) &&
+                  (this.slow = !1 || this.scene.game.mod.getVar("slowmo")),
                 !this.slow)
               ) {
                 this.crashed || this.control();
@@ -13040,10 +13059,13 @@
               s = t.isButtonDown("down"),
               i = t.isButtonDown("left"),
               n = t.isButtonDown("right"),
-              x = t.isButtonDown("x") && (this.scene.game.mod.getVar("crouch") || this.scene.game.mod.getVar("propeller")),
+              x = t.isButtonDown("x") && (this.scene.game.mod.getVar("crouch") || this.scene.game.mod.getVar("propeller") || this.scene.game.mod.getVar("slowmo")),
               r = t.isButtonDown("z"),
               o = e ? 1 : 0,
               a = this.rearWheel;
+
+              if (this.scene.game.mod.getVar("slowmo")) {
+              this.slow = !x}
   
               if (this.scene.game.mod.getVar("propeller")) {
                 let angle = this.frontWheel.pos.sub(this.rearWheel.pos);
@@ -14275,12 +14297,13 @@
               e = this.masses;
             for (let e = t.length - 1; e >= 0; e--) t[e].update();
             for (let t = e.length - 1; t >= 0; t--) e[t].update();
-            if (
-              (this.rearWheel.contact &&
-                this.frontWheel.contact &&
-                (this.slow = !1),
-              !this.slow)
-            ) {
+            if (this.scene.game.mod.getVar("slowmo")) {this.slow = !0}
+              if (
+              ((this.rearWheel.contact &&
+                  this.frontWheel.contact) &&
+                  (this.slow = !1 || this.scene.game.mod.getVar("slowmo")),
+                !this.slow)
+              ) {
               this.crashed || this.control();
               for (let e = t.length - 1; e >= 0; e--) t[e].update();
               for (let t = e.length - 1; t >= 0; t--) e[t].update();
@@ -15998,7 +16021,7 @@
             e = this.options.snap,
             s = this.options.snapLocked;
           let i = t.isButtonDown("alt");
-          this.options.rightClickMove && (i = t.isButtonDown("shift")),
+          this.options.rightClickMove && (i = t.isButtonDown("shift")), // right click camera move changes line snap
             i && !e
               ? this.toggleQuickSnap()
               : i || !e || s || this.toggleQuickSnap(),
@@ -16238,8 +16261,11 @@
             (this.p1 = new t.Z(0, 0)),
             (this.p2 = new t.Z(0, 0)),
             (this.midpoint = new t.Z(0, 0)),
-            (this.active = !1),
-            (this.options = {});
+            (this.active = !1);
+            const s = e.scene.settings.brush;
+            (this.options = {
+              SegmentLength: s.SegmentLength
+            });
         }
         getOptions() {
           const t = this.toolHandler,
@@ -22329,6 +22355,7 @@
           mini: { default: !1 },
           propeller: { default: !1 },
           crouch: { default: !1 },
+          slowmo: { default: !1 },
           frontBrake: { default: !1 },
           bikeData: { default: !1 },
           inputDisplay: { default: !1 },
@@ -22723,6 +22750,12 @@
             title: "Crouch",
             description:
               "Press 'x' to crouch.",
+          },
+          {
+            key: "slowmo",
+            title: "Slow-mo",
+            description:
+              "Adds a propeller to the bike, press 'x' to fly.",
           },
           {
             key: "frontBrake",
