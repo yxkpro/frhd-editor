@@ -9977,7 +9977,6 @@
             m = 1e-30,
             v = 0,
             y = 0.01;
-            console.log('curveSegmentLength:', f.toFixed(1));
           return (
             (function (t, e, s, i, n, r) {
               p.push(t, e), o(t, e, s, i, n, r, 0), p.push(n, r);
@@ -22755,7 +22754,7 @@
             key: "slowmo",
             title: "Slow-mo",
             description:
-              "Adds a propeller to the bike, press 'x' to fly.",
+              "Toggles slow-motion mode.",
           },
           {
             key: "frontBrake",
