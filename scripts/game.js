@@ -21282,6 +21282,10 @@
               break;
             case "fullscreen":
               this.toggleFullscreen(), this.stateChanged();
+              break;
+            case "import":
+              this.command("dialog", "import");
+              break;
           }
         }
         toggleFullscreen() {
@@ -21486,7 +21490,43 @@
                 this.command("dialog", !1);
               break;
             }
+            case "add": {
+              let e = t[0];
+                if (e.length <= 0) {
+                    e = false;
+                }
+                if (e) {
+                    const exportedCode = this.track.getCode();
+                    const combinedCode = this.combineTrackCodes(e, exportedCode);
+                    this.importCode = combinedCode;
+                    this.clear = t[1]; // does this need to be false instead?
+                } else {
+                    this.importCode = e;
+                    this.clear = t[1];
+                }
+                this.command("dialog", false);
+                break;
+            }
           }
+        }
+        combineTrackCodes(e, exportedCode) {
+        let [oldPhysics, oldScenery, oldPowerups] = exportedCode.split('#');
+        let [addPhysics, addScenery, addPowerups] = e.split('#');
+
+        let physics = [];
+        let scenery = [];
+        let powerups = [];
+
+        oldPhysics && physics.push(oldPhysics);
+        addPhysics && physics.push(addPhysics);
+
+        oldScenery && scenery.push(oldScenery);
+        addScenery && scenery.push(addScenery);
+
+        oldPowerups && powerups.push(oldPowerups);
+        addPowerups && powerups.push(addPowerups);
+
+        return [physics.join(','), scenery.join(','), powerups.join(',')].join('#');
         }
         listen() {
           this.playerManager.firstPlayer.getGamepad().listen();
@@ -23519,15 +23559,15 @@ function load() {
       }
 
       keydown(event) {
-          if (event.key.toLowerCase() === 'r' && this.selected.length > 0) {
+          if (event.key.toLowerCase() === 'r') {
               const degrees = event.shiftKey ? -1 * GameSettings.rotateFactor : GameSettings.rotateFactor;
               this.rotateSelected(degrees);
           }
-          if (event.key.toLowerCase() === 's' && this.selected.length > 0) {
+          if (event.key.toLowerCase() === 's') {
               const scale = event.shiftKey ? 1 / GameSettings.scaleFactor : GameSettings.scaleFactor;
               this.scaleSelected(scale);
           }
-          if (event.key.toLowerCase() === 'f' && this.selected.length > 0) {
+          if (event.key.toLowerCase() === 'f') {
               const flipVertically = event.shiftKey;
               this.flipSelected(flipVertically);
           }

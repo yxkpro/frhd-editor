@@ -2594,9 +2594,69 @@
                 "undefined" != typeof GameManager &&
                   GameManager.command("import", n, !0);
             },
+            addTrack: function () {
+              var e = this.refs.code.getDOMNode(),
+                t = e.getAttribute("data-paste-code"),
+                n = e.value,
+                trackName = e.value.replace(/(\.\.\/|\/)/g, ''),
+                url = `assets/tracks/${trackName}.txt`;
+
+                if (e.value.includes('$')) {
+                  var commands = e.value.split('$').slice(1);
+                  commands.forEach(command => {
+                    var parts = command.trim().split(' ');
+                    var setting = parts[0];
+                    var value = parts[1];
+                    
+                    if (setting && value) {
+                      var parsedValue = parseFloat(value);
+                      
+                      if (!isNaN(parsedValue)) {
+                        GameSettings[setting] = parsedValue;
+                      } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
+                        GameSettings[setting] = value.toLowerCase() === 'true';
+                      } else {
+                        GameSettings[setting] = value;
+                      }
+                      console.log(`GameSettings.${setting} set to`, value);
+    
+                    }
+                  });
+                  return;
+                }
+
+                if (!e.value.includes('$') && !e.value.includes('#') && !t) {
+
+                  GameSettings.defaultTrack = `${trackName}.txt`;
+  
+                fetch(url)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('no track ID found, loading as track code.');
+                    }
+                    return response.text();
+                  })
+                  .then(data => {
+                    this.processAddTrackData(data);
+                    console.log("track loaded:", trackName);
+                  })
+                  .catch(error => {
+                    console.error(error);
+                  });
+                }
+                
+              t && (n = t),
+                "undefined" != typeof GameManager &&
+                  GameManager.command("add", n, !0);
+            },
             processTrackData(data) {
               if ("undefined" != typeof GameManager) {
                 GameManager.command("import", data, true);
+              }
+            },
+            processAddTrackData(data) {
+              if ("undefined" != typeof GameManager) {
+                GameManager.command("add", data, true);
               }
             },
             onDragLeave: function (e) {
@@ -2752,6 +2812,15 @@
                 n.createElement(
                   "div",
                   { className: "editorDialog-bottomBar clearfix" },
+                  n.createElement(
+                    "button",
+                    {
+                      className:
+                        "primary-button primary-button-blue float-right margin-0-5",
+                      onClick: this.addTrack,
+                    },
+                    "Add"
+                  ),
                   n.createElement(
                     "button",
                     {
