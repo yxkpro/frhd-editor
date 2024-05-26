@@ -9977,6 +9977,7 @@
             m = 1e-30,
             v = 0,
             y = 0.01;
+            console.log(f);
           return (
             (function (t, e, s, i, n, r) {
               p.push(t, e), o(t, e, s, i, n, r, 0), p.push(n, r);
@@ -12493,7 +12494,7 @@
               (this.scene = e._scene),
               (this.gamepad = e._gamepad),
               (this.settings = e._settings),
-              (this.gravity = new t.Z(0, 0.3)), // can change to 0.15 for moon gravity
+              (this.gravity = new t.Z((GameSettings.wind * 0.3), (GameSettings.gravity * 0.3))), // can change to 0.15 for moon gravity
               (this.complete = !1),
               (this.alive = !0),
               (this.crashed = !1),
@@ -12859,7 +12860,7 @@
           }
           createMasses(e, s) {
             this.masses = [];
-            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
             const i = new A(),
               n = new X(new t.Z(e.x + 21 * mini, e.y + 3), this),
               r = new X(new t.Z(e.x + -21 * mini, e.y + 3), this);
@@ -12879,7 +12880,7 @@
           }
           createSprings() {
             this.springs = [];
-            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
             const t = new N(this.head, this.rearWheel, this),
               e = new N(this.rearWheel, this.frontWheel, this),
               s = new N(this.frontWheel, this.head, this);
@@ -12901,7 +12902,7 @@
               (this.frontSpring = s);
           }
           updateMasses() {
-            const mini = 0.7;
+            const mini = GameSettings.mini;
             if (this.scene.game.mod.getVar("mini")) {
             for (let mass of this.masses) {
               mass.radius = mass.radius * mini;
@@ -12912,7 +12913,7 @@
               }}
           }
           updateSprings() {
-            const mini = 0.7;
+            const mini = GameSettings.mini;
             if (this.scene.game.mod.getVar("mini")) {
             for (let spring of this.springs) {
               spring.lrest = spring.lrest * mini;
@@ -13052,7 +13053,7 @@
               (this.frontSpring.leff = t);
           }
           control() {
-            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
             const t = this.gamepad,
               e = t.isButtonDown("up"),
               s = t.isButtonDown("down"),
@@ -13086,7 +13087,7 @@
                   this.rearWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
               }
   
-            (a.motor += ((o - a.motor) / 10) * mini),
+            (a.motor += ((Math.sqrt(GameSettings.accel) * o - a.motor) / 10) * mini),
               r && !this.swapped && (this.swap(), (this.swapped = !0)),
               r || (this.swapped = !1),
               e && (this.pedala += this.rearWheel.speed / 5),
@@ -13226,7 +13227,7 @@
           }
           }
         drawBikeFrame() {
-            const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+            const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
             const e = this.scene,
               s = e.game.mod.getVar("crBmx"),
               i = e.game.mod.getVar("crHead"),
@@ -14137,7 +14138,7 @@
         }
         createMasses(e, s) {
           this.masses = [];
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+          const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
           const i = new A(),
             n = new X(new t.Z(e.x + 23 * mini, e.y), this),
             r = new X(new t.Z(e.x + -23 * mini, e.y), this);
@@ -14159,7 +14160,7 @@
         }
         createSprings() {
           this.springs = [];
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+          const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
           const t = new N(this.head, this.rearWheel, this),
             e = new N(this.rearWheel, this.frontWheel, this),
             s = new N(this.frontWheel, this.head, this);
@@ -14183,7 +14184,7 @@
             (this.frontSpring = s);
         }
         updateMasses() {
-          const mini = 0.7;
+          const mini = GameSettings.mini;
           if (this.scene.game.mod.getVar("mini")) {
           for (let mass of this.masses) {
             mass.radius = mass.radius * mini;
@@ -14194,7 +14195,7 @@
             }}
         }
         updateSprings() {
-          const mini = 0.7;
+          const mini = GameSettings.mini;
           if (this.scene.game.mod.getVar("mini")) {
           for (let spring of this.springs) {
             spring.lrest = spring.lrest * mini;
@@ -14337,7 +14338,7 @@
             (this.frontSpring.leff = t);
         }
         control() {
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+          const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
           const t = this.gamepad,
             e = t.isButtonDown("up"),
             s = t.isButtonDown("down"),
@@ -14368,7 +14369,7 @@
                 this.rearWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
             }
 
-          (a.motor += ((o - a.motor) / 10) * mini),
+          (a.motor += ((Math.sqrt(GameSettings.accel) * o - a.motor) / 10) * mini),
             r && !this.swapped && (this.swap(), (this.swapped = !0)),
             r || (this.swapped = !1),
             e && (this.pedala += this.rearWheel.speed / 5),
@@ -14502,7 +14503,7 @@
       }
       }
         drawBikeFrame() {
-          const mini = this.scene.game.mod.getVar("mini") ? 0.7 : 1;
+          const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
           const e = this.scene,
             s = e.game.mod.getVar("crMtb"),
             i = e.game.mod.getVar("crHead"),
@@ -17342,7 +17343,7 @@
         (Qe.p1 = null),
         (Qe.p2 = null),
         (Qe.active = !1),
-        (Qe.shouldDrawMetadata = !1); // metadata copy teleport
+        (Qe.shouldDrawMetadata = !1);
       const ts = $e;
       class es extends ts {
         constructor(t) {
@@ -19090,7 +19091,7 @@
         }
       }
       Gs.drawData = {
-        canvas: document.createElement("canvas"), // draw metadata copy teleport
+        canvas: document.createElement("canvas"),
         dirty: !0,
         width: 29,
         height: 32,
@@ -19193,10 +19194,10 @@
             (t.strokeStyle = "#ffffff"),
             (t.font = "bold " + 10 * n + "pt arial"),
             (t.lineWidth = 5 * n),
-            t.strokeText("p1: (" + this.p1.x + "," + this.p1.y + ")", s.x + r, s.y),
-            t.strokeText("p2: (" + this.p2.x + "," + this.p2.y + ")", s.x + r, s.y + 30),
-            t.fillText("p1: (" + this.p1.x + "," + this.p1.y + ")", s.x + r, s.y),
-            t.fillText("p2: (" + this.p2.x + "," + this.p2.y + ")", s.x + r, s.y + 30);
+            t.strokeText("p1: (" + this.p1.x + ", " + this.p1.y + ")", s.x + r, s.y),
+            t.strokeText("p2: (" + this.p2.x + ", " + this.p2.y + ")", s.x + r, s.y + 30),
+            t.fillText("p1: (" + this.p1.x + ", " + this.p1.y + ")", s.x + r, s.y),
+            t.fillText("p2: (" + this.p2.x + ", " + this.p2.y + ")", s.x + r, s.y + 30);
         }
       }
       const $s = Js.prototype;
@@ -22727,6 +22728,12 @@
               "Collisions with the head mass are disabled.",
           },
           {
+            key: "slowmo",
+            title: "Slow-mode",
+            description:
+              "Toggles slow-motion mode.",
+          },
+          {
             key: "invisibleRider",
             title: "Invisible Rider",
             description:
@@ -22749,12 +22756,6 @@
             title: "Crouch",
             description:
               "Press 'x' to crouch.",
-          },
-          {
-            key: "slowmo",
-            title: "Slow-mo",
-            description:
-              "Toggles slow-motion mode.",
           },
           {
             key: "frontBrake",
@@ -23518,15 +23519,15 @@ function load() {
       }
 
       keydown(event) {
-          if (event.key.toLowerCase() === 'r') {
+          if (event.key.toLowerCase() === 'r' && this.selected.length > 0) {
               const degrees = event.shiftKey ? -1 * GameSettings.rotateFactor : GameSettings.rotateFactor;
               this.rotateSelected(degrees);
           }
-          if (event.key.toLowerCase() === 's') {
+          if (event.key.toLowerCase() === 's' && this.selected.length > 0) {
               const scale = event.shiftKey ? 1 / GameSettings.scaleFactor : GameSettings.scaleFactor;
               this.scaleSelected(scale);
           }
-          if (event.key.toLowerCase() === 'f') {
+          if (event.key.toLowerCase() === 'f' && this.selected.length > 0) {
               const flipVertically = event.shiftKey;
               this.flipSelected(flipVertically);
           }

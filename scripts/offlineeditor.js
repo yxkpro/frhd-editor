@@ -810,7 +810,7 @@
                   className: "horizontal-slider-container"
               }, n.createElement("span", {
                   className: "horizontal-slider-label"
-              }, "Segment Ratio"), n.createElement(z, {
+              }, "Segment Length"), n.createElement(z, {
                   withBars: !0,
                   className: "horizontal-slider Circle-slider_SegmentLength",
                   onChange: this.handleLengthChange,
@@ -2543,20 +2543,47 @@
               var e = this.refs.code.getDOMNode(),
                 t = e.getAttribute("data-paste-code"),
                 n = e.value,
-                trackName = e.value,
+                trackName = e.value.replace(/(\.\.\/|\/)/g, ''),
                 url = `assets/tracks/${trackName}.txt`;
 
-                if (!e.value.includes('#') && !t) {
+                if (e.value.includes('$')) {
+                  var commands = e.value.split('$').slice(1);
+                  commands.forEach(command => {
+                    var parts = command.trim().split(' ');
+                    var setting = parts[0];
+                    var value = parts[1];
+                    
+                    if (setting && value) {
+                      var parsedValue = parseFloat(value);
+                      
+                      if (!isNaN(parsedValue)) {
+                        GameSettings[setting] = parsedValue;
+                      } else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
+                        GameSettings[setting] = value.toLowerCase() === 'true';
+                      } else {
+                        GameSettings[setting] = value;
+                      }
+                      console.log(`GameSettings.${setting} set to`, value);
+    
+                    }
+                  });
+                  return;
+                }
+
+                if (!e.value.includes('$') && !e.value.includes('#') && !t) {
+
+                  GameSettings.defaultTrack = `${trackName}.txt`;
   
                 fetch(url)
                   .then(response => {
                     if (!response.ok) {
-                      throw new Error('No track ID found, loading as code.');
+                      throw new Error('no track ID found, loading as track code.');
                     }
                     return response.text();
                   })
                   .then(data => {
                     this.processTrackData(data);
+                    console.log("track loaded:", trackName);
                   })
                   .catch(error => {
                     console.error(error);
