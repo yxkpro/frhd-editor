@@ -2549,11 +2549,12 @@
                 if (e.value.includes('$')) {
                   var commands = e.value.split('$').slice(1);
                   commands.forEach(command => {
+                    var allowed = ['propeller', 'wind', 'gravity', 'accel', 'mini'];
                     var parts = command.trim().split(' ');
                     var setting = parts[0];
                     var value = parts[1];
                     
-                    if (setting && value) {
+                    if (allowed.includes(setting) && value) {
                       var parsedValue = parseFloat(value);
                       
                       if (!isNaN(parsedValue)) {
@@ -2563,9 +2564,10 @@
                       } else {
                         GameSettings[setting] = value;
                       }
-                      console.log(`GameSettings.${setting} set to`, value);
+                      e.value = `${setting} set to ${value}`;
     
                     }
+                    else {e.value = `${setting} is not a setting`;}
                   });
                   return;
                 }
@@ -2598,17 +2600,18 @@
               var e = this.refs.code.getDOMNode(),
                 t = e.getAttribute("data-paste-code"),
                 n = e.value,
-                trackName = e.value.replace(/(\.\.\/|\/)/g, ''),
+                trackName = e.value.replace(/(\.\.\/)/g, ''),
                 url = `assets/tracks/${trackName}.txt`;
 
                 if (e.value.includes('$')) {
                   var commands = e.value.split('$').slice(1);
                   commands.forEach(command => {
+                    var allowed = ['propeller', 'wind', 'gravity', 'accel', 'mini'];
                     var parts = command.trim().split(' ');
                     var setting = parts[0];
                     var value = parts[1];
                     
-                    if (setting && value) {
+                    if (allowed.includes(setting) && value) {
                       var parsedValue = parseFloat(value);
                       
                       if (!isNaN(parsedValue)) {
@@ -2618,9 +2621,10 @@
                       } else {
                         GameSettings[setting] = value;
                       }
-                      console.log(`GameSettings.${setting} set to`, value);
+                      e.value = `${setting} set to ${value}`;
     
                     }
+                    else {e.value = `${setting} is not a setting`;}
                   });
                   return;
                 }
@@ -2680,14 +2684,17 @@
                 ? (t = e.dataTransfer.files)
                 : e.target && (t = e.target.files);
               var n = new FileReader();
-              (n.onload = this.fileDropComplete),
+              (n.onload = (event) => this.fileDropComplete(event, t[0].name)),
                 (n.onerror = this.fileDropError),
                 n.readAsText(t[0]);
+                
             },
-            fileDropComplete: function (e) {
+            fileDropComplete: function (e, fileName) {
               var t = e.target.result,
                 n = this.refs.code.getDOMNode();
-              n.setAttribute("data-paste-code", t), this.importTrack();
+              n.value = fileName;
+              n.setAttribute("data-paste-code", t);
+              this.onInput();
             },
             fileDropError: function (e) {
               console.log("There was an error", e);
