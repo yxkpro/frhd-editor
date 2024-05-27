@@ -2304,7 +2304,14 @@
                                     className: "helpDialog-hotkey helpDialog-hotkey_light"
                                 }, "V"), n.createElement("span", {
                                     className: "helpDialog-hotkey-name"
-                                }, "Change Vehicle")),
+                                }, "Change Vehicle")), n.createElement("div", {
+                                  className: "hotkey"
+                              }, n.createElement("span", {
+                                  className: "helpDialog-hotkey helpDialog-hotkey_light"
+                              }, "I"), n.createElement("span", {
+                                  className: "helpDialog-hotkey-name"
+                              }, "Import Track")),
+
 
 
                                 
