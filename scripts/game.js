@@ -13138,8 +13138,8 @@
               let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
               angle = ((angle + 180) % 360) - 180;
 
-              let textOffsetX = 70;
-              let textOffsetY = -70;
+              let textOffsetX = 80;
+              let textOffsetY = -80;
               t.textAlign = "left";
 
               const speed = Math.round(vel);
@@ -14415,8 +14415,8 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = 70;
-            let textOffsetY = -70;
+            let textOffsetX = 80;
+            let textOffsetY = -80;
             t.textAlign = "left";
 
             const speed = Math.round(vel);
@@ -21485,7 +21485,10 @@
               break;
             case "import": {
               let e = t[0];
-              e.length <= 0 && (e = !1),
+                if (e.length <= 0) {
+                  e = false;
+                  return;
+                }
                 (this.importCode = e),
                 (this.clear = t[1]),
                 this.command("dialog", !1);
@@ -21495,6 +21498,7 @@
               let e = t[0];
                 if (e.length <= 0) {
                     e = false;
+                    return;
                 }
                 if (e) {
                     const exportedCode = this.track.getCode();

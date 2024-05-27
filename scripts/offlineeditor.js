@@ -2579,6 +2579,10 @@
                   return;
                 }
 
+                if (!confirm("Your current track will be cleared. Are you sure you'd like to import?")) {
+                  return;
+                }
+
                 if (!e.value.includes('$') && !e.value.includes('#') && !t) {
 
                   GameSettings.defaultTrack = `${trackName}.txt`;
