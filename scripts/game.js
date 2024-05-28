@@ -14474,14 +14474,15 @@
                 this.frontWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
                 this.rearWheel.pos.y -= this.windspeed * this.head.vel.x * angleX * wind;
             }
-
+            
           (a.motor += ((Math.sqrt(GameSettings.accel) * o - a.motor) / 10) * mini),
             r && !this.swapped && (this.swap(), (this.swapped = !0)),
             r || (this.swapped = !1),
             e && (this.pedala += this.rearWheel.speed / 5),
             (a.brake = s),
-            (this.frontWheel.brake =
-              !!(this.dir > 0 && n && s) || !!(this.dir < 0 && i && s));
+            (1 === this.dir && (n || this.scene.game.mod.getVar("frontBrake")) && s) || (-1 === this.dir && (i || this.scene.game.mod.getVar("frontBrake")) && s)
+                ? (this.frontWheel.brake = !0)
+                : (this.frontWheel.brake = !1);
           let h = i ? 1 : 0;
           (h += n ? -1 : 0),
             this.rearSpring.contract(5 * h * this.dir, 5),
