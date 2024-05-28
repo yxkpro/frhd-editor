@@ -115,7 +115,6 @@ var GameSettings = {
         "backspace": 8,
         "z": 90,
         "x": 88,
-        "change_camera": 9,
         "zoom_increase": 187,
         "zoom_decrease": 189,
         "zoom_100": 48,

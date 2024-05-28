@@ -12857,6 +12857,7 @@
               this.propeller = 0,
               this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
               this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
+              this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes"),
               -1 === s && this.swap();
           }
           createMasses(e, s) {
@@ -13006,7 +13007,9 @@
             if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
               this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
             }
-
+            if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
+              this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
+            }
             if (this.mini !== this.scene.game.mod.getVar("mini")) {
               this.updateSprings();
               this.updateMasses();
@@ -13119,6 +13122,7 @@
               )
                 for (const t of this.masses) t.draw();
               this.drawBikeFrame();
+              this.drawHitboxes();
               this.drawBikeData(t);
               this.drawInputDisplay(t);
             }
@@ -13138,10 +13142,11 @@
               let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
               angle = ((angle + 180) % 360) - 180;
 
-              let textOffsetX = 80;
+              let textOffsetX = this.dir * 100;
               let textOffsetY = -80;
-              t.textAlign = "left";
-
+              let d = this.dir < 0 ? "right" : "left";
+              t.textAlign = d;
+              
               const speed = Math.round(vel);
               const color = `rgb(${speed}, 0, 0)`;
 
@@ -13226,7 +13231,103 @@
               t.restore(),
               (t.globalCompositeOperation = "source-over");
           }
-          }
+          };
+          drawHitboxes() {
+            if (this.shouldDrawHitboxes) {
+                let ctx = this.scene.game.canvas.getContext('2d'),
+                    masses = this.masses,
+                    springs = this.springs,
+                    a = this.scene,
+                    zoom = a.camera.zoom,
+                    opacity = Math.min(this.player._opacity + 0.3, 1),
+                    // these are stored to restore them after the function, even though it's unnecessary
+                    s = ctx.strokeStyle,
+                    f = ctx.fillStyle,
+                    d = this.dir,
+                    spinningWheels = ['rearWheel'];
+                ctx.lineCap = 'round';
+                for (let i of masses) {
+                    if (i.collide) {
+                        // red channel displays if you'll die when this hitbox touches a line
+                        // every single mass that will kill you upon touching a line has a drive
+                        // function that's been altered from the base for that class (tested on poly mod and normal).
+                        // blue channel displays if this hitbox is touching a line
+                        // it will never be purple, sorry (plus it turns light pink anyways)
+                        let c = [256 * (i.drive !== i.__proto__.drive),
+                                 0,
+                                 i.contact ? 128 : 0];
+                        ctx.fillStyle = `rgb(${c.join(',')})`;
+                        let pos = i.pos.toScreen(a);
+                        // the opacity is opposite that of the powerup hitbox it touches
+                        // idk
+                        ctx.globalAlpha = (0.4) * opacity * (i.opacity || 1);
+                        // circle of the main hitbox
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, i.radius * zoom, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.globalAlpha = (1) * opacity * (i.opacity || 1);
+                        // circle to mark the center (to make it easier to tell where the springs should go to
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, zoom, 0, Math.PI * 2);
+                        ctx.fill();
+                        // draws an inner circle the size of the other powerup for the balloon
+                        // this inner circle is the one that matters for the balloon for the most part, but the outer circle is correct on powerups that support it
+                        if (i.radius > 20) {
+                            ctx.beginPath();
+                            ctx.arc(pos.x, pos.y, 10 * zoom, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+    
+                        if (spinningWheels.map(j=>this[j])?.indexOf(i) > -1) {
+                            ctx.lineWidth = 2 * zoom;
+                            //ctx.strokeStyle = `rgb(${c.join(',')})`;
+                            ctx.strokeStyle = '#ffffff';
+                            let start = this.dir * Math.PI / 2 + i.angle,
+                                arrowLoc = start + (this.dir == 1 ? 3 * Math.PI / 2.5 : Math.PI / -2.5),
+                                x = Math.cos(start + 3 * Math.PI / 2.5) * i.radius * zoom * 2 / 3,
+                                y = Math.sin(start + 3 * Math.PI / 2.5) * i.radius * zoom * 2 / 3;
+                            ctx.beginPath();
+                            ctx.arc(pos.x, pos.y, i.radius * zoom * 2 / 3, start - Math.PI / 2.5, start + 3 * Math.PI / 2.5);
+                            ctx.moveTo(pos.x + Math.cos(arrowLoc - 0.2 * this.dir) * i.radius * 0.8 * zoom * 2 / 3,
+                                       pos.y + Math.sin(arrowLoc - 0.2 * this.dir) * i.radius * 0.8 * zoom * 2 / 3);
+                            ctx.lineTo(pos.x + Math.cos(arrowLoc) * i.radius * zoom * 2 / 3,
+                                       pos.y + Math.sin(arrowLoc) * i.radius * zoom * 2 / 3);
+                            ctx.lineTo(pos.x + Math.cos(arrowLoc - 0.2 * this.dir) * i.radius * 10 * zoom * 2 / 3 / 8,
+                                       pos.y + Math.sin(arrowLoc - 0.2 * this.dir) * i.radius * 10 * zoom * 2 / 3 / 8);
+                            ctx.stroke();
+                        }
+                        
+                    }
+
+                }
+                //ctx.globalAlpha = 0.5 * opacity;
+                //ctx.strokeStyle = '#000000';
+                for (let i of springs) {
+                    if (i.drawAnyways || (i.m1.collide && i.m2.collide)) {
+                        // calculate the positions of the endpoints of the spring that it'll go to based on the midpoint and length
+                        let mid = i.m1.pos.add(i.m2.pos).factor(1 / 2),
+                            v = i.m1.pos.sub(i.m2.pos),
+                            s = v.normalize(i.leff / 2),
+                            len = v.len(),
+                            pos1 = mid.add(s).toScreen(a),
+                            pos2 = mid.sub(s).toScreen(a),
+                            c = [len < i.leff ? Math.min(Math.log2((i.leff - len) / i.leff * 100) * 50, 255) : 0,
+                                 len > i.leff ? Math.min(Math.log2((len - i.leff) / i.leff * 100) * 50, 255) : 0,
+                                 0];
+                        ctx.globalAlpha = 0.5 * opacity * (i.opacity || 1);
+                        ctx.strokeStyle = `rgb(${c.join(',')})`;
+                        ctx.lineWidth = zoom * 2;
+                        ctx.beginPath();
+                        ctx.moveTo(pos1.x, pos1.y);
+                        ctx.lineTo(pos2.x, pos2.y);
+                        ctx.stroke();
+                    }
+                }
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = s;
+                ctx.fillStyle = f;
+        }
+      };
         drawBikeFrame() {
             const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
             const e = this.scene,
@@ -14135,6 +14236,7 @@
             this.propeller = 0,
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
             this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
+            this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes"),
             -1 === s && this.swap();
         }
         createMasses(e, s) {
@@ -14283,6 +14385,9 @@
           if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
             this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
           }
+          if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
+            this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
+          }
           if (this.mini !== this.scene.game.mod.getVar("mini")) {
             this.updateSprings();
             this.updateMasses();
@@ -14400,6 +14505,7 @@
             )
               for (const t of this.masses) t.draw();
             this.drawBikeFrame();
+            this.drawHitboxes();
             this.drawBikeData(t);
             this.drawInputDisplay(t);
           }
@@ -14415,9 +14521,10 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = 80;
+            let textOffsetX = this.dir * 100;
             let textOffsetY = -80;
-            t.textAlign = "left";
+            let d = this.dir < 0 ? "right" : "left";
+            t.textAlign = d;
 
             const speed = Math.round(vel);
             const color = `rgb(${speed}, 0, 0)`;
@@ -14503,6 +14610,102 @@
           (t.globalCompositeOperation = "source-over");
       }
       }
+      drawHitboxes() {
+        if (this.shouldDrawHitboxes) {
+        let ctx = this.scene.game.canvas.getContext('2d'),
+            masses = this.masses,
+            springs = this.springs,
+            a = this.scene,
+            zoom = a.camera.zoom,
+            opacity = Math.min(this.player._opacity + 0.3, 1),
+            // these are stored to restore them after the function, even though it's unnecessary
+            s = ctx.strokeStyle,
+            f = ctx.fillStyle,
+            d = this.dir,
+            spinningWheels = ['rearWheel'];
+        ctx.lineCap = 'round';
+        for (let i of masses) {
+            if (i.collide) {
+                // red channel displays if you'll die when this hitbox touches a line
+                // every single mass that will kill you upon touching a line has a drive
+                // function that's been altered from the base for that class (tested on poly mod and normal).
+                // blue channel displays if this hitbox is touching a line
+                // it will never be purple, sorry (plus it turns light pink anyways)
+                let c = [256 * (i.drive !== i.__proto__.drive),
+                         0,
+                         i.contact ? 128 : 0];
+                ctx.fillStyle = `rgb(${c.join(',')})`;
+                let pos = i.pos.toScreen(a);
+                // the opacity is opposite that of the powerup hitbox it touches
+                // idk
+                ctx.globalAlpha = (0.4) * opacity * (i.opacity || 1);
+                // circle of the main hitbox
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, i.radius * zoom, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = (1) * opacity * (i.opacity || 1);
+                // circle to mark the center (to make it easier to tell where the springs should go to
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, zoom, 0, Math.PI * 2);
+                ctx.fill();
+                // draws an inner circle the size of the other powerup for the balloon
+                // this inner circle is the one that matters for the balloon for the most part, but the outer circle is correct on powerups that support it
+                if (i.radius > 20) {
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, 10 * zoom, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                if (spinningWheels.map(j=>this[j])?.indexOf(i) > -1) {
+                    ctx.lineWidth = 2 * zoom;
+                    //ctx.strokeStyle = `rgb(${c.join(',')})`;
+                    ctx.strokeStyle = '#ffffff';
+                    let start = this.dir * Math.PI / 2 + i.angle,
+                        arrowLoc = start + (this.dir == 1 ? 3 * Math.PI / 2.5 : Math.PI / -2.5),
+                        x = Math.cos(start + 3 * Math.PI / 2.5) * i.radius * zoom * 2 / 3,
+                        y = Math.sin(start + 3 * Math.PI / 2.5) * i.radius * zoom * 2 / 3;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, i.radius * zoom * 2 / 3, start - Math.PI / 2.5, start + 3 * Math.PI / 2.5);
+                    ctx.moveTo(pos.x + Math.cos(arrowLoc - 0.2 * this.dir) * i.radius * 0.8 * zoom * 2 / 3,
+                               pos.y + Math.sin(arrowLoc - 0.2 * this.dir) * i.radius * 0.8 * zoom * 2 / 3);
+                    ctx.lineTo(pos.x + Math.cos(arrowLoc) * i.radius * zoom * 2 / 3,
+                               pos.y + Math.sin(arrowLoc) * i.radius * zoom * 2 / 3);
+                    ctx.lineTo(pos.x + Math.cos(arrowLoc - 0.2 * this.dir) * i.radius * 10 * zoom * 2 / 3 / 8,
+                               pos.y + Math.sin(arrowLoc - 0.2 * this.dir) * i.radius * 10 * zoom * 2 / 3 / 8);
+                    ctx.stroke();
+                }
+                
+            }
+
+        }
+        //ctx.globalAlpha = 0.5 * opacity;
+        //ctx.strokeStyle = '#000000';
+        for (let i of springs) {
+            if (i.drawAnyways || (i.m1.collide && i.m2.collide)) {
+                // calculate the positions of the endpoints of the spring that it'll go to based on the midpoint and length
+                let mid = i.m1.pos.add(i.m2.pos).factor(1 / 2),
+                    v = i.m1.pos.sub(i.m2.pos),
+                    s = v.normalize(i.leff / 2),
+                    len = v.len(),
+                    pos1 = mid.add(s).toScreen(a),
+                    pos2 = mid.sub(s).toScreen(a),
+                    c = [len < i.leff ? Math.min(Math.log2((i.leff - len) / i.leff * 100) * 50, 255) : 0,
+                         len > i.leff ? Math.min(Math.log2((len - i.leff) / i.leff * 100) * 50, 255) : 0,
+                         0];
+                ctx.globalAlpha = 0.5 * opacity * (i.opacity || 1);
+                ctx.strokeStyle = `rgb(${c.join(',')})`;
+                ctx.lineWidth = zoom * 2;
+                ctx.beginPath();
+                ctx.moveTo(pos1.x, pos1.y);
+                ctx.lineTo(pos2.x, pos2.y);
+                ctx.stroke();
+            }
+        }
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = s;
+        ctx.fillStyle = f;
+}
+      };
         drawBikeFrame() {
           const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
           const e = this.scene,
@@ -22414,6 +22617,7 @@
           frontBrake: { default: !1 },
           bikeData: { default: !1 },
           inputDisplay: { default: !1 },
+          hitboxes: { default: !1 },
           accurateEraser: { default: !1 },
           keepDeadRiders: {
             default: !1,
@@ -22823,6 +23027,12 @@
             title: "Bike Data",
             description:
               "Shows the metadata about the rider, including head angle, position, and velocity.",
+          },
+          {
+            key: "hitboxes",
+            title: "Visible Hitboxes",
+            description:
+              "Shows the hitboxes (masses) and the springs for the bikes.",
           },
           {
             key: "inputDisplay",
