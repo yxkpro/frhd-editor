@@ -1786,7 +1786,233 @@
                     closeDialog: function () {
                         "undefined" != typeof GameManager && GameManager.command("dialog", !1)
                     },
+                    handleKeyPress: function (event) {
+                      if (this.state.editingKey) {
+                          GameSettings.switchHotkeys ? GameSettings.playHotkeys[this.state.editingKey] = event.keyCode : GameSettings.editorHotkeys[this.state.editingKey] = event.keyCode;
+                          this.setState({ editingKey: null });
+                          document.removeEventListener('keydown', this.handleKeyPress);
+                      }
+                    },
+                    handleHotkeyClick: function (key) {
+                      GameSettings.switchHotkeys ? GameSettings.playHotkeys[key] = null : GameSettings.editorHotkeys[key] = null;
+                      this.setState({ editingKey: key });
+                      document.addEventListener('keydown', this.handleKeyPress);
+                    },
                     render: function () {
+                      const keyChange = {
+                        8: 'Backspace',
+                        9: 'Tab',
+                        13: 'Enter',
+                        16: 'Shift',
+                        17: 'Control',
+                        18: 'Alt',
+                        19: 'Pause',
+                        20: 'CapsLock',
+                        27: 'Escape',
+                        32: 'Space',
+                        33: 'PageUp',
+                        34: 'PageDown',
+                        35: 'End',
+                        36: 'Home',
+                        37: '◄',
+                        38: '▲',
+                        39: '►',
+                        40: '▼',
+                        45: 'Insert',
+                        46: 'Delete',
+                        48: '0',
+                        49: '1',
+                        50: '2',
+                        51: '3',
+                        52: '4',
+                        53: '5',
+                        54: '6',
+                        55: '7',
+                        56: '8',
+                        57: '9',
+                        65: 'A',
+                        66: 'B',
+                        67: 'C',
+                        68: 'D',
+                        69: 'E',
+                        70: 'F',
+                        71: 'G',
+                        72: 'H',
+                        73: 'I',
+                        74: 'J',
+                        75: 'K',
+                        76: 'L',
+                        77: 'M',
+                        78: 'N',
+                        79: 'O',
+                        80: 'P',
+                        81: 'Q',
+                        82: 'R',
+                        83: 'S',
+                        84: 'T',
+                        85: 'U',
+                        86: 'V',
+                        87: 'W',
+                        88: 'X',
+                        89: 'Y',
+                        90: 'Z',
+                        91: 'MetaLeft',
+                        92: 'MetaRight',
+                        93: 'ContextMenu',
+                        96: 'Numpad0',
+                        97: 'Numpad1',
+                        98: 'Numpad2',
+                        99: 'Numpad3',
+                        100: 'Numpad4',
+                        101: 'Numpad5',
+                        102: 'Numpad6',
+                        103: 'Numpad7',
+                        104: 'Numpad8',
+                        105: 'Numpad9',
+                        106: 'NumpadMultiply',
+                        107: 'NumpadAdd',
+                        109: 'NumpadSubtract',
+                        110: 'NumpadDecimal',
+                        111: 'NumpadDivide',
+                        112: 'F1',
+                        113: 'F2',
+                        114: 'F3',
+                        115: 'F4',
+                        116: 'F5',
+                        117: 'F6',
+                        118: 'F7',
+                        119: 'F8',
+                        120: 'F9',
+                        121: 'F10',
+                        122: 'F11',
+                        123: 'F12',
+                        144: 'NumLock',
+                        145: 'ScrollLock',
+                        186: 'Semicolon',
+                        187: 'Equal',
+                        188: 'Comma',
+                        189: 'Minus',
+                        190: 'Period',
+                        191: 'Slash',
+                        192: 'Backquote',
+                        219: 'BracketLeft',
+                        220: 'Backslash',
+                        221: 'BracketRight',
+                        222: 'Quote'
+                    };
+                    const editorKeys = {};
+                      for (const key in GameSettings.editorHotkeys) {
+                        if (GameSettings.editorHotkeys.hasOwnProperty(key)) {
+                          editorKeys[key] = keyChange[GameSettings.editorHotkeys[key]];
+                        }
+                      };
+                    const playKeys = {};
+                      for (const key in GameSettings.playHotkeys) {
+                        if (GameSettings.playHotkeys.hasOwnProperty(key)) {
+                          playKeys[key] = keyChange[GameSettings.playHotkeys[key]];
+                        }
+                      };
+                    var z = GameSettings.switchHotkeys;
+                    const t = z ? playKeys : editorKeys;
+                    return n.createElement("div", {
+                          className: "editorDialog-content editorDialog-content_controlsDialog"
+                      }, n.createElement("div", null, n.createElement("div", {
+                          className: "editorDialog-titleBar"
+                      }, n.createElement("span", {
+                          className: "editorDialog-close",
+                          onClick: this.closeDialog
+                      }, "×"), 
+                      
+                      /*n.createElement("div", {
+                        className: "hotkey"
+                    }, n.createElement("span", {
+                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                    }, "G"), n.createElement("span", {
+                        className: "helpDialog-hotkey-name"
+                    }, "Toggle Grid")),*/
+                    
+                    n.createElement("h1", {
+                          className: "editorDialog-content-title"
+                      }, "VEHICLE CONTROLS")), n.createElement("div", {
+                          className: "keysContainer"
+                      }, n.createElement("table", null, 
+                      
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('up')
+                    }, n.createElement("span", {
+                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                    }, t.up), n.createElement("span", {
+                        className: "helpDialog-hotkey-name"
+                    }, "Accelerate"))),
+
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('down')
+                    }, n.createElement("span", {
+                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                    }, t.down), n.createElement("span", {
+                        className: "helpDialog-hotkey-name"
+                    }, "Brake"))),
+                      
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('left')
+                    }, n.createElement("span", {
+                          className: "helpDialog-hotkey helpDialog-hotkey_light"
+                      }, t.left), n.createElement("span", {
+                          className: "helpDialog-hotkey-name"
+                      }, "Lean Left"))),
+
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('right')
+                    }, n.createElement("span", {
+                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                    }, t.right), n.createElement("span", {
+                        className: "helpDialog-hotkey-name"
+                    }, "Lean Right"))), 
+                      
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('z')
+                    }, n.createElement("span", {
+                          className: "helpDialog-hotkey helpDialog-hotkey_light"
+                      }, t.z), n.createElement("span", {
+                          className: "helpDialog-hotkey-name"
+                      }, "Turn Around"))), 
+                      
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('x')
+                    }, n.createElement("span", {
+                          className: "helpDialog-hotkey helpDialog-hotkey_light"
+                      }, t.x), n.createElement("span", {
+                          className: "helpDialog-hotkey-name"
+                      }, "Special Ability"))), 
+
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('space')
+                    }, n.createElement("span", {
+                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                      }, t.pause), n.createElement("span", {
+                        className: "helpDialog-hotkey-name"
+                      }, "Pause"))),
+                      
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('enter')
+                    }, n.createElement("span", {
+                          className: "helpDialog-hotkey helpDialog-hotkey_light"
+                      }, t.enter), n.createElement("span", {
+                          className: "helpDialog-hotkey-name"
+                      }, "Back to Checkpoint"))), 
+                      
+                      n.createElement("tr", null, n.createElement("td", {
+                        onClick: () => this.handleHotkeyClick('backspace')
+                    }, n.createElement("span", {
+                          className: "helpDialog-hotkey helpDialog-hotkey_light"
+                      }, t.backspace), n.createElement("span", {
+                          className: "helpDialog-hotkey-name"
+                      }, "Remove Checkpoint")))))
+                    
+                      ))
+                  }
+              });
+                    /*render: function () {
                         return n.createElement("div", {
                             className: "editorDialog-content editorDialog-content_controlsDialog"
                         }, n.createElement("div", null, n.createElement("div", {
@@ -1836,7 +2062,7 @@
                             className: "helpDialog-hotkey-name"
                         }, "Pause")))))))
                     }
-                });
+                });*/
             t.exports = r
         }
             , {
@@ -2387,6 +2613,7 @@
                             t = e.toolHandler,
                             r = t.visibleGrid,
                             o = t.rightClickMove,
+                            z = e.switchHotkeys,
                             isometricGrid = t.isometricGrid,
                             scaleLock = e.scaleLock; // Added isometricGrid variable
 
@@ -2452,6 +2679,19 @@
                                 onChange: this.toggleRightClickMove
                             }))),
 
+                            n.createElement("tr", null, n.createElement("td", {
+                              className: "settingTitle"
+                          }, n.createElement("span", {
+                              className: "name"
+                          }, "Switch to Play Hotkeys")), n.createElement("td", {
+                              className: "settingInput"
+                          }, n.createElement("input", {
+                              type: "checkbox",
+                              ref: "switchHotkeys",
+                              defaultChecked: z,
+                              onChange: this.toggleSwitchHotkeys
+                          })))
+
                             /* n.createElement("tr", null, n.createElement("td", {
                                 className: "settingTitle"
                             }, n.createElement("span", {
@@ -2509,6 +2749,10 @@
                     toggleRightClickMove: function () {
                         var e = this.refs.rightClickMove.getDOMNode().checked;
                         GameSettings.toolHandler.rightClickMove = e
+                    },
+                    toggleSwitchHotkeys: function () {
+                      var e = this.refs.switchHotkeys.getDOMNode().checked;
+                      GameSettings.switchHotkeys = e
                     },
                     gotoAdvancedSettings: function () {
                         this.setState({

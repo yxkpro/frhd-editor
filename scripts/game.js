@@ -21101,6 +21101,7 @@
             (this.playerManager = new $t(this)),
             (this.vehicleTimer = new (te())(this)),
             (this.score = new (dn())(this)),
+            this.updateMainPlayerHotkeys;
             this.createMainPlayer(),
             this.createControls(),
             this.registerTools(),
@@ -21138,6 +21139,14 @@
             e.listen(),
             (this.playerManager.firstPlayer = t),
             this.playerManager.addPlayer(t);
+        }
+        updateMainPlayerHotkeys() {
+          const t = this.playerManager.firstPlayer;
+          if (t) {
+            const e = t.getGamepad();
+            const hotkeys = GameSettings.switchHotkeys ? this.settings.playHotkeys : this.settings.editorHotkeys;
+            e.setKeyMap(hotkeys);
+          }
         }
         createControls() {
           "tablet" === this.settings.controls &&
@@ -21222,7 +21231,8 @@
             this.stage.clear(),
             this.draw(),
             this.stage.update(),
-            this.camera.updateZoom();
+            this.camera.updateZoom(),
+            this.updateMainPlayerHotkeys();
         }
         isStateDirty() {
           const t = this.oldState,

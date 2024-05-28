@@ -55,6 +55,7 @@ var GameSettings = {
     "gravity": 1,
     "mini" : 0.7,
     "add": true,
+    "switchHotkeys": false,
     "raceColors": ["rgba(57,185,117,1)", "rgba(0,152,189,1)", "rgba(151,95,162,1)", "rgba(253,85,91,1)", "rgba(245,126,64,1)", "rgba(247,212,62,1)", "rgba(170,221,114,1)", "rgba(72,217,207,1)", "rgba(0,124,212,1)", "rgba(226,108,216,1)"],
     "toolHandler": {
         "snap": false,
@@ -105,10 +106,10 @@ var GameSettings = {
         "SegmentLengthSensitivity": 0.1
     },
     "playHotkeys": {
-        "up": [38, 87],
-        "down": [40, 83],
-        "left": [37, 65],
-        "right": [39, 68],
+        "up": [38],
+        "down": [40],
+        "left": [37],
+        "right": [39],
         "pause": 32,
         "enter": 13,
         "backspace": 8,
@@ -118,9 +119,7 @@ var GameSettings = {
         "zoom_increase": 187,
         "zoom_decrease": 189,
         "zoom_100": 48,
-        "change_vehicle": 86,
-        "exit_fullscreen": 27,
-        "settings": 220
+        "change_vehicle": 86
     },
     "editorHotkeys": {
         "up": 38,

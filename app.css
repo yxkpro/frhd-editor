@@ -220,6 +220,10 @@ table {
     border-spacing: 0
 }
 
+td {
+    padding: 3px;
+}
+
 *,
 :after,
 :before {
@@ -2193,6 +2197,13 @@ html.fullscreen #main_page {
     min-height: 200px
 }
 
+.hotkeyDialogAdvanced {
+    font-size: .75em;
+    padding: 15px;
+    min-height: 10px;
+    width: 150px;
+}
+
 .helpDialogAdvanced .settingTitle {
     width: 200px
 }
@@ -2232,7 +2243,7 @@ html.fullscreen #main_page {
 }
 
 .editorDialog-content_controlsDialog {
-    width: 600px
+    width: 300px
 }
 
 .editorDialog-content_controlsDialog .keyboard_keys {
