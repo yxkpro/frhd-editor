@@ -19172,7 +19172,7 @@
             this.powerup.draw(n, r, e, t),
             (t.globalAlpha = 1);
           }
-          this.shouldDrawMetadata && this.drawPointData(t, this.p1, this.p2); // Ensures metadata is drawn only when shouldDrawMetadata is true and portal1 is defined
+          this.shouldDrawMetadata && this.drawPointData(t, this.p1, this.p2);
         }
         drawPathToMouse(t) {
           const e = this.p1,
@@ -22774,7 +22774,7 @@
           },
           {
             key: "slowmo",
-            title: "Slow-mode",
+            title: "Slow-Mode",
             description:
               "Toggles slow-motion mode.",
           },
