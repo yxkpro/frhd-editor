@@ -9701,22 +9701,225 @@
           }),
           (t.exports = i);
       },
-      219: (t, e) => {
-        !(async function () {
+      219: (t) => {
+        !(function () {
           "use strict";
-          const headgear = GameSettings.head;
-          const fileName = `${headgear}.js`;
-          try {
-            await import(`../assets/js/${fileName}`);
-            console.log('Head loaded:', fileName)
+          function e(t) {
+            (this.drawAngle = 0), (this.colors = t), this.createVersion();
           }
-          catch (error) {
-            console.error('Failed to get head:', error);
-            GameSettings.head = "cowboy";
-            const headgearDefault = "cowboy";
-            const fileNameDefault = `${headgearDefault}.js`;
-            await import(`../assets/js/${fileNameDefault}`);
-          }
+          var s = GameInventoryManager.HeadClass,
+            i = Math.max,
+            n = {},
+            r = 0.17,
+            o = (e.prototype = new s());
+          (o.versionName = ""),
+            (o.dirty = !0),
+            (o.getVersions = function () {
+              return n;
+            }),
+            (o.cache = function (t) {
+              var e = n[this.versionName];
+              e.dirty = !1;
+              var s = 115 * (t = i(t, 1)) * r,
+                o = 112 * t * r,
+                a = e.canvas;
+              (a.width = s), (a.height = o), a.width, a.height;
+              var h = a.getContext("2d"),
+                l = r * t,
+                c = this.colors;
+              h.save(),
+                h.scale(l, l),
+                h.translate(0, 0),
+                h.beginPath(),
+                (h.strokeStyle = "rgba(0,0,0,0)"),
+                (h.lineCap = "butt"),
+                (h.lineJoin = "miter"),
+                (h.miterLimit = 4),
+                h.save(),
+                (h.fillStyle = "#ffffff"),
+                h.beginPath(),
+                h.arc(42.4, 52.5, 30.3, 0, 6.283185307179586, !0),
+                h.closePath(),
+                h.fill(),
+                h.stroke(),
+                h.restore(),
+                h.save(),
+                (h.fillStyle = c.back),
+                h.beginPath(),
+                h.moveTo(71.624, 44.496),
+                h.bezierCurveTo(68.112, 31.647, 56.363, 22.2, 42.4, 22.2),
+                h.bezierCurveTo(
+                  25.665999999999997,
+                  22.2,
+                  12.099999999999998,
+                  35.765,
+                  12.099999999999998,
+                  52.5
+                ),
+                h.bezierCurveTo(
+                  12.099999999999998,
+                  55.771,
+                  12.623999999999999,
+                  58.916,
+                  13.582999999999998,
+                  61.867000000000004
+                ),
+                h.lineTo(71.624, 44.496),
+                h.closePath(),
+                h.fill(),
+                h.stroke(),
+                h.restore(),
+                c.front &&
+                  (h.save(),
+                  h.beginPath(),
+                  h.moveTo(76.917, 38.393),
+                  h.bezierCurveTo(
+                    71.677,
+                    25.617,
+                    59.54900000000001,
+                    16.371000000000002,
+                    45.172,
+                    15.309000000000001
+                  ),
+                  h.bezierCurveTo(
+                    47.57899999999999,
+                    22.559,
+                    50.918,
+                    33.862,
+                    52.501,
+                    44.894999999999996
+                  ),
+                  h.bezierCurveTo(
+                    60.643,
+                    42.731,
+                    68.775,
+                    40.566,
+                    76.917,
+                    38.393
+                  ),
+                  h.closePath(),
+                  (h.fillStyle = c.front),
+                  h.fill(),
+                  h.stroke(),
+                  h.restore()),
+                h.save(),
+                h.beginPath(),
+                h.moveTo(42.4, 22.2),
+                h.bezierCurveTo(59.134, 22.2, 72.7, 35.765, 72.7, 52.5),
+                h.bezierCurveTo(72.7, 69.235, 59.135, 82.8, 42.4, 82.8),
+                h.bezierCurveTo(25.665, 82.8, 12.1, 69.234, 12.1, 52.5),
+                h.bezierCurveTo(
+                  12.1,
+                  35.766000000000005,
+                  25.666,
+                  22.2,
+                  42.4,
+                  22.2
+                ),
+                h.moveTo(42.4, 15.2),
+                h.bezierCurveTo(
+                  21.833,
+                  15.2,
+                  5.100000000000001,
+                  31.932,
+                  5.100000000000001,
+                  52.5
+                ),
+                h.bezierCurveTo(
+                  5.100000000000001,
+                  73.068,
+                  21.832,
+                  89.8,
+                  42.4,
+                  89.8
+                ),
+                h.bezierCurveTo(
+                  62.967999999999996,
+                  89.8,
+                  79.69999999999999,
+                  73.068,
+                  79.69999999999999,
+                  52.5
+                ),
+                h.bezierCurveTo(
+                  79.69999999999999,
+                  31.932000000000002,
+                  62.968,
+                  15.2,
+                  42.4,
+                  15.2
+                ),
+                h.lineTo(42.4, 15.2),
+                h.closePath(),
+                h.fill(),
+                h.stroke(),
+                h.restore(),
+                h.save(),
+                h.beginPath(),
+                h.moveTo(16.3, 66.85),
+                h.bezierCurveTo(
+                  41.8,
+                  60.148999999999994,
+                  67.2,
+                  53.449999999999996,
+                  92.601,
+                  46.648999999999994
+                ),
+                h.bezierCurveTo(
+                  96.201,
+                  45.648999999999994,
+                  99.8,
+                  44.748999999999995,
+                  103.5,
+                  43.748999999999995
+                ),
+                h.bezierCurveTo(
+                  111,
+                  41.748999999999995,
+                  107.8,
+                  30.148999999999994,
+                  100.3,
+                  32.148999999999994
+                ),
+                h.bezierCurveTo(
+                  74.901,
+                  38.94899999999999,
+                  49.400999999999996,
+                  45.748999999999995,
+                  24,
+                  52.449
+                ),
+                h.bezierCurveTo(20.4, 53.449, 16.8, 54.349, 13.101, 55.349),
+                h.bezierCurveTo(5.7, 57.35, 8.9, 68.85, 16.3, 66.85),
+                h.lineTo(16.3, 66.85),
+                h.closePath(),
+                h.fill(),
+                h.stroke(),
+                h.restore();
+            }),
+            (o.setDirty = function () {
+              n[this.versionName].dirty = !0;
+            }),
+            (o.getBaseWidth = function () {
+              return 115;
+            }),
+            (o.getBaseHeight = function () {
+              return 112;
+            }),
+            (o.getDrawOffsetX = function () {
+              return 2.2;
+            }),
+            (o.getDrawOffsetY = function () {
+              return 1;
+            }),
+            (o.getScale = function () {
+              return r;
+            }),
+            GameInventoryManager &&
+              GameInventoryManager.register("forward_cap", e),
+            void 0 !== t.exports &&
+              (t.exports && (t.exports = t.exports = e),
+              (t.exports.Forward_Cap = e));
         })();
       },
       787: (t, e, s) => {
@@ -9775,7 +9978,7 @@
             o = t.options,
             a = t.type;
           s[e] ||
-            ("1" === a && ((e = GameSettings.head), (o = { back: GameSettings.hatColor })),
+            ("1" === a && ((e = "forward_cap"), (o = { back: GameSettings.hatColor })),
             n[r] || ((n[r] = !0), GameManager.loadFile(r)));
           var h = this.generateID(a, e, o);
           return i[h] || (i[h] = new s[e](o)), i[h];
@@ -16646,7 +16849,8 @@
             (this.p2 = new t.Z(0, 0)),
             (this.active = !1),
             (this.shouldDrawMetadata = !1),
-            (this.options = {});
+            (this.options = {}),
+            (this.drawnPoints = []);
         }
         reset() {
           this.active = !1;
@@ -16661,6 +16865,34 @@
           return (
             (e.lineType = t.options.lineType), (e.snap = t.options.snap), e
           );
+        }
+        snapNear() {
+          if (!GameSettings.snapNear || this.drawnPoints.length === 0) return;
+        
+          // Check if snapNear has already been called in this snap cycle
+          if (!this.snapUpdated) {
+            let nearestPoint = null;
+            let minDistance = Infinity;
+        
+            this.drawnPoints.forEach(point => {
+              const distance = Math.sqrt(
+                Math.pow(this.mouse.touch.real.x - point.x, 2) +
+                  Math.pow(this.mouse.touch.real.y - point.y, 2)
+              );
+              if (distance < minDistance) {
+                minDistance = distance;
+                nearestPoint = point;
+              }
+            });
+        
+            if (nearestPoint) {
+              this.toolHandler.snapPoint.equ(nearestPoint); // Update snapPoint with the nearest point
+            }
+        
+            this.snapUpdated = true; // Set flag to indicate snap update
+          }
+        
+          console.log("snap", this.toolHandler.snapPoint); // Debugging: Print the snap point
         }
         hold() {
           const t = this.mouse.touch.real;
@@ -16694,8 +16926,9 @@
                 ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
                 : s.addSceneryLine(t.x, t.y, e.x, e.y)),
               n && i.addActionToTimeline({ type: "add", objects: [n] }),
-              i.snapPoint.equ(e),
+              this.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
               (this.active = !1);
+              if (!GameSettings.snapNear) {i.snapPoint.equ(e)};
           }
         }
         update() {
@@ -16703,8 +16936,10 @@
           const t = this.toolHandler,
             e = t.gamepad;
           t.options.snap &&
-            ((this.active = !0), (this.p1 = t.snapPoint), this.hold()),
+            ((this.active = !0), (this.p1 = t.snapPoint), this.snapNear(), this.hold()),
             (this.shouldDrawMetadata = !!e.isButtonDown("ctrl"));
+          !t.options.snap && (this.snapUpdated = false);
+            
         }
         draw() {
           const t = this.scene,

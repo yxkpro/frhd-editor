@@ -2614,6 +2614,7 @@
                             r = t.visibleGrid,
                             o = t.rightClickMove,
                             z = e.switchHotkeys,
+                            q = e.snapNear,
                             isometricGrid = t.isometricGrid,
                             scaleLock = e.scaleLock; // Added isometricGrid variable
 
@@ -2678,6 +2679,19 @@
                                 defaultChecked: o,
                                 onChange: this.toggleRightClickMove
                             }))),
+
+                            n.createElement("tr", null, n.createElement("td", {
+                              className: "settingTitle"
+                          }, n.createElement("span", {
+                              className: "name"
+                          }, "Line Snap to Nearest Line")), n.createElement("td", {
+                              className: "settingInput"
+                          }, n.createElement("input", {
+                              type: "checkbox",
+                              ref: "snapNear",
+                              defaultChecked: q,
+                              onChange: this.toggleSnapNear
+                          }))),
 
                             n.createElement("tr", null, n.createElement("td", {
                               className: "settingTitle"
@@ -2750,6 +2764,10 @@
                         var e = this.refs.rightClickMove.getDOMNode().checked;
                         GameSettings.toolHandler.rightClickMove = e
                     },
+                    toggleSnapNear: function () {
+                      var e = this.refs.snapNear.getDOMNode().checked;
+                      GameSettings.snapNear = e
+                  },
                     toggleSwitchHotkeys: function () {
                       var e = this.refs.switchHotkeys.getDOMNode().checked;
                       GameSettings.switchHotkeys = e
@@ -2844,7 +2862,7 @@
                 }
 
                 if (n.length > 0) {
-                if (!confirm("Your current track will be cleared. Are you sure you'd like to import?")) {
+                if (!confirm("The current track will be cleared. Are you sure you'd like to import?")) {
                   return;
                 }}
                 
