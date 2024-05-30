@@ -918,7 +918,7 @@
             },
               renderGridSizeSelect: function() {
                 var e = GameSettings.toolHandler.gridSize,
-                    t = [2, 5, 10, 15, 20, 25, 50, 100];
+                    t = [2, 4, 5, 10, 15, 20, 25, 50, 100];
                 return n.createElement("select", {
                     ref: "gridSize",
                     defaultValue: e,
@@ -2818,7 +2818,7 @@
                 if (e.value.includes('$')) {
                   var commands = e.value.split('$').slice(1);
                   commands.forEach(command => {
-                    var allowed = ['propeller', 'wind', 'gravity', 'accel', 'mini'];
+                    var allowed = ['propeller', 'wind', 'gravity', 'accel', 'mini', 'offsetX', 'offsetY'];
                     var parts = command.trim().split(' ');
                     var setting = parts[0];
                     var value = parts[1];
@@ -2880,7 +2880,7 @@
                 if (e.value.includes('$')) {
                   var commands = e.value.split('$').slice(1);
                   commands.forEach(command => {
-                    var allowed = ['propeller', 'wind', 'gravity', 'accel', 'mini'];
+                    var allowed = ['propeller', 'wind', 'gravity', 'accel', 'mini', 'offsetX', 'offsetY'];
                     var parts = command.trim().split(' ');
                     var setting = parts[0];
                     var value = parts[1];

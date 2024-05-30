@@ -13346,8 +13346,8 @@
               let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
               angle = ((angle + 180) % 360) - 180;
 
-              let textOffsetX = this.dir * 100;
-              let textOffsetY = -80;
+              let textOffsetX = this.dir * GameSettings.offsetX;
+              let textOffsetY = -1 * GameSettings.offsetY;
               let d = this.dir < 0 ? "right" : "left";
               t.textAlign = d;
               
@@ -14020,7 +14020,7 @@
           let h = o[1].pos.add(o[2].pos).factor(0.5);
           (h = o[0].pos.sub(h)), (h = h.factor(1 / h.len())), o[0].angle.equ(h);
           const l = e ? 1 : 0;
-          o[0].motor += (l - o[0].motor) / 10;
+          o[0].motor += (Math.sqrt(GameSettings.accel) * l - o[0].motor) / 10;
           let c = i ? 1 : 0;
           (c += n ? -1 : 0),
             a[2].rotate(c / 6),
@@ -14174,8 +14174,8 @@
             let angle = this.cockpitAngle ? this.cockpitAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * 100;
-            let textOffsetY = -80;
+            let textOffsetX = this.dir * GameSettings.offsetX;
+            let textOffsetY = -1 * GameSettings.offsetY;
             let d = this.dir < 0 ? "right" : "left";
             s.textAlign = d;
 
@@ -14491,7 +14491,7 @@
           const o = e ? 1 : 0,
             a = this.rearWheel,
             h = this.frontWheel;
-          (a.motor += (0.8 * o - a.motor) / 10),
+          (a.motor += (Math.sqrt(GameSettings.accel) * 0.8 * o - a.motor) / 10),
             (h.motor += (0.8 * o - h.motor) / 10),
             (a.brake = s),
             (h.brake = s);
@@ -14531,8 +14531,8 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * 100;
-            let textOffsetY = -80;
+            let textOffsetX = this.dir * GameSettings.offsetX;
+            let textOffsetY = -1 * GameSettings.offsetY;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
@@ -15151,8 +15151,8 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * 100;
-            let textOffsetY = -80;
+            let textOffsetX = this.dir * GameSettings.offsetX;
+            let textOffsetY = -1 * GameSettings.offsetY;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
@@ -15649,7 +15649,7 @@
               o && (e.x += -0.05),
               a && (e.x += 0.05),
               (0 === i.x && 0 === i.y) || (e.y += -0.1),
-              r && (e.y += -0.5),
+              r && (e.y += Math.sqrt(GameSettings.accel) * -0.5),
               this.wind && (e.x += 0.3),
               (e.x += t.x),
               (e.y += t.y),
@@ -15758,8 +15758,8 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 270;
 
-            let textOffsetX = this.dir * 100;
-            let textOffsetY = -80;
+            let textOffsetX = this.dir * GameSettings.offsetX;
+            let textOffsetY = -1 * GameSettings.offsetY;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
@@ -16113,7 +16113,7 @@
           let l = n || i ? 1 : 0;
           s && (l = 0);
           for (const t of o)
-            (t.motor += (l * h - t.motor) / 10),
+            (t.motor += (Math.sqrt(GameSettings.accel) * l * h - t.motor) / 10),
               0 === l && (t.motor = 0),
               (t.brake = s);
           let c = i ? 1 : 0;
@@ -16188,8 +16188,8 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * 100;
-            let textOffsetY = -80;
+            let textOffsetX = this.dir * GameSettings.offsetX;
+            let textOffsetY = -1 * GameSettings.offsetY;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
