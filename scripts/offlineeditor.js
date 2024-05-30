@@ -2841,6 +2841,11 @@
                   return;
                 }
 
+                if (n.length > 0) {
+                  if (!confirm("The current track will be cleared. Are you sure you'd like to import?")) {
+                    return;
+                  }}
+
                 if (!e.value.includes('$') && !e.value.includes('#') && !t) {
 
                   GameSettings.defaultTrack = `${trackName}.txt`;
@@ -2860,11 +2865,6 @@
                     console.error(error);
                   });
                 }
-
-                if (n.length > 0) {
-                if (!confirm("The current track will be cleared. Are you sure you'd like to import?")) {
-                  return;
-                }}
                 
               t && (n = t),
                 "undefined" != typeof GameManager &&

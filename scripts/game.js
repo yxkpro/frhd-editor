@@ -16284,7 +16284,10 @@
             (this.tools = {}),
             (this.options = e.settings.toolHandler),
             (this.snapPoint = new t.Z()),
+            (this.snapNearPoint = new t.Z()),
             this.snapPoint.equ(this.scene.track.defaultLine.p2),
+            this.snapUpdated = null,
+            this.drawnPoints = [],
             (this.gridCache = !1),
             this.initAnalytics(),
             (this.actionTimeline = []),
@@ -16388,7 +16391,8 @@
             this.mouse.enabled && this.tools[this.currentTool].update(),
             this.checkHotkeys(),
             this.checkMouse(),
-            this.checkSnap();
+            this.checkSnap(),
+            this.snapNear();
         }
         checkGrid() {
           const t = this.scene.camera;
@@ -16396,6 +16400,34 @@
         }
         checkSnap() {
           this.options.snapLocked && (this.options.snap = !0);
+        }
+        snapNear() {
+          this.drawnPoints.push({ x: -40, y: 50 }, { x: 40, y: 50 });
+          if (!GameSettings.snapNear || this.drawnPoints.length === 0) return;
+        
+          if (!this.snapUpdated) {
+            let nearestPoint = null;
+            let minDistance = Infinity;
+        
+            this.drawnPoints.forEach(point => {
+              const distance = Math.sqrt(
+                Math.pow(this.mouse.touch.real.x - point.x, 2) +
+                  Math.pow(this.mouse.touch.real.y - point.y, 2)
+              );
+              if (distance < minDistance) {
+                minDistance = distance;
+                nearestPoint = point;
+              }
+            });
+        
+            if (nearestPoint && this.options.snap) {
+              this.snapNearPoint.equ(nearestPoint);
+            }
+        
+            this.snapUpdated = true;
+            !this.options.snap && (this.snapUpdated = false);
+          }
+        
         }
         moveCameraTowardsMouse() {
           if (!1 === this.options.cameraLocked) {
@@ -16634,6 +16666,8 @@
         (ye.gridCacheAlpha = 1),
         (ye.gridUseEnabled = !1),
         (ye.snapPoint = !1),
+        (ye.snapNearPoint = !1),
+        (ye.snapUpdated = !1),
         (ye.options = null);
       const we = ve;
       var xe = s(348);
@@ -16690,6 +16724,7 @@
             this.active = !0;
             const t = this.mouse.touch.real;
             (this.p1.x = t.x), (this.p1.y = t.y);
+            this.toolHandler.drawnPoints.push({ x: t.x, y: t.y });
           }
         }
         hold() {
@@ -16714,9 +16749,11 @@
                 "physics" === i.options.lineType
                   ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
                   : s.addSceneryLine(t.x, t.y, e.x, e.y)),
-                n && i.addActionToTimeline({ type: "add", objects: [n] }),
+                n && i.addActionToTimeline({ type: "add", objects: [n] });
                 (i.snapPoint.x = e.x),
                 (i.snapPoint.y = e.y);
+                i.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
+                (this.active = !1);
             } else this.splitAndAddCurve();
             (this.anchoring = !1), (this.active = !1);
           } else
@@ -16743,9 +16780,11 @@
               "physics" === s.options.lineType
                 ? e.addPhysicsLine(r, o, a, h)
                 : e.addSceneryLine(r, o, a, h)),
-              l && i.push(l),
+              l && i.push(l);
               (s.snapPoint.x = a),
               (s.snapPoint.y = h);
+              s.drawnPoints.push({ x: a, y: h });
+                (this.active = !1);
           }
           i.length > 0 && s.addActionToTimeline({ type: "add", objects: i });
         }
@@ -16770,6 +16809,8 @@
             this.anchoring && this.updateAnchor(),
             e.release && this.release(),
             !1 === t.mousewheel || o || this.mousewheel(t.mousewheel);
+            !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
+            if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
         }
         draw() {
           const t = this.scene,
@@ -16849,8 +16890,7 @@
             (this.p2 = new t.Z(0, 0)),
             (this.active = !1),
             (this.shouldDrawMetadata = !1),
-            (this.options = {}),
-            (this.drawnPoints = []);
+            (this.options = {});
         }
         reset() {
           this.active = !1;
@@ -16865,34 +16905,6 @@
           return (
             (e.lineType = t.options.lineType), (e.snap = t.options.snap), e
           );
-        }
-        snapNear() {
-          if (!GameSettings.snapNear || this.drawnPoints.length === 0) return;
-        
-          // Check if snapNear has already been called in this snap cycle
-          if (!this.snapUpdated) {
-            let nearestPoint = null;
-            let minDistance = Infinity;
-        
-            this.drawnPoints.forEach(point => {
-              const distance = Math.sqrt(
-                Math.pow(this.mouse.touch.real.x - point.x, 2) +
-                  Math.pow(this.mouse.touch.real.y - point.y, 2)
-              );
-              if (distance < minDistance) {
-                minDistance = distance;
-                nearestPoint = point;
-              }
-            });
-        
-            if (nearestPoint) {
-              this.toolHandler.snapPoint.equ(nearestPoint); // Update snapPoint with the nearest point
-            }
-        
-            this.snapUpdated = true; // Set flag to indicate snap update
-          }
-        
-          console.log("snap", this.toolHandler.snapPoint); // Debugging: Print the snap point
         }
         hold() {
           const t = this.mouse.touch.real;
@@ -16926,9 +16938,9 @@
                 ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
                 : s.addSceneryLine(t.x, t.y, e.x, e.y)),
               n && i.addActionToTimeline({ type: "add", objects: [n] }),
-              this.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
+              i.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
               (this.active = !1);
-              if (!GameSettings.snapNear) {i.snapPoint.equ(e)};
+              i.snapPoint.equ(e);
           }
         }
         update() {
@@ -16936,9 +16948,10 @@
           const t = this.toolHandler,
             e = t.gamepad;
           t.options.snap &&
-            ((this.active = !0), (this.p1 = t.snapPoint), this.snapNear(), this.hold()),
+            ((this.active = !0), (this.p1 = t.snapPoint), this.hold()),
             (this.shouldDrawMetadata = !!e.isButtonDown("ctrl"));
-          !t.options.snap && (this.snapUpdated = false);
+            !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
+            if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
             
         }
         draw() {
@@ -17101,6 +17114,7 @@
                 e.equ(s),
                 (this.toolHandler.snapPoint.x = s.x),
                 (this.toolHandler.snapPoint.y = s.y);
+                this.toolHandler.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
             }
             this.toolHandler.moveCameraTowardsMouse();
           }
@@ -17119,6 +17133,7 @@
               this.recordActionsToToolhandler();
             const n = this.toolHandler.snapPoint;
             (n.x = e.x), (n.y = e.y), (this.active = !1);
+            this.toolHandler.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
           }
         }
         update() {
@@ -17137,6 +17152,8 @@
             (this.p2.x = e.touch.real.x),
             (this.p2.y = e.touch.real.y)),
             super.update();
+            !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
+            if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
         }
         adjustTrailSpeed(t) {
           let e = this.options.trailSpeed;
@@ -17325,8 +17342,10 @@
                       let lineObject;
                       if (this.toolHandler.options.lineType === "physics") {
                           lineObject = s.addPhysicsLine(x1, y1, x2, y2);
+                          this.toolHandler.drawnPoints.push({ x: x1, y: y1 }, { x: x2, y: y2 });
                       } else {
                           lineObject = s.addSceneryLine(x1, y1, x2, y2);
+                          this.toolHandler.drawnPoints.push({ x: x1, y: y1 }, { x: x2, y: y2 });
                       }
                       
                       if (lineObject) {
@@ -17355,7 +17374,9 @@
               t.options.snap && (this.active = !0,
               this.p1 = t.snapPoint,
               this.hold()),
-              this.shouldDrawMetadata = !!e.isButtonDown("ctrl")
+              this.shouldDrawMetadata = !!e.isButtonDown("ctrl");
+              !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
+            if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
           }
 
           adjustTrailSpeed(t) {
@@ -21602,6 +21623,7 @@
           0 != e
             ? (t.read(e),
               (this.track = t),
+              this.addDrawnPoints(e),
               (this.state.preloading = !1),
               (this.state.loading = !1))
             : t.addDefaultLine(),
@@ -21609,6 +21631,26 @@
             (this.restartTrack = !0),
             (this.clear = !1),
             (this.track = t);
+        }
+        addDrawnPoints(trackCode) {
+          const segments = trackCode.split('#');
+        
+          const parsePoints = (code) => {
+            return code.split(',').forEach(segment => {
+              const coords = segment.trim().split(' ').map(coord => parseInt(coord, 32));
+              for (let i = 0; i < coords.length; i += 2) {
+                const x = coords[i];
+                const y = coords[i + 1];
+                this.toolHandler.drawnPoints.push({ x, y });
+              }
+            });
+          };
+        
+          segments.forEach(segment => {
+            if (segment) {
+              parsePoints(segment);
+            }
+          });
         }
         updateControls() {
           if (this.controls) {
@@ -21931,6 +21973,8 @@
               break;
             case "clear track":
               this.trackAction("editor-action", "clear"), (this.clear = !0);
+              this.toolHandler.drawnPoints = [];
+              this.toolHandler.drawnPoints.push({ x: -40, y: 50 }, { x: 40, y: 50 })
               break;
             case "import": {
               let e = t[0];
