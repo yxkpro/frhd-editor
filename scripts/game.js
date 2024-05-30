@@ -10180,7 +10180,6 @@
             m = 1e-30,
             v = 0,
             y = 0.01;
-            console.log(f);
           return (
             (function (t, e, s, i, n, r) {
               p.push(t, e), o(t, e, s, i, n, r, 0), p.push(n, r);
@@ -21982,6 +21981,7 @@
                   e = false;
                   return;
                 }
+                this.toolHandler.drawnPoints = [];
                 (this.importCode = e),
                 (this.clear = t[1]),
                 this.command("dialog", !1);
