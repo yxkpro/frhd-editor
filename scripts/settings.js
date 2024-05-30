@@ -45,6 +45,7 @@ var GameSettings = {
     "windspeed": 1,
     "propeller" : 1.2,
     "speed": 0,
+    "speedOther": 0,
     "rotateFactor": 15,
     "scaleFactor": 1.25,
     "scaleLock": true,
