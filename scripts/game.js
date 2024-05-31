@@ -18394,6 +18394,24 @@
             this.options.types
           );
           s.length > 0 && this.erasedObjects.push(s);
+          //remove erased points from drawnPoints
+          if (s[0] && s[0].p1 && s[0].p2) {
+            const { p1, p2 } = s[0];
+            for (let i = 0; i < this.toolHandler.drawnPoints.length; i++) {
+              const point = this.toolHandler.drawnPoints[i];
+              if (point.x === p1.x && point.y === p1.y) {
+                this.toolHandler.drawnPoints.splice(i, 1);
+                break;
+              }
+            }
+            for (let i = 0; i < this.toolHandler.drawnPoints.length; i++) {
+              const point = this.toolHandler.drawnPoints[i];
+              if (point.x === p2.x && point.y === p2.y) {
+                this.toolHandler.drawnPoints.splice(i, 1);
+                break;
+              }
+            }
+          }
         }
         draw() {
           this.drawEraser(this.scene.game.canvas.getContext("2d"));
