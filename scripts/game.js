@@ -22509,6 +22509,7 @@
         }
         addDrawnPoints(trackCode) {
           const segments = trackCode.split('#');
+          const lines = segments.slice(0, 2);
         
           const parsePoints = (code) => {
             return code.split(',').forEach(segment => {
@@ -22521,7 +22522,7 @@
             });
           };
         
-          segments.forEach(segment => {
+          lines.forEach(segment => {
             if (segment) {
               parsePoints(segment);
             }
