@@ -17626,21 +17626,17 @@
             s = this.toolHandler,
             i = [];
           for (let n = 0; n < t.length - 2; n += 2) {
-            const r = t[n],
-              o = t[n + 1],
-              a = t[n + 2],
-              h = t[n + 3];
+            const r = Math.round(t[n]),
+              o = Math.round(t[n + 1]),
+              a = Math.round(t[n + 2]),
+              h = Math.round(t[n + 3]);
             let l = !1;
             (l =
               "physics" === s.options.lineType
                 ? e.addPhysicsLine(r, o, a, h)
                 : e.addSceneryLine(r, o, a, h)),
               l && i.push(l);
-              const rr = Math.round(r),
-              oo = Math.round(o),
-              aa = Math.round(a),
-              hh = Math.round(h);
-              l && this.toolHandler.drawnPoints.push({ x: rr, y: oo }, { x: aa, y: hh });
+              l && this.toolHandler.drawnPoints.push({ x: r, y: o }, { x: a, y: h });
               (s.snapPoint.x = a),
               (s.snapPoint.y = h);
                 (this.active = !1);
