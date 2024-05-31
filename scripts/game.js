@@ -17581,7 +17581,6 @@
             this.active = !0;
             const t = this.mouse.touch.real;
             (this.p1.x = t.x), (this.p1.y = t.y);
-            this.toolHandler.drawnPoints.push({ x: t.x, y: t.y });
           }
         }
         hold() {
@@ -17609,7 +17608,6 @@
                 n && i.addActionToTimeline({ type: "add", objects: [n] });
                 (i.snapPoint.x = e.x),
                 (i.snapPoint.y = e.y);
-                i.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
                 (this.active = !1);
             } else this.splitAndAddCurve();
             (this.anchoring = !1), (this.active = !1);
@@ -17638,9 +17636,13 @@
                 ? e.addPhysicsLine(r, o, a, h)
                 : e.addSceneryLine(r, o, a, h)),
               l && i.push(l);
+              const rr = Math.round(r),
+              oo = Math.round(o),
+              aa = Math.round(a),
+              hh = Math.round(h);
+              l && this.toolHandler.drawnPoints.push({ x: rr, y: oo }, { x: aa, y: hh });
               (s.snapPoint.x = a),
               (s.snapPoint.y = h);
-              s.drawnPoints.push({ x: a, y: h });
                 (this.active = !1);
           }
           i.length > 0 && s.addActionToTimeline({ type: "add", objects: i });
@@ -17678,6 +17680,7 @@
               (this.drawLine(e, s),
               this.drawPoint(e, this.p1, s),
               this.drawPoint(e, this.p2, s));
+
         }
         drawCursor(t, e) {
           const s = this.mouse.touch.real.toScreenSnapped(this.scene);
@@ -17794,8 +17797,8 @@
               "physics" === i.options.lineType
                 ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
                 : s.addSceneryLine(t.x, t.y, e.x, e.y)),
-              n && i.addActionToTimeline({ type: "add", objects: [n] }),
-              i.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
+              n && i.addActionToTimeline({ type: "add", objects: [n] });
+              n && i.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
               (this.active = !1);
               i.snapPoint.equ(e);
           }
@@ -17968,10 +17971,10 @@
                   ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
                   : t.addSceneryLine(e.x, e.y, s.x, s.y)),
                 i && this.addedObjects.push(i),
+                i && this.toolHandler.drawnPoints.push({ x: e.x, y: e.y }, { x: s.x, y: s.y });
                 e.equ(s),
                 (this.toolHandler.snapPoint.x = s.x),
                 (this.toolHandler.snapPoint.y = s.y);
-                this.toolHandler.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
             }
             this.toolHandler.moveCameraTowardsMouse();
           }
@@ -17990,7 +17993,6 @@
               this.recordActionsToToolhandler();
             const n = this.toolHandler.snapPoint;
             (n.x = e.x), (n.y = e.y), (this.active = !1);
-            this.toolHandler.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
           }
         }
         update() {
@@ -18199,10 +18201,8 @@
                       let lineObject;
                       if (this.toolHandler.options.lineType === "physics") {
                           lineObject = s.addPhysicsLine(x1, y1, x2, y2);
-                          this.toolHandler.drawnPoints.push({ x: x1, y: y1 }, { x: x2, y: y2 });
                       } else {
                           lineObject = s.addSceneryLine(x1, y1, x2, y2);
-                          this.toolHandler.drawnPoints.push({ x: x1, y: y1 }, { x: x2, y: y2 });
                       }
                       
                       if (lineObject) {
@@ -18215,12 +18215,20 @@
                       this.toolHandler.addActionToTimeline({
                           type: "add",
                           objects: addedObjects
-                      });
+                      }
+                    );
+                    addedObjects.forEach(obj => {
+                      if (obj.p1 && obj.p2) {
+                          this.toolHandler.drawnPoints.push({ x: obj.p1.x, y: obj.p1.y });
+                          this.toolHandler.drawnPoints.push({ x: obj.p2.x, y: obj.p2.y });
+                      }
+                  });
                   }
           
                   // reset snap point and active flag
                   this.toolHandler.snapPoint.x = e.x;
                   this.toolHandler.snapPoint.y = e.y;
+                  
                   this.active = false;
               }
           }
