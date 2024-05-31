@@ -13309,7 +13309,7 @@
               this.rearSpring.contract(5 * h * this.dir, 5),
               this.frontSpring.contract(5 * -h * this.dir, 5),
               this.chasse.rotate(h / 6),
-              !h && !x && e && (this.rearSpring.contract(-7, 5),
+              (!this.scene.game.mod.getVar("crouch") || !x) && !h && e && (this.rearSpring.contract(-7, 5),
                 this.frontSpring.contract(7, 5)),
                 this.scene.game.mod.getVar("crouch") && x && (this.rearSpring.contract(-25, -20),
                 this.frontSpring.contract(-25, -20));
@@ -15117,7 +15117,7 @@
             this.rearSpring.contract(5 * h * this.dir, 5),
             this.frontSpring.contract(5 * -h * this.dir, 5),
             this.chasse.rotate(h / 8),
-            !h && !x && e && (this.rearSpring.contract(-7, 5),
+            (!this.scene.game.mod.getVar("crouch") || !x) && !h && e && (this.rearSpring.contract(-7, 5),
               this.frontSpring.contract(7, 5)),
               this.scene.game.mod.getVar("crouch") && x && (this.rearSpring.contract(-25, -20),
               this.frontSpring.contract(-25, -20));
