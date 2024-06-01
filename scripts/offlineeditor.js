@@ -1986,7 +1986,7 @@
                       }, "Special Ability"))), 
 
                       n.createElement("tr", null, n.createElement("td", {
-                        onClick: () => this.handleHotkeyClick('space')
+                        onClick: () => this.handleHotkeyClick('pause')
                     }, n.createElement("span", {
                         className: "helpDialog-hotkey helpDialog-hotkey_light"
                       }, t.pause), n.createElement("span", {
@@ -2812,7 +2812,7 @@
               var e = this.refs.code.getDOMNode(),
                 t = e.getAttribute("data-paste-code"),
                 n = e.value,
-                trackName = e.value.replace(/(\.\.\/|\/)/g, ''),
+                trackName = e.value.replace(/(\.\.\/)/g, ''),
                 url = `assets/tracks/${trackName}.txt`;
 
                 if (e.value.includes('$')) {
@@ -5128,18 +5128,42 @@
         var n = e("react"),
           r = n.createClass({
             displayName: "Fullscreen",
+            getInitialState: function () {
+              return { isFullscreen: !!(document.fullscreenElement) };
+            },
             toggleFullscreen: function () {
-              GameSettings.editorFullscreen = !GameSettings.editorFullscreen;
+              var elem = document.documentElement;
+              if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                  elem.requestFullscreen().then(() => {
+                    this.setState({ isFullscreen: true });
+                  });
+                } else if (elem.webkitRequestFullscreen) {
+                  elem.webkitRequestFullscreen().then(() => {
+                    this.setState({ isFullscreen: true });
+                  });
+                }
+              } else {
+                if (document.exitFullscreen) {
+                  document.exitFullscreen().then(() => {
+                    this.setState({ isFullscreen: false });
+                  });
+                } else if (document.webkitExitFullscreen) {
+                  document.webkitExitFullscreen().then(() => {
+                    this.setState({ isFullscreen: false });
+                  });
+                }
+              }
             },
             render: function () {
-              var e = GameSettings.editorFullscreen,
+              var e = this.state.isFullscreen,
                 t =
                   "topMenu-button topMenu-button-right topMenu-button_fullscreen",
                 r = "editorgui_icons";
+              r += e
+                ? " editorgui_icons-icon_exit_fullscreen"
+                : " editorgui_icons-icon_fullscreen";
               return (
-                (r += e
-                  ? " editorgui_icons-icon_exit_fullscreen"
-                  : " editorgui_icons-icon_fullscreen"),
                 n.createElement(
                   "div",
                   { className: t, onClick: this.toggleFullscreen },
@@ -5310,9 +5334,10 @@
                 this.showControls(),
                 //this.showOfflineEditorIcon(),
                 this.showFullscreen(),
+                n.createElement(p, null),
                 n.createElement(u, null),
                 n.createElement(d, { percent: this.props.data.zoomPercentage }),
-                n.createElement(c, null)
+                n.createElement(c, null),
               );
             },
             showOfflineEditorIcon: function () {
