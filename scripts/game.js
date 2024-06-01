@@ -10633,11 +10633,14 @@
               i = this.toolHandler.gamepad,
               n = this.toolHandler.options;
             let r = (s.old.down || i.isButtonDown("shift")) && !i.isButtonDown("ctrl");
-            n.rightClickMove && (r = s.old.down),
-            r
-                ? (s.old.down || e.old.down) && this.moveCamera()
-                : (e.press && this.press(), e.old.down && this.hold()),
-              e.release && this.release(),
+            n.rightClickMove && (r = s.old.down);
+            if (r) {
+              (s.old.down || e.old.down) && this.moveCamera()
+            }
+            else {
+              (e.press && this.press(), e.old.down && this.hold()),
+              e.release && this.release()
+            };
               t.mousewheel &&
                 !i.isButtonDown("shift") &&
                 this.mousewheel(t.mousewheel);
@@ -17651,21 +17654,22 @@
             n = this.toolHandler;
           n.options.snap &&
             ((this.active = !0),
-            (this.p1 = n.snapPoint),
-            this.anchoring || this.hold());
+              (this.p1 = n.snapPoint),
+              this.anchoring || this.hold());
           const r = this.toolHandler.options;
-          let o = i.isButtonDown("shift");
-          r.rightClickMove && (o = s.old.down),
-            o
-              ? (e.old.down || r.rightClickMove) && this.moveCamera()
-              : (e.press &&
-                  (this.anchoring || this.press(), (this.active = !0)),
-                e.old.down && !this.anchoring && this.hold()),
+          let o = (s.old.down || i.isButtonDown("shift")) && !i.isButtonDown("ctrl");
+          r.rightClickMove && (o = s.old.down);
+          if (o) { (e.old.down || s.old.down) && this.moveCamera() }
+          else {
+            (e.press &&
+              (this.anchoring || this.press(), (this.active = !0)),
+              e.old.down && !this.anchoring && this.hold()),
             this.anchoring && this.updateAnchor(),
-            e.release && this.release(),
-            !1 === t.mousewheel || o || this.mousewheel(t.mousewheel);
-            !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
-            if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
+            e.release && this.release()
+          }
+          !1 === t.mousewheel || o || this.mousewheel(t.mousewheel);
+          !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
+          if (GameSettings.snapNear) { this.toolHandler.snapPoint = this.toolHandler.snapNearPoint };
         }
         draw() {
           const t = this.scene,
