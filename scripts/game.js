@@ -17147,7 +17147,6 @@
             (this.snapNearPoint = new t.Z()),
             this.snapPoint.equ(this.scene.track.defaultLine.p2),
             this.snapUpdated = null,
-            this.drawnPoints = [],
             (this.gridCache = !1),
             this.initAnalytics(),
             (this.actionTimeline = []),
@@ -17262,32 +17261,49 @@
           this.options.snapLocked && (this.options.snap = !0);
         }
         snapNear() {
-          this.drawnPoints.push({ x: -40, y: 50 }, { x: 40, y: 50 });
-          if (!GameSettings.snapNear || this.drawnPoints.length === 0) return;
-        
-          if (!this.snapUpdated) {
-            let nearestPoint = null;
-            let minDistance = Infinity;
-        
-            this.drawnPoints.forEach(point => {
-              const distance = Math.sqrt(
-                Math.pow(this.mouse.touch.real.x - point.x, 2) +
+          if (!GameSettings.snapNear || this.snapUpdated) return;
+      
+          let sectorSize = this.scene.settings.drawSectorSize;
+          let sectorPos = {
+              x: Math.floor(this.mouse.touch.real.x / sectorSize),
+              y: Math.floor(this.mouse.touch.real.y / sectorSize)
+          };
+      
+          let linesInSector = [];
+          for (let xOffset = -1; xOffset <= 1; xOffset++) {
+              for (let yOffset = -1; yOffset <= 1; yOffset++) {
+                  let x = sectorPos.x + xOffset;
+                  let y = sectorPos.y + yOffset;
+                  let sector = this.scene.track.sectors.drawSectors?.[x]?.[y];
+                  if (sector) {
+                      linesInSector.push(...sector.physicsLines.filter(line => !line.remove));
+                      linesInSector.push(...sector.sceneryLines.filter(line => !line.remove));
+                  }
+              }
+          }
+      
+          let pointsInSector = linesInSector.flatMap(line => [line.p1, line.p2]);
+      
+          let nearestPoint = null;
+          let minDistance = Infinity;
+      
+          pointsInSector.forEach(point => {
+              const distanceToPoint = Math.sqrt(
+                  Math.pow(this.mouse.touch.real.x - point.x, 2) +
                   Math.pow(this.mouse.touch.real.y - point.y, 2)
               );
-              if (distance < minDistance) {
-                minDistance = distance;
-                nearestPoint = point;
+              if (distanceToPoint < minDistance) {
+                  minDistance = distanceToPoint;
+                  nearestPoint = point;
               }
-            });
-        
-            if (nearestPoint && this.options.snap) {
+          });
+      
+          if (nearestPoint && this.options.snap) {
               this.snapNearPoint.equ(nearestPoint);
-            }
-        
-            this.snapUpdated = true;
-            !this.options.snap && (this.snapUpdated = false);
           }
-        
+      
+          this.snapUpdated = true;
+          !this.options.snap && (this.snapUpdated = false);
         }
         moveCameraTowardsMouse() {
           if (!1 === this.options.cameraLocked) {
@@ -17639,7 +17655,6 @@
                 ? e.addPhysicsLine(r, o, a, h)
                 : e.addSceneryLine(r, o, a, h)),
               l && i.push(l);
-              l && this.toolHandler.drawnPoints.push({ x: r, y: o }, { x: a, y: h });
               (s.snapPoint.x = a),
               (s.snapPoint.y = h);
                 (this.active = !1);
@@ -17798,7 +17813,6 @@
                 ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
                 : s.addSceneryLine(t.x, t.y, e.x, e.y)),
               n && i.addActionToTimeline({ type: "add", objects: [n] });
-              n && i.drawnPoints.push({ x: t.x, y: t.y }, { x: e.x, y: e.y });
               (this.active = !1);
               i.snapPoint.equ(e);
           }
@@ -17971,7 +17985,6 @@
                   ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
                   : t.addSceneryLine(e.x, e.y, s.x, s.y)),
                 i && this.addedObjects.push(i),
-                i && this.toolHandler.drawnPoints.push({ x: e.x, y: e.y }, { x: s.x, y: s.y });
                 e.equ(s),
                 (this.toolHandler.snapPoint.x = s.x),
                 (this.toolHandler.snapPoint.y = s.y);
@@ -18217,12 +18230,6 @@
                           objects: addedObjects
                       }
                     );
-                    addedObjects.forEach(obj => {
-                      if (obj.p1 && obj.p2) {
-                          this.toolHandler.drawnPoints.push({ x: obj.p1.x, y: obj.p1.y });
-                          this.toolHandler.drawnPoints.push({ x: obj.p2.x, y: obj.p2.y });
-                      }
-                  });
                   }
           
                   // reset snap point and active flag
@@ -18402,24 +18409,6 @@
             this.options.types
           );
           s.length > 0 && this.erasedObjects.push(s);
-          //remove erased points from drawnPoints
-          if (s[0] && s[0].p1 && s[0].p2) {
-            const { p1, p2 } = s[0];
-            for (let i = 0; i < this.toolHandler.drawnPoints.length; i++) {
-              const point = this.toolHandler.drawnPoints[i];
-              if (point.x === p1.x && point.y === p1.y) {
-                this.toolHandler.drawnPoints.splice(i, 1);
-                break;
-              }
-            }
-            for (let i = 0; i < this.toolHandler.drawnPoints.length; i++) {
-              const point = this.toolHandler.drawnPoints[i];
-              if (point.x === p2.x && point.y === p2.y) {
-                this.toolHandler.drawnPoints.splice(i, 1);
-                break;
-              }
-            }
-          }
         }
         draw() {
           this.drawEraser(this.scene.game.canvas.getContext("2d"));
@@ -22506,7 +22495,6 @@
           0 != e
             ? (t.read(e),
               (this.track = t),
-              this.addDrawnPoints(e),
               (this.state.preloading = !1),
               (this.state.loading = !1))
             : t.addDefaultLine(),
@@ -22514,27 +22502,6 @@
             (this.restartTrack = !0),
             (this.clear = !1),
             (this.track = t);
-        }
-        addDrawnPoints(trackCode) {
-          const segments = trackCode.split('#');
-          const lines = segments.slice(0, 2);
-        
-          const parsePoints = (code) => {
-            return code.split(',').forEach(segment => {
-              const coords = segment.trim().split(' ').map(coord => parseInt(coord, 32));
-              for (let i = 0; i < coords.length; i += 2) {
-                const x = coords[i];
-                const y = coords[i + 1];
-                this.toolHandler.drawnPoints.push({ x, y });
-              }
-            });
-          };
-        
-          lines.forEach(segment => {
-            if (segment) {
-              parsePoints(segment);
-            }
-          });
         }
         updateControls() {
           if (this.controls) {
@@ -22857,8 +22824,6 @@
               break;
             case "clear track":
               this.trackAction("editor-action", "clear"), (this.clear = !0);
-              this.toolHandler.drawnPoints = [];
-              this.toolHandler.drawnPoints.push({ x: -40, y: 50 }, { x: 40, y: 50 })
               break;
             case "import": {
               let e = t[0];
@@ -22866,7 +22831,6 @@
                   e = false;
                   return;
                 }
-                this.toolHandler.drawnPoints = [];
                 (this.importCode = e),
                 (this.clear = t[1]),
                 this.command("dialog", !1);
