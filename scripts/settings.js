@@ -1,7 +1,7 @@
 var GameSettings = {
     "embedded": false,
-    "basePlatformUrl": "http:\/\/www.kanohub.com\/~charlie\/kano\/apps\/tracks\/frhd",
-    "basePlatformExternalUrl": "http:\/\/www.kanohub.com\/~charlie\/kano\/apps\/tracks\/frhd",
+    "basePlatformUrl": "",
+    "basePlatformExternalUrl": "",
     "baseAssetUrl": true,
     "developerMode": false,
     "isChromeApp": true,
@@ -162,7 +162,10 @@ var GameSettings = {
         "zoom_100": 48,
         "select" : 68,
         "circle" : 84,
-        "import" : [73, 191]
+        "import" : 73,
+        "rotate" : 82,
+        "scale" : 83,
+        "flip" : 70
     },
     "keysToRecord": ["up", "down", "left", "right", "enter", "backspace", "z"],
     "user": {
@@ -181,9 +184,9 @@ var GameSettings = {
                 },
                 "classname": "forwardcap",
                 "equiped": false,
-                "img": "http:\/\/cdn.kanohub.com\/free_rider_hd\/assets\/inventory\/head\/img\/v1\/classic.png",
+                "img": "",
                 "show": true,
-                "script": "http:\/\/cdn.kanohub.com\/free_rider_hd\/assets\/inventory\/head\/scripts\/v1\/forwardcap.js",
+                "script": "",
                 "limited": false
             }
         },

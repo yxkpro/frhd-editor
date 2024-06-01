@@ -10872,7 +10872,7 @@
                 (i = !1),
                 (t = this.scene.settings.mobile
                   ? "Paused"
-                  : "Paused - Press Spacebar to Continue")),
+                  : "Paused")),
               !1 === s && (s = "#333333"),
               t)
             ) {
@@ -20602,7 +20602,6 @@
               t.setButtonUp("opt7"),
               this.scene.stateChanged()),
             t.isButtonDown("opt8") &&
-              Application.User.get("classic") &&
               ((e.selected = "teleport"),
               t.setButtonUp("opt8"),
               this.scene.stateChanged()),
@@ -24899,6 +24898,9 @@ function load() {
           this.name = 'select';
           this.down = false;
           this.center = null;
+          this.rotate = false;
+          this.scale = false;
+          this.flip = false;
           // make a copy
           this.oldMouse = this.mouse.touch.real.factor(1);
           document.addEventListener('keydown', this.keydown.bind(this));
@@ -24912,22 +24914,31 @@ function load() {
           return isHoverList ? hoverList : hovered ? [hovered] : [];
       }
 
-      keydown(event) {
-          if (event.key.toLowerCase() === 'r') {
-              const degrees = event.shiftKey ? -1 * GameSettings.rotateFactor : GameSettings.rotateFactor;
+      keydown() {
+        const t = this.gamepad,
+          r = t.isButtonDown("rotate"),
+          s = t.isButtonDown("scale"),
+          f = t.isButtonDown("flip"),
+          shift = t.isButtonDown("shift");
+          if (r && !this.rotate) {
+              const degrees = shift ? -1 * GameSettings.rotateFactor : GameSettings.rotateFactor;
               this.rotateSelected(degrees);
+              this.rotate = !0;
           }
-          if (event.key.toLowerCase() === 's') {
-              const scale = event.shiftKey ? 1 / GameSettings.scaleFactor : GameSettings.scaleFactor;
+          if (s && !this.scale) {
+              const scale = shift ? 1 / GameSettings.scaleFactor : GameSettings.scaleFactor;
               this.scaleSelected(scale);
+              this.scale = !0;
           }
-          if (event.key.toLowerCase() === 'f') {
-              const flipVertically = event.shiftKey;
+          if (f && !this.flip) {
+              const flipVertically = shift;
               this.flipSelected(flipVertically);
+              this.flip = !0;
           }
+          r || (this.rotate = !1);
+          s || (this.scale = !1);
+          f || (this.flip = !1);
       }
-
-      //note
 
       findCenter() {
           if (!this.center) {
@@ -25313,6 +25324,7 @@ function load() {
           if (force) return;
           this.oldMouse = this.mouse.touch.real.factor(1);
           this.toolUpdate();
+          this.keydown();
       }
 
       
