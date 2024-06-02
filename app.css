@@ -1750,7 +1750,9 @@ html.fullscreen #main_page {
 }
 
 .bottomMenu-button_snap {
-    min-width: 120px
+    min-width: 110px;
+    padding-left: 5px;
+
 }
 
 .bottomMenu-button_cameralock {

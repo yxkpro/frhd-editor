@@ -11915,12 +11915,41 @@
           }
 
           if (this.scene.toolHandler.options.snap) {
-            const snapPoint = this.scene.toolHandler.snapPointP1;
-            const mouseClose = Math.abs(s.x - snapPoint.x) <= GameSettings.snapDistance && Math.abs(s.y - snapPoint.y) <= GameSettings.snapDistance;
-            
-            if (mouseClose) {
-              s.x = snapPoint.x;
-              s.y = snapPoint.y;
+            const sectorSize = this.scene.settings.drawSectorSize;
+            const sectorPos = {
+                x: Math.floor(s.x / sectorSize),
+                y: Math.floor(s.y / sectorSize)
+            };
+    
+            let linesInSector = [];
+            for (let xOffset = -1; xOffset <= 1; xOffset++) {
+                for (let yOffset = -1; yOffset <= 1; yOffset++) {
+                    let x = sectorPos.x + xOffset;
+                    let y = sectorPos.y + yOffset;
+                    let sector = this.scene.track.sectors.drawSectors?.[x]?.[y];
+                    if (sector) {
+                        linesInSector.push(...sector.physicsLines.filter(line => !line.remove));
+                        linesInSector.push(...sector.sceneryLines.filter(line => !line.remove));
+                    }
+                }
+            }
+    
+            let pointsInSector = linesInSector.flatMap(line => [line.p1, line.p2]);
+    
+            let nearestPoint = null;
+            let minDistance = Infinity;
+    
+            pointsInSector.forEach(point => {
+                const distanceToPoint = Math.hypot(s.x - point.x, s.y - point.y);
+                if (distanceToPoint < minDistance && distanceToPoint <= GameSettings.snapDistance) {
+                    minDistance = distanceToPoint;
+                    nearestPoint = point;
+                }
+            });
+    
+            if (nearestPoint) {
+                s.x = nearestPoint.x;
+                s.y = nearestPoint.y;
             }
           }
         }
