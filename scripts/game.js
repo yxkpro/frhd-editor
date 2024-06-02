@@ -11913,6 +11913,16 @@
             s.x = h(s.x / gridSize) * gridSize;
             s.y = h(s.y / gridSize) * gridSize;
           }
+
+          if (this.scene.toolHandler.options.snap) {
+            const snapPoint = this.scene.toolHandler.snapPointP1;
+            const mouseClose = Math.abs(s.x - snapPoint.x) <= GameSettings.snapDistance && Math.abs(s.y - snapPoint.y) <= GameSettings.snapDistance;
+            
+            if (mouseClose) {
+              s.x = snapPoint.x;
+              s.y = snapPoint.y;
+            }
+          }
         }
         onMouseWheel(t) {
           return (
@@ -17143,10 +17153,13 @@
             (this.gamepad = e.playerManager.firstPlayer.getGamepad()),
             (this.tools = {}),
             (this.options = e.settings.toolHandler),
+            (this.snapPointP1 = new t.Z()),
+            (this.snapPointP2 = new t.Z()),
             (this.snapPoint = new t.Z()),
             (this.snapNearPoint = new t.Z()),
             this.snapPoint.equ(this.scene.track.defaultLine.p2),
-            this.snapUpdated = null,
+            (this.updateP1 = true),
+            (this.updateP2 = true),
             (this.gridCache = !1),
             this.initAnalytics(),
             (this.actionTimeline = []),
@@ -17261,7 +17274,7 @@
           this.options.snapLocked && (this.options.snap = !0);
         }
         snapNear() {
-          if (!GameSettings.snapNear || this.snapUpdated) return;
+          if (!this.options.snap) return;
       
           let sectorSize = this.scene.settings.drawSectorSize;
           let sectorPos = {
@@ -17297,13 +17310,14 @@
                   nearestPoint = point;
               }
           });
+
+          if (nearestPoint && this.options.snap && this.updateP2) {
+            this.snapPointP2.equ(nearestPoint);
+        }
       
-          if (nearestPoint && this.options.snap) {
-              this.snapNearPoint.equ(nearestPoint);
+          if (nearestPoint && this.options.snap && this.updateP1) {
+              this.snapPointP1.equ(nearestPoint);
           }
-      
-          this.snapUpdated = true;
-          !this.options.snap && (this.snapUpdated = false);
         }
         moveCameraTowardsMouse() {
           if (!1 === this.options.cameraLocked) {
@@ -17373,15 +17387,13 @@
             this.scene.stateChanged();
         }
         toggleSnap() {
-          (this.options.snap = !this.options.snap),
+          (this.options.snap = this.scene.state.snap = !this.options.snap),
             (this.options.snapLocked = !this.options.snapLocked),
-            this.resetTool(),
             this.scene.stateChanged();
         }
         toggleQuickSnap() {
           this.options.snapLocked ||
             ((this.options.snap = !this.options.snap),
-            this.resetTool(),
             this.scene.stateChanged());
         }
         toggleCameraLock() {
@@ -17667,10 +17679,11 @@
             s = t.secondaryTouch,
             i = this.toolHandler.gamepad,
             n = this.toolHandler;
-          n.options.snap &&
-            ((this.active = !0),
-              (this.p1 = n.snapPoint),
-              this.anchoring || this.hold());
+            if (n.options.snap && GameSettings.snapNear) {
+              if (this.updateP2) {
+                this.p2 = this.toolHandler.snapPointP2;
+              }
+            }
           const r = this.toolHandler.options;
           let o = (s.old.down || i.isButtonDown("shift")) && !i.isButtonDown("ctrl");
           r.rightClickMove && (o = s.old.down);
@@ -17699,7 +17712,7 @@
         }
         drawCursor(t, e) {
           const s = this.mouse.touch.real.toScreenSnapped(this.scene);
-          if (this.toolHandler.options.grid) {
+          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
             const i = 5 * e;
             t.beginPath(),
               t.moveTo(s.x, s.y - i),
@@ -17815,18 +17828,20 @@
               n && i.addActionToTimeline({ type: "add", objects: [n] });
               (this.active = !1);
               i.snapPoint.equ(e);
+              this.toolHandler.updateP1 = true;
+              this.toolHandler.updateP2 = true;
           }
         }
         update() {
           super.update();
           const t = this.toolHandler,
             e = t.gamepad;
-          t.options.snap &&
-            ((this.active = !0), (this.p1 = t.snapPoint), this.hold()),
-            (this.shouldDrawMetadata = !!e.isButtonDown("ctrl"));
-            !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
-            if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
-            
+          if (t.options.snap && GameSettings.snapNear) {
+            if (this.updateP2) {
+              this.p2 = this.toolHandler.snapPointP2;
+            }
+          }
+          (this.shouldDrawMetadata = !!e.isButtonDown("ctrl"));
         }
         draw() {
           const t = this.scene,
@@ -17844,7 +17859,7 @@
         drawCursor(t) {
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
-          if (this.toolHandler.options.grid) {
+          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
             const i = 5 * s;
             t.beginPath(),
               t.moveTo(e.x, e.y - i),
@@ -18017,15 +18032,12 @@
               !1 !== e.mousewheel &&
               this.adjustBreakLength(e.mousewheel);
           const s = this.toolHandler;
-          s.options.snap &&
-            ((this.active = !0),
-            (this.p1.x = s.snapPoint.x),
-            (this.p1.y = s.snapPoint.y),
-            (this.p2.x = e.touch.real.x),
-            (this.p2.y = e.touch.real.y)),
+          if (s.options.snap && GameSettings.snapNear) {
+            if (this.updateP2) {
+              this.p2 = this.toolHandler.snapPointP2;
+            }
+          }
             super.update();
-            !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
-            if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
         }
         adjustTrailSpeed(t) {
           let e = this.options.trailSpeed;
@@ -18079,7 +18091,7 @@
         drawCursor(t) {
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
-          if (this.toolHandler.options.grid) {
+          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
             const i = 5 * s;
             t.beginPath(),
               t.moveTo(e.x, e.y - i),
@@ -18243,9 +18255,11 @@
               super.update();
               const t = this.toolHandler
                 , e = t.gamepad;
-              t.options.snap && (this.active = !0,
-              this.p1 = t.snapPoint,
-              this.hold()),
+                if (t.options.snap && GameSettings.snapNear) {
+                  if (this.updateP2) {
+                    this.p2 = this.toolHandler.snapPointP2;
+                  }
+                }
               this.shouldDrawMetadata = !!e.isButtonDown("ctrl");
               !this.toolHandler.options.snap && (this.toolHandler.snapUpdated = false);
             if (GameSettings.snapNear) {this.toolHandler.snapPoint = this.toolHandler.snapNearPoint};
@@ -18296,7 +18310,7 @@
           drawCursor(t) {
               const e = this.mouse.touch.real.toScreenSnapped(this.scene)
                 , s = this.camera.zoom;
-              if (this.toolHandler.options.grid) {
+              if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
                   const i = 5 * s;
                   t.beginPath(),
                   t.moveTo(e.x, e.y - i),
@@ -22475,7 +22489,7 @@
           const t = this.playerManager.firstPlayer;
           if (t) {
             const e = t.getGamepad();
-            const hotkeys = GameSettings.switchHotkeys ? this.settings.playHotkeys : this.settings.editorHotkeys;
+            const hotkeys = this.settings.editorHotkeys;
             e.setKeyMap(hotkeys);
           }
         }

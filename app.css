@@ -1749,6 +1749,10 @@ html.fullscreen #main_page {
     min-width: 100px
 }
 
+.bottomMenu-button_snap {
+    min-width: 120px
+}
+
 .bottomMenu-button_cameralock {
     min-width: 140px
 }

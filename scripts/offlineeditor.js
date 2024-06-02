@@ -347,6 +347,7 @@
           a = e("./brushbottomtooloptions"),
           x = e("./circlebottomtooloptions"),
           xx = e("./selectbottomtooloptions"),
+          xxx = e("./snap"),
           s = e("./eraserbottomtooloptions"),
           l = e("./camerabottomtooloptions"),
           c = e("./straightlinebottomtooloptions"),
@@ -404,6 +405,7 @@
                     n.createElement(i, {
                       active: this.props.data.cameraLocked,
                     }),
+                    n.createElement(xxx, { active: this.props.data.snap }),
                     n.createElement(o, { active: this.props.data.grid }),
                     n.createElement(r, { vehicle: this.props.data.vehicle }),
                     n.createElement("span", { className: "divider" })
@@ -420,6 +422,7 @@
         "./brushbottomtooloptions": 5,
         "./circlebottomtooloptions": 905,
         "./selectbottomtooloptions": 906,
+        "./snap": 952,
         "./camerabottomtooloptions": 6,
         "./cameralock": 7,
         "./curvedlinebottomtooloptions": 8,
@@ -2837,20 +2840,7 @@
                                 onChange: this.toggleScaleLock
                             }))),
 
-                            n.createElement("tr", null, n.createElement("td", {
-                                className: "settingTitle"
-                            }, n.createElement("span", {
-                                className: "name"
-                            }, "Shift Key to Toggle Snap")), n.createElement("td", {
-                                className: "settingInput"
-                            }, n.createElement("input", {
-                                type: "checkbox",
-                                ref: "rightClickMove",
-                                defaultChecked: o,
-                                onChange: this.toggleRightClickMove
-                            }))),
-
-                            n.createElement("tr", null, n.createElement("td", {
+                            /*n.createElement("tr", null, n.createElement("td", {
                               className: "settingTitle"
                           }, n.createElement("span", {
                               className: "name"
@@ -2861,7 +2851,7 @@
                               ref: "snapNear",
                               defaultChecked: q,
                               onChange: this.toggleSnapNear
-                          })))
+                          })))*/
 
                             /* n.createElement("tr", null, n.createElement("td", {
                                 className: "settingTitle"
@@ -5079,6 +5069,146 @@
       },
       { react: 230 },
     ],
+    952: [function (e, t) {
+      var n = e("react"),
+        a = n.createClass({
+          displayName: "Snap",
+          setSnap: function (e) {
+            "undefined" != typeof GameManager && GameManager.command("snap")
+          },
+          changeSnapSize: function (e) {
+            var t = e.target.value;
+            GameSettings.snapDistance = t,
+              GameManager.command("redraw"),
+              e.preventDefault(),
+              e.stopPropagation();
+            return !1
+          },
+          changeSnapType: function () {
+            GameSettings.snapNear = !GameSettings.snapNear,
+              GameManager.command("redraw");
+          },
+          /*changeSnapType: function(e) {
+            var selectedOption = e.target.value;
+            if (selectedOption === "VISIBLE") {
+                GameSettings.toolHandler.visibleGrid = true;
+                GameSettings.toolHandler.snapGrid = true;
+            } else if (selectedOption === "HIDDEN") {
+                GameSettings.toolHandler.visibleGrid = false;
+                GameSettings.toolHandler.snapGrid = true;
+            } else if (selectedOption === "NO-SNAP") {
+                GameSettings.toolHandler.visibleGrid = true;
+                GameSettings.toolHandler.snapGrid = false;
+            }
+            GameManager.command("redraw");
+        },*/
+          stopClickPropagation: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          },
+          renderSnapSizeSelect: function () {
+            var e = GameSettings.snapDistance,
+              t = [5, 10, 25, 50, 100, 250];
+            return n.createElement("select", {
+              ref: "snapSize",
+              defaultValue: e,
+              onChange: this.changeSnapSize,
+              onClick: this.stopClickPropagation
+            }, t.map(function (e) {
+              return n.createElement("option", {
+                key: e,
+                value: e
+              }, e)
+            }))
+          },
+          renderSnapTypeSelect: function () {
+            var f = GameSettings.snapNear,
+              u = ["Snap Near", "Snap Last"];
+            var snapType = f ? "Snap Near" : "Snap Last";
+            return n.createElement("select", {
+              ref: "snapType",
+              defaultValue: snapType,
+              onChange: this.changeSnapType,
+              onClick: this.stopClickPropagation
+            }, u.map(function (f) {
+              return n.createElement("option", {
+                key: f,
+                value: f
+              }, f)
+            }))
+          },
+          /*renderGridVisibleSelect: function() {
+            var v = GameSettings.toolHandler.visibleGrid,
+                s = GameSettings.toolHandler.snapGrid,
+                u = ["VISIBLE", "HIDDEN", "NO-SNAP"];
+            var gridVisible;
+            if (v && s) {
+                gridVisible = "VISIBLE";
+            } else if (!v && s) {
+                gridVisible = "HIDDEN";
+            } else {
+                gridVisible = "NO-SNAP";
+            }
+            return n.createElement("select", {
+                ref: "gridVisible",
+                defaultValue: gridVisible,
+                onChange: this.changeGridVisible,
+                onClick: this.stopClickPropagation
+            }, u.map(function(v) {
+                return n.createElement("option", {
+                    key: v,
+                    value: v
+                }, v)
+            }))
+        },*/
+          render: function () {
+            var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_snap ",
+              t = "editorgui_icons_bottom editorgui_icons-icon_snap",
+              a = this.props.active;
+            a && (e += " bottomMenu-button-active",
+              t = "editorgui_icons editorgui_icons-icon_snap_on");
+            var o = a ? "" : "off";
+            return n.createElement("div", {
+              className: e,
+              onClick: this.setSnap
+            }, n.createElement("span", {
+              className: t
+            }), n.createElement("span", {
+              className: "name"
+            }, "Snap : ", o), a ? n.createElement("div", {}, this.renderSnapSizeSelect()) : null)
+          }
+        });
+      t.exports = a
+    }, {
+      react: 230
+    }],    
+    /*952: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "SnapNear",
+            toggleSnap: function () {
+              "undefined" != typeof GameManager && GameManager.command("snap");
+            },
+            render: function () {
+              var e = "sideButton sideButton_snap",
+                t = "editorgui_icons editorgui_icons-icon_snap";
+              return (
+                this.props.active &&
+                  ((e += " active"),
+                  (t = "editorgui_icons editorgui_icons-icon_snap_on")),
+                n.createElement(
+                  "div",
+                  { className: e, onClick: this.toggleSnap },
+                  n.createElement("span", { className: t })
+                )
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],*/
     53: [
       function (e, t) {
         var n = e("react"),
