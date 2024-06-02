@@ -5108,7 +5108,7 @@
           },
           renderSnapSizeSelect: function () {
             var e = GameSettings.snapDistance,
-              t = [5, 10, 25, 50, 100, 250];
+              t = [0, 2, 5, 10, 25, 50, 100, 250];
             return n.createElement("select", {
               ref: "snapSize",
               defaultValue: e,
@@ -5123,8 +5123,8 @@
           },
           renderSnapTypeSelect: function () {
             var f = GameSettings.snapNear,
-              u = ["Snap Near", "Snap Last"];
-            var snapType = f ? "Snap Near" : "Snap Last";
+              u = ["Line Snap", "Point Snap"];
+            var snapType = f ? "Line Snap" : "Point Snap";
             return n.createElement("select", {
               ref: "snapType",
               defaultValue: snapType,
@@ -5167,7 +5167,7 @@
               a = this.props.active;
             a && (e += " bottomMenu-button-active",
               t = "editorgui_icons editorgui_icons-icon_snap_on");
-            var o = a ? "" : "off";
+            var o = ""
             return n.createElement("div", {
               className: e,
               onClick: this.setSnap
@@ -5175,7 +5175,7 @@
               className: t
             }), n.createElement("span", {
               className: "name"
-            }, "Snap : ", o), a ? n.createElement("div", {}, this.renderSnapSizeSelect()) : null)
+            }, "Snap : ", o), n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()))
           }
         });
       t.exports = a
