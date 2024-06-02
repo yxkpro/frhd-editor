@@ -11898,7 +11898,7 @@
           const gridSize = u.toolHandler.gridSize;
           const isometricGridEnabled = u.toolHandler.isometricGrid;
 
-          if (this.scene.toolHandler.options.grid && isometricGridEnabled) {
+          if (this.scene.toolHandler.options.grid && this.scene.toolHandler.options.snapGrid && isometricGridEnabled) {
 
             let t = gridSize | 0;
             function c(t, z) {
@@ -11909,7 +11909,7 @@
               , k = c(adjusted, 2);
             s.x = adjusted * t;
             s.y = s.y - c(s.y + g * (k + 1), t) - (g * (k - 1)) + (k * g);
-          } else if (this.scene.toolHandler.options.grid && !isometricGridEnabled) {
+          } else if (this.scene.toolHandler.options.grid && this.scene.toolHandler.options.snapGrid && !isometricGridEnabled) {
             s.x = h(s.x / gridSize) * gridSize;
             s.y = h(s.y / gridSize) * gridSize;
           }
@@ -17392,7 +17392,7 @@
           this.mouse.enabled && this.tools[this.currentTool].draw();
         }
         drawGrid() {
-          if (this.options.grid && this.options.visibleGrid && !this.scene.game.mod.vars.invisibleGrid) {
+          if (this.options.grid && this.options.visibleGrid) {
             if (this.options.isometricGrid) {
               return this.drawCachedGridIsometric(this.scene.game.canvas.getContext("2d"), this.scene.game.pixelRatio);
             } else {

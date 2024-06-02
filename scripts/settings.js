@@ -68,6 +68,7 @@ var GameSettings = {
         "grid": false,
         "gridSize": 10,
         "visibleGrid": true,
+        "snapGrid": true,
         "gridMinorLineColor": "#EEE",
         "gridMajorLineColor": "#CCC",
         "lineType": "physics",

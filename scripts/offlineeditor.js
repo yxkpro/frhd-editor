@@ -893,81 +893,119 @@
       },
       { react: 230, "react-slider": 75 },
     ],
-    10: [function(e, t) {
+    10: [function (e, t) {
       var n = e("react"),
-          a = n.createClass({
-              displayName: "Grid",
-              setGrid: function(e) {
-                  "undefined" != typeof GameManager && GameManager.command("grid")
-              },
-              changeGridSize: function(e) {
-                  var t = e.target.value;
-                  GameSettings.toolHandler.gridSize = t,
-                  GameManager.command("redraw"),
-                  e.preventDefault(),
-                  e.stopPropagation();
-                  return !1
-              },
-              changeGridType: function() {
-                  GameSettings.toolHandler.isometricGrid = !GameSettings.toolHandler.isometricGrid,
-                  GameManager.command("redraw");
-              },
-              stopClickPropagation: function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            },
-              renderGridSizeSelect: function() {
-                var e = GameSettings.toolHandler.gridSize,
-                    t = [2, 4, 5, 10, 15, 20, 25, 50, 100];
-                return n.createElement("select", {
-                    ref: "gridSize",
-                    defaultValue: e,
-                    onChange: this.changeGridSize,
-                    onClick: this.stopClickPropagation
-                }, t.map(function(e) {
-                    return n.createElement("option", {
-                        key: e,
-                        value: e
-                    }, e)
-                }))
-            },
-            renderGridTypeSelect: function() {
-              var f = GameSettings.toolHandler.isometricGrid,
-                  u = ["STANDARD", "ISOMETRIC"];
-              var gridType = f ? "ISOMETRIC" : "STANDARD";
-              return n.createElement("select", {
-                  ref: "gridType",
-                  defaultValue: gridType,
-                  onChange: this.changeGridType,
-                  onClick: this.stopClickPropagation
-              }, u.map(function(f) {
-                  return n.createElement("option", {
-                      key: f,
-                      value: f
-                  }, f)
-              }))
+        a = n.createClass({
+          displayName: "Grid",
+          setGrid: function (e) {
+            "undefined" != typeof GameManager && GameManager.command("grid")
           },
-              render: function() {
-                  var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_grid ",
-                      t = "editorgui_icons_bottom editorgui_icons-icon_grid_off",
-                      a = this.props.active;
-                  a && (e += " bottomMenu-button-active",
-                  t = "editorgui_icons editorgui_icons-icon_grid_on");
-                  var o = a ? "" : "off";
-                  return n.createElement("div", {
-                      className: e,
-                      onClick: this.setGrid
-                  }, n.createElement("span", {
-                      className: t
-                  }), n.createElement("span", {
-                      className: "name"
-                  }, "Grid : ", o), a ? n.createElement("div", {}, this.renderGridSizeSelect(), this.renderGridTypeSelect()) : null)
-              }
-          });
+          changeGridSize: function (e) {
+            var t = e.target.value;
+            GameSettings.toolHandler.gridSize = t,
+              GameManager.command("redraw"),
+              e.preventDefault(),
+              e.stopPropagation();
+            return !1
+          },
+          changeGridType: function () {
+            GameSettings.toolHandler.isometricGrid = !GameSettings.toolHandler.isometricGrid,
+              GameManager.command("redraw");
+          },
+          changeGridVisible: function(e) {
+            var selectedOption = e.target.value;
+            if (selectedOption === "VISIBLE") {
+                GameSettings.toolHandler.visibleGrid = true;
+                GameSettings.toolHandler.snapGrid = true;
+            } else if (selectedOption === "HIDDEN") {
+                GameSettings.toolHandler.visibleGrid = false;
+                GameSettings.toolHandler.snapGrid = true;
+            } else if (selectedOption === "NO-SNAP") {
+                GameSettings.toolHandler.visibleGrid = true;
+                GameSettings.toolHandler.snapGrid = false;
+            }
+            GameManager.command("redraw");
+        },
+          stopClickPropagation: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          },
+          renderGridSizeSelect: function () {
+            var e = GameSettings.toolHandler.gridSize,
+              t = [2, 4, 5, 10, 15, 20, 25, 50, 100];
+            return n.createElement("select", {
+              ref: "gridSize",
+              defaultValue: e,
+              onChange: this.changeGridSize,
+              onClick: this.stopClickPropagation
+            }, t.map(function (e) {
+              return n.createElement("option", {
+                key: e,
+                value: e
+              }, e)
+            }))
+          },
+          renderGridTypeSelect: function () {
+            var f = GameSettings.toolHandler.isometricGrid,
+              u = ["STANDARD", "ISOMETRIC"];
+            var gridType = f ? "ISOMETRIC" : "STANDARD";
+            return n.createElement("select", {
+              ref: "gridType",
+              defaultValue: gridType,
+              onChange: this.changeGridType,
+              onClick: this.stopClickPropagation
+            }, u.map(function (f) {
+              return n.createElement("option", {
+                key: f,
+                value: f
+              }, f)
+            }))
+          },
+          renderGridVisibleSelect: function() {
+            var v = GameSettings.toolHandler.visibleGrid,
+                s = GameSettings.toolHandler.snapGrid,
+                u = ["VISIBLE", "HIDDEN", "NO-SNAP"];
+            var gridVisible;
+            if (v && s) {
+                gridVisible = "VISIBLE";
+            } else if (!v && s) {
+                gridVisible = "HIDDEN";
+            } else {
+                gridVisible = "NO-SNAP";
+            }
+            return n.createElement("select", {
+                ref: "gridVisible",
+                defaultValue: gridVisible,
+                onChange: this.changeGridVisible,
+                onClick: this.stopClickPropagation
+            }, u.map(function(v) {
+                return n.createElement("option", {
+                    key: v,
+                    value: v
+                }, v)
+            }))
+        },
+          render: function () {
+            var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_grid ",
+              t = "editorgui_icons_bottom editorgui_icons-icon_grid_off",
+              a = this.props.active;
+            a && (e += " bottomMenu-button-active",
+              t = "editorgui_icons editorgui_icons-icon_grid_on");
+            var o = a ? "" : "off";
+            return n.createElement("div", {
+              className: e,
+              onClick: this.setGrid
+            }, n.createElement("span", {
+              className: t
+            }), n.createElement("span", {
+              className: "name"
+            }, "Grid : ", o), a ? n.createElement("div", {}, this.renderGridSizeSelect(), this.renderGridTypeSelect(), this.renderGridVisibleSelect()) : null)
+          }
+        });
       t.exports = a
-  }, {
+    }, {
       react: 230
-  }],    
+    }],    
     11: [
       function (e, t) {
         var n = e("react"),
@@ -2770,18 +2808,7 @@
                             className: "editorDialog-content-title"
                         }, "ADVANCED SETTINGS")), n.createElement("div", {
                             className: "helpDialogAdvanced"
-                        }, n.createElement("table", null, n.createElement("tr", null, n.createElement("td", {
-                            className: "settingTitle"
-                        }, n.createElement("span", {
-                            className: "name"
-                        }, "Visible Grid")), n.createElement("td", {
-                            className: "settingInput"
-                        }, n.createElement("input", {
-                            type: "checkbox",
-                            ref: "visibleGrid",
-                            defaultChecked: r,
-                            onChange: this.toggleVisibleGrid
-                        }))),
+                        }, n.createElement("table", null,
 
                             /* n.createElement("tr", null, n.createElement("td", {
                                 className: "settingTitle"
@@ -2834,19 +2861,6 @@
                               ref: "snapNear",
                               defaultChecked: q,
                               onChange: this.toggleSnapNear
-                          }))),
-
-                            n.createElement("tr", null, n.createElement("td", {
-                              className: "settingTitle"
-                          }, n.createElement("span", {
-                              className: "name"
-                          }, "Switch to Play Hotkeys")), n.createElement("td", {
-                              className: "settingInput"
-                          }, n.createElement("input", {
-                              type: "checkbox",
-                              ref: "switchHotkeys",
-                              defaultChecked: z,
-                              onChange: this.toggleSwitchHotkeys
                           })))
 
                             /* n.createElement("tr", null, n.createElement("td", {
