@@ -11947,9 +11947,14 @@
                 }
             });
     
-            if (nearestPoint) {
-                s.x = nearestPoint.x;
-                s.y = nearestPoint.y;
+            if (nearestPoint && ((nearestPoint.x !== this.scene.toolHandler.snapPointOld.x || nearestPoint.y !== this.scene.toolHandler.snapPointOld.y) || !GameSettings.snapNear)) {
+              s.x = nearestPoint.x;
+              s.y = nearestPoint.y;
+            }
+
+            else {
+              s.x = Math.round((t.pos.x - this.scene.screen.center.x) / this.scene.camera.zoom + this.scene.camera.position.x),
+              s.y = Math.round((t.pos.y - this.scene.screen.center.y) / this.scene.camera.zoom + this.scene.camera.position.y);
             }
           }
         }
@@ -17183,6 +17188,7 @@
             (this.tools = {}),
             (this.options = e.settings.toolHandler),
             (this.snapPoint = new t.Z()),
+            (this.snapPointOld = new t.Z()),
             this.snapPoint.equ(this.scene.track.defaultLine.p2),
             (this.snapUpdated = false),
             (this.gridCache = !1),
@@ -17302,9 +17308,10 @@
         snapNear() {
           if (!this.options.snap) {
             this.snapUpdated = false;
+            this.snapPointOld = new t.Z();
             return;
           }
-      
+
           let sectorSize = this.scene.settings.drawSectorSize;
           let sectorPos = {
               x: Math.floor(this.mouse.touch.real.x / sectorSize),
@@ -17342,9 +17349,13 @@
 
           if (nearestPoint && this.options.snap && !this.mouse.touch.old.down && !this.snapUpdated) {
             this.snapPoint.equ(nearestPoint);
-            this.snapUpdated = true;}
-        
-      
+            this.snapPointOld.equ(nearestPoint);
+            this.snapUpdated = true;
+          }
+
+          if (this.mouse.touch.old.down) {
+            this.snapPointOld = this.snapPoint;
+          }
         }
         moveCameraTowardsMouse() {
           if (!1 === this.options.cameraLocked) {
