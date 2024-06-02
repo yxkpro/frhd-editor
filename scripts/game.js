@@ -12446,7 +12446,7 @@
             this.collide && this.scene.track.collide(this)};
             t.equ(this.pos.sub(this.old)),
             this.old.equ(this.pos);
-            GameSettings.speed = (Math.sqrt(Math.pow(t.x, 2) + Math.pow(t.y, 2))) * 6;
+            this.parent.speed = (Math.sqrt(Math.pow(t.x, 2) + Math.pow(t.y, 2))) * 6;
         }
         draw() {
           const t = this.pos.toScreen(this.scene),
@@ -12661,8 +12661,8 @@
                 (o.y += -n.y),
                 (r.x += n.x),
                 (r.y += n.y);
-                GameSettings.speedOther = ((Math.sqrt(Math.pow(o.x, 2) + Math.pow(o.y, 2))) * 6);
-                if ((Math.abs(o.x) + Math.abs(o.y)) * 0.5 < 0.01) GameSettings.speedOther = 0;
+                this.parent.speedOther = ((Math.sqrt(Math.pow(o.x, 2) + Math.pow(o.y, 2))) * 6);
+                if ((Math.abs(o.x) + Math.abs(o.y)) * 0.5 < 0.01) this.parent.speedOther = 0;
             }
           }
         }
@@ -13345,7 +13345,7 @@
 
               const posX = (this.head.pos.x + this.frontWheel.pos.x + this.rearWheel.pos.x) / 3;
               const posY = (this.head.pos.y + this.frontWheel.pos.y + this.rearWheel.pos.y) / 3;
-              const vel = GameSettings.speed;
+              const vel = this.speed;
               let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
               angle = ((angle + 180) % 360) - 180;
 
@@ -14173,7 +14173,7 @@
 
             const posX = (this.head.pos.x);
             const posY = (this.head.pos.y);
-            const vel = GameSettings.speedOther;
+            const vel = this.speedOther;
             let angle = this.cockpitAngle ? this.cockpitAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
@@ -14530,7 +14530,7 @@
 
             const posX = (this.head.pos.x);
             const posY = (this.head.pos.y);
-            const vel = GameSettings.speedOther;
+            const vel = this.speedOther;
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
@@ -15150,7 +15150,7 @@
 
             const posX = (this.head.pos.x + this.frontWheel.pos.x + this.rearWheel.pos.x) / 3;
             const posY = (this.head.pos.y + this.frontWheel.pos.y + this.rearWheel.pos.y) / 3;
-            const vel = GameSettings.speed;
+            const vel = this.speed;
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
@@ -15757,7 +15757,7 @@
 
             const posX = (this.head.pos.x);
             const posY = (this.head.pos.y);
-            const vel = GameSettings.speedOther;
+            const vel = this.speedOther;
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 270;
 
@@ -16187,7 +16187,7 @@
 
             const posX = (this.head.pos.x);
             const posY = (this.head.pos.y);
-            const vel = GameSettings.speedOther;
+            const vel = this.speedOther;
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
