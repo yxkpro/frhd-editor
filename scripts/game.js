@@ -16480,6 +16480,7 @@
                 this.createBaseVehicle(new t.Z(0, 35), 1, new t.Z(0, 0)),
                 (this.deadVehiclesIndex = 0),
                 (this.deadVehicles = new Array(10));
+
             }
             getCheckpointCount() {
               return this._checkpoints.length;
@@ -16527,7 +16528,7 @@
                           "#FFFFFF"
                         )
                       : s.show(
-                          "Press" + x + "For Checkpoint",
+                          "Press " + x + " For Checkpoint",
                           !1,
                           "#000000",
                           "#FFFFFF"
@@ -16561,16 +16562,32 @@
               (this._baseVehicleType = t), this.reset();
             }
             createBaseVehicle(t, e, s) {
-              this._tempVehicle && this._tempVehicle.stopSounds(),
-                (this._baseVehicle = new Xt[this._baseVehicleType](
-                  this,
-                  t,
-                  e,
-                  s
-                )),
-                (this._tempVehicle = !1),
-                (this._tempVehicleType = !1),
-                (this._tempVehicleTicks = 0);
+              this._tempVehicle && this._tempVehicle.stopSounds();
+              this._baseVehicle = new Xt[this._baseVehicleType](this, t, e, s);
+              this._tempVehicle = !1;
+              this._tempVehicleType = !1;
+              this._tempVehicleTicks = 0;
+            
+              const scene = this._scene;
+              const settings = scene.settings;
+              const message = scene.message;
+            
+              
+              if (GameSettings.defaultTrack === "track.txt") return;
+              let trackName = GameSettings.defaultTrack;
+              trackName = trackName.replace(".txt", "");
+              message.show(
+                "Track Loaded: " + trackName,
+                !1,
+                "#000000",
+                "#FFFFFF"
+              );
+            
+              // Hide the message after 3 seconds (3000 milliseconds)
+              setTimeout(() => {
+                message.hide();
+                GameSettings.defaultTrack = "track.txt";
+              }, 3000);
             }
             setTempVehicle(t, e, s, i) {
               this._temp_vehicle_options &&
@@ -22882,6 +22899,7 @@
               break;
             case "clear track":
               this.trackAction("editor-action", "clear"), (this.clear = !0);
+              GameSettings.defaultTrack = "track.txt";
               break;
             case "import": {
               let e = t[0];

@@ -3084,10 +3084,37 @@
                 }
               }
 
-              if (!e.value.includes('$') && !e.value.includes('#') && !t) {
-
+              if (e.value === 'random') {
+                fetch('assets/tracks/tracklist.json')
+                  .then(response => response.json())
+                  .then(data => {
+                    const tracklist = data.tracks;
+                    const randomIndex = Math.floor(Math.random() * tracklist.length);
+                    trackName = tracklist[randomIndex];
+                    GameSettings.defaultTrack = `${trackName}.txt`;
+            
+                    url = `assets/tracks/${trackName}.txt`;
+                    fetch(url)
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error('no track ID found, loading as track code.');
+                        }
+                        return response.text();
+                      })
+                      .then(data => {
+                        this.processAddTrackData(data);
+                        console.log("track loaded:", trackName);
+                      })
+                      .catch(error => {
+                        console.error(error);
+                      });
+                  })
+                  .catch(error => {
+                    console.error('Error loading tracklist:', error);
+                  });
+              } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
                 GameSettings.defaultTrack = `${trackName}.txt`;
-
+            
                 fetch(url)
                   .then(response => {
                     if (!response.ok) {
@@ -3096,7 +3123,7 @@
                     return response.text();
                   })
                   .then(data => {
-                    this.processTrackData(data);
+                    this.processAddTrackData(data);
                     console.log("track loaded:", trackName);
                   })
                   .catch(error => {
@@ -3114,16 +3141,43 @@
                 n = e.value,
                 trackName = e.value.replace(/(\.\.\/)/g, ''),
                 url = `assets/tracks/${trackName}.txt`;
-
-                if (e.value.includes('$')) {
-                  e.value = `use import to change settings`;
-                  return;
-                }
-
-                if (!e.value.includes('$') && !e.value.includes('#') && !t) {
-
-                  GameSettings.defaultTrack = `${trackName}.txt`;
-  
+            
+              if (e.value.includes('$')) {
+                e.value = `use import to change settings`;
+                return;
+              }
+            
+              if (e.value === 'random') {
+                fetch('assets/tracks/tracklist.json')
+                  .then(response => response.json())
+                  .then(data => {
+                    const tracklist = data.tracks;
+                    const randomIndex = Math.floor(Math.random() * tracklist.length);
+                    trackName = tracklist[randomIndex];
+                    GameSettings.defaultTrack = `${trackName}.txt`;
+            
+                    url = `assets/tracks/${trackName}.txt`;
+                    fetch(url)
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error('no track ID found, loading as track code.');
+                        }
+                        return response.text();
+                      })
+                      .then(data => {
+                        this.processAddTrackData(data);
+                        console.log("track loaded:", trackName);
+                      })
+                      .catch(error => {
+                        console.error(error);
+                      });
+                  })
+                  .catch(error => {
+                    console.error('Error loading tracklist:', error);
+                  });
+              } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
+                GameSettings.defaultTrack = `${trackName}.txt`;
+            
                 fetch(url)
                   .then(response => {
                     if (!response.ok) {
@@ -3138,11 +3192,11 @@
                   .catch(error => {
                     console.error(error);
                   });
-                }
-                
+              }
+            
               t && (n = t),
                 "undefined" != typeof GameManager &&
-                  GameManager.command("add", n, !0);
+                GameManager.command("add", n, !0);
             },
             processTrackData(data) {
               if ("undefined" != typeof GameManager) {
