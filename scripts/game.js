@@ -11898,6 +11898,38 @@
           const gridSize = u.toolHandler.gridSize;
           const isometricGridEnabled = u.toolHandler.isometricGrid;
 
+          const sectorSize = this.scene.settings.drawSectorSize;
+          const sectorPos = {
+            x: Math.floor(s.x / sectorSize),
+            y: Math.floor(s.y / sectorSize)
+          };
+
+          let linesInSector = [];
+          for (let xOffset = -1; xOffset <= 1; xOffset++) {
+            for (let yOffset = -1; yOffset <= 1; yOffset++) {
+              let x = sectorPos.x + xOffset;
+              let y = sectorPos.y + yOffset;
+              let sector = this.scene.track.sectors.drawSectors?.[x]?.[y];
+              if (sector) {
+                linesInSector.push(...sector.physicsLines.filter(line => !line.remove));
+                linesInSector.push(...sector.sceneryLines.filter(line => !line.remove));
+              }
+            }
+          }
+
+          let pointsInSector = linesInSector.flatMap(line => [line.p1, line.p2]);
+
+          let nearestPoint = null;
+          let minDistance = Infinity;
+
+          pointsInSector.forEach(point => {
+            const distanceToPoint = Math.hypot(s.x - point.x, s.y - point.y);
+            if (distanceToPoint < minDistance && distanceToPoint <= GameSettings.snapDistance) {
+              minDistance = distanceToPoint;
+              nearestPoint = point;
+            }
+          });
+
           if (this.scene.toolHandler.options.grid && this.scene.toolHandler.options.snapGrid && isometricGridEnabled) {
 
             let t = gridSize | 0;
@@ -11913,50 +11945,11 @@
             s.x = h(s.x / gridSize) * gridSize;
             s.y = h(s.y / gridSize) * gridSize;
           }
-
-          if (this.scene.toolHandler.options.snap) {
-            const sectorSize = this.scene.settings.drawSectorSize;
-            const sectorPos = {
-                x: Math.floor(s.x / sectorSize),
-                y: Math.floor(s.y / sectorSize)
-            };
-    
-            let linesInSector = [];
-            for (let xOffset = -1; xOffset <= 1; xOffset++) {
-                for (let yOffset = -1; yOffset <= 1; yOffset++) {
-                    let x = sectorPos.x + xOffset;
-                    let y = sectorPos.y + yOffset;
-                    let sector = this.scene.track.sectors.drawSectors?.[x]?.[y];
-                    if (sector) {
-                        linesInSector.push(...sector.physicsLines.filter(line => !line.remove));
-                        linesInSector.push(...sector.sceneryLines.filter(line => !line.remove));
-                    }
-                }
-            }
-    
-            let pointsInSector = linesInSector.flatMap(line => [line.p1, line.p2]);
-    
-            let nearestPoint = null;
-            let minDistance = Infinity;
-    
-            pointsInSector.forEach(point => {
-                const distanceToPoint = Math.hypot(s.x - point.x, s.y - point.y);
-                if (distanceToPoint < minDistance && distanceToPoint <= GameSettings.snapDistance) {
-                    minDistance = distanceToPoint;
-                    nearestPoint = point;
-                }
-            });
-    
-            if (nearestPoint && ((nearestPoint.x !== this.scene.toolHandler.snapPointOld.x || nearestPoint.y !== this.scene.toolHandler.snapPointOld.y) || !GameSettings.snapNear)) {
-              s.x = nearestPoint.x;
-              s.y = nearestPoint.y;
-            }
-
-            else {
-              s.x = Math.round((t.pos.x - this.scene.screen.center.x) / this.scene.camera.zoom + this.scene.camera.position.x),
-              s.y = Math.round((t.pos.y - this.scene.screen.center.y) / this.scene.camera.zoom + this.scene.camera.position.y);
-            }
+          if (this.scene.toolHandler.options.snap && nearestPoint && ((nearestPoint.x !== this.scene.toolHandler.snapPointOld.x || nearestPoint.y !== this.scene.toolHandler.snapPointOld.y) || !GameSettings.snapNear)) {
+            s.x = nearestPoint.x;
+            s.y = nearestPoint.y;
           }
+
         }
         onMouseWheel(t) {
           return (

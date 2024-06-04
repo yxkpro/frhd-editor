@@ -133,7 +133,7 @@ var GameSettings = {
         "y": 89,
         "x": 88,
         "snap": 17,
-        "lineType": 83,
+        "lineType": 9,
         "eraser": 69,
         "straightline": 81,
         "brush": 65,
