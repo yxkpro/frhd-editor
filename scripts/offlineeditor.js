@@ -405,7 +405,7 @@
                     n.createElement(i, {
                       active: this.props.data.cameraLocked,
                     }),
-                    n.createElement(xxx, { active: this.props.data.snap }),
+                    //n.createElement(xxx, { active: this.props.data.snap }),
                     n.createElement(o, { active: this.props.data.grid }),
                     n.createElement(r, { vehicle: this.props.data.vehicle }),
                     n.createElement("span", { className: "divider" })
