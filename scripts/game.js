@@ -18465,10 +18465,19 @@
 
       release() {
         this.offsetPete.equ(this.mouse.touch.real);
+        GameSettings.offsetPeteX = this.offsetPete.x;
+        GameSettings.offsetPeteY = this.offsetPete.y;
+        this.offsetPete.x = GameSettings.offsetPeteX;
+        this.offsetPete.y = GameSettings.offsetPeteY;
+        (this.active = !1);
       }
 
       update() {
         super.update();
+        if (GameSettings.offsetPeteX === 0 && GameSettings.offsetPeteY === 0) {
+          // Reset this.offsetPete to (0, 0)
+          this.offsetPete.x = 0;
+          this.offsetPete.y = 0;}
       }
 
       draw() {
@@ -18484,8 +18493,6 @@
       drawStartPosition(t) {
         const i = this.offsetPete.toScreenSnapped(this.scene)
         , s = this.camera.zoom;
-        GameSettings.offsetPeteX = this.offsetPete.x;
-        GameSettings.offsetPeteY = this.offsetPete.y;
         t.lineWidth = 3;
         t.strokeStyle = "#FF0000";
         t.beginPath();
@@ -22912,7 +22919,7 @@
             case "import":
               break;
             case "export":
-              setTimeout(this.getTrackCode.bind(this), GameSettings.offsetPeteX = 0, GameSettings.offsetPeteY = 0, 750);
+              setTimeout(this.getTrackCode.bind(this), 750);
               break;
             case "upload":
               "undefined" == typeof isChromeApp &&
@@ -22996,6 +23003,8 @@
             case "clear track":
               this.trackAction("editor-action", "clear"), (this.clear = !0);
               GameSettings.defaultTrack = "track.txt";
+              GameSettings.offsetPeteX = 0;
+              GameSettings.offsetPeteY = 0;
               break;
             case "import": {
               let e = t[0];
@@ -23003,6 +23012,8 @@
                   e = false;
                   return;
                 }
+                GameSettings.offsetPeteX = 0;
+                GameSettings.offsetPeteY = 0;
                 (this.importCode = e),
                 (this.clear = t[1]),
                 this.command("dialog", !1);
