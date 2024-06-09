@@ -3004,7 +3004,7 @@
                           $editorHotkeys.y 89
                           $editorHotkeys.x 88
                           $editorHotkeys.snap 17
-                          $editorHotkeys.lineType 83
+                          $editorHotkeys.lineType 9
                           $editorHotkeys.eraser 69
                           $editorHotkeys.straightline 81
                           $editorHotkeys.brush 65
@@ -4183,6 +4183,7 @@
           c = e("../tools/cameratool"),
           x = e("../tools/circletool"),
           xx = e("../tools/selecttool"),
+          xxx = e("../tools/petetool"),
           u = n.createClass({
             displayName: "LeftMenu",
             render: function () {
@@ -4204,7 +4205,8 @@
                   n.createElement(s, { active: "powerup" === e }),
                   n.createElement(l, { active: "vehiclepowerup" === e }),
                   n.createElement(xx, { active: "select" === e }),
-                  n.createElement(c, { active: "camera" === e })
+                  n.createElement(c, { active: "camera" === e }),
+                  n.createElement(xxx, { active: "pete" === e })
                 )
               );
             },
@@ -4219,6 +4221,7 @@
         "../tools/erasertool": 44,
         "../tools/poweruptool": 48,
         "../tools/selecttool": 50,
+        "../tools/petetool": 950,
         "../tools/straightlinetool": 53,
         "../tools/vehicletool": 59,
         react: 230,
@@ -5054,6 +5057,33 @@
                   { className: e, onClick: this.changeTool },
                   n.createElement("span", {
                     className: "editorgui_icons editorgui_icons-icon_select",
+                  })
+                )
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],
+    950: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "PeteTool",
+            changeTool: function () {
+              "undefined" != typeof GameManager &&
+                GameManager.command("change tool", "pete");
+            },
+            render: function () {
+              var e = "sideButton sideButton_selectTool";
+              return (
+                this.props.active && (e += " active"),
+                n.createElement(
+                  "div",
+                  { className: e, onClick: this.changeTool },
+                  n.createElement("span", {
+                    className: "editorgui_icons editorgui_icons-icon_bmx",
                   })
                 )
               );

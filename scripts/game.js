@@ -10209,7 +10209,7 @@
             getCode(t) {
               this.recorded = !0;
               let e =
-                " " + this.p2.x.toString(32) + " " + this.p2.y.toString(32);
+                " " + (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
               const s = this.checkForConnectedLine(t, this.p2);
               return s && (e += s.getCode(t)), e;
             }
@@ -10319,7 +10319,7 @@
           }
           getCode(t) {
             this.recorded = !0;
-            let e = " " + this.p2.x.toString(32) + " " + this.p2.y.toString(32);
+            let e = " " + (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
             const s = this.checkForConnectedLine(t, this.p2);
             return s && (e += s.getCode(t)), e;
           }
@@ -13095,6 +13095,8 @@
           constructor(t, e, s, i) {
             super(),
               super.init(t),
+              this.offsetX = GameSettings.offsetPeteX;
+              this.offsetY = GameSettings.offsetPeteY;
               this.createMasses(e, i),
               this.createSprings(),
               this.updateCameraFocalPoint(),
@@ -13110,9 +13112,9 @@
             this.masses = [];
             const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
             const i = new A(),
-              n = new X(new t.Z(e.x + 21 * mini, e.y + 3), this),
-              r = new X(new t.Z(e.x + -21 * mini, e.y + 3), this);
-            i.init(new t.Z(e.x, e.y - 36 * mini), this);
+              n = new X(new t.Z(e.x + 21 * mini + this.offsetX, e.y + 3 + this.offsetY), this),
+              r = new X(new t.Z(e.x + -21 * mini + this.offsetX, e.y + 3 + this.offsetY), this);
+            i.init(new t.Z(e.x + this.offsetX, e.y - 36 * mini + this.offsetY), this);
               i.drive = this.createRagdoll.bind(this);
               (r.radius = 11.7 * mini),
               (n.radius = 11.7 * mini),
@@ -14899,6 +14901,8 @@
           super(),
             (this.color = "rgba(0,0,0,1)"),
             super.init(t),
+            this.offsetX = GameSettings.offsetPeteX;
+            this.offsetY = GameSettings.offsetPeteY;
             this.createMasses(e, i),
             this.createSprings(),
             this.updateCameraFocalPoint(),
@@ -14914,9 +14918,9 @@
           this.masses = [];
           const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
           const i = new A(),
-            n = new X(new t.Z(e.x + 23 * mini, e.y), this),
-            r = new X(new t.Z(e.x + -23 * mini, e.y), this);
-          i.init(new t.Z(e.x + 2, e.y + -38 * mini), this);
+            n = new X(new t.Z(e.x + 23 * mini + this.offsetX, e.y + this.offsetY), this),
+            r = new X(new t.Z(e.x + -23 * mini + this.offsetX, e.y + this.offsetY), this);
+          i.init(new t.Z(e.x + 2 + this.offsetX, e.y + -38 * mini + this.offsetY), this);
           i.drive = this.createRagdoll.bind(this);
             (r.radius = 14 * mini),
             (n.radius = 14 * mini),
@@ -17054,7 +17058,7 @@
             this.init(s);
         }
         getCode() {
-          return "T " + this.x.toString(32) + " " + this.y.toString(32);
+          return "T " + (this.x - GameSettings.offsetPeteX).toString(32) + " " + (this.y - GameSettings.offsetPeteY).toString(32);
         }
         recache(t) {
           (pe = !1), this.cacheStar(t), this.cacheEmptyStar(t);
@@ -18327,16 +18331,6 @@
             this.shouldDrawMetadata = !!e.isButtonDown("ctrl")}
         }
 
-          adjustTrailSpeed(t) {
-              let e = this.options.trailSpeed;
-              const s = this.options.trailSpeedSensitivity
-                , i = this.options.maxTrailSpeed
-                , n = this.options.minTrailSpeed;
-              t > 0 ? (e += s,
-              e > i && (e = i)) : (e -= s,
-              n > e && (e = n)),
-              this.setOption("trailSpeed", e)
-          }
           adjustSegmentLength(t) {
               let e = this.options.SegmentLength;
               const s = this.options.SegmentLengthSensitivity
@@ -18449,6 +18443,95 @@
       const circze = circleTool;
 
       //end circle tool
+
+    //start Pete tool
+    class movePeteTool extends xe.Z {
+      constructor(e) {
+        super(),
+          super.init(e),
+          this.offsetPete = new t.Z(0, 0),
+          this.active = !1;
+      }
+      reset() {
+        this.active = !1
+      }
+
+      press() {
+      }
+
+      hold() {
+        this.offsetPete.equ(this.mouse.touch.real);
+      }
+
+      release() {
+        this.offsetPete.equ(this.mouse.touch.real);
+      }
+
+      update() {
+        super.update();
+      }
+
+      draw() {
+        const t = this.scene
+          , e = t.game.canvas.getContext("2d")
+          , s = t.camera.zoom;
+        e.save(),
+        this.drawCursor(e),
+        this.drawStartPosition(e),
+        e.restore()
+      }
+
+      drawStartPosition(t) {
+        const i = this.offsetPete.toScreenSnapped(this.scene)
+        , s = this.camera.zoom;
+        GameSettings.offsetPeteX = this.offsetPete.x;
+        GameSettings.offsetPeteY = this.offsetPete.y;
+        t.lineWidth = 3;
+        t.strokeStyle = "#FF0000";
+        t.beginPath();
+        t.arc(i.x, i.y, 10 * s, 0, 2 * Math.PI, false);
+        t.stroke();
+      }
+
+      drawCursor(t) {
+        const e = this.mouse.touch.real.toScreenSnapped(this.scene)
+        , x = this.mouse.touch.real
+        , s = this.camera.zoom;
+
+        const distance = Math.sqrt(Math.pow(x.x - this.offsetPete.x, 2) + Math.pow(x.y - this.offsetPete.y, 2));
+        GameSettings.offsetPeteX = this.offsetPete.x;
+        GameSettings.offsetPeteY = this.offsetPete.y;
+
+        if (distance <= 10 * s) {
+        //this.game.canvas.style.cursor = "grab";
+        } else {
+          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+            const i = 5 * s;
+            t.beginPath();
+            t.moveTo(e.x, e.y - i);
+            t.lineTo(e.x, e.y + i);
+            t.moveTo(e.x - i, e.y);
+            t.lineTo(e.x + i, e.y);
+            t.lineWidth = 1 * s;
+            t.closePath();
+            t.stroke();
+          } else {
+            t.lineWidth = 1;
+            t.fillStyle = "#1884cf";
+            t.beginPath();
+            t.arc(e.x, e.y, 1 * s, 0, 2 * Math.PI, false);
+            t.closePath();
+            t.fill();
+          }
+        }
+      }
+    }
+    const peTe = movePeteTool.prototype;
+    peTe.name = "Pete",
+    peTe.offsetPete = null;
+    const pete = movePeteTool;
+
+    //end movePete tool
 
       class je extends xe.Z {
         constructor(e) {
@@ -18564,9 +18647,9 @@
         getCode() {
           return (
             "G " +
-            this.x.toString(32) +
+            (this.x - GameSettings.offsetPeteX).toString(32) +
             " " +
-            this.y.toString(32) +
+            (this.y - GameSettings.offsetPeteY).toString(32) +
             " " +
             this.realAngle.toString(32)
           );
@@ -18823,9 +18906,9 @@
         getCode() {
           return (
             "B " +
-            this.x.toString(32) +
+            (this.x - GameSettings.offsetPeteX).toString(32) +
             " " +
-            this.y.toString(32) +
+            (this.y - GameSettings.offsetPeteY).toString(32) +
             " " +
             this.realAngle.toString(32)
           );
@@ -18914,7 +18997,10 @@
           super(), (this.x = t), (this.y = e), this.init(s);
         }
         getCode() {
-          return "S " + this.x.toString(32) + " " + this.y.toString(32);
+          return "S " +
+          (this.x - GameSettings.offsetPeteX).toString(32) +
+          " " +
+          (this.y - GameSettings.offsetPeteY).toString(32);
         }
         draw(t, e, s, i) {
           this.constructor.drawData.dirty && this.recache(s);
@@ -19069,7 +19155,10 @@
             this.init(s);
         }
         getCode() {
-          return "C " + this.x.toString(32) + " " + this.y.toString(32);
+          return "C " +
+          (this.x - GameSettings.offsetPeteX).toString(32) +
+          " " +
+          (this.y - GameSettings.offsetPeteY).toString(32);
         }
         draw(t, e, s, i) {
           this.constructor.drawData.dirty && this.recache(s);
@@ -19169,7 +19258,10 @@
           super(), (this.x = t), (this.y = e), (this.hit = !1), this.init(s);
         }
         getCode() {
-          return "O " + this.x.toString(32) + " " + this.y.toString(32);
+          return "O " +
+          (this.x - GameSettings.offsetPeteX).toString(32) +
+          " " +
+          (this.y - GameSettings.offsetPeteY).toString(32);
         }
         drawPowerup(t, e) {
           this.game.mod.getVar("crPowerups")
@@ -19310,7 +19402,10 @@
           super(), (this.x = t), (this.y = e), this.init(s);
         }
         getCode() {
-          return "A " + this.x.toString(32) + " " + this.y.toString(32);
+          return "A " +
+          (this.x - GameSettings.offsetPeteX).toString(32) +
+          " " +
+          (this.y - GameSettings.offsetPeteY).toString(32);
         }
         draw(t, e, s, i) {
           this.constructor.drawData.dirty && this.recache(s);
@@ -19644,25 +19739,25 @@
               ? ((this.recorded = !0),
                 (t =
                   "W " +
-                  this.x.toString(32) +
+                  (this.x - GameSettings.offsetPeteX).toString(32) +
                   " " +
-                  this.y.toString(32) +
+                  (this.y - GameSettings.offsetPeteY).toString(32) +
                   " " +
-                  this.otherPortal.x.toString(32) +
+                  (this.otherPortal.x - GameSettings.offsetPeteX).toString(32) +
                   " " +
-                  this.otherPortal.y.toString(32)))
+                  (this.otherPortal.y - GameSettings.offsetPeteY).toString(32)))
               : !0 === this.recorded &&
                 !0 === this.otherPortal.recorded &&
                 ((this.otherPortal.recorded = !1),
                 (t =
                   "W " +
-                  this.x.toString(32) +
+                  (this.x - GameSettings.offsetPeteX).toString(32) +
                   " " +
-                  this.y.toString(32) +
+                  (this.y - GameSettings.offsetPeteY).toString(32) +
                   " " +
-                  this.otherPortal.x.toString(32) +
+                  (this.otherPortal.x - GameSettings.offsetPeteX).toString(32) +
                   " " +
-                  this.otherPortal.y.toString(32))),
+                  (this.otherPortal.y - GameSettings.offsetPeteY).toString(32))),
             t
           );
         }
@@ -20719,9 +20814,9 @@
         getCode() {
           return (
             "V " +
-            this.x.toString(32) +
+            (this.x - GameSettings.offsetPeteX).toString(32) +
             " " +
-            this.y.toString(32) +
+            (this.y - GameSettings.offsetPeteY).toString(32) +
             " 1 " +
             this.time.toString(32)
           );
@@ -20958,9 +21053,9 @@
         getCode() {
           return (
             "V " +
-            this.x.toString(32) +
+            (this.x - GameSettings.offsetPeteX).toString(32) +
             " " +
-            this.y.toString(32) +
+            (this.y - GameSettings.offsetPeteY).toString(32) +
             " 2 " +
             this.time.toString(32)
           );
@@ -21215,9 +21310,9 @@
         getCode() {
           return (
             "V " +
-            this.x.toString(32) +
+            (this.x - GameSettings.offsetPeteX).toString(32) +
             " " +
-            this.y.toString(32) +
+            (this.y - GameSettings.offsetPeteY).toString(32) +
             " 3 " +
             this.time.toString(32)
           );
@@ -21388,9 +21483,9 @@
         getCode() {
           return (
             "V " +
-            this.x.toString(32) +
+            (this.x - GameSettings.offsetPeteX).toString(32) +
             " " +
-            this.y.toString(32) +
+            (this.y - GameSettings.offsetPeteY).toString(32) +
             " 4 " +
             this.time.toString(32)
           );
@@ -22226,9 +22321,9 @@
               0 !== t.remove ||
               ((n = !0),
               (i +=
-                t.p1.x.toString(32) +
+                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
                 " " +
-                t.p1.y.toString(32) +
+                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
                 t.getCode(this) +
                 ","));
           n && (i = i.slice(0, -1));
@@ -22239,9 +22334,9 @@
               0 !== t.remove ||
               ((n = !0),
               (i +=
-                t.p1.x.toString(32) +
+                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
                 " " +
-                t.p1.y.toString(32) +
+                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
                 t.getCode(this) +
                 ","));
           n && (i = i.slice(0, -1));
@@ -22601,6 +22696,7 @@
             t.registerTool(De),
             t.registerTool(ze),
             t.registerTool(circze),
+            t.registerTool(pete),
             t.registerTool(Fe()),
             t.registerTool(We),
             t.registerTool(si),
@@ -22816,7 +22912,7 @@
             case "import":
               break;
             case "export":
-              setTimeout(this.getTrackCode.bind(this), 750);
+              setTimeout(this.getTrackCode.bind(this), GameSettings.offsetPeteX = 0, GameSettings.offsetPeteY = 0, 750);
               break;
             case "upload":
               "undefined" == typeof isChromeApp &&

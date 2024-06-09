@@ -29,4 +29,10 @@ var GameManifest = [
     src: "assets/images/icons/goal_icon.png",
     name: "Goal Icon",
   },
+  {
+    loadTimeout: 300000,
+    id: "editor_gui",
+    src: "assets/images/gui/editor_gui.png",
+    name: "Editor GUI",
+  },
 ];
