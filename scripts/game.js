@@ -18461,6 +18461,8 @@
 
       hold() {
         this.offsetPete.equ(this.mouse.touch.real);
+        GameSettings.offsetPeteX = this.offsetPete.x;
+        GameSettings.offsetPeteY = this.offsetPete.y;
       }
 
       release() {
@@ -18475,7 +18477,6 @@
       update() {
         super.update();
         if (GameSettings.offsetPeteX === 0 && GameSettings.offsetPeteY === 0) {
-          // Reset this.offsetPete to (0, 0)
           this.offsetPete.x = 0;
           this.offsetPete.y = 0;}
       }
