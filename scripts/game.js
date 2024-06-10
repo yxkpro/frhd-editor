@@ -18444,13 +18444,47 @@
 
       //end circle tool
 
+      // treating the springs as ropes (code taken from fr2) gets around the issue of the head not getting updated
+      function ropeUpdate() {
+        let distance = this.m2.pos.sub(this.m1.pos);
+        let length = distance.len();
+        if (length < 1) return;
+        distance.factorSelf(1 / length);
+        let force = distance.factor(
+            (length - this.lrest) * this.springConstant
+        );
+        let normalVelocity =
+            this.m2.vel.sub(this.m1.vel).dot(distance) * this.dampConstant;
+        force.inc(distance.factor(normalVelocity));
+        this.m1.vel.inc(force);
+      }
     //start Pete tool
     class movePeteTool extends xe.Z {
       constructor(e) {
-        super(),
-          super.init(e),
-          this.offsetPete = new t.Z(0, 0),
-          this.active = !1;
+        super();
+        super.init(e);
+        this.bikeClone =
+            this.scene.playerManager.firstPlayer._baseVehicle.clone();
+        // remove collision from the masses, and add additional dampening inversely proportional to velocity
+        this.bikeClone.masses.forEach(
+            (i) => (
+                (i.collide = false),
+                (i.update = ((old) => () => {
+                    old.apply(i);
+                    let len = i.vel.len();
+                    i.vel.factorSelf(len > 10 ? 10 / len : 0.97);
+                })(i.update))
+            )
+        );
+        this.bikeClone.head.update = () => {};
+        // convert the springs connected to the head to ropes (which don't apply any force to one of their masses)
+        this.bikeClone.rearSpring.m1 = this.bikeClone.rearSpring.m2;
+        this.bikeClone.rearSpring.m2 = this.bikeClone.head;
+        [this.bikeClone.rearSpring, this.bikeClone.frontSpring].forEach(
+            (i) => (i.update = () => ropeUpdate.apply(i))
+        );
+        this.offsetPete = this.bikeClone.head.pos;
+        this.active = !1;
       }
       reset() {
         this.active = !1
@@ -18476,6 +18510,12 @@
 
       update() {
         super.update();
+        this.bikeClone.update();
+        // fixes an issue where the clone's wheels start inhabiting the same point and end up breaking everything
+        if (this.bikeClone.rearWheel.pos.sub(this.bikeClone.frontWheel.pos).len() < 1) {
+          this.bikeClone.rearWheel.pos.inc({x: -10, y: 10});
+          this.bikeClone.frontWheel.pos.inc({x: 10, y: -10});
+        }
         if (GameSettings.offsetPeteX === 0 && GameSettings.offsetPeteY === 0) {
           this.offsetPete.x = 0;
           this.offsetPete.y = 0;}
@@ -18488,6 +18528,7 @@
         e.save(),
         this.drawCursor(e),
         this.drawStartPosition(e),
+        this.bikeClone.drawBikeFrame(),
         e.restore()
       }
 
