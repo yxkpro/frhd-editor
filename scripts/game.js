@@ -18532,28 +18532,10 @@
 
       reset() {
         this.active = !1
+        if (GameSettings.freeFloppyPete) {
         this.bikeClone =
-            this.scene.playerManager.firstPlayer._baseVehicle.clone();
-            if (!GameSettings.freeFloppyPete) {
-        // remove collision from the masses, and add additional dampening inversely proportional to velocity
-        this.bikeClone.masses.forEach(
-            (i) => (
-                (i.collide = true),
-                (i.update = ((old) => () => {
-                    old.apply(i);
-                    let len = i.vel.len();
-                    i.vel.factorSelf(len > 10 ? 10 / len : 0.97);
-                })(i.update))
-            )
-        );
-        this.bikeClone.head.update = () => {};
-        // convert the springs connected to the head to ropes (which don't apply any force to one of their masses)
-        this.bikeClone.rearSpring.m1 = this.bikeClone.rearSpring.m2;
-        this.bikeClone.rearSpring.m2 = this.bikeClone.head;
-        [this.bikeClone.rearSpring, this.bikeClone.frontSpring].forEach(
-            (i) => (i.update = () => ropeUpdate.apply(i))
-        );}
-        this.offsetPete = this.bikeClone.head.pos;
+        this.scene.playerManager.firstPlayer._baseVehicle.clone();
+        this.offsetPete = this.bikeClone.head.pos;}
       }
 
       press() {
