@@ -13390,11 +13390,11 @@
               let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
               angle = ((angle + 180) % 360) - 180;
 
-              let textOffsetX = this.dir * GameSettings.offsetX;
-              let textOffsetY = -1 * GameSettings.offsetY;
+              let textOffsetX = this.dir * GameSettings.textOffset;
+              let textOffsetY = -1 * GameSettings.textOffset;
               let d = this.dir < 0 ? "right" : "left";
               t.textAlign = d;
-              
+
               const speed = Math.round(vel);
               const color = `rgb(${speed}, 0, 0)`;
 
@@ -13403,14 +13403,21 @@
                 (t.font = "bold " + 10 * i + "pt arial"),
                 (t.lineWidth = 5 * i);
 
-              t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-              t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
-              t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+              let fps = createjs.Ticker.getMeasuredFPS();
+              fps = Vn(10 * fps) / 10;
+              console.log(fps);
 
-              t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-              t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+              t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+              t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+              t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+              GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
+
+              t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+              t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
               t.fillStyle = color;
-              t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+              t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+              t.fillStyle = "#000000";
+              GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
               t.strokeStyle = "#000";
             }
           }
@@ -14218,8 +14225,8 @@
             let angle = this.cockpitAngle ? this.cockpitAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * GameSettings.offsetX;
-            let textOffsetY = -1 * GameSettings.offsetY;
+            let textOffsetX = this.dir * GameSettings.textOffset;
+            let textOffsetY = -1 * GameSettings.textOffset;
             let d = this.dir < 0 ? "right" : "left";
             s.textAlign = d;
 
@@ -14231,14 +14238,21 @@
             (s.font = "bold " + 10 * i + "pt arial"),
             (s.lineWidth = 5 * i);
 
-            s.strokeText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 20);
-            s.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 50);
-            s.strokeText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 80);
+            let fps = createjs.Ticker.getMeasuredFPS();
+            fps = Vn(10 * fps) / 10;
+            console.log(fps);
 
-            s.fillText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 20);
-            s.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 50);
+            s.strokeText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 10 * i);
+            s.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
+            s.strokeText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 40 * i);
+            GameSettings.showFPS && s.strokeText("fps: " + fps, h.x + textOffsetX, h.y + textOffsetY + 55 * i);
+
+            s.fillText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 10 * i);
+            s.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
             s.fillStyle = color;
-            s.fillText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 80);
+            s.fillText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 40 * i);
+            s.fillStyle = "#000000";
+            GameSettings.showFPS && s.fillText("fps: " + fps, h.x + textOffsetX, h.y + textOffsetY + 55 * i);
             s.strokeStyle = "#000";
           }
       }
@@ -14572,11 +14586,11 @@
             const posX = (this.head.pos.x);
             const posY = (this.head.pos.y);
             const vel = this.speedOther;
-            let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
+            let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * GameSettings.offsetX;
-            let textOffsetY = -1 * GameSettings.offsetY;
+            let textOffsetX = this.dir * GameSettings.textOffset;
+            let textOffsetY = -1 * GameSettings.textOffset;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
@@ -14584,18 +14598,25 @@
             const color = `rgb(${speed}, 0, 0)`;
 
             (t.fillStyle = "#000000"),
-            (t.strokeStyle = "#ffffff"),
-            (t.font = "bold " + 10 * i + "pt arial"),
-            (t.lineWidth = 5 * i);
+              (t.strokeStyle = "#ffffff"),
+              (t.font = "bold " + 10 * i + "pt arial"),
+              (t.lineWidth = 5 * i);
 
-            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            let fps = createjs.Ticker.getMeasuredFPS();
+            fps = Vn(10 * fps) / 10;
+            console.log(fps);
 
-            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
+
+            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillStyle = "#000000";
+            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
       }
@@ -15194,11 +15215,11 @@
             const posX = (this.head.pos.x + this.frontWheel.pos.x + this.rearWheel.pos.x) / 3;
             const posY = (this.head.pos.y + this.frontWheel.pos.y + this.rearWheel.pos.y) / 3;
             const vel = this.speed;
-            let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
+            let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI) : 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * GameSettings.offsetX;
-            let textOffsetY = -1 * GameSettings.offsetY;
+            let textOffsetX = this.dir * GameSettings.textOffset;
+            let textOffsetY = -1 * GameSettings.textOffset;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
@@ -15206,18 +15227,25 @@
             const color = `rgb(${speed}, 0, 0)`;
 
             (t.fillStyle = "#000000"),
-            (t.strokeStyle = "#ffffff"),
-            (t.font = "bold " + 10 * i + "pt arial"),
-            (t.lineWidth = 5 * i);
+              (t.strokeStyle = "#ffffff"),
+              (t.font = "bold " + 10 * i + "pt arial"),
+              (t.lineWidth = 5 * i);
 
-            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            let fps = createjs.Ticker.getMeasuredFPS();
+            fps = Vn(10 * fps) / 10;
+            console.log(fps);
 
-            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
+
+            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillStyle = "#000000";
+            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
       }
@@ -15804,8 +15832,8 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 270;
 
-            let textOffsetX = this.dir * GameSettings.offsetX;
-            let textOffsetY = -1 * GameSettings.offsetY;
+            let textOffsetX = this.dir * GameSettings.textOffset;
+            let textOffsetY = -1 * GameSettings.textOffset;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
@@ -15817,14 +15845,21 @@
             (t.font = "bold " + 10 * i + "pt arial"),
             (t.lineWidth = 5 * i);
 
-            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            let fps = createjs.Ticker.getMeasuredFPS();
+            fps = Vn(10 * fps) / 10;
+            console.log(fps);
 
-            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
+
+            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillStyle = "#000000";
+            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
       }
@@ -16234,8 +16269,8 @@
             let angle = this.drawHeadAngle ? this.drawHeadAngle * (180 / Math.PI): 0;
             angle = ((angle + 180) % 360) - 180;
 
-            let textOffsetX = this.dir * GameSettings.offsetX;
-            let textOffsetY = -1 * GameSettings.offsetY;
+            let textOffsetX = this.dir * GameSettings.textOffset;
+            let textOffsetY = -1 * GameSettings.textOffset;
             let d = this.dir < 0 ? "right" : "left";
             t.textAlign = d;
 
@@ -16247,14 +16282,21 @@
             (t.font = "bold " + 10 * i + "pt arial"),
             (t.lineWidth = 5 * i);
 
-            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            let fps = createjs.Ticker.getMeasuredFPS();
+            fps = Vn(10 * fps) / 10;
+            console.log(fps);
 
-            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 20);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 50);
+            t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
+
+            t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
+            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 80);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillStyle = "#000000";
+            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
       }
@@ -17410,6 +17452,7 @@
             e = this.options.snap,
             s = this.options.snapLocked;
           let i = t.isButtonDown("alt");
+          t.isButtonDown("enter") && this.resetTool();
           this.options.rightClickMove && (i = t.isButtonDown("shift")), // right click camera move changes line snap
             i && !e
               ? this.toggleQuickSnap()
@@ -18468,7 +18511,7 @@
         // remove collision from the masses, and add additional dampening inversely proportional to velocity
         this.bikeClone.masses.forEach(
             (i) => (
-                (i.collide = false),
+                (i.collide = true),
                 (i.update = ((old) => () => {
                     old.apply(i);
                     let len = i.vel.len();
@@ -18486,8 +18529,31 @@
         this.offsetPete = this.bikeClone.head.pos;
         this.active = !1;
       }
+
       reset() {
         this.active = !1
+        this.bikeClone =
+            this.scene.playerManager.firstPlayer._baseVehicle.clone();
+            if (!GameSettings.freeFloppyPete) {
+        // remove collision from the masses, and add additional dampening inversely proportional to velocity
+        this.bikeClone.masses.forEach(
+            (i) => (
+                (i.collide = true),
+                (i.update = ((old) => () => {
+                    old.apply(i);
+                    let len = i.vel.len();
+                    i.vel.factorSelf(len > 10 ? 10 / len : 0.97);
+                })(i.update))
+            )
+        );
+        this.bikeClone.head.update = () => {};
+        // convert the springs connected to the head to ropes (which don't apply any force to one of their masses)
+        this.bikeClone.rearSpring.m1 = this.bikeClone.rearSpring.m2;
+        this.bikeClone.rearSpring.m2 = this.bikeClone.head;
+        [this.bikeClone.rearSpring, this.bikeClone.frontSpring].forEach(
+            (i) => (i.update = () => ropeUpdate.apply(i))
+        );}
+        this.offsetPete = this.bikeClone.head.pos;
       }
 
       press() {
@@ -18495,16 +18561,18 @@
 
       hold() {
         this.offsetPete.equ(this.mouse.touch.real);
+        if (!GameSettings.freeFloppyPete) {
         GameSettings.offsetPeteX = this.offsetPete.x;
-        GameSettings.offsetPeteY = this.offsetPete.y;
+        GameSettings.offsetPeteY = this.offsetPete.y;}
+        this.offsetPete.y -= 1;
       }
 
       release() {
         this.offsetPete.equ(this.mouse.touch.real);
+        if (!GameSettings.freeFloppyPete) {
         GameSettings.offsetPeteX = this.offsetPete.x;
-        GameSettings.offsetPeteY = this.offsetPete.y;
-        this.offsetPete.x = GameSettings.offsetPeteX;
-        this.offsetPete.y = GameSettings.offsetPeteY;
+        GameSettings.offsetPeteY = this.offsetPete.y;}
+        this.offsetPete.y -= 1;
         (this.active = !1);
       }
 
@@ -18516,9 +18584,9 @@
           this.bikeClone.rearWheel.pos.inc({x: -10, y: 10});
           this.bikeClone.frontWheel.pos.inc({x: 10, y: -10});
         }
-        if (GameSettings.offsetPeteX === 0 && GameSettings.offsetPeteY === 0) {
-          this.offsetPete.x = 0;
-          this.offsetPete.y = 0;}
+        if (GameSettings.offsetPeteX === 0 && GameSettings.offsetPeteY === 0 && !GameSettings.freeFloppyPete) {
+          this.offsetPete.x = GameSettings.offsetPeteX;
+          this.offsetPete.y = GameSettings.offsetPeteY - 1;}
       }
 
       draw() {
@@ -18526,7 +18594,6 @@
           , e = t.game.canvas.getContext("2d")
           , s = t.camera.zoom;
         e.save(),
-        this.drawCursor(e),
         this.drawStartPosition(e),
         this.bikeClone.drawBikeFrame(),
         e.restore()
@@ -18534,44 +18601,48 @@
 
       drawStartPosition(t) {
         const i = this.offsetPete.toScreenSnapped(this.scene)
-        , s = this.camera.zoom;
-        t.lineWidth = 3;
-        t.strokeStyle = "#FF0000";
-        t.beginPath();
-        t.arc(i.x, i.y, 10 * s, 0, 2 * Math.PI, false);
-        t.stroke();
-      }
+          , v = this.mouse.touch.real.toScreenSnapped(this.scene)
+          , s = this.camera.zoom
+          , r = this.scene.game.pixelRatio;
 
-      drawCursor(t) {
-        const e = this.mouse.touch.real.toScreenSnapped(this.scene)
-        , x = this.mouse.touch.real
-        , s = this.camera.zoom;
-
-        const distance = Math.sqrt(Math.pow(x.x - this.offsetPete.x, 2) + Math.pow(x.y - this.offsetPete.y, 2));
-        GameSettings.offsetPeteX = this.offsetPete.x;
-        GameSettings.offsetPeteY = this.offsetPete.y;
-
-        if (distance <= 10 * s) {
-        //this.game.canvas.style.cursor = "grab";
+        if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+          const z = 5 * s;
+          t.beginPath();
+          t.moveTo(v.x, v.y - z);
+          t.lineTo(v.x, v.y + z);
+          t.moveTo(v.x - z, v.y);
+          t.lineTo(v.x + z, v.y);
+          t.lineWidth = 1 * s;
+          t.closePath();
+          t.stroke();
         } else {
-          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
-            const i = 5 * s;
-            t.beginPath();
-            t.moveTo(e.x, e.y - i);
-            t.lineTo(e.x, e.y + i);
-            t.moveTo(e.x - i, e.y);
-            t.lineTo(e.x + i, e.y);
-            t.lineWidth = 1 * s;
-            t.closePath();
-            t.stroke();
-          } else {
-            t.lineWidth = 1;
-            t.fillStyle = "#1884cf";
-            t.beginPath();
-            t.arc(e.x, e.y, 1 * s, 0, 2 * Math.PI, false);
-            t.closePath();
-            t.fill();
-          }
+          t.beginPath();
+          t.arc(v.x, v.y, 1 * s, 0, 2 * Math.PI, false);
+          t.lineWidth = 1;
+          t.fillStyle = "#1884cf";
+          t.closePath();
+          t.fill();
+        }
+
+        let textOffsetY = -1 * GameSettings.textOffset;
+        t.textAlign = "center";
+
+        (t.fillStyle = "#000000"),
+          (t.strokeStyle = "#ffffff"),
+          (t.font = "bold " + 10 * r + "pt arial"),
+          (t.lineWidth = 5 * r);
+
+        if (!GameSettings.freeFloppyPete) {
+        t.strokeText("START POSITION", i.x, i.y + textOffsetY - 40 * r);
+        t.strokeText("(" + GameSettings.offsetPeteX.toFixed(0) + ", " + GameSettings.offsetPeteY.toFixed(0) + ")", i.x, i.y + textOffsetY - 20 * r);
+
+        t.fillText("START POSITION", i.x, i.y + textOffsetY - 40 * r);
+        t.fillText("(" + GameSettings.offsetPeteX.toFixed(0) + ", " + GameSettings.offsetPeteY.toFixed(0) + ")", i.x, i.y + textOffsetY - 20 * r);
+        t.strokeStyle = "#000";}
+
+        else {
+          t.strokeText("FLOPPY PETE", i.x, i.y + textOffsetY - 40 * r);
+          t.fillText("FLOPPY PETE", i.x, i.y + textOffsetY - 40 * r);
         }
       }
     }
