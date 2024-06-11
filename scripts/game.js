@@ -18310,7 +18310,7 @@
                   const t = this.p1;
                   const e = this.p2;
                   const s = this.scene.track;
-                  const i = this.options.SegmentLength;
+                  const i = (Math.abs(this.options.SegmentLength - 1.1)).toFixed(1);
                   // calculate radius
                   const radius = Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
           

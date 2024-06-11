@@ -572,7 +572,7 @@
                   className: "horizontal-slider-container"
               }, n.createElement("span", {
                   className: "horizontal-slider-label"
-              }, "Segment Ratio"), n.createElement(r, {
+              }, "Segment Length"), n.createElement(r, {
                   withBars: !0,
                   className: "horizontal-slider Circle-slider_SegmentLength",
                   onChanged: this.adjustSegmentLength,
