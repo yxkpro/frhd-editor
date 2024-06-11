@@ -17792,10 +17792,10 @@
             (this.p1 = n.snapPoint),
             this.anchoring || this.hold());}
           const r = this.toolHandler.options;
-          let o = i.isButtonDown("shift");
+          let o = (s.old.down || i.isButtonDown("shift"));
           r.rightClickMove && (o = s.old.down),
             o
-              ? (e.old.down || r.rightClickMove) && this.moveCamera()
+              ? (s.old.down || e.old.down) && this.moveCamera()
               : (e.press &&
                   (this.anchoring || this.press(), (this.active = !0)),
                 e.old.down && !this.anchoring && this.hold()),
