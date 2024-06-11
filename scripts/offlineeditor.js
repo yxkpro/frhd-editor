@@ -355,6 +355,7 @@
           d = e("./powerupbottomtooloptions"),
           p = e("../chromeapp/bottommenu"),
           h = e("./vehiclepowerupbottomtooloptions"),
+          v = e("./moveVehicle")
           f = n.createClass({
             displayName: "BottomMenu",
             render: function () {
@@ -408,6 +409,7 @@
                     //n.createElement(xxx, { active: this.props.data.snap }),
                     n.createElement(o, { active: this.props.data.grid }),
                     n.createElement(r, { vehicle: this.props.data.vehicle }),
+                    n.createElement(v),
                     n.createElement("span", { className: "divider" })
                   ),
                   m
@@ -431,6 +433,7 @@
         "./powerupbottomtooloptions": 11,
         "./straightlinebottomtooloptions": 12,
         "./vehicle": 13,
+        "./moveVehicle": 913,
         "./vehiclepowerupbottomtooloptions": 14,
         react: 230,
       },
@@ -1088,6 +1091,9 @@
               "undefined" != typeof GameManager &&
                 GameManager.command("toggle vehicle");
             },
+            moveVehicle: function () {
+              "undefined" != typeof GameManager && GameManager.command("change tool", "pete");
+            },
             render: function () {
               var e =
                   "bottomMenu-button bottomMenu-button-right bottomMenu-button_vehicle ",
@@ -1106,8 +1112,33 @@
                     { className: "name" },
                     "Vehicle : ",
                     n.createElement("span", { className: "bottomMenu-bold" }, r)
-                  )
+                  ),
                 )
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],
+    913: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "moveVehicle",
+            moveVehicle: function () {
+              "undefined" != typeof GameManager && GameManager.command("change tool", "pete");
+            },
+            render: function () {
+              var e =
+                  "bottomMenu-button-right bottomMenu-button_moveVehicle ";
+              return (
+                n.createElement(
+                    "div", { className: e, onClick: this.moveVehicle},
+                  n.createElement("span", {},
+                    n.createElement("button", {
+                        onClick: this.moveVehicle
+                    }, "SET START POSITION")))
               );
             },
           });
@@ -4183,7 +4214,6 @@
           c = e("../tools/cameratool"),
           x = e("../tools/circletool"),
           xx = e("../tools/selecttool"),
-          xxx = e("../tools/petetool"),
           u = n.createClass({
             displayName: "LeftMenu",
             render: function () {
@@ -4205,8 +4235,7 @@
                   n.createElement(s, { active: "powerup" === e }),
                   n.createElement(l, { active: "vehiclepowerup" === e }),
                   n.createElement(xx, { active: "select" === e }),
-                  n.createElement(c, { active: "camera" === e }),
-                  n.createElement(xxx, { active: "pete" === e })
+                  n.createElement(c, { active: "camera" === e })
                 )
               );
             },
@@ -4221,7 +4250,6 @@
         "../tools/erasertool": 44,
         "../tools/poweruptool": 48,
         "../tools/selecttool": 50,
-        "../tools/petetool": 950,
         "../tools/straightlinetool": 53,
         "../tools/vehicletool": 59,
         react: 230,
@@ -5057,33 +5085,6 @@
                   { className: e, onClick: this.changeTool },
                   n.createElement("span", {
                     className: "editorgui_icons editorgui_icons-icon_select",
-                  })
-                )
-              );
-            },
-          });
-        t.exports = r;
-      },
-      { react: 230 },
-    ],
-    950: [
-      function (e, t) {
-        var n = e("react"),
-          r = n.createClass({
-            displayName: "PeteTool",
-            changeTool: function () {
-              "undefined" != typeof GameManager &&
-                GameManager.command("change tool", "pete");
-            },
-            render: function () {
-              var e = "sideButton sideButton_selectTool";
-              return (
-                this.props.active && (e += " active"),
-                n.createElement(
-                  "div",
-                  { className: e, onClick: this.changeTool },
-                  n.createElement("span", {
-                    className: "editorgui_icons editorgui_icons-icon_bmx",
                   })
                 )
               );

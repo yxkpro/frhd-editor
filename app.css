@@ -1745,6 +1745,10 @@ html.fullscreen #main_page {
     min-width: 135px
 }
 
+.bottomMenu-button_moveVehicle {
+    min-width: 100px
+}
+
 .bottomMenu-button_grid {
     min-width: 100px
 }
