@@ -17410,6 +17410,11 @@
               }
           });
 
+          if ((this.currentTool === ("vehiclepowerup")) || (this.currentTool === ("powerup"))) {
+            this.snapPoint.equ(nearestPoint);
+            return;
+          }
+
           if (nearestPoint && this.options.snap && !this.mouse.touch.old.down && !this.snapUpdated) {
             this.snapPoint.equ(nearestPoint);
             this.snapPointOld.equ(nearestPoint);

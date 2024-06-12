@@ -2131,11 +2131,12 @@ html.fullscreen #main_page {
 
 .editorDialog-content_helpDialog {
     width: 640px;
-    height: 460px
+    height: 445px
 }
 
 .editorDialog-content_helpDialog .hotkeys {
     padding: 10px;
+    padding-top: 0px;
     clear: both
 }
 
@@ -2145,7 +2146,7 @@ html.fullscreen #main_page {
 
 .editorDialog-content_helpDialog .hotkeys-title {
     font-size: 13px;
-    margin: 10px 0 5px;
+    margin: 15px 0 5px;
     font-family: roboto_condensed_bold, Arial, Helvetica, sans-serif;
     text-transform: uppercase;
     color: #595959

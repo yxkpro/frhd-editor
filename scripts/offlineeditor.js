@@ -2816,12 +2816,14 @@
 
 
 
-                                )),
+                                /*)),
 
                             n.createElement("div", null, n.createElement("span", {
                                 className: "helpDialog-advanced_settings link",
                                 onClick: this.gotoAdvancedSettings
-                            }, "Advanced Settings")))
+                            }, "Advanced Settings"*/
+                          ))
+                          )
                     },
                     getAdvancedSettings: function () {
                         var e = GameSettings,
@@ -3174,7 +3176,7 @@
                 url = `assets/tracks/${trackName}.txt`;
             
               if (e.value.includes('$')) {
-                e.value = `use import to change settings`;
+                e.value = `$use import to change settings`;
                 return;
               }
             
