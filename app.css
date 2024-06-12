@@ -1918,7 +1918,7 @@ html.fullscreen #main_page {
 }
 
 .editorDialog-content_clearDialog .editorDialog-centerContent {
-    padding: 10px
+    padding: 15px
 }
 
 .editorDialog-content_clearDialog .editorDialog-bottomBar {
@@ -1929,13 +1929,13 @@ html.fullscreen #main_page {
 .importDialog-code {
     border: 1px solid #CCC;
     border-radius: 6px;
-    padding: 10px;
+    font-size: 14px;
+    padding: 14px;
     height: 210px;
     overflow-x: hidden;
     overflow-y: scroll;
     z-index: 2;
     resize: none;
-    font-size: .9em;
     background: #F8F8F8
 }
 
@@ -1961,7 +1961,7 @@ html.fullscreen #main_page {
 
 .importDialog-placeholder {
     font-size: 14px;
-    padding: 14PX;
+    padding: 15px;
     position: absolute;
     width: 486px
 }
