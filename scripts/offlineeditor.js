@@ -2303,21 +2303,51 @@
             render: function () {
               var e = this.props.options,
                 t = "Generating track code... this may take a minute",
-                r = "";
+                r = "",
+                physicsLineCount = e.physicsLineCount != null ? `: ${e.physicsLineCount}` : ": 0",
+                sceneryLineCount = e.sceneryLineCount != null ? `: ${e.sceneryLineCount}` : ": 0",
+                powerupCounts = e.powerupCounts || {
+                  goal: 0,
+                  boost: 0,
+                  gravity: 0,
+                  slowmo: 0,
+                  bomb: 0,
+                  checkpoint: 0,
+                  antigravity: 0,
+                  teleport: 0,
+                  helicopter: 0,
+                  truck: 0,
+                  balloon: 0,
+                  blob: 0
+                },
+                powerupTypes = {
+                  goal: "goal",
+                  boost: "speed",
+                  gravity: "gravity",
+                  slowmo: "slowmotion",
+                  bomb: "bomb",
+                  checkpoint: "checkpoint",
+                  antigravity: "antigravity",
+                  teleport: "portal",
+                  helicopter: "helicopter",
+                  truck: "truck",
+                  balloon: "balloon",
+                  blob: "blob"
+                };
               return (
                 e &&
-                  e.code &&
-                  ((t = e.code),
-                  this.fileSaverSupport &&
-                    (r = n.createElement(
-                      "button",
-                      {
-                        className:
-                          "primary-button primary-button-blue float-right",
-                        onClick: this.createSaveFile,
-                      },
-                      "Save as File"
-                    ))),
+                e.code &&
+                ((t = e.code),
+                this.fileSaverSupport &&
+                (r = n.createElement(
+                  "button",
+                  {
+                    className:
+                      "primary-button primary-button-blue float-right",
+                    onClick: this.createSaveFile,
+                  },
+                  "Save as File"
+                ))),
                 n.createElement(
                   "div",
                   {
@@ -2353,7 +2383,37 @@
                       readOnly: true,
                       value: t,
                       onClick: this.selectAllText,
-                    })
+                    }),
+                    n.createElement(
+                      "div",
+                      { className: "exportDialog-trackdata" },
+                      n.createElement(
+                        "div",
+                        { className: "exportDialog-lineCounts" },
+                        n.createElement("span", {
+                          className: "editorgui_small editorgui_icons-icon_physics",
+                        }),
+                        physicsLineCount
+                      ),
+                      n.createElement(
+                        "div",
+                        { className: "exportDialog-lineCounts" },
+                        n.createElement("span", {
+                          className: "editorgui_small editorgui_icons-icon_scenery",
+                        }),
+                        sceneryLineCount
+                      ),
+                      Object.entries(powerupCounts).map(([type, count]) =>
+                        n.createElement(
+                          "div",
+                          { key: type },
+                          n.createElement("span", {
+                            className: `editorgui_small editorgui_smaller editorgui_icons-${powerupTypes[type]}`,
+                          }),
+                          `: ${count}`
+                        )
+                      )
+                    ),
                   ),
                   n.createElement(
                     "div",
@@ -2371,7 +2431,7 @@
                   )
                 )
               );
-            },
+            }
           });
         t.exports = i;
       },

@@ -13104,7 +13104,6 @@
               this.mini = this.scene.game.mod.getVar("mini"),
               this.propeller = 0,
               this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
-              this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
               this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes"),
               -1 === s && this.swap();
           }
@@ -13252,9 +13251,6 @@
             if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
               this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");
             }
-            if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
-              this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
-            }
             if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
               this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
             }
@@ -13372,7 +13368,6 @@
               this.drawBikeFrame();
               this.drawHitboxes();
               this.drawBikeData(t);
-              this.drawInputDisplay(t);
             }
           }
           updateDrawHeadAngle() {
@@ -13403,90 +13398,18 @@
                 (t.font = "bold " + 10 * i + "pt arial"),
                 (t.lineWidth = 5 * i);
 
-              let fps = createjs.Ticker.getMeasuredFPS();
-              fps = Vn(10 * fps) / 10;
-              console.log(fps);
-
               t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
               t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
               t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
-              GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
 
               t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
               t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
               t.fillStyle = color;
               t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
               t.fillStyle = "#000000";
-              GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
               t.strokeStyle = "#000";
             }
           }
-          drawInputDisplay(t) {
-            if (this.shouldDrawInputDisplay) {
-            let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
-                this.scene.camera.focusIndex
-              )._gamepad,
-              s = 10,
-              i = { x: s, y: t.canvas.height - 10 * s };
-              
-              (t.fillStyle = GameSettings.sceneryLineColor),
-              (t.lineWidth = s / 2),
-              (t.strokeStyle = GameSettings.physicsLineColor);
-            let o = s / 2,
-              a = 4 * s;
-              t.beginPath(),
-              t.roundRect(i.x + 10 * s, i.y, a, a, o),
-              e.x && t.fill(),
-              t.stroke(),
-              t.beginPath(),
-              t.roundRect(i.x, i.y, a, a, o),
-              e.z && t.fill(),
-              t.stroke(),
-              t.beginPath(),
-              t.roundRect(i.x + 5 * s, i.y, a, a, o),
-              e.up && t.fill(),
-              t.stroke(),
-              t.beginPath(),
-              t.roundRect(i.x, i.y + 5 * s, a, a, o),
-              e.left && t.fill(),
-              t.stroke(),
-              t.beginPath(),
-              t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
-              e.down && t.fill(),
-              t.stroke(),
-              t.beginPath(),
-              t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
-              e.right && t.fill(),
-              t.stroke(),
-              (t.lineWidth = s / 3),
-              t.beginPath(),
-              t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
-              t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
-              t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
-              t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
-
-              t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
-              t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
-              t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
-              t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
-
-              t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
-              t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
-              t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
-              t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
-              t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
-              t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
-              t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
-              t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
-              t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
-              t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
-              t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
-              t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
-              t.stroke(),
-              t.restore(),
-              (t.globalCompositeOperation = "source-over");
-          }
-          };
           drawHitboxes() {
             if (this.shouldDrawHitboxes) {
                 let ctx = this.scene.game.canvas.getContext('2d'),
@@ -13897,7 +13820,6 @@
             this.updateCameraFocalPoint(),
             this.stopSounds(),
             -1 === s && this.swap(),
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
             this.shouldDrawVehicleData = this.scene.game.mod.getVar("bikeData"),
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
         }
@@ -14003,9 +13925,6 @@
         update() {
           if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");
-          }
-          if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
           }
           if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
@@ -14211,7 +14130,6 @@
             }
             this.drawHitboxes();
             this.drawVehicleData(s);
-            this.drawInputDisplay(s);
           }
         }
         drawVehicleData(s) {
@@ -14238,88 +14156,17 @@
             (s.font = "bold " + 10 * i + "pt arial"),
             (s.lineWidth = 5 * i);
 
-            let fps = createjs.Ticker.getMeasuredFPS();
-            fps = Vn(10 * fps) / 10;
-            console.log(fps);
-
             s.strokeText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 10 * i);
             s.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
             s.strokeText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 40 * i);
-            GameSettings.showFPS && s.strokeText("fps: " + fps, h.x + textOffsetX, h.y + textOffsetY + 55 * i);
 
             s.fillText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 10 * i);
             s.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
             s.fillStyle = color;
             s.fillText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 40 * i);
             s.fillStyle = "#000000";
-            GameSettings.showFPS && s.fillText("fps: " + fps, h.x + textOffsetX, h.y + textOffsetY + 55 * i);
             s.strokeStyle = "#000";
           }
-      }
-      drawInputDisplay(t) {
-        if (this.shouldDrawInputDisplay) {
-        let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
-            this.scene.camera.focusIndex
-          )._gamepad,
-          s = 10,
-          i = { x: s, y: t.canvas.height - 10 * s };
-          (t.fillStyle = GameSettings.sceneryLineColor),
-          (t.lineWidth = s / 2),
-          (t.strokeStyle = GameSettings.physicsLineColor);
-        let o = s / 2,
-          a = 4 * s;
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y, a, a, o),
-          e.x && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y, a, a, o),
-          e.z && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y, a, a, o),
-          e.up && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y + 5 * s, a, a, o),
-          e.left && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
-          e.down && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
-          e.right && t.fill(),
-          t.stroke(),
-          (t.lineWidth = s / 3),
-          t.beginPath(),
-          t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
-          t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
-
-          t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
-          t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
-
-          t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
-          t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
-          t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
-          t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
-          t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
-          t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
-          t.stroke(),
-          t.restore(),
-          (t.globalCompositeOperation = "source-over");
-      }
       }
       drawHitboxes() {
         if (this.shouldDrawHitboxes) {
@@ -14439,7 +14286,6 @@
             this.stopSounds(),
             this.updateCameraFocalPoint(),
             -1 === s && this.swap(),
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
             this.shouldDrawVehicleData = this.scene.game.mod.getVar("bikeData"),
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
         }
@@ -14482,9 +14328,6 @@
         update() {
           if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");            
-          }
-          if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
           }
           if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
@@ -14575,7 +14418,6 @@
               (t.globalAlpha = 1);
             this.drawHitboxes();
             this.drawVehicleData(t);
-            this.drawInputDisplay(t);
           }
         }
         drawVehicleData(t) {
@@ -14602,88 +14444,17 @@
               (t.font = "bold " + 10 * i + "pt arial"),
               (t.lineWidth = 5 * i);
 
-            let fps = createjs.Ticker.getMeasuredFPS();
-            fps = Vn(10 * fps) / 10;
-            console.log(fps);
-
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
-            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
             t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
             t.fillStyle = "#000000";
-            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
-      }
-      drawInputDisplay(t) {
-        if (this.shouldDrawInputDisplay) {
-        let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
-            this.scene.camera.focusIndex
-          )._gamepad,
-          s = 10,
-          i = { x: s, y: t.canvas.height - 10 * s };
-          (t.fillStyle = GameSettings.sceneryLineColor),
-          (t.lineWidth = s / 2),
-          (t.strokeStyle = GameSettings.physicsLineColor);
-        let o = s / 2,
-          a = 4 * s;
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y, a, a, o),
-          e.x && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y, a, a, o),
-          e.z && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y, a, a, o),
-          e.up && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y + 5 * s, a, a, o),
-          e.left && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
-          e.down && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
-          e.right && t.fill(),
-          t.stroke(),
-          (t.lineWidth = s / 3),
-          t.beginPath(),
-          t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
-          t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
-
-          t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
-          t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
-
-          t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
-          t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
-          t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
-          t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
-          t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
-          t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
-          t.stroke(),
-          t.restore(),
-          (t.globalCompositeOperation = "source-over");
-      }
       }
       drawHitboxes() {
         if (this.shouldDrawHitboxes) {
@@ -14931,7 +14702,6 @@
             this.mini = this.scene.game.mod.getVar("mini"),
             this.propeller = 0,
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData"),
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes"),
             -1 === s && this.swap();
         }
@@ -15078,9 +14848,6 @@
           if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");
           }
-          if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
-          }
           if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
           }
@@ -15204,7 +14971,6 @@
             this.drawBikeFrame();
             this.drawHitboxes();
             this.drawBikeData(t);
-            this.drawInputDisplay(t);
           }
         }
         drawBikeData(t) {
@@ -15231,88 +14997,17 @@
               (t.font = "bold " + 10 * i + "pt arial"),
               (t.lineWidth = 5 * i);
 
-            let fps = createjs.Ticker.getMeasuredFPS();
-            fps = Vn(10 * fps) / 10;
-            console.log(fps);
-
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
-            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
             t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
             t.fillStyle = "#000000";
-            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
-      }
-      drawInputDisplay(t) {
-        if (this.shouldDrawInputDisplay) {
-        let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
-            this.scene.camera.focusIndex
-          )._gamepad,
-          s = 10,
-          i = { x: s, y: t.canvas.height - 10 * s };
-          (t.fillStyle = GameSettings.sceneryLineColor),
-          (t.lineWidth = s / 2),
-          (t.strokeStyle = GameSettings.physicsLineColor);
-        let o = s / 2,
-          a = 4 * s;
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y, a, a, o),
-          e.x && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y, a, a, o),
-          e.z && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y, a, a, o),
-          e.up && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y + 5 * s, a, a, o),
-          e.left && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
-          e.down && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
-          e.right && t.fill(),
-          t.stroke(),
-          (t.lineWidth = s / 3),
-          t.beginPath(),
-          t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
-          t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
-
-          t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
-          t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
-
-          t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
-          t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
-          t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
-          t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
-          t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
-          t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
-          t.stroke(),
-          t.restore(),
-          (t.globalCompositeOperation = "source-over");
-      }
       }
       drawHitboxes() {
         if (this.shouldDrawHitboxes) {
@@ -15741,7 +15436,6 @@
             this.createMasses(e),
             this.createSprings(),
             this.stopSounds(),
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
             this.shouldDrawVehicleData = this.scene.game.mod.getVar("bikeData"),
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes"),
             (this.focalPoint = this.head);
@@ -15773,9 +15467,6 @@
         update() {
           if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");
-          }
-          if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
           }
           if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
@@ -15814,7 +15505,6 @@
               (t.globalAlpha = 1);
               this.drawHitboxes();
               this.drawVehicleData(t);
-              this.drawInputDisplay(t);
           }
         }
         drawVehicleData(t) {
@@ -15845,88 +15535,17 @@
             (t.font = "bold " + 10 * i + "pt arial"),
             (t.lineWidth = 5 * i);
 
-            let fps = createjs.Ticker.getMeasuredFPS();
-            fps = Vn(10 * fps) / 10;
-            console.log(fps);
-
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
-            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
             t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
             t.fillStyle = "#000000";
-            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
-      }
-      drawInputDisplay(t) {
-        if (this.shouldDrawInputDisplay) {
-        let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
-            this.scene.camera.focusIndex
-          )._gamepad,
-          s = 10,
-          i = { x: s, y: t.canvas.height - 10 * s };
-          (t.fillStyle = GameSettings.sceneryLineColor),
-          (t.lineWidth = s / 2),
-          (t.strokeStyle = GameSettings.physicsLineColor);
-        let o = s / 2,
-          a = 4 * s;
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y, a, a, o),
-          e.x && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y, a, a, o),
-          e.z && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y, a, a, o),
-          e.up && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y + 5 * s, a, a, o),
-          e.left && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
-          e.down && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
-          e.right && t.fill(),
-          t.stroke(),
-          (t.lineWidth = s / 3),
-          t.beginPath(),
-          t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
-          t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
-
-          t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
-          t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
-
-          t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
-          t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
-          t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
-          t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
-          t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
-          t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
-          t.stroke(),
-          t.restore(),
-          (t.globalCompositeOperation = "source-over");
-      }
       }
       drawHitboxes() {
         if (this.shouldDrawHitboxes) {
@@ -16104,7 +15723,6 @@
             this.createMasses(e),
             this.createSprings(),
             this.stopSounds(),
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay"),
             this.shouldDrawVehicleData = this.scene.game.mod.getVar("bikeData"),
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
         }
@@ -16140,9 +15758,6 @@
         update() {
           if (this.shouldDrawMetadata !== this.scene.game.mod.getVar("bikeData")) {
             this.shouldDrawMetadata = this.scene.game.mod.getVar("bikeData");
-          }
-          if (this.shouldDrawInputDisplay !== this.scene.game.mod.getVar("inputDisplay")) {
-            this.shouldDrawInputDisplay = this.scene.game.mod.getVar("inputDisplay");
           }
           if (this.shouldDrawHitboxes !== this.scene.game.mod.getVar("hitboxes")) {
             this.shouldDrawHitboxes = this.scene.game.mod.getVar("hitboxes");
@@ -16251,7 +15866,6 @@
             t.lineTo(n[0].x, n[0].y), t.fill(), t.stroke(), (t.globalAlpha = 1);
             this.drawHitboxes();
           this.drawVehicleData(t);
-          this.drawInputDisplay(t);
           }
         }
         drawVehicleData(t) {
@@ -16282,88 +15896,17 @@
             (t.font = "bold " + 10 * i + "pt arial"),
             (t.lineWidth = 5 * i);
 
-            let fps = createjs.Ticker.getMeasuredFPS();
-            fps = Vn(10 * fps) / 10;
-            console.log(fps);
-
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
-            GameSettings.showFPS && t.strokeText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
             t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
             t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
             t.fillStyle = "#000000";
-            GameSettings.showFPS && t.fillText("fps: " + fps, s.x + textOffsetX, s.y + textOffsetY + 55 * i);
             t.strokeStyle = "#000";
           }
-      }
-      drawInputDisplay(t) {
-        if (this.shouldDrawInputDisplay) {
-        let { downButtons: e } = this.scene.playerManager.getPlayerByIndex(
-            this.scene.camera.focusIndex
-          )._gamepad,
-          s = 10,
-          i = { x: s, y: t.canvas.height - 10 * s };
-          (t.fillStyle = GameSettings.sceneryLineColor),
-          (t.lineWidth = s / 2),
-          (t.strokeStyle = GameSettings.physicsLineColor);
-        let o = s / 2,
-          a = 4 * s;
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y, a, a, o),
-          e.x && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y, a, a, o),
-          e.z && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y, a, a, o),
-          e.up && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x, i.y + 5 * s, a, a, o),
-          e.left && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
-          e.down && t.fill(),
-          t.stroke(),
-          t.beginPath(),
-          t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
-          e.right && t.fill(),
-          t.stroke(),
-          (t.lineWidth = s / 3),
-          t.beginPath(),
-          t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
-          t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
-
-          t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
-          t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
-          t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
-
-          t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
-          t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
-          t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
-          t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
-          t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
-          t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
-          t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
-          t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
-          t.stroke(),
-          t.restore(),
-          (t.globalCompositeOperation = "source-over");
-      }
       }
       drawHitboxes() {
         if (this.shouldDrawHitboxes) {
@@ -16632,7 +16175,6 @@
               // Hide the message after 3 seconds (3000 milliseconds)
               setTimeout(() => {
                 message.hide();
-                GameSettings.defaultTrack = "track.txt";
               }, 3000);
             }
             setTempVehicle(t, e, s, i) {
@@ -22933,6 +22475,178 @@
               this.toolHandler.draw(),
             this.state.loading && this.loadingcircle.draw(),
             this.message.draw();
+            this.drawInputDisplay();
+            this.drawGameData();
+        }
+        trackData() {
+          this.trackcode = this.track.getCode();
+          let trackSize = new Blob([this.trackcode]).size / 1024;
+          trackSize = trackSize.toFixed(2);
+          this.lastUpdate = Date.now();
+        
+          const [physicsLines, sceneryLines, powerups] = this.trackcode.split('#');
+        
+          const countLines = (lines) => {
+            if (!lines.trim()) return 0;
+            return lines.split(',').reduce((count, line) => {
+              const points = line.trim().split(' ');
+              return count + (points.length - 2) / 2;
+            }, 0);
+          };
+        
+          const physicsLineCount = countLines(physicsLines);
+          const sceneryLineCount = countLines(sceneryLines);
+          const powerupTypes = {
+            T: 'goal',
+            B: 'boost',
+            G: 'gravity',
+            S: 'slowmo',
+            O: 'bomb',
+            C: 'checkpoint',
+            A: 'antigravity',
+            W: 'teleport',
+            1: 'helicopter',
+            2: 'truck',
+            3: 'balloon',
+            4: 'blob'
+          };
+          let powerupCounts = {
+            goal: 0,
+            boost: 0,
+            gravity: 0,
+            slowmo: 0,
+            bomb: 0,
+            checkpoint: 0,
+            antigravity: 0,
+            teleport: 0,
+            helicopter: 0,
+            truck: 0,
+            balloon: 0,
+            blob: 0
+          };
+        
+          if (powerups) {
+            const powerupMatches = powerups.match(/(?:T|B|G|S|O|C|A|W) [^,]+/g);
+            const vehiclePowerupMatches = powerups.match(/(?:V) [^,]+/g);
+            if (powerupMatches) {
+              powerupMatches.forEach((powerup) => {
+                const type = powerup.charAt(0);
+                const powerupType = powerupTypes[type];
+                if (powerupType) {
+                  powerupCounts[powerupType]++;
+                }
+              });
+            }
+            if (vehiclePowerupMatches) {
+              vehiclePowerupMatches.forEach((powerup) => {
+                const parts = powerup.split(' ');
+                if (parts.length >= 5) {
+                  const type = parts[parts.length - 2];
+                  const powerupType = powerupTypes[type];
+                  if (powerupType) {
+                    powerupCounts[powerupType]++;
+                  }
+                }
+              });
+            }
+          }
+        
+          return {
+            physicsLineCount,
+            sceneryLineCount,
+            powerupCounts,
+            trackSize
+          };
+        }
+        drawGameData() {
+          if (this.game.mod.getVar("gameData")) {
+            const t = this.game.canvas.getContext("2d");
+            const i = this.game.pixelRatio;
+            (t.fillStyle = "#000000"),
+            (t.strokeStyle = "#ffffff"),
+            (t.font = "bold " + 10 * i + "pt arial"),
+            (t.lineWidth = 5 * i),
+            (t.textAlign = "right");
+            let s = { x: t.canvas.width - 10, y: t.canvas.height - 10 };
+            let fps = createjs.Ticker.getMeasuredFPS();
+            fps = Vn(10 * fps) / 10;
+        
+            t.strokeText("fps: " + fps, s.x, s.y);
+            t.fillText("fps: " + fps, s.x, s.y);
+
+            let trackName = GameSettings.defaultTrack;
+            trackName = trackName.replace(".txt", "");
+            if (GameSettings.defaultTrack !== "track.txt") {
+              t.strokeText("track: " + trackName, s.x, s.y - 15 * i);
+              t.fillText("track: " + trackName, s.x, s.y - 15 * i);
+            }
+          }
+        }
+        drawInputDisplay() {
+          if (this.game.mod.getVar("inputDisplay")) {
+          const t = this.game.canvas.getContext("2d");
+          let { downButtons: e } = this.playerManager.getPlayerByIndex(
+              this.camera.focusIndex
+            )._gamepad,
+            s = 10,
+            i = { x: s, y: t.canvas.height - 10 * s };
+            
+            (t.fillStyle = GameSettings.sceneryLineColor),
+            (t.lineWidth = s / 2),
+            (t.strokeStyle = GameSettings.physicsLineColor);
+          let o = s / 2,
+            a = 4 * s;
+            t.beginPath(),
+            t.roundRect(i.x + 10 * s, i.y, a, a, o),
+            e.x && t.fill(),
+            t.stroke(),
+            t.beginPath(),
+            t.roundRect(i.x, i.y, a, a, o),
+            e.z && t.fill(),
+            t.stroke(),
+            t.beginPath(),
+            t.roundRect(i.x + 5 * s, i.y, a, a, o),
+            e.up && t.fill(),
+            t.stroke(),
+            t.beginPath(),
+            t.roundRect(i.x, i.y + 5 * s, a, a, o),
+            e.left && t.fill(),
+            t.stroke(),
+            t.beginPath(),
+            t.roundRect(i.x + 5 * s, i.y + 5 * s, a, a, o),
+            e.down && t.fill(),
+            t.stroke(),
+            t.beginPath(),
+            t.roundRect(i.x + 10 * s, i.y + 5 * s, a, a, o),
+            e.right && t.fill(),
+            t.stroke(),
+            (t.lineWidth = s / 3),
+            t.beginPath(),
+            t.moveTo(i.x + 2.7 * s, i.y + 3 * s),
+            t.lineTo(i.x + 1.2 * s, i.y + 3 * s),
+            t.lineTo(i.x + 2.7 * s, i.y + 1 * s),
+            t.lineTo(i.x + 1.2 * s, i.y + 1 * s),
+
+            t.moveTo(i.x + 12.7 * s, i.y + 3 * s),
+            t.lineTo(i.x + 11.2 * s, i.y + 1 * s),
+            t.moveTo(i.x + 12.7 * s, i.y + 1 * s),
+            t.lineTo(i.x + 11.2 * s, i.y + 3 * s),
+
+            t.moveTo(i.x + 6.2 * s, i.y + 2.7 * s),
+            t.lineTo(i.x + 7 * s, i.y + 1.2 * s),
+            t.lineTo(i.x + 7.8 * s, i.y + 2.7 * s),
+            t.moveTo(i.x + 2.5 * s, i.y + 7.8 * s),
+            t.lineTo(i.x + 1.2 * s, i.y + 7 * s),
+            t.lineTo(i.x + 2.5 * s, i.y + 6.2 * s),
+            t.moveTo(i.x + 6.2 * s, i.y + 6.2 * s),
+            t.lineTo(i.x + 7 * s, i.y + 7.8 * s),
+            t.lineTo(i.x + 7.8 * s, i.y + 6.2 * s),
+            t.moveTo(i.x + 11.5 * s, i.y + 7.8 * s),
+            t.lineTo(i.x + 12.8 * s, i.y + 7 * s),
+            t.lineTo(i.x + 11.5 * s, i.y + 6.2 * s),
+            t.stroke(),
+            t.restore(),
+            (t.globalCompositeOperation = "source-over")}
         }
         getAvailableTrackCode() {
           const t = this.settings;
@@ -22944,6 +22658,7 @@
                 ((e = this.importCode), (this.importCode = null)),
             e
           );
+          
         }
         redraw() {
           this.track.undraw(),
@@ -23028,9 +22743,14 @@
           (this.state.playing = !1), (this.state.showDialog = t);
         }
         getTrackCode() {
+          const trackData = this.trackData();
           (this.state.dialogOptions = {}),
             (this.state.dialogOptions.verified = this.verified),
-            (this.state.dialogOptions.code = this.track.getCode());
+            (this.state.dialogOptions.code = this.track.getCode()),
+            (this.state.dialogOptions.physicsLineCount = trackData.physicsLineCount),
+            (this.state.dialogOptions.sceneryLineCount = trackData.sceneryLineCount),
+            (this.state.dialogOptions.powerupCounts = trackData.powerupCounts),
+            (this.state.dialogOptions.trackSize = trackData.trackSize);
         }
         trackComplete() {
           this.verified = !this.track.dirty;
@@ -23105,6 +22825,7 @@
               GameSettings.defaultTrack = "track.txt";
               GameSettings.offsetPeteX = 0;
               GameSettings.offsetPeteY = 0;
+              this.trackUpdated = true
               break;
             case "import": {
               let e = t[0];
@@ -23117,6 +22838,7 @@
                 (this.importCode = e),
                 (this.clear = t[1]),
                 this.command("dialog", !1);
+                this.trackUpdated = true
               break;
             }
             case "add": {
@@ -23135,6 +22857,7 @@
                     this.clear = t[1];
                 }
                 this.command("dialog", false);
+                this.trackUpdated = true
                 break;
             }
           }
@@ -24028,6 +23751,7 @@
           slowmo: { default: !1 },
           frontBrake: { default: !1 },
           bikeData: { default: !1 },
+          gameData: { default: !1 },
           inputDisplay: { default: !1 },
           hitboxes: { default: !1 },
           accurateEraser: { default: !1 },
@@ -24439,6 +24163,12 @@
             title: "Bike/Vehicle Data",
             description:
               "Shows the metadata about the rider, including head angle, position, and velocity.",
+          },
+          {
+            key: "gameData",
+            title: "Game Data",
+            description:
+              "Shows game data, including FPS.",
           },
           {
             key: "hitboxes",

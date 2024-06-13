@@ -273,6 +273,24 @@ td {
     display: table
 }
 
+.gamedata {
+    margin-bottom: 18px;
+    margin-left: 18px;
+    font-size: 14px;
+}
+
+.exportDialog-trackdata {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    padding: 6px;
+    width: 25%;
+    height: 294px;
+    border: 1px solid #CCC;
+    border-radius: 6px;
+    font-size: 10px;
+}
+
 .break {
     -ms-word-break: break-all;
     word-break: break-all;
@@ -1239,6 +1257,20 @@ html.fullscreen #main_page {
     background-size: 512px 164px
 }
 
+.editorgui_small {
+    display: inline-block;
+    vertical-align: middle;
+    width: 22px;
+    height: 22px;
+    transform: scale(0.5);
+    transform-origin: middle;
+    overflow: hidden;
+    margin: -12px;
+    background-repeat: no-repeat;
+    background-image: url(assets/images/gui/editor_gui.png);
+    background-size: 512px 164px
+}
+
 .editorgui_icons_bottom {
     display: inline-block;
     vertical-align: top;
@@ -1884,7 +1916,7 @@ html.fullscreen #main_page {
     background: #FFF;
     border: 1px solid #C2C2C2;
     margin: -190px auto auto;
-    top: 50%;
+    top: 45%;
     position: relative;
     box-shadow: 0 0 1px #DDD
 }
@@ -1931,12 +1963,16 @@ html.fullscreen #main_page {
     border-radius: 6px;
     font-size: 14px;
     padding: 14px;
-    height: 210px;
+    height: 294px;
     overflow-x: hidden;
     overflow-y: scroll;
     z-index: 2;
     resize: none;
     background: #F8F8F8
+}
+
+.exportDialog-code{
+    width: 70%;
 }
 
 .editorDialog-codeContainer,
