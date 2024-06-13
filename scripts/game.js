@@ -16130,6 +16130,9 @@
                         "#000000",
                         "#FFFFFF"
                       );
+                      setTimeout(() => {
+                        t.message.hide();
+                      }, 3000);
               }
             }
             setAsGhost() {
@@ -16156,26 +16159,6 @@
               this._tempVehicle = !1;
               this._tempVehicleType = !1;
               this._tempVehicleTicks = 0;
-            
-              const scene = this._scene;
-              const settings = scene.settings;
-              const message = scene.message;
-            
-              
-              if (GameSettings.defaultTrack === "track.txt") return;
-              let trackName = GameSettings.defaultTrack;
-              trackName = trackName.replace(".txt", "");
-              message.show(
-                "Track Loaded: " + trackName,
-                !1,
-                "#000000",
-                "#FFFFFF"
-              );
-            
-              // Hide the message after 3 seconds (3000 milliseconds)
-              setTimeout(() => {
-                message.hide();
-              }, 3000);
             }
             setTempVehicle(t, e, s, i) {
               this._temp_vehicle_options &&
@@ -22349,6 +22332,23 @@
             (this.restartTrack = !0),
             (this.clear = !1),
             (this.track = t);
+            const message = this.message;
+            
+              
+              if (GameSettings.defaultTrack === "track.txt") return;
+              let trackName = GameSettings.defaultTrack;
+              trackName = trackName.replace(".txt", "");
+              message.show(
+                trackName,
+                !1,
+                "#000000",
+                "#FFFFFF"
+              );
+            
+              // Hide the message after 3 seconds (3000 milliseconds)
+              setTimeout(() => {
+                message.hide();
+              }, 3000);
         }
         updateControls() {
           if (this.controls) {
@@ -22435,7 +22435,6 @@
           (this.verified = !this.settings.requireTrackVerification),
             (this.track.dirty = !1),
             this.track.resetPowerups(),
-            this.message.hide(),
             (this.restartTrack = !1),
             (this.state.playing = !1),
             (this.ticks = 0),
