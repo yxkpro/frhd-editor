@@ -12959,7 +12959,7 @@
         draw() {
           this.hat && this.hat.draw();
           const e = this.parent.scene.game.mod.getVar("crRagdoll"),
-            s = this.parent.scene.game.mod.getVar("crHead"),
+            s = this.parent.scene.game.mod.getVar("crHead") || this.parent.scene.game.mod.getVar("mario"),
             i = this.parent.scene.game.mod.getVar("customColors"),
             n = this.head,
             r = this.waist,
@@ -13510,7 +13510,7 @@
             const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
             const e = this.scene,
               s = e.game.mod.getVar("crBmx"),
-              i = e.game.mod.getVar("crHead"),
+              i = e.game.mod.getVar("crHead") || e.game.mod.getVar("mario"),
               n = e.game.mod.getVar("customColors"),
               r = n ? Q(e.game.mod.getVar("vehicleColor")) : "#000",
               o = e.game.mod.getVar("blackHat"),
@@ -13709,7 +13709,7 @@
                     y.fill(),
                     y.closePath(),
                     y.strokeStyle = e.game.mod.getVar("hatColor"),
-                    this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = GameSettings.hatColor;
+                    this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : (e.game.mod.getVar("mario") ? y.fillStyle = "#e4000f" : y.fillStyle = GameSettings.hatColor);
                     y.lineWidth = 2 * v;
                     if (!this.drawHeadAngle) {
                       y.beginPath();
@@ -15109,7 +15109,7 @@
           const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
           const e = this.scene,
             s = e.game.mod.getVar("crMtb"),
-            i = e.game.mod.getVar("crHead"),
+            i = e.game.mod.getVar("crHead") || e.game.mod.getVar("mario"),
             n = e.game.mod.getVar("customColors"),
             r = n ? Q(e.game.mod.getVar("vehicleColor")) : "#000",
             o = e.game.mod.getVar("blackHat"),
@@ -15329,7 +15329,7 @@
                   u.arc(z.x, z.y, 4 * c, 0, 2 * Math.PI),
                   u.fill(),
                   u.closePath(),
-                  this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgba(0,0,0,0)" : u.fillStyle = GameSettings.hatColor;
+                  this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgba(0,0,0,0)" : ((this.scene.game.mod.getVar("mario") ? u.fillStyle = "#48ad16" : u.fillStyle = GameSettings.hatColor));
                 if (!this.drawHeadAngle) {
                   u.beginPath();
                   u.arc(z.x, z.y, 4.2 * c, Math.PI - 13 * Math.PI / 180, -18 * Math.PI / 180);
@@ -16703,7 +16703,7 @@
           }
         }
         drawStar(t, e, s, i, n, r, o, a) {
-          if (this.game.mod.getVar("crPowerups"))
+          if (this.game.mod.getVar("crPowerups") && !this.game.mod.getVar("mario"))
             re(a, ue, r ? "#ff0" : "#ffa");
           else {
             var h = (Math.PI / 2) * 3,
@@ -16731,6 +16731,34 @@
               a.stroke(),
               (a.fillStyle = r ? "#FAE335" : "#FFFFFF"),
               a.fill();
+              if (this.game.mod.getVar("mario")) {
+              const eyeRadius = 0.8 * o;
+              const leftEyeX = t - 2 * o;
+              const leftEyeY = e - 1 * o;
+              const rightEyeX = t + 2 * o;
+              const rightEyeY = e - 1 * o;
+              
+              a.beginPath();
+              a.ellipse(leftEyeX, leftEyeY, 1.4 * o, 0.7 * eyeRadius, Math.PI / 2, 0, Math.PI * 2); // left eye
+              a.closePath();
+              a.stroke();
+              a.fillStyle = "#000";
+              a.fill();
+              a.beginPath();
+              a.ellipse(rightEyeX, rightEyeY, 1.4 * o, 0.7 * eyeRadius, Math.PI / 2, 0, Math.PI * 2); // right eye
+              a.closePath();
+              a.stroke();
+              a.fillStyle = "#000";
+              a.fill();
+              
+              a.beginPath();
+              a.ellipse(t - 2 * o, e - 2 * o, 0.9 * o, 0.5 * eyeRadius, Math.PI / 2, 0, Math.PI * 2); // left glare
+              a.moveTo(rightEyeX + o, rightEyeY);
+              a.ellipse(t + 2 * o, e - 2 * o, 0.9 * o, 0.5 * eyeRadius, Math.PI / 2, 0, Math.PI * 2); // right glare
+              a.closePath();
+              a.stroke();
+              a.fillStyle = "#fff";
+              a.fill(); }
           }
         }
         collide(t) {
@@ -22482,7 +22510,6 @@
           this.trackcode = this.track.getCode();
           let trackSize = new Blob([this.trackcode]).size / 1024;
           trackSize = trackSize.toFixed(2);
-          this.lastUpdate = Date.now();
         
           const [physicsLines, sceneryLines, powerups] = this.trackcode.split('#');
         
@@ -23850,6 +23877,18 @@
               this.set(t);
             },
           },
+          mario: {
+            default: false,
+            set(t, e, s) {
+              if (t !== s) {
+                e.currentScene.track.undraw();
+                GameSettings.cameraMovementVertical = !t;
+              }
+            },
+            initialize(t) {
+              GameSettings.cameraMovementVertical = !t;
+            },
+          },
         },
         ir = document.createElement("style");
       ir.innerHTML =
@@ -24063,8 +24102,15 @@
             key: "blackHat",
             title: "Hacker Mode",
             description:
-              "Replaces the rider's baseball cap with a classy black top hat.",
-            disables: ["crHead"],
+              "Replaces Pete's baseball cap with a classy black top hat.",
+            disables: ["crHead", "mario"],
+          },
+          {
+            key: "mario",
+            title: "Mario Mode",
+            description:
+              "Enables horizontal scrolling, replaces goals with Mario stars, and gives Pete a red or green cap depending on the bike.",
+            disables: ["blackHat"],
           },
           {
             key: "lineShadow",
