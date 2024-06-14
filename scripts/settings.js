@@ -43,7 +43,7 @@ var GameSettings = {
     "foregroundLineColor": "AAA",
     "hatColor": "rgb(255,255,255)",
     "windspeed": 1,
-    "propeller" : 1.2,
+    "propeller" : 1,
     "rotateFactor": 15,
     "scaleFactor": 1.25,
     "scaleLock": true,
@@ -61,8 +61,8 @@ var GameSettings = {
     "offsetPeteX": 0,
     "offsetPeteY": 0,
     "head": "cowboy",
-    "showFPS": false,
     "freeFloppyPete": false,
+    "customBrush": false,
     "raceColors": ["rgba(57,185,117,1)", "rgba(0,152,189,1)", "rgba(151,95,162,1)", "rgba(253,85,91,1)", "rgba(245,126,64,1)", "rgba(247,212,62,1)", "rgba(170,221,114,1)", "rgba(72,217,207,1)", "rgba(0,124,212,1)", "rgba(226,108,216,1)"],
     "toolHandler": {
         "snap": false,
