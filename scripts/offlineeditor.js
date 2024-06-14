@@ -452,7 +452,18 @@
               "undefined" != typeof GameManager &&
                 GameManager.command("change tool option", "breakLength", e);
             },
+            getInitialState: function () {
+              return { brushType: GameSettings.customBrush ? "CUSTOM" : "DEFAULT" };
+            },
+            toggleBrush: function () {
+              if (!GameSettings.customBrush) {
+                "undefined" != typeof GameManager &&
+                GameManager.command("dialog", "importBrush");}
+              GameSettings.customBrush = !GameSettings.customBrush;
+              this.setState({ brushType: GameSettings.customBrush ? "CUSTOM" : "DEFAULT" });
+            },
             render: function () {
+              var brushType = GameSettings.customBrush ? "CUSTOM" : "DEFAULT";
               var e = this.props.options,
                 t = 0,
                 o = 0,
@@ -465,7 +476,7 @@
                 d = 0;
               return (
                 e &&
-                  ((t = e.trailSpeed),
+                ((t = e.trailSpeed),
                   (o = e.minTrailSpeed),
                   (i = e.maxTrailSpeed),
                   (a = e.trailSpeedSensitivity),
@@ -491,7 +502,11 @@
                         { className: "bottomMenu-bold" },
                         e.lineType
                       )
-                    )
+                    ),
+                    n.createElement("span", {},
+                      n.createElement("button", {
+                        onClick: this.toggleBrush
+                      }, this.state.brushType))
                   ),
                   n.createElement(
                     "div",
@@ -506,18 +521,24 @@
                       className: "horizontal-slider brush-slider_breaklength",
                       onChanged: this.adjustBreakLength,
                       defaultValue: d,
-                      max: c,
+                      max: 5,
                       min: l,
-                      step: u,
+                      step: 0.1,
                       value: s,
-                    })
+                    }),
+                    n.createElement("input", {
+                      type: "text",
+                      className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
+                      value: s.toFixed(1),
+                      readOnly: true
+                  }),
                   ),
                   n.createElement(
                     "div",
                     { className: "horizontal-slider-container" },
                     n.createElement(
                       "span",
-                      { className: "horizontal-slider-label" },
+                      { className: "horizontal-slider-label-2" },
                       "Trail Speed"
                     ),
                     n.createElement(r, {
@@ -527,9 +548,15 @@
                       defaultValue: d,
                       max: i,
                       min: o,
-                      step: a,
+                      step: 0.1,
                       value: t,
-                    })
+                    }),
+                    n.createElement("input", {
+                      type: "text",
+                      className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
+                      value: Math.floor(t * 10) / 10,
+                      readOnly: true
+                  }),
                   )
                 )
               );
@@ -2146,6 +2173,7 @@
           u = e("../chromeapp/upload"),
           d = e("../chromeapp/infodialog"),
           p = e("./clear"),
+          x = e("./importBrush"),
           h = n.createClass({
             displayName: "Dialogs",
             className: "editorDialog",
@@ -2189,6 +2217,9 @@
                 case "clear":
                   f = n.createElement(p, null);
                   break;
+                case "importBrush":
+                  f = n.createElement(x, null);
+                  break;
                 default:
                   h = { display: "none" };
               }
@@ -2214,6 +2245,7 @@
         "./export": 23,
         "./help": 24,
         "./import": 25,
+        "./importBrush": 925,
         "./offline_editor_promo": 26,
         "./upload": 27,
         react: 230,
@@ -3482,6 +3514,238 @@
                       onClick: this.importTrack,
                     },
                     "Import"
+                  ),
+                  n.createElement(
+                    "button",
+                    {
+                      className:
+                        "primary-button primary-button-black float-right margin-0-5",
+                      onClick: this.closeDialog,
+                    },
+                    "Cancel"
+                  )
+                )
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],
+    925: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "BrushDialog",
+            dialogName: "importBrush",
+            hasFileAPI: !!(window.File && window.FileList && window.FileReader),
+            closeDialog: function () {
+              "undefined" != typeof GameManager &&
+                GameManager.command("dialog", !1);
+            },
+            getInitialState: function () {
+              return { isDragActive: !1 };
+            },
+            addBrush: function () {
+              var e = this.refs.code.getDOMNode(),
+                t = e.getAttribute("data-paste-code"),
+                n = e.value;
+            
+              if (e.value.includes('$')) {
+                e.value = `$use import to change settings`;
+                return;
+              }
+            
+              if (e.value === 'random') {
+                e.value = `$cannot add track as brush`;
+                return;
+
+              } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
+                e.value = `$cannot add track as brush`;
+                return;
+              }
+            
+              t && (n = t),
+                "undefined" != typeof GameManager &&
+                GameManager.command("addBrush", n, !0);
+            },
+            processAddBrushData(data) {
+              if ("undefined" != typeof GameManager) {
+                GameManager.command("addBrush", data, true);
+              }
+            },
+            onDragLeave: function (e) {
+              var t = e.target;
+              t.getAttribute("data-ignoredragleave") ||
+                (this.setState({ isDragActive: !1 }),
+                (this.refs.dropFile.getDOMNode().style.display = "none"),
+                (this.refs.placeholder.getDOMNode().style.display = "block"));
+            },
+            onDragOver: function (e) {
+              e.preventDefault(),
+                (e.dataTransfer.dropEffect = "copy"),
+                (this.refs.dropFile.getDOMNode().style.display = "block"),
+                (this.refs.placeholder.getDOMNode().style.display = "none"),
+                this.setState({ isDragActive: !0 });
+            },
+            onDrop: function (e) {
+              e.preventDefault(), this.setState({ isDragActive: !1 });
+              var t;
+              e.dataTransfer
+                ? (t = e.dataTransfer.files)
+                : e.target && (t = e.target.files);
+              var n = new FileReader();
+              (n.onload = (event) => this.fileDropComplete(event, t[0].name)),
+                (n.onerror = this.fileDropError),
+                n.readAsText(t[0]);
+                
+            },
+            fileDropComplete: function (e, fileName) {
+              var fileContent = e.target.result;
+              var isSettingsFile = fileContent.includes('$');
+              var n = this.refs.code.getDOMNode();
+            
+              if (isSettingsFile) {
+                n.value = fileContent;
+                n.setAttribute("data-paste-code", fileContent);
+                this.onInput();
+              } else {
+                n.value = fileName;
+                n.setAttribute("data-paste-code", fileContent);
+                this.onInput();
+              }
+            },
+            fileDropError: function (e) {
+              console.log("There was an error", e);
+            },
+            onPaste: function (e) {
+              if (e.clipBoardData || window.clipboardData) {
+                e.preventDefault();
+                var t = !1,
+                  n = "";
+                e.clipBoardData
+                  ? ((t = e.clipboardData), (n = t.getData("text/plain")))
+                  : window.clipboardData &&
+                    (n = window.clipboardData.getData("Text"));
+                var r = n.length,
+                  o = n.slice(0, 5e4);
+                r > 5e4 &&
+                  (o +=
+                    "... track is too large to show, but will still import");
+                var i = this.refs.code.getDOMNode();
+                (i.value = o), i.setAttribute("data-paste-code", n);
+              }
+              this.onInput();
+            },
+            openFileDialog: function () {
+              this.refs.fileInput.getDOMNode().click();
+            },
+            onBlurInput: function () {
+              this.refs.placeholder.getDOMNode().style.opacity = 1;
+            },
+            onFocusInput: function () {
+              this.refs.placeholder.getDOMNode().style.opacity = 0.3;
+            },
+            onInput: function () {
+              var e = this.refs.code.getDOMNode().value,
+                t = this.refs.placeholder.getDOMNode();
+              t.style.display = e.length > 0 ? "none" : "block";
+            },
+            render: function () {
+              var e = this.state.isDragActive,
+                t = "editorDialog-content editorDialog-content_importDialog";
+              e && (t += " editorDialog-content-dragActive");
+              var r = "";
+              this.hasFileAPI &&
+                (r = n.createElement(
+                  "span",
+                  null,
+                  "or ",
+                  n.createElement(
+                    "span",
+                    { className: "link", onClick: this.openFileDialog },
+                    "select a file"
+                  )
+                ));
+              var o = n.createElement(
+                "span",
+                {
+                  className: "importDialog-placeholder",
+                  ref: "placeholder",
+                  "data-ignoredragleave": "true",
+                },
+                "Paste track code, drag and drop text files here, ",
+                r,
+                " to import"
+              );
+              return n.createElement(
+                "div",
+                { className: t },
+                n.createElement(
+                  "div",
+                  { className: "editorDialog-titleBar" },
+                  n.createElement(
+                    "span",
+                    {
+                      className: "editorDialog-close",
+                      onClick: this.closeDialog,
+                    },
+                    "×"
+                  ),
+                  n.createElement(
+                    "h1",
+                    { className: "editorDialog-content-title" },
+                    "IMPORT BRUSH"
+                  )
+                ),
+                n.createElement(
+                  "div",
+                  {
+                    className: "importDialog-codeContainer",
+                    onDragLeave: this.onDragLeave,
+                    onDragOver: this.onDragOver,
+                    onDrop: this.onDrop,
+                  },
+                  o,
+                  n.createElement(
+                    "span",
+                    {
+                      className: "importDialog-dropFile",
+                      ref: "dropFile",
+                      "data-ignoredragleave": "true",
+                    },
+                    "Drop file to import"
+                  ),
+                  n.createElement("textarea", {
+                    ref: "code",
+                    className: "importDialog-code",
+                    "data-ignoredragleave": "true",
+                    autoComplete: "false",
+                    spellCheck: "false",
+                    onPaste: this.onPaste,
+                    onChange: this.onInput,
+                    onFocus: this.onFocusInput,
+                    onBlur: this.onBlurInput,
+                  }),
+                  n.createElement("input", {
+                    style: { display: "none" },
+                    type: "file",
+                    ref: "fileInput",
+                    accept: "text/plain",
+                    onChange: this.onDrop,
+                  })
+                ),
+                n.createElement(
+                  "div",
+                  { className: "editorDialog-bottomBar clearfix" },
+                  n.createElement(
+                    "button",
+                    {
+                      className:
+                        "primary-button primary-button-blue float-right margin-0-5",
+                      onClick: this.addBrush,
+                    },
+                    "Add as Brush"
                   ),
                   n.createElement(
                     "button",
