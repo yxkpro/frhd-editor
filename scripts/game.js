@@ -17650,7 +17650,7 @@
               e = this.p1,
               s = this.p2,
               i = this.options.trailSpeed,
-              n = this.options.breakLength;
+              n = this.options.breakLength * 0.2;
             s.inc(t.sub(s).factor(i));
             let r = screen.height + t.sub(s).len();
             if (((r *= n), s.sub(e).lenSqr() > r)) {
