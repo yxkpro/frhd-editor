@@ -12479,8 +12479,10 @@
             e = this.parent.gravity;
           t.inc(e),
             (0 === e.x && 0 === e.y) || t.factorSelf(0.99),
-            this.pos.inc(this.vel); //noclip
-            if (!this.scene.game.mod.getVar("noClip")) {
+            this.pos.inc(this.vel);
+            const z = this.scene.playerManager.firstPlayer._tempVehicle.vehicleName
+            const v = (z === "BALLOON")
+            if (!this.scene.game.mod.getVar("noClip")) { //add "|| v" for contact with balloon basket
             (this.contact = !1),
             this.collide && this.scene.track.collide(this)};
             t.equ(this.pos.sub(this.old)),
@@ -13798,9 +13800,11 @@
             n = this.motor;
           t.inc(e.factor(2 * n)),
             (t = t.factor(0.99)),
-            s.inc(t),
-            (this.contact = !1),
-            this.collide && this.scene.track.collide(this),
+            s.inc(t);
+            if (!this.scene.game.mod.getVar("noClip")) {
+            (this.contact = !1);
+            this.collide && this.scene.track.collide(this)
+            }
             (this.vel = s.sub(i)),
             i.equ(s);
         }
@@ -15421,8 +15425,10 @@
               r && (e.y += Math.sqrt(GameSettings.accel) * -0.5),
               this.wind && (e.x += 0.3),
               (e.x += t.x),
-              (e.y += t.y),
-              this.collide && this.scene.track.collide(this),
+              (e.y += t.y);
+              if (!this.scene.game.mod.getVar("noClip")) {
+              this.wind && this.collide && this.scene.track.collide(this)
+              }
               (0 === i.x && 0 === i.y) ||
                 ((t.x = e.x - s.x), (t.y = e.y - s.y)),
               (s.x = e.x),
