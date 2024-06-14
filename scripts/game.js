@@ -17419,29 +17419,29 @@
               (t.strokeStyle = "#ffffff"),
               (t.font = "bold " + 10 * i + "pt arial"),
               (t.lineWidth = 5 * i),
-              t.strokeText(e + "°", s.x + r, s.y + 10),
-              t.strokeText(n + " units", s.x + r, s.y + 40),
+              t.strokeText(e + "°", s.x + r, s.y + 10 * i),
+              t.strokeText(n + " units", s.x + r, s.y + 25 * i),
               t.strokeText(
                 "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 70
+                s.y + 40 * i
               ),
               t.strokeText(
                 "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 100
+                s.y + 55 * i
               );
-              t.fillText(e + "°", s.x + r, s.y + 10),
-              t.fillText(n + " units", s.x + r, s.y + 40),
+              t.fillText(e + "°", s.x + r, s.y + 10 * i),
+              t.fillText(n + " units", s.x + r, s.y + 25 * i),
               t.fillText(
                 "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 70
+                s.y + 40 * i
               ),
               t.fillText(
                 "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 100
+                s.y + 55 * i
               );
           }
         }
@@ -17462,29 +17462,29 @@
               (t.strokeStyle = "#ffffff"),
               (t.font = "bold " + 10 * i + "pt arial"),
               (t.lineWidth = 5 * i),
-              t.strokeText(e + "°", s.x + r, s.y + 10),
-              t.strokeText(n + " units", s.x + r, s.y + 40),
+              t.strokeText(e + "°", s.x + r, s.y + 10 * i),
+              t.strokeText(n + " units", s.x + r, s.y + 25 * i),
               t.strokeText(
                 "x: " + ((this.midpoint.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 70
+                s.y + 40 * i
               ),
               t.strokeText(
                 "y: " + ((this.midpoint.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 100
+                s.y + 55 * i
               );
-              t.fillText(e + "°", s.x + r, s.y + 10),
-              t.fillText(n + " units", s.x + r, s.y + 40),
+              t.fillText(e + "°", s.x + r, s.y + 10 * i),
+              t.fillText(n + " units", s.x + r, s.y + 25 * i),
               t.fillText(
                 "x: " + ((this.midpoint.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 70
+                s.y + 40 * i
               ),
               t.fillText(
                 "y: " + ((this.midpoint.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 100
+                s.y + 55 * i
               );
           }
         }
@@ -17653,29 +17653,29 @@
               (t.strokeStyle = "#ffffff"),
               (t.font = "bold " + 10 * i + "pt arial"),
               (t.lineWidth = 5 * i),
-              t.strokeText(e + "°", s.x + r, s.y + 10),
-              t.strokeText(n + " units", s.x + r, s.y + 40),
+              t.strokeText(e + "°", s.x + r, s.y + 10 * i),
+              t.strokeText(n + " units", s.x + r, s.y + 25 * i),
               t.strokeText(
                 "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 70
+                s.y + 40 * i
               ),
               t.strokeText(
                 "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 100
+                s.y + 55 * i
               ),
-              t.fillText(e + "°", s.x + r, s.y + 10),
-              t.fillText(n + " units", s.x + r, s.y + 40),
+              t.fillText(e + "°", s.x + r, s.y + 10 * i),
+              t.fillText(n + " units", s.x + r, s.y + 25 * i),
               t.fillText(
                 "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
                 s.x + r,
-                s.y + 70
+                s.y + 40 * i
               ),
               t.fillText(
                 "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
                 s.x + r,
-                s.y + 100
+                s.y + 55 * i
               );
           }
         }
@@ -18183,14 +18183,14 @@
                   t.strokeStyle = "#ffffff",
                   t.font = "bold " + 10 * i + "pt arial",
                   t.lineWidth = 5 * i,
-                  t.strokeText(e + "°", s.x + r, s.y + 10),
-                  t.strokeText(n + " units", s.x + r, s.y + 40),
-                  t.strokeText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 70),
-                  t.strokeText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 100),
-                  t.fillText(e + "°", s.x + r, s.y + 10),
-                  t.fillText(n + " units", s.x + r, s.y + 40),
-                  t.fillText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 70),
-                  t.fillText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 100)
+                  t.strokeText(e + "°", s.x + r, s.y + 10 * i),
+                  t.strokeText(n + " units", s.x + r, s.y + 25 * i),
+                  t.strokeText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 40 * i),
+                  t.strokeText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 55 * i),
+                  t.fillText(e + "°", s.x + r, s.y + 10 * i),
+                  t.fillText(n + " units", s.x + r, s.y + 25 * i),
+                  t.fillText("x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1), s.x + r, s.y + 40 * i),
+                  t.fillText("y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1), s.x + r, s.y + 55 * i)
               }
           }
           drawLine(t, e) {
@@ -20535,9 +20535,9 @@
             (t.font = "bold " + 10 * n + "pt arial"),
             (t.lineWidth = 5 * n),
             t.strokeText("p1: (" + this.p1.x + ", " + this.p1.y + ")", s.x + r, s.y),
-            t.strokeText("p2: (" + this.p2.x + ", " + this.p2.y + ")", s.x + r, s.y + 30),
+            t.strokeText("p2: (" + this.p2.x + ", " + this.p2.y + ")", s.x + r, s.y + 15 * n),
             t.fillText("p1: (" + this.p1.x + ", " + this.p1.y + ")", s.x + r, s.y),
-            t.fillText("p2: (" + this.p2.x + ", " + this.p2.y + ")", s.x + r, s.y + 30);
+            t.fillText("p2: (" + this.p2.x + ", " + this.p2.y + ")", s.x + r, s.y + 15 * n);
         }
       }
       const $s = Js.prototype;
@@ -24733,7 +24733,7 @@
       }
       let xr = document.createElement("template");
       (xr.innerHTML =
-        '<div class="mod-menu-container"> <div style="display:grid;grid-template-columns:auto auto auto"> <div class="mod-menu"> </div> <div class="mod-v-seperator"></div> <div class="mod-description-container"> <div class="mod-setting-description invisible"></div> <div class="mod-title" onclick=\'window.open("https://community.freeriderhd.com/threads/polygons-mod.11712/")\'> <div style="flex:1"></div> <div> <p style="font-family:monospace;font-size:14pt">Free Rider<br><span style="font-size:10pt">track editor v1.1</span></p><br><p style="font-family:monospace;font-size:8pt">credits:<br>Char<br>Polygon<br>Calculus<br>Pie42<br>Ness</p></div> <div style="flex:1"></div> </div> </div> </div> </div> '),
+        '<div class="mod-menu-container"> <div style="display:grid;grid-template-columns:auto auto auto"> <div class="mod-menu"> </div> <div class="mod-v-seperator"></div> <div class="mod-description-container"> <div class="mod-setting-description invisible"></div> <div class="mod-title" onclick=\'window.open("https://community.freeriderhd.com/threads/polygons-mod.11712/")\'> <div style="flex:1"></div> <div> <p style="font-family:monospace;font-size:14pt">Free Rider<br><span style="font-size:10pt">track editor v1.1</span></p><br><p style="font-family:monospace;font-size:8pt">credits:<br>Ness<br>Pie42<br>Polygon<br>Calculus<br>Char</div></p> <div style="flex:1"></div> </div> </div> </div> </div> '),
         (xr = xr.content);
       const br = {
         bool: (t, e, s, i) => new lr(t, s[e], i),

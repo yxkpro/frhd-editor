@@ -3562,9 +3562,7 @@
                 e.value = `$cannot add track as brush`;
                 return;
 
-              } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
-                GameSettings.defaultTrack = `${trackName}.txt`;
-            
+              } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {            
                 fetch(url)
                   .then(response => {
                     if (!response.ok) {
