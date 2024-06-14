@@ -17253,7 +17253,8 @@
             (this.p1 = new t.Z(0, 0)),
             (this.p2 = new t.Z(0, 0)),
             (this.midpoint = new t.Z(0, 0)),
-            (this.active = !1);
+            (this.active = !1),
+            (this.shouldDrawMetadata = !1);
             const s = e.scene.settings.brush;
             (this.options = {
               SegmentLength: s.SegmentLength
@@ -17348,7 +17349,8 @@
           n.options.snap &&
             ((this.active = !0),
             (this.p1 = n.snapPoint),
-            this.anchoring || this.hold());}
+            this.anchoring || this.hold()),
+            (this.shouldDrawMetadata = !!i.isButtonDown("ctrl"));}
           const r = this.toolHandler.options;
           let o = (s.old.down || i.isButtonDown("shift"));
           r.rightClickMove && (o = s.old.down),
@@ -17369,7 +17371,9 @@
             (this.active || this.anchoring) &&
               (this.drawLine(e, s),
               this.drawPoint(e, this.p1, s),
-              this.drawPoint(e, this.p2, s));
+              this.drawPoint(e, this.p2, s),
+              this.drawPointData(e, this.p2, s),
+              this.drawAnchorData(e, this.midpoint, s));
 
         }
         drawCursor(t, e) {
@@ -17397,6 +17401,92 @@
             (t.lineWidth = 1),
             (t.fillStyle = "#1884cf"),
             t.fill();
+        }
+        drawPointData(t, e) {
+          const s = e.toScreenSnapped(this.scene);
+          if (this.shouldDrawMetadata) {
+            const e = this.p1.getAngleInDegrees(this.p2).toFixed(2),
+              i = this.game.pixelRatio;
+            let n =
+              Math.sqrt(
+                Math.pow(this.p1.x - this.p2.x, 2) +
+                  Math.pow(this.p1.y - this.p2.y, 2)
+              ) / 10;
+            n = n.toFixed(2);
+            let r = 30;
+            this.p2.x < this.p1.x && ((r = -10), (t.textAlign = "right")),
+              (t.fillStyle = "#000000"),
+              (t.strokeStyle = "#ffffff"),
+              (t.font = "bold " + 10 * i + "pt arial"),
+              (t.lineWidth = 5 * i),
+              t.strokeText(e + "°", s.x + r, s.y + 10),
+              t.strokeText(n + " units", s.x + r, s.y + 40),
+              t.strokeText(
+                "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
+                s.x + r,
+                s.y + 70
+              ),
+              t.strokeText(
+                "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
+                s.x + r,
+                s.y + 100
+              );
+              t.fillText(e + "°", s.x + r, s.y + 10),
+              t.fillText(n + " units", s.x + r, s.y + 40),
+              t.fillText(
+                "x: " + ((this.p2.x - this.p1.x) / 10).toFixed(1),
+                s.x + r,
+                s.y + 70
+              ),
+              t.fillText(
+                "y: " + ((this.p2.y - this.p1.y) / 10).toFixed(1),
+                s.x + r,
+                s.y + 100
+              );
+          }
+        }
+        drawAnchorData(t, e) {
+          const s = e.toScreenSnapped(this.scene);
+          if (this.shouldDrawMetadata) {
+            const e = this.p1.getAngleInDegrees(this.midpoint).toFixed(2),
+              i = this.game.pixelRatio;
+            let n =
+              Math.sqrt(
+                Math.pow(this.p1.x - this.midpoint.x, 2) +
+                  Math.pow(this.p1.y - this.midpoint.y, 2)
+              ) / 10;
+            n = n.toFixed(2);
+            let r = 30;
+            this.midpoint.x < this.p1.x && ((r = -10), (t.textAlign = "right")),
+              (t.fillStyle = "#000000"),
+              (t.strokeStyle = "#ffffff"),
+              (t.font = "bold " + 10 * i + "pt arial"),
+              (t.lineWidth = 5 * i),
+              t.strokeText(e + "°", s.x + r, s.y + 10),
+              t.strokeText(n + " units", s.x + r, s.y + 40),
+              t.strokeText(
+                "x: " + ((this.midpoint.x - this.p1.x) / 10).toFixed(1),
+                s.x + r,
+                s.y + 70
+              ),
+              t.strokeText(
+                "y: " + ((this.midpoint.y - this.p1.y) / 10).toFixed(1),
+                s.x + r,
+                s.y + 100
+              );
+              t.fillText(e + "°", s.x + r, s.y + 10),
+              t.fillText(n + " units", s.x + r, s.y + 40),
+              t.fillText(
+                "x: " + ((this.midpoint.x - this.p1.x) / 10).toFixed(1),
+                s.x + r,
+                s.y + 70
+              ),
+              t.fillText(
+                "y: " + ((this.midpoint.y - this.p1.y) / 10).toFixed(1),
+                s.x + r,
+                s.y + 100
+              );
+          }
         }
         drawText(t) {
           const e = this.name,
@@ -17630,8 +17720,15 @@
             });
         }
         recordActionsToToolhandler() {
-          for (const t of this.addedObjects)
-            this.toolHandler.addActionToTimeline({ type: "add", objects: [t] });
+          if (GameSettings.customBrush && this.addedObjects.length > 0) {
+            this.toolHandler.addActionToTimeline({
+              type: "add",
+              objects: this.addedObjects
+            });
+          } else {
+            for (const t of this.addedObjects)
+              this.toolHandler.addActionToTimeline({ type: "add", objects: [t] });
+          }
           this.addedObjects = [];
         }
         press() {
@@ -17706,6 +17803,7 @@
                 ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
                 : s.addSceneryLine(t.x, t.y, e.x, e.y)),
               i && this.addedObjects.push(i);
+              this.recordActionsToToolhandler();
             }
 
               if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
@@ -17725,9 +17823,16 @@
                   : s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
                 i && this.addedObjects.push(i);
               });
+
+              if (this.addedObjects.length > 0) {
+                this.toolHandler.addActionToTimeline({
+                    type: "add",
+                    objects: this.addedObjects
+                }
+              );
+            }
             }
 
-              this.recordActionsToToolhandler();
             const n = this.toolHandler.snapPoint;
             (n.x = e.x), (n.y = e.y), (this.active = !1);
           }
@@ -25460,7 +25565,7 @@ function load() {
                   let dMouse = mousePos.sub(this.oldMouse);
                   dMouse.x = Math.round(dMouse.x);
                   dMouse.y = Math.round(dMouse.y);
-                  if (this.scene.toolHandler.options.grid) {
+                  if (this.scene.toolHandler.options.grid && GameSettings.toolHandler.snapGrid) {
                       let gridSize = this.scene.toolHandler.options.gridSize;
                       dMouse.x = Math.round(dMouse.x / gridSize) * gridSize;
                       dMouse.y = Math.round(dMouse.y / gridSize) * gridSize;

@@ -3549,7 +3549,9 @@
             addBrush: function () {
               var e = this.refs.code.getDOMNode(),
                 t = e.getAttribute("data-paste-code"),
-                n = e.value;
+                n = e.value,
+                trackName = e.value.replace(/(\.\.\/)/g, ''),
+                url = `assets/tracks/brush/${trackName}.txt`;
             
               if (e.value.includes('$')) {
                 e.value = `$use import to change settings`;
@@ -3561,8 +3563,22 @@
                 return;
 
               } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
-                e.value = `$cannot add track as brush`;
-                return;
+                GameSettings.defaultTrack = `${trackName}.txt`;
+            
+                fetch(url)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('no brush found, loading as track code.');
+                    }
+                    return response.text();
+                  })
+                  .then(data => {
+                    this.processAddBrushData(data);
+                    console.log("brush loaded:", trackName);
+                  })
+                  .catch(error => {
+                    console.error(error);
+                  });
               }
             
               t && (n = t),
