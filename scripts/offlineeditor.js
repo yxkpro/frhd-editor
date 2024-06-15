@@ -572,7 +572,7 @@
         , o = n.createClass({
           displayName: "circleBottomToolOptions",
           adjustSegmentLength: function(e) {
-              "undefined" != typeof GameManager && GameManager.command("change tool option", "SegmentLength", e)
+              "undefined" != typeof GameManager && GameManager.command("change tool option", "segmentLength", e)
           },
           render: function() {
               var e = this.props.options
@@ -581,10 +581,10 @@
                 , c = 100
                 , u = 1
                 , d = 0;
-              return e && (s = e.SegmentLength,
+              return e && (s = e.segmentLength,
               l = e.minSegmentLength,
               c = e.maxSegmentLength,
-              u = e.SegmentLengthSensitivity),
+              u = e.segmentLengthSensitivity),
               n.createElement("div", {
                   className: "bottomToolOptions bottomToolOptions_circle"
               }, n.createElement("div", {
@@ -622,7 +622,7 @@
       react: 230,
       "react-slider": 75
   }],
-  6: [function(e, t) {
+  /*6: [function(e, t) {
       var n = e("react"),
           r = n.createClass({
               displayName: "CameraBottomToolOptions",
@@ -647,6 +647,29 @@
                       GameSettings.cameraMovementHorizontal = true;
                   }
               },
+              changeCameraSpeed: function (e) {
+                var t = e.target.value;
+                GameSettings.cameraSpeed = t,
+                  GameManager.command("redraw"),
+                  e.preventDefault(),
+                  e.stopPropagation();
+                return !1
+              },
+              renderCameraSpeedSelect: function () {
+                var e = GameSettings.cameraSpeed,
+                  t = [1, 2, 3, 4, 5, 10, 25, 50, 100];
+                return n.createElement("select", {
+                  ref: "cameraSpeed",
+                  defaultValue: e,
+                  onChange: this.changeCameraSpeed,
+                  onClick: this.stopClickPropagation
+                }, t.map(function (e) {
+                  return n.createElement("option", {
+                    key: e,
+                    value: e
+                  }, e)
+                }))
+              },
               render: function() {
                   var type;
                   if (GameSettings.cameraMovementVertical && GameSettings.cameraMovementHorizontal) {
@@ -665,13 +688,7 @@
                       className: "bottomToolOptions-toolTitle"
                   }, n.createElement("span", {
                       className: "editorgui_icons_bottom editorgui_icons-icon_camera"
-                  }), n.createElement("span", {
-                      className: "toolName"
-                  }, "Camera : ", n.createElement("span", {},
-                      n.createElement("button", {
-                          onClick: this.toggleCameraType
-                      }, type))),
-                      
+                  }), 
                       )
                   );
               }
@@ -680,6 +697,131 @@
   }, {
       react: 230,
       "react-slider": 75
+  }],*/
+  6: [function (e, t) {
+    var n = e("react"),
+      r = n.createClass({
+        displayName: "CameraBottomToolOptions",
+        changeZoom: function () { },
+        changeCameraType: function (e) {
+          var selectedType = e.target.value;
+          switch (selectedType) {
+            case "HORIZONTAL":
+              GameSettings.cameraMovementVertical = false;
+              GameSettings.cameraMovementHorizontal = true;
+              break;
+            case "VERTICAL":
+              GameSettings.cameraMovementVertical = true;
+              GameSettings.cameraMovementHorizontal = false;
+              break;
+            case "NORMAL":
+              GameSettings.cameraMovementVertical = true;
+              GameSettings.cameraMovementHorizontal = true;
+              break;
+            case "NONE":
+            default:
+              GameSettings.cameraMovementVertical = false;
+              GameSettings.cameraMovementHorizontal = false;
+              break;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          return !1;
+        },
+        renderCameraTypeSelect: function () {
+          var type;
+          if (GameSettings.cameraMovementVertical && GameSettings.cameraMovementHorizontal) {
+            type = "NORMAL";
+          } else if (!GameSettings.cameraMovementVertical && GameSettings.cameraMovementHorizontal) {
+            type = "HORIZONTAL";
+          } else if (GameSettings.cameraMovementVertical && !GameSettings.cameraMovementHorizontal) {
+            type = "VERTICAL";
+          } else {
+            type = "NONE";
+          }
+          var types = ["NORMAL", "HORIZONTAL", "VERTICAL", "NONE"];
+          return n.createElement("select", {
+            ref: "cameraType",
+            defaultValue: type,
+            onChange: this.changeCameraType,
+            onClick: this.stopClickPropagation
+          }, types.map(function (type) {
+            return n.createElement("option", {
+              key: type,
+              value: type
+            }, type);
+          }));
+        },
+        changeCameraSpeed: function (e) {
+          var selectedType = e.target.value;
+          switch (selectedType) {
+            case "FASTER":
+              GameSettings.cameraSpeed = 2;
+              break;
+            case "IMMEDIATE":
+              GameSettings.cameraSpeed = 1;
+              break;
+            case "SLOW":
+              GameSettings.cameraSpeed = 5;
+              break;
+            case "FAST":
+            default:
+              GameSettings.cameraSpeed = 3;
+              break;
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          return !1;
+        },
+        renderCameraSpeedSelect: function () {
+          var speedType;
+          if (GameSettings.cameraSpeed === 3) {
+            speedType = "FAST";
+          } else if (GameSettings.cameraSpeed === 2) {
+            speedType = "FASTER";
+          } else if (GameSettings.cameraSpeed === 1) {
+            speedType = "IMMEDIATE";
+          } else if (GameSettings.cameraSpeed === 5) {
+            speedType = "SLOW";
+          }
+          var speeds = ["FAST", "FASTER", "IMMEDIATE", "SLOW"];
+          return n.createElement("select", {
+            ref: "cameraSpeed",
+            defaultValue: speedType,
+            onChange: this.changeCameraSpeed,
+            onClick: this.stopClickPropagation
+          }, speeds.map(function (speed) {
+            return n.createElement("option", {
+              key: speed,
+              value: speed
+            }, speed);
+          }));
+        },
+        render: function () {
+          return n.createElement("div", {
+            className: "bottomToolOptions bottomToolOptions_select"
+          },
+            n.createElement("div", {
+              className: "bottomToolOptions-toolTitle"
+            },
+              n.createElement("span", {
+                className: "editorgui_icons_bottom editorgui_icons-icon_camera"
+              }),
+              n.createElement("span", {
+                className: "toolName"
+              }, "Camera : ",
+                this.renderCameraTypeSelect(),
+                this.renderCameraSpeedSelect(),
+                
+              )
+            )
+          );
+        }
+      });
+    t.exports = r;
+  }, {
+    react: 230,
+    "react-slider": 75
   }],
   906: [function(e, t) {
     var n = e("react")
@@ -805,21 +947,13 @@
           z = e("react-slider"),
           r = n.createClass({
             displayName: "CurvedLineBottomToolOptions",
-            getInitialState: function() {
-              return { SegmentLength: 0.5 };
-            },
-            handleLengthChange: function(length) {
-              this.setState({ curveSegmentLength: length });
-              GameSettings.curveSegmentLength = length;
-            },
+            adjustSegmentLength: function(e) {
+              "undefined" != typeof GameManager && GameManager.command("change tool option", "segmentLength", e)
+          },
             render: function () {
-              var e = this.props.options
-              , s = 0
-              , l = 0
-              , c = 100
-              , u = 1
-              , d = 0;
-              return n.createElement(
+              var e = this.props.options;
+              return e && (s = e.segmentLength),
+              n.createElement(
                 "div",
                 { className: "bottomToolOptions bottomToolOptions_curvedline" },
                 n.createElement(
@@ -831,7 +965,7 @@
                   n.createElement(
                     "span",
                     { className: "toolName" },
-                    "Curved Line : ",
+                    "Curve : ",
                     n.createElement(
                       "span",
                       { className: "bottomMenu-bold" },
@@ -846,16 +980,16 @@
               }, "Segment Length"), n.createElement(z, {
                   withBars: !0,
                   className: "horizontal-slider Circle-slider_SegmentLength",
-                  onChange: this.handleLengthChange,
-                  defaultValue: GameSettings.curveSegmentLength || 1,
+                  onChange: this.adjustSegmentLength,
+                  defaultValue: 4,
                   max: 10,
                   min: 1,
                   step: 1,
-                  value: GameSettings.curveSegmentLength || this.state.curveSegmentLength
+                  value: s
               })), n.createElement("input", {
                   type: "text",
                   className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
-                  value: (0.1 * GameSettings.curveSegmentLength).toFixed(1),
+                  value: (0.1 * s).toFixed(1),
                   readOnly: true
               }),
               );
@@ -3216,7 +3350,6 @@
                     const tracklist = data.tracks;
                     const randomIndex = Math.floor(Math.random() * tracklist.length);
                     trackName = tracklist[randomIndex];
-                    GameSettings.defaultTrack = `${trackName}.txt`;
             
                     url = `assets/tracks/${trackName}.txt`;
                     fetch(url)
@@ -3227,8 +3360,9 @@
                         return response.text();
                       })
                       .then(data => {
-                        this.processAddTrackData(data);
+                        this.processTrackData(data);
                         console.log("track loaded:", trackName);
+                        GameSettings.trackName = `${trackName}.txt`;
                       })
                       .catch(error => {
                         console.error(error);
@@ -3238,7 +3372,6 @@
                     console.error('Error loading tracklist:', error);
                   });
               } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
-                GameSettings.defaultTrack = `${trackName}.txt`;
             
                 fetch(url)
                   .then(response => {
@@ -3248,8 +3381,9 @@
                     return response.text();
                   })
                   .then(data => {
-                    this.processAddTrackData(data);
+                    this.processTrackData(data);
                     console.log("track loaded:", trackName);
+                    GameSettings.trackName = `${trackName}.txt`;
                   })
                   .catch(error => {
                     console.error(error);
@@ -3258,7 +3392,8 @@
 
               t && (n = t),
                 "undefined" != typeof GameManager &&
-                GameManager.command("import", n, !0);
+                GameManager.command("import", n, !0),
+                GameSettings.trackName = `track.txt`;
             },
             addTrack: function () {
               var e = this.refs.code.getDOMNode(),
@@ -3279,7 +3414,6 @@
                     const tracklist = data.tracks;
                     const randomIndex = Math.floor(Math.random() * tracklist.length);
                     trackName = tracklist[randomIndex];
-                    GameSettings.defaultTrack = `${trackName}.txt`;
             
                     url = `assets/tracks/${trackName}.txt`;
                     fetch(url)
@@ -3292,6 +3426,7 @@
                       .then(data => {
                         this.processAddTrackData(data);
                         console.log("track loaded:", trackName);
+                        GameSettings.trackName = `track.txt`;
                       })
                       .catch(error => {
                         console.error(error);
@@ -3301,7 +3436,6 @@
                     console.error('Error loading tracklist:', error);
                   });
               } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
-                GameSettings.defaultTrack = `${trackName}.txt`;
             
                 fetch(url)
                   .then(response => {
@@ -3313,6 +3447,7 @@
                   .then(data => {
                     this.processAddTrackData(data);
                     console.log("track loaded:", trackName);
+                    GameSettings.trackName = `track.txt`;
                   })
                   .catch(error => {
                     console.error(error);

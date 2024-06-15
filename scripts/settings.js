@@ -6,7 +6,7 @@ var GameSettings = {
     "developerMode": false,
     "isChromeApp": true,
     "isStandalone": true,
-    "defaultTrack": "track.txt",
+    "trackName": "track.txt",
     "fullscreenAvailable": true,
     "portal": "",
     "platform": "web",
@@ -47,7 +47,6 @@ var GameSettings = {
     "rotateFactor": 15,
     "scaleFactor": 1.25,
     "scaleLock": true,
-    "curveSegmentLength": 4,
     "accel": 1,
     "wind": 0,
     "gravity": 1,
@@ -99,6 +98,18 @@ var GameSettings = {
             "powerups": true
         }
     },
+    "circle": {
+        "segmentLength": 0.4,
+        "maxSegmentLength": 1,
+        "minSegmentLength": 0.1,
+        "segmentLengthSensitivity": 0.1
+    },
+    "curve": {
+        "segmentLength": 4,
+        "maxSegmentLength": 10,
+        "minSegmentLength": 1,
+        "segmentLengthSensitivity": 1
+    },
     "brush": {
         "breakLength": 0.2,
         "maxBreakLength": 3,
@@ -108,10 +119,6 @@ var GameSettings = {
         "maxTrailSpeed": 1,
         "minTrailSpeed": 0.01,
         "trailSpeedSensitivity": 0.005,
-        "SegmentLength": 0.4,
-        "maxSegmentLength": 1,
-        "minSegmentLength": 0.1,
-        "SegmentLengthSensitivity": 0.1
     },
     "playHotkeys": {
         "up": [38],

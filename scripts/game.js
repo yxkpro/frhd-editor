@@ -10175,7 +10175,7 @@
             u = r.x,
             d = r.y,
             p = [],
-            f = 0.1 * Math.exp(GameSettings.curveSegmentLength),
+            f = 0.1 * Math.exp(GameSettings.curve.segmentLength),
             g = 10,
             m = 1e-30,
             v = 0,
@@ -17261,9 +17261,12 @@
             (this.midpoint = new t.Z(0, 0)),
             (this.active = !1),
             (this.shouldDrawMetadata = !1);
-            const s = e.scene.settings.brush;
+            const s = this.scene.settings.curve;
             (this.options = {
-              SegmentLength: s.SegmentLength
+              segmentLength: s.segmentLength,
+              maxSegmentLength: s.maxSegmentLength,
+              minSegmentLength: s.minSegmentLength,
+              segmentLengthSensitivity: s.segmentLengthSensitivity
             });
         }
         getOptions() {
@@ -17272,6 +17275,10 @@
           return (
             (e.lineType = t.options.lineType), (e.snap = t.options.snap), e
           );
+        }
+        setOption(t, e) {
+          this.options[t] = e
+          GameSettings.curve.segmentLength = e;
         }
         reset() {
           (this.active = !1), (this.anchoring = !1);
@@ -17998,14 +18005,14 @@
               this.p1 = new t.Z(0,0),
               this.p2 = new t.Z(0,0),
               this.active = !1;
-              const s = e.scene.settings.brush;
+              const s = e.scene.settings.circle;
               this.shouldDrawMetadata = !1,
               this.addedObjects = [],
               this.options = {
-                  SegmentLength: s.SegmentLength,
+                  segmentLength: s.segmentLength,
                   maxSegmentLength: s.maxSegmentLength,
                   minSegmentLength: s.minSegmentLength,
-                  SegmentLengthSensitivity: s.SegmentLengthSensitivity
+                  segmentLengthSensitivity: s.segmentLengthSensitivity
               }
           }
           reset() {
@@ -18050,12 +18057,12 @@
                   const t = this.p1;
                   const e = this.p2;
                   const s = this.scene.track;
-                  const i = (Math.abs(this.options.SegmentLength - 1.1)).toFixed(1);
+                  const i = GameSettings.circle.segmentLength * 10;
                   // calculate radius
                   const radius = Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
           
                   // calculate the number of line segments
-                  const segments = Math.ceil(Math.max(4, (radius/2) * i));
+                  const segments = Math.ceil(Math.max(4, Math.round((radius / i) / 2) * 2));
           
                   // calculate angle increment
                   const angleIncrement = (2 * Math.PI) / segments;
@@ -18113,19 +18120,9 @@
             this.hold()),
             this.shouldDrawMetadata = !!e.isButtonDown("ctrl")}
         }
-
-          adjustSegmentLength(t) {
-              let e = this.options.SegmentLength;
-              const s = this.options.SegmentLengthSensitivity
-                , i = this.options.maxSegmentLength
-                , n = this.options.minSegmentLength;
-              t > 0 ? (e += s,
-              e > i && (e = i)) : (e -= s,
-              n > e && (e = n)),
-              this.setOption("SegmentLength", e)
-          }
           setOption(t, e) {
-              this.options[t] = e
+              this.options[t] = e;
+              GameSettings.circle.segmentLength = e;
           }
           getOptions() {
               const t = this.toolHandler
@@ -22518,8 +22515,8 @@
             const message = this.message;
             
               
-              if (GameSettings.defaultTrack === "track.txt") return;
-              let trackName = GameSettings.defaultTrack;
+              if (GameSettings.trackName === "track.txt") return;
+              let trackName = GameSettings.trackName;
               trackName = trackName.replace(".txt", "");
               message.show(
                 trackName,
@@ -22783,9 +22780,9 @@
             t.strokeText("fps: " + fps, s.x, s.y);
             t.fillText("fps: " + fps, s.x, s.y);
 
-            let trackName = GameSettings.defaultTrack;
+            let trackName = GameSettings.trackName;
             trackName = trackName.replace(".txt", "");
-            if (GameSettings.defaultTrack !== "track.txt") {
+            if (GameSettings.trackName !== "track.txt") {
               t.strokeText("track: " + trackName, s.x, s.y - 15 * i);
               t.fillText("track: " + trackName, s.x, s.y - 15 * i);
             }
@@ -23033,7 +23030,7 @@
               break;
             case "clear track":
               this.trackAction("editor-action", "clear"), (this.clear = !0);
-              GameSettings.defaultTrack = "track.txt";
+              GameSettings.trackName = "track.txt";
               GameSettings.offsetPeteX = 0;
               GameSettings.offsetPeteY = 0;
               this.trackUpdated = true
@@ -25427,7 +25424,7 @@ function load() {
                   remove(connected);
               }
               let a = selectList.map(s => recreate(s));
-              if (selectOffset.x || selectOffset.y) {
+              if (selectOffset.x || selectOffset.y || GameSettings.copy) {
                   let {x, y} = selectOffset;
                   this.scene.toolHandler.addActionToTimeline({
                       objects: a,
