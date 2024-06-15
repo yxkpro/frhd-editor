@@ -284,7 +284,7 @@ td {
     top: 18px;
     right: 18px;
     padding: 6px;
-    width: 25%;
+    width: 20%;
     height: 294px;
     border: 1px solid #CCC;
     border-radius: 6px;
@@ -1972,7 +1972,7 @@ html.fullscreen #main_page {
 }
 
 .exportDialog-code{
-    width: 70%;
+    width: 75%;
 }
 
 .editorDialog-codeContainer,

@@ -12062,7 +12062,7 @@
           if (this.playerFocus) {
             const t = this.playerFocus.getActiveVehicle().focalPoint,
               e = this.position;
-            let s = 3;
+            let s = (GameSettings.cameraSpeed < 0.5 ? 0.5 : GameSettings.cameraSpeed);
             f(g(t.pos.x - e.x, 2) + g(t.pos.y - e.y, 2)) > 1500 && (s = 1);
             /*
               (e.x += (t.pos.x - e.x) / s),
@@ -24043,6 +24043,18 @@
               this.set(t, null, !1);
             },
           },
+          grayscale: {
+            default: !1,
+            set(t, e, s) {
+              t !== s &&
+                (t
+                  ? document.head.appendChild(qr)
+                  : document.head.removeChild(qr));
+            },
+            initialize(t) {
+              this.set(t, null, !1);
+            },
+          },
           lineShadow: {
             default: !1,
             set(t, e) {
@@ -24117,6 +24129,9 @@
         const zr = document.createElement("style");
       zr.innerHTML =
         "html{filter:brightness(0.5)}";
+        const qr = document.createElement("style");
+      qr.innerHTML =
+        "html{filter:grayscale(1)}";
       const nr = document.createElement("style"),
         rr = sr;
       class or {
