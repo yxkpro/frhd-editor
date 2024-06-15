@@ -25323,15 +25323,21 @@ function load() {
           let scalable = true;
       
           this.selected.forEach(line => {
+            const newP1x = centerX + (line.p1.x - centerX) * scaleFactor;
+            const newP1y = centerY + (line.p1.y - centerY) * scaleFactor;
+            const newP2x = centerX + (line.p2.x - centerX) * scaleFactor;
+            const newP2y = centerY + (line.p2.y - centerY) * scaleFactor;
 
-              const newP2x = centerX + (line.p2.x - centerX) * scaleFactor;
-              const newP2y = centerY + (line.p2.y - centerY) * scaleFactor;
+            const newLength = Math.hypot(newP2x - newP1x, newP2y - newP1y);
+              if (newLength < 2 && GameSettings.scaleLock) {
+            scalable = false;
+      }
 
           });
       
           if (scalable) {
           this.selected.forEach(line => {
-              [line.p2].forEach(point => {
+              [line.p1, line.p2].forEach(point => {
                   point.x = centerX + (point.x - centerX) * scaleFactor;
                   point.y = centerY + (point.y - centerY) * scaleFactor;
               });
