@@ -1699,7 +1699,7 @@ html.fullscreen #main_page {
 
 .horizontal-slider {
     position: relative;
-    width: 100px;
+    width: 80px;
     height: 5px;
     background: #9B9B9B;
     border-radius: 30px;

@@ -452,6 +452,10 @@
               "undefined" != typeof GameManager &&
                 GameManager.command("change tool option", "breakLength", e);
             },
+            adjustBrushSize: function (e) {
+              "undefined" != typeof GameManager &&
+                GameManager.command("change tool option", "brushSize", e);
+            },
             getInitialState: function () {
               return { brushType: GameSettings.customBrush ? "CUSTOM" : "DEFAULT" };
             },
@@ -473,7 +477,11 @@
                 l = 0,
                 c = 100,
                 u = 1,
-                d = 0;
+                d = 0,
+                w = 1,
+                x = 5,
+                y = 1,
+                z = 0.1;
               return (
                 e &&
                 ((t = e.trailSpeed),
@@ -483,7 +491,11 @@
                   (s = e.breakLength),
                   (l = e.minBreakLength),
                   (c = e.maxBreakLength),
-                  (u = e.breakLengthSensitivity)),
+                  (u = e.breakLengthSensitivity),
+                  (w = e.brushSize),
+                  (x = e.maxBrushSize),
+                  (y = e.minBrushSize),
+                  (z = e.brushSizeSensitivity)),
                 n.createElement(
                   "div",
                   { className: "bottomToolOptions bottomToolOptions_brush" },
@@ -557,7 +569,32 @@
                       value: Math.floor(t * 10) / 10,
                       readOnly: true
                   }),
-                  )
+                  ),
+                  GameSettings.customBrush && n.createElement(
+                    "div",
+                    { className: "horizontal-slider-container" },
+                    n.createElement(
+                      "span",
+                      { className: "horizontal-slider-label-2" },
+                      "Brush Size"
+                    ),
+                    n.createElement(r, {
+                      withBars: !0,
+                      className: "horizontal-slider brush-slider_breaklength",
+                      onChanged: this.adjustBrushSize,
+                      defaultValue: 1,
+                      max: x,
+                      min: y,
+                      step: 0.1,
+                      value: w,
+                    }),
+                    n.createElement("input", {
+                      type: "text",
+                      className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
+                      value: w.toFixed(1),
+                      readOnly: true
+                  }),
+                  ),
                 )
               );
             },

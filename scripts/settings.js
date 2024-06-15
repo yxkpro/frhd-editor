@@ -119,6 +119,10 @@ var GameSettings = {
         "maxTrailSpeed": 1,
         "minTrailSpeed": 0.01,
         "trailSpeedSensitivity": 0.005,
+        "brushSize": 1,
+        "maxBrushSize": 5,
+        "minBrushSize": 1,
+        "brushSizeSensitivity": 0.1,
     },
     "playHotkeys": {
         "up": [38],

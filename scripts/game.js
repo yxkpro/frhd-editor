@@ -17730,6 +17730,10 @@
               maxTrailSpeed: s.maxTrailSpeed,
               minTrailSpeed: s.minTrailSpeed,
               trailSpeedSensitivity: s.trailSpeedSensitivity,
+              brushSize: s.brushSize,
+              maxBrushSize: s.maxBrushSize,
+              minBrushSize: s.minBrushSize,
+              brushSizeSensitivity: s.brushSizeSensitivity,
             });
         }
         recordActionsToToolhandler() {
@@ -17779,10 +17783,10 @@
               if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
                 this.scene.customBrush.forEach(line => {
                   points.push({
-                    x1: e.x + line.x1,
-                    y1: e.y + line.y1,
-                    x2: e.x + line.x2,
-                    y2: e.y + line.y2
+                    x1: e.x + line.x1 * this.options.brushSize,
+                    y1: e.y + line.y1 * this.options.brushSize,
+                    x2: e.x + line.x2 * this.options.brushSize,
+                    y2: e.y + line.y2 * this.options.brushSize
                   });
                 });
 
@@ -17822,10 +17826,10 @@
               if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
                 this.scene.customBrush.forEach(line => {
                   points.push({
-                    x1: e.x + line.x1,
-                    y1: e.y + line.y1,
-                    x2: e.x + line.x2,
-                    y2: e.y + line.y2
+                    x1: e.x + line.x1 * this.options.brushSize,
+                    y1: e.y + line.y1 * this.options.brushSize,
+                    x2: e.x + line.x2 * this.options.brushSize,
+                    y2: e.y + line.y2 * this.options.brushSize
                   });
                 });
 
@@ -17853,7 +17857,7 @@
         update() {
           const t = this.toolHandler.gamepad,
             e = this.mouse;
-          t.isButtonDown("alt")
+          t.isButtonDown("alt") && !GameSettings.customBrush
             ? !1 !== e.mousewheel && this.adjustTrailSpeed(e.mousewheel)
             : t.isButtonDown("shift") &&
               !1 !== e.mousewheel &&
@@ -17869,6 +17873,11 @@
             (this.p1.y = s.snapPoint.y),
             (this.p2.x = e.touch.real.x),
             (this.p2.y = e.touch.real.y))
+          }
+          if (GameSettings.customBrush) {
+          t.isButtonDown("shift") &&
+            !1 !== e.mousewheel &&
+            this.adjustBrushSize(e.mousewheel)
           }
             super.update();
         }
@@ -17887,6 +17896,16 @@
             n = this.options.minBreakLength;
           t > 0 ? ((e += s), e > i && (e = i)) : ((e -= s), n > e && (e = n)),
             this.setOption("breakLength", e);
+        }
+        adjustBrushSize(t) {
+          let e = this.options.brushSize;
+          const s = this.options.brushSizeSensitivity,
+            i = this.options.maxBrushSize,
+            n = this.options.minBrushSize;
+          (e += t > 0 ? s : -s),
+            (e = Math.max(n, Math.min(i, e))),
+            this.setOption("brushSize", e);
+            console.log(e);
         }
         setOption(t, e) {
           this.options[t] = e;
@@ -17943,10 +17962,10 @@
 
           if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
             const points = this.scene.customBrush.map(line => ({
-              x1: e.x + line.x1 * s,
-              y1: e.y + line.y1 * s,
-              x2: e.x + line.x2 * s,
-              y2: e.y + line.y2 * s
+              x1: e.x + line.x1 * s * this.options.brushSize,
+              y1: e.y + line.y1 * s * this.options.brushSize,
+              x2: e.x + line.x2 * s * this.options.brushSize,
+              y2: e.y + line.y2 * s * this.options.brushSize
             }));
 
             const r =
@@ -25304,20 +25323,15 @@ function load() {
           let scalable = true;
       
           this.selected.forEach(line => {
-              const newP1x = centerX + (line.p1.x - centerX) * scaleFactor;
-              const newP1y = centerY + (line.p1.y - centerY) * scaleFactor;
+
               const newP2x = centerX + (line.p2.x - centerX) * scaleFactor;
               const newP2y = centerY + (line.p2.y - centerY) * scaleFactor;
-      
-              const newLength = Math.hypot(newP2x - newP1x, newP2y - newP1y);
-              if (newLength < 2 && GameSettings.scaleLock) {
-          scalable = false;
-      }
+
           });
       
           if (scalable) {
           this.selected.forEach(line => {
-              [line.p1, line.p2].forEach(point => {
+              [line.p2].forEach(point => {
                   point.x = centerX + (point.x - centerX) * scaleFactor;
                   point.y = centerY + (point.y - centerY) * scaleFactor;
               });
