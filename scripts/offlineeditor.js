@@ -406,7 +406,7 @@
                     n.createElement(i, {
                       active: this.props.data.cameraLocked,
                     }),
-                    //n.createElement(xxx, { active: this.props.data.snap }),
+                    n.createElement(xxx, { active: this.props.data.snap }),
                     n.createElement(o, { active: this.props.data.grid }),
                     n.createElement(r, { vehicle: this.props.data.vehicle }),
                     n.createElement(v),
@@ -5705,7 +5705,7 @@
           },
           renderSnapSizeSelect: function () {
             var e = GameSettings.snapDistance,
-              t = [0, 2, 5, 10, 25, 50, 100, 250];
+              t = [0, 2, 5, 10, 25, 50, 100];
             return n.createElement("select", {
               ref: "snapSize",
               defaultValue: e,
@@ -5760,10 +5760,10 @@
         },*/
           render: function () {
             var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_snap ",
-              t = "editorgui_icons_bottom editorgui_icons-icon_snap",
+              t = "editorgui_icons_bottom editorgui_icons-icon_snapbottom",
               a = this.props.active;
             a && (e += " bottomMenu-button-active",
-              t = "editorgui_icons editorgui_icons-icon_snap_on");
+              t = "editorgui_icons editorgui_icons-icon_snapbottom_on");
             var o = ""
             return n.createElement("div", {
               className: e,

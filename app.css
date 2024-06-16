@@ -1418,22 +1418,40 @@ html.fullscreen #main_page {
     background-position: -219px -46px;
 }
 
+.editorgui_icons-icon_snapbottom {
+    width: 40px;
+    height: 40px;
+    background-position: -219px -47px;
+}
+
+.editorgui_icons-icon_snapbottom:hover {
+    width: 40px;
+    height: 40px;
+    background-position: -440px -90px;
+}
+
 .editorgui_icons-icon_snap_on {
     width: 44px;
     height: 44px;
     background-position: -219px -90px
 }
 
+.editorgui_icons-icon_snapbottom_on {
+    width: 40px;
+    height: 40px;
+    background-position: -219px -91px
+}
+
 .editorgui_icons-icon_camera_lock_off {
     width: 32px;
     height: 32px;
-    background-position: -220px -132px
+    background-position: -220px -131px
 }
 
 .editorgui_icons-icon_camera_lock_on:hover {
     width: 32px;
     height: 32px;
-    background-position: -252px -132px
+    background-position: -252px -131px
 }
 
 .editorgui_icons-icon_vehicle_swap {
@@ -1457,7 +1475,7 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_camera_lock_on {
     width: 32px;
     height: 32px;
-    background-position: -284px -132px
+    background-position: -284px -131px
 }
 
 .editorgui_icons-speed {
@@ -1790,6 +1808,7 @@ html.fullscreen #main_page {
     padding-left: 5px;
 
 }
+
 
 .bottomMenu-button_cameralock {
     min-width: 140px
