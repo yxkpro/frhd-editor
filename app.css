@@ -1421,12 +1421,14 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_snapbottom {
     width: 40px;
     height: 40px;
+    transform: scale(0.8);
     background-position: -219px -47px;
 }
 
 .editorgui_icons-icon_snapbottom:hover {
     width: 40px;
     height: 40px;
+    transform: scale(0.8);
     background-position: -440px -90px;
 }
 
@@ -1439,6 +1441,7 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_snapbottom_on {
     width: 40px;
     height: 40px;
+    transform: scale(0.8);
     background-position: -219px -91px
 }
 

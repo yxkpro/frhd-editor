@@ -403,11 +403,9 @@
                     "div",
                     { className: "clearfix" },
                     f,
-                    n.createElement(i, {
-                      active: this.props.data.cameraLocked,
-                    }),
-                    n.createElement(xxx, { active: this.props.data.snap }),
-                    n.createElement(o, { active: this.props.data.grid }),
+                    e === "camera" && n.createElement(i, {active: this.props.data.cameraLocked }),
+                    e !== "camera" && n.createElement(xxx, { active: this.props.data.snap }),
+                    e !== "camera" && n.createElement(o, { active: this.props.data.grid }),
                     n.createElement(r, { vehicle: this.props.data.vehicle }),
                     n.createElement(v),
                     n.createElement("span", { className: "divider" })
