@@ -524,7 +524,7 @@
                     n.createElement(
                       "span",
                       { className: "horizontal-slider-label" },
-                      "Brush Length"
+                      "Break Length"
                     ),
                     n.createElement(r, {
                       withBars: !0,
@@ -532,7 +532,7 @@
                       onChanged: this.adjustBreakLength,
                       defaultValue: d,
                       max: 5,
-                      min: l,
+                      min: 0.01,
                       step: 0.1,
                       value: s,
                     }),
@@ -564,7 +564,7 @@
                     n.createElement("input", {
                       type: "text",
                       className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
-                      value: Math.floor(t * 10) / 10,
+                      value: (Math.floor(t * 10) / 10).toFixed(1),
                       readOnly: true
                   }),
                   ),
@@ -646,7 +646,7 @@
               })), n.createElement("input", {
                   type: "text",
                   className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
-                  value: s,
+                  value: s.toFixed(1),
                   readOnly: true
               }), )
           }

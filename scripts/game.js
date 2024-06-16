@@ -17355,6 +17355,9 @@
             s = t.secondaryTouch,
             i = this.toolHandler.gamepad,
             n = this.toolHandler;
+            i.isButtonDown("shift") &&
+              !1 !== t.mousewheel &&
+              this.adjustSegmentLength(t.mousewheel);
             if (n.snapPoint = this.scene.track.defaultLine.p2) {
               n.snapPoint = this.p1
             }
@@ -17375,6 +17378,16 @@
             this.anchoring && this.updateAnchor(),
             e.release && this.release(),
             !1 === t.mousewheel || o || this.mousewheel(t.mousewheel);
+        }
+        adjustSegmentLength(t) {
+          let e = this.options.segmentLength;
+          const s = this.options.segmentLengthSensitivity,
+            i = this.options.maxSegmentLength,
+            n = this.options.minSegmentLength;
+          (e += t > 0 ? s : -s),
+          (e = Math.max(n, Math.min(i, e))),
+          this.setOption("segmentLength", e);
+          this.scene.stateChanged();
         }
         draw() {
           const t = this.scene,
@@ -17857,11 +17870,11 @@
         update() {
           const t = this.toolHandler.gamepad,
             e = this.mouse;
-          t.isButtonDown("alt") && !GameSettings.customBrush
+          if (!GameSettings.customBrush) {t.isButtonDown("alt") && t.isButtonDown("shift")
             ? !1 !== e.mousewheel && this.adjustTrailSpeed(e.mousewheel)
             : t.isButtonDown("shift") &&
               !1 !== e.mousewheel &&
-              this.adjustBreakLength(e.mousewheel);
+              this.adjustBreakLength(e.mousewheel)};
           const s = this.toolHandler;
           if (s.snapPoint = this.scene.track.defaultLine.p2) {
             s.snapPoint = this.p1
@@ -17879,6 +17892,7 @@
             !1 !== e.mousewheel &&
             this.adjustBrushSize(e.mousewheel)
           }
+          console.log(this.options.breakLength, GameSettings.brush.breakLength)
             super.update();
         }
         adjustTrailSpeed(t) {
@@ -17888,6 +17902,7 @@
             n = this.options.minTrailSpeed;
           t > 0 ? ((e += s), e > i && (e = i)) : ((e -= s), n > e && (e = n)),
             this.setOption("trailSpeed", e);
+            this.scene.stateChanged();
         }
         adjustBreakLength(t) {
           let e = this.options.breakLength;
@@ -17896,6 +17911,7 @@
             n = this.options.minBreakLength;
           t > 0 ? ((e += s), e > i && (e = i)) : ((e -= s), n > e && (e = n)),
             this.setOption("breakLength", e);
+            this.scene.stateChanged();
         }
         adjustBrushSize(t) {
           let e = this.options.brushSize;
@@ -17905,8 +17921,9 @@
           (e += t > 0 ? s : -s),
             (e = Math.max(n, Math.min(i, e))),
             this.setOption("brushSize", e);
-            console.log(e);
+            this.scene.stateChanged();
         }
+        
         setOption(t, e) {
           this.options[t] = e;
         }
@@ -18129,7 +18146,11 @@
           update() {
             super.update();
             const t = this.toolHandler
-              , e = t.gamepad;
+              , e = t.gamepad
+              , m = this.mouse;
+            e.isButtonDown("shift") &&
+              !1 !== m.mousewheel &&
+              this.adjustSegmentLength(m.mousewheel)
             if (t.snapPoint = this.scene.track.defaultLine.p2) {
                 t.snapPoint = this.p1
             }
@@ -18138,10 +18159,21 @@
             this.p1 = t.snapPoint,
             this.hold()),
             this.shouldDrawMetadata = !!e.isButtonDown("ctrl")}
-        }
+          }
+          adjustSegmentLength(t) {
+            let e = this.options.segmentLength;
+            const s = this.options.segmentLengthSensitivity,
+              i = this.options.maxSegmentLength,
+              n = this.options.minSegmentLength;
+            (e += t > 0 ? s : -s),
+            (e = Math.max(n, Math.min(i, e))),
+            this.setOption("segmentLength", e);
+            this.scene.stateChanged();
+          }
           setOption(t, e) {
               this.options[t] = e;
               GameSettings.circle.segmentLength = e;
+              this.scene.stateChanged();
           }
           getOptions() {
               const t = this.toolHandler
@@ -18462,6 +18494,7 @@
           (e += t > 0 ? s : -s),
             (e = Math.max(n, Math.min(i, e))),
             this.setOption("radius", e);
+            this.scene.stateChanged();
         }
       }
       const Re = je.prototype;
