@@ -17794,23 +17794,21 @@
               }
 
               if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
-                this.scene.customBrush.forEach(line => {
-                  points.push({
-                    x1: e.x + line.x1 * this.options.brushSize,
-                    y1: e.y + line.y1 * this.options.brushSize,
-                    x2: e.x + line.x2 * this.options.brushSize,
-                    y2: e.y + line.y2 * this.options.brushSize
-                  });
+                const modifiedBrush = this.scene.customBrush.map(line => ({
+                  x1: e.x + line.x1 * this.options.brushSize,
+                  y1: e.y + line.y1 * this.options.brushSize,
+                  x2: e.x + line.x2 * this.options.brushSize,
+                  y2: e.y + line.y2 * this.options.brushSize
+                }));
+        
+                modifiedBrush.forEach(point => {
+                  let i = false;
+                  i = "physics" === this.toolHandler.options.lineType
+                    ? t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2)
+                    : t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                  i && this.addedObjects.push(i);
                 });
-
-              points.forEach(point => {
-                let i = false;
-                i = "physics" === this.toolHandler.options.lineType
-                  ? t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2)
-                  : t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                i && this.addedObjects.push(i);
-              });
-            }
+              }
 
               e.equ(s),
                 (this.toolHandler.snapPoint.x = s.x),
@@ -17836,17 +17834,15 @@
               this.recordActionsToToolhandler();
             }
 
-              if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
-                this.scene.customBrush.forEach(line => {
-                  points.push({
-                    x1: e.x + line.x1 * this.options.brushSize,
-                    y1: e.y + line.y1 * this.options.brushSize,
-                    x2: e.x + line.x2 * this.options.brushSize,
-                    y2: e.y + line.y2 * this.options.brushSize
-                  });
-                });
-
-              points.forEach(point => {
+            if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
+              const modifiedBrush = this.scene.customBrush.map(line => ({
+                x1: e.x + line.x1 * this.options.brushSize,
+                y1: e.y + line.y1 * this.options.brushSize,
+                x2: e.x + line.x2 * this.options.brushSize,
+                y2: e.y + line.y2 * this.options.brushSize
+              }));
+        
+              modifiedBrush.forEach(point => {
                 let i = false;
                 i = "physics" === this.toolHandler.options.lineType
                   ? s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2)
@@ -17977,20 +17973,19 @@
           }
 
           if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
-            const points = this.scene.customBrush.map(line => ({
+            const modifiedBrush = this.scene.customBrush.map(line => ({
               x1: e.x + line.x1 * s * this.options.brushSize,
               y1: e.y + line.y1 * s * this.options.brushSize,
               x2: e.x + line.x2 * s * this.options.brushSize,
               y2: e.y + line.y2 * s * this.options.brushSize
             }));
-
-            const r =
-              "physics" === this.toolHandler.options.lineType ? "#000" : "#AAA";
+        
+            const r = "physics" === this.toolHandler.options.lineType ? "#000" : "#AAA";
             t.beginPath(),
               (t.lineWidth = 2 * s > 0.5 ? 2 * s : 0.5),
               (t.lineCap = "round"),
               (t.strokeStyle = r);
-            points.forEach(point => {
+            modifiedBrush.forEach(point => {
               t.beginPath();
               t.moveTo(point.x1, point.y1);
               t.lineTo(point.x2, point.y2);
@@ -18492,7 +18487,7 @@
         );
         if (s.length > 0) {
           this.erasedObjects.push(s);
-          if (GameSettings.cutShort) {
+          if (GameSettings.lineTrim) {
             s.forEach(line => {
               if (e.powerups.includes(line)) {
                     return;
@@ -18601,7 +18596,7 @@
         this.scene.stateChanged();
       }
       adjustEraserType() {
-        let e = GameSettings.cutShort;
+        let e = GameSettings.lineTrim;
         this.setOption("eraserType", e);
         this.scene.stateChanged();
       }

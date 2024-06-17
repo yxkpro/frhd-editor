@@ -1047,10 +1047,10 @@
             toggleEraserType: function (e) {
               "undefined" != typeof GameManager &&
                 GameManager.command("change tool option", "eraserType", e);
-                GameSettings.cutShort = !GameSettings.cutShort;
+                GameSettings.lineTrim = !GameSettings.lineTrim;
             },
             render: function () {
-              var type = GameSettings.cutShort ? "LINE TRIM" : "LINE ERASE";
+              var type = GameSettings.lineTrim ? "LINE TRIM" : "LINE ERASE";
               var e = this.props.options,
                 t = 0,
                 o = 100,
