@@ -17892,7 +17892,6 @@
             !1 !== e.mousewheel &&
             this.adjustBrushSize(e.mousewheel)
           }
-          console.log(this.options.breakLength, GameSettings.brush.breakLength)
             super.update();
         }
         adjustTrailSpeed(t) {
@@ -18423,82 +18422,192 @@
 
     //end movePete tool
 
-      class je extends xe.Z {
-        constructor(e) {
-          super(),
-            super.init(e),
-            (this.options = e.scene.settings.eraser),
-            (this.eraserPoint = new t.Z()),
-            (this.erasedObjects = []);
-        }
-        reset() {
-          this.recordActionsToToolhandler();
-        }
-        press() {
-          this.recordActionsToToolhandler();
-        }
-        recordActionsToToolhandler() {
-          this.erasedObjects.length > 0 &&
-            this.toolHandler.addActionToTimeline({
-              type: "remove",
-              objects: (0, e.flatten)(this.erasedObjects),
-            }),
-            (this.erasedObjects = []);
-        }
-        release() {
-          this.recordActionsToToolhandler();
-        }
-        hold() {
-          const t = this.mouse.touch,
-            e = this.scene.track;
-          this.eraserPoint = t.pos.toRealSnapped(this.scene);
-          const s = e.erase(
-            this.eraserPoint,
-            this.options.radius / this.scene.camera.zoom,
-            this.options.types
-          );
-          s.length > 0 && this.erasedObjects.push(s);
-        }
-        draw() {
-          this.drawEraser(this.scene.game.canvas.getContext("2d"));
-        }
-        drawEraser(t) {
-          const e = this.mouse.touch.pos;
-          t.beginPath(),
-            t.arc(e.x, e.y, this.options.radius, 0, 2 * Math.PI, !1),
-            (t.lineWidth = 1),
-            (t.fillStyle = "rgba(255,255,255,0.8)"),
-            (t.strokeStyle = "#000000"),
-            t.fill(),
-            t.stroke();
-        }
-        setOption(t, e) {
-          this.options[t] = e;
-        }
-        getOptions() {
-          return this.options;
-        }
-        update() {
-          const t = this.toolHandler.gamepad,
-            e = this.mouse;
-          t.isButtonDown("shift") &&
-            !1 !== e.mousewheel &&
-            this.adjustRadius(e.mousewheel),
-            super.update();
-        }
-        adjustRadius(t) {
-          let e = this.options.radius;
-          const s = this.options.radiusSizeSensitivity,
-            i = this.options.maxRadius,
-            n = this.options.minRadius;
-          (e += t > 0 ? s : -s),
-            (e = Math.max(n, Math.min(i, e))),
-            this.setOption("radius", e);
-            this.scene.stateChanged();
+    //start object tool
+    class objectTool extends xe.Z {
+      constructor(e) {
+        super();
+        super.init(e);
+        this.active = !1;
+      }
+
+      reset() {
+        this.active = !1
+      }
+
+      press() {
+      }
+
+      hold() {
+      }
+
+      release() {
+      }
+
+      update() {
+        super.update();
+      }
+
+      draw() {
+      }
+    }
+    const object = objectTool.prototype;
+    object.name = "Object";
+    const obj = objectTool;
+
+    //end Object tool
+
+    class je extends xe.Z {
+      constructor(e) {
+        super(),
+          super.init(e),
+          (this.options = e.scene.settings.eraser),
+          (this.eraserPoint = new t.Z()),
+          (this.erasedObjects = []);
+      }
+      reset() {
+        this.recordActionsToToolhandler();
+      }
+      press() {
+        this.recordActionsToToolhandler();
+      }
+      recordActionsToToolhandler() {
+        this.erasedObjects.length > 0 &&
+          this.toolHandler.addActionToTimeline({
+            type: "remove",
+            objects: (0, e.flatten)(this.erasedObjects),
+          }),
+          (this.erasedObjects = []);
+      }
+      release() {
+        this.recordActionsToToolhandler();
+      }
+      hold() {
+        const t = this.mouse.touch,
+          e = this.scene.track;
+        this.eraserPoint = t.pos.toRealSnapped(this.scene);
+        const s = e.erase(
+          this.eraserPoint,
+          this.options.radius / this.scene.camera.zoom,
+          this.options.types
+        );
+        if (s.length > 0) {
+          this.erasedObjects.push(s);
+          if (GameSettings.cutShort) {
+            s.forEach(line => {
+              if (e.powerups.includes(line)) {
+                    return;
+                }
+              const pointsList = this.calculatePoints(line);
+              if (pointsList.length >= 5) {
+                const midpointIndex = Math.floor(pointsList.length / 2);
+                const midPoint = pointsList[midpointIndex];
+                const p1 = pointsList[0];
+                const p2 = pointsList[pointsList.length - 1];
+
+                let type = 'unknown';
+                if (e.physicsLines.includes(line)) {
+                  type = 'physics';
+                } else if (e.sceneryLines.includes(line)) {
+                  type = 'scenery';
+                }
+
+                if (this.distanceBetweenPoints(p1, midPoint) >= 20) {
+                  this.addLine(p1, midPoint, type);
+                }
+                if (this.distanceBetweenPoints(p2, midPoint) >= 20) {
+                  this.addLine(p2, midPoint, type);
+                }
+              }
+            });
+          }
         }
       }
-      const Re = je.prototype;
-      (Re.name = "Eraser"), (Re.options = null);
+      distanceBetweenPoints(point1, point2) {
+        return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+      }
+      addLine(point1, point2, type) {
+        if (this.distanceBetweenPoints(point1, point2) >= 20) {
+          let n = !1;
+          if (type === 'physics') {
+            n = this.scene.track.addPhysicsLine(point1.x, point1.y, point2.x, point2.y);
+          } else if (type === 'scenery') {
+            n = this.scene.track.addSceneryLine(point1.x, point1.y, point2.x, point2.y);
+          } 
+          this.toolHandler.addActionToTimeline({ type: "add", objects: [n] });
+        }
+      }
+      calculatePoints(line) {
+        const pointsList = [];
+        const dx = line.p2.x - line.p1.x;
+        const dy = line.p2.y - line.p1.y;
+        const gcd = this.greatestCommonDivisor(dx, dy);
+        const stepX = dx / gcd;
+        const stepY = dy / gcd;
+
+        for (let i = 0; i <= gcd; i++) {
+          const x = Math.round(line.p1.x + stepX * i);
+          const y = Math.round(line.p1.y + stepY * i);
+          pointsList.push({ x, y });
+        }
+
+        return pointsList;
+      }
+      greatestCommonDivisor(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b !== 0) {
+          const temp = b;
+          b = a % b;
+          a = temp;
+        }
+        return a;
+      }
+      draw() {
+        this.drawEraser(this.scene.game.canvas.getContext("2d"));
+      }
+      drawEraser(t) {
+        const e = this.mouse.touch.pos;
+        t.beginPath(),
+          t.arc(e.x, e.y, this.options.radius, 0, 2 * Math.PI, !1),
+          (t.lineWidth = 1),
+          (t.fillStyle = "rgba(255,255,255,0.8)"),
+          (t.strokeStyle = "#000000"),
+          t.fill(),
+          t.stroke();
+      }
+      setOption(t, e) {
+        this.options[t] = e;
+      }
+      getOptions() {
+        return this.options;
+      }
+      update() {
+        const t = this.toolHandler.gamepad,
+          e = this.mouse;
+        t.isButtonDown("shift") &&
+          !1 !== e.mousewheel &&
+          this.adjustRadius(e.mousewheel),
+          super.update();
+      }
+      adjustRadius(t) {
+        let e = this.options.radius;
+        const s = this.options.radiusSizeSensitivity,
+          i = this.options.maxRadius,
+          n = this.options.minRadius;
+        (e += t > 0 ? s : -s),
+          (e = Math.max(n, Math.min(i, e))),
+          this.setOption("radius", e);
+          
+        this.scene.stateChanged();
+      }
+      adjustEraserType() {
+        let e = GameSettings.cutShort;
+        this.setOption("eraserType", e);
+        this.scene.stateChanged();
+      }
+    }
+    const Re = je.prototype;
+    (Re.name = "Eraser"), (Re.options = null);
       const We = je,
         Ve = class extends ne {
           constructor(t, e, s, i, n = 1) {
@@ -22606,6 +22715,7 @@
             t.registerTool(ze),
             t.registerTool(circze),
             t.registerTool(pete),
+            t.registerTool(obj),
             t.registerTool(Fe()),
             t.registerTool(We),
             t.registerTool(si),

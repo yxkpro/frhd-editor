@@ -62,6 +62,7 @@ var GameSettings = {
     "head": "cowboy",
     "freeFloppyPete": false,
     "customBrush": false,
+    "cutShort": true,
     "cameraSpeed": 3,
     "raceColors": ["rgba(57,185,117,1)", "rgba(0,152,189,1)", "rgba(151,95,162,1)", "rgba(253,85,91,1)", "rgba(245,126,64,1)", "rgba(247,212,62,1)", "rgba(170,221,114,1)", "rgba(72,217,207,1)", "rgba(0,124,212,1)", "rgba(226,108,216,1)"],
     "toolHandler": {
@@ -121,7 +122,7 @@ var GameSettings = {
         "trailSpeedSensitivity": 0.1,
         "brushSize": 1,
         "maxBrushSize": 5,
-        "minBrushSize": 1,
+        "minBrushSize": 0.1,
         "brushSizeSensitivity": 0.1,
     },
     "playHotkeys": {

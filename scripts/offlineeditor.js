@@ -1044,7 +1044,13 @@
               "undefined" != typeof GameManager &&
                 GameManager.command("change tool option", "radius", e);
             },
+            toggleEraserType: function (e) {
+              "undefined" != typeof GameManager &&
+                GameManager.command("change tool option", "eraserType", e);
+                GameSettings.cutShort = !GameSettings.cutShort;
+            },
             render: function () {
+              var type = GameSettings.cutShort ? "LINE TRIM" : "LINE ERASE";
               var e = this.props.options,
                 t = 0,
                 o = 100,
@@ -1066,8 +1072,12 @@
                     n.createElement("span", {
                       className: "editorgui_icons_bottom editorgui_icons-icon_eraser",
                     }),
-                    n.createElement("span", { className: "toolName" }, "ERASER")
-                  ),
+                    n.createElement("span", {
+                      className: "toolName"
+                  }, "Eraser : ", n.createElement("span", {},
+                  n.createElement("button", {
+                      onClick: this.toggleEraserType
+                  }, type)))),
                   n.createElement(
                     "div",
                     { className: "horizontal-slider-container" },
@@ -4724,6 +4734,7 @@
           c = e("../tools/cameratool"),
           x = e("../tools/circletool"),
           xx = e("../tools/selecttool"),
+          //xxx = e("../tools/objecttool"),
           u = n.createClass({
             displayName: "LeftMenu",
             render: function () {
@@ -4740,6 +4751,7 @@
                   n.createElement(r, { active: "straightline" === e }),
                   n.createElement(o, { active: "curve" === e }),
                   n.createElement(x, { active: "circle" === e }),
+                  //n.createElement(xxx, { active: "object" === e }),
                   n.createElement(i, { active: "brush" === e }),
                   n.createElement(a, { active: "eraser" === e }),
                   n.createElement(s, { active: "powerup" === e }),
@@ -4756,6 +4768,7 @@
         "../tools/brushtool": 40,
         "../tools/circletool": 940,
         "../tools/cameratool": 41,
+        //"../tools/objecttool": 941,
         "../tools/curvedlinetool": 43,
         "../tools/erasertool": 44,
         "../tools/poweruptool": 48,
@@ -5343,6 +5356,34 @@
       },
       { react: 230 },
     ],
+    /*
+    941: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "ObjectTool",
+            changeTool: function () {
+              "undefined" != typeof GameManager &&
+                GameManager.command("change tool", "object");
+            },
+            render: function () {
+              var e = "sideButton sideButton-bottom sideButton_cameraTool ";
+              return (
+                this.props.active && (e += " active"),
+                n.createElement(
+                  "div",
+                  { className: e, onClick: this.changeTool },
+                  n.createElement("span", {
+                    className: "editorgui_icons editorgui_icons-icon_camera",
+                  })
+                )
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],*/
     42: [
       function (e, t) {
         var n = e("react"),
