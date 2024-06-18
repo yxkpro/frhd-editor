@@ -893,6 +893,7 @@
                             y2: i.p2.y - centerY,
                         };
                     });
+                GameSettings.customBrush = true;
             },
             render: function() {
                 var type = GameSettings.copy ? "COPY + PASTE" : "CUT + PASTE";

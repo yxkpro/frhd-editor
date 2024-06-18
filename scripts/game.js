@@ -25889,7 +25889,6 @@ function load() {
           this.dashOffset %= 23;
           if (!isSelectList) return;
           let point = center.add(selectOffset).add(inflectionOffset).toScreen(this.scene);
-          console.log(point);
           ctx.globalAlpha = 0.5;
           ctx.beginPath();
           ctx.moveTo(point.x - 5, point.y);
@@ -25897,6 +25896,7 @@ function load() {
           ctx.moveTo(point.x, point.y - 5);
           ctx.lineTo(point.x, point.y + 5);
           ctx.stroke();
+          ctx.globalAlpha = 1;
       }
 
       testSectorSingle(sectorPos) {
