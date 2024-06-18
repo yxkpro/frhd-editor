@@ -17771,6 +17771,13 @@
               (this.active = !0);
           }
         }
+        rotate(x, y, angle) {
+          angle = -angle;
+          return {
+              x: Math.cos(angle) * x + Math.sin(angle) * y,
+              y: -Math.sin(angle) * x + Math.cos(angle) * y,
+          };
+        }
         hold() {
           if (this.active) {
             const t = this.mouse.touch.real,
@@ -17794,12 +17801,18 @@
               }
 
               if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
-                const modifiedBrush = this.scene.customBrush.map(line => ({
-                  x1: e.x + line.x1 * this.options.brushSize,
-                  y1: e.y + line.y1 * this.options.brushSize,
-                  x2: e.x + line.x2 * this.options.brushSize,
-                  y2: e.y + line.y2 * this.options.brushSize
-                }));
+                let offset = s.sub(e),
+                    dir = Math.atan2(offset.y, offset.x);
+                const modifiedBrush = this.scene.customBrush.map((line) => {
+                    let p1 = this.rotate(line.x1, line.y1, dir),
+                        p2 = this.rotate(line.x2, line.y2, dir);
+                    return {
+                        x1: e.x + p1.x * this.options.brushSize,
+                        y1: e.y + p1.y * this.options.brushSize,
+                        x2: e.x + p2.x * this.options.brushSize,
+                        y2: e.y + p2.y * this.options.brushSize,
+                    };
+                });
         
                 modifiedBrush.forEach(point => {
                   let i = false;
@@ -25287,6 +25300,8 @@ function load() {
       selectOffset = vector(),
       // since this is used to track, not render, we can get away with only having one of these
       pointOffset = vector(),
+      inflectionOffset = vector(),
+      center = vector(),
       isHoverList = false,
       isSelectList = false,
       hoverPoint,
@@ -25339,12 +25354,12 @@ function load() {
           }
           this.supa = supa;
           this.toolUpdate = supa.update;
-          console.log(supa, this);
           supa.init.apply(this, [s]);
           this.toolHandler = s;
           this.p1 = undefined;
           this.p2 = undefined;
           this.dashOffset = 0;
+          this.inflectionOffset;
           this.name = 'select';
           this.down = false;
           this.center = null;
@@ -25408,10 +25423,11 @@ function load() {
               const width = maxX - minX;
               const height = maxY - minY;
       
-              const centerX = minX + width / 2;
-              const centerY = minY + height / 2;
+              const centerX = minX + width / 2 + inflectionOffset.x;
+              const centerY = minY + height / 2 + inflectionOffset.y;
       
-              this.center = { centerX, centerY, width, height };
+              this.center = vector(centerX, centerY);
+              Object.assign(this.center, { centerX, centerY, width, height });
               console.log('Center info:', this.center);
           }
       
@@ -25423,7 +25439,9 @@ function load() {
       }
 
       rotateSelected(degrees) {
-          const { centerX, centerY } = this.findCenter();
+          let center = this.findCenter();
+          const centerX = center.x;
+          const centerY = center.y;
           const radians = degrees * Math.PI / 180;
 
           this.selected.forEach(line => {
@@ -25457,7 +25475,9 @@ function load() {
       }
       
       scaleSelected(scaleFactor) {
-          const { centerX, centerY } = this.findCenter();
+        let center = this.findCenter();
+        const centerX = center.x;
+        const centerY = center.y;
           let scalable = true;
       
           this.selected.forEach(line => {
@@ -25806,6 +25826,10 @@ function load() {
               selected = undefined;
               isSelectList = true;
               selectList = [...hoverList];
+              inflectionOffset = vector();
+              this.findCenter();
+              let c = this.center;
+              center = vector(c.centerX, c.centerY);
               selectPhysicsList = hoverPhysicsList;
               hoverList = [];
               isHoverList = false;
@@ -25863,6 +25887,16 @@ function load() {
           ctx.stroke();
           ctx.restore();
           this.dashOffset %= 23;
+          if (!isSelectList) return;
+          let point = center.add(selectOffset).add(inflectionOffset).toScreen(this.scene);
+          console.log(point);
+          ctx.globalAlpha = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(point.x - 5, point.y);
+          ctx.lineTo(point.x + 5, point.y);
+          ctx.moveTo(point.x, point.y - 5);
+          ctx.lineTo(point.x, point.y + 5);
+          ctx.stroke();
       }
 
       testSectorSingle(sectorPos) {
@@ -26145,7 +26179,8 @@ function load() {
       // allow moving the currently selected object with movement keys when paused
       if (selectTool.selected.length && !tempSelect?.length) {
           let tdb = scene.playerManager.firstPlayer._gamepad.getDownButtons(),
-              dir = vector();
+              dir = vector(),
+              moveSelection = true;
           for (let button of tdb) {
               switch (button) {
                   case "up":
@@ -26173,21 +26208,29 @@ function load() {
                       isSelectList = false;
                       selectOffset = vector();
                       break;
+                  case "shift":
+                      moveSelection = false;
+                      break;
               }
           }
-          if (selected) {
+          if (selectTool.selected.length) {
               let dirLen = Math.sqrt(dir.x ** 2 + dir.y ** 2);
               if (dirLen > 0) {
                   dir.x = dir.x * moveAccumulator / dirLen | 0;
                   dir.y = dir.y * moveAccumulator / dirLen | 0;
-                  if (selectPoint) {
-                      selectPoint.inc(dir);
-                      if (connected) {
-                          connected[connectedPoint].inc(dir);
+                  if (moveSelection) {
+                      if (selectPoint) {
+                          selectPoint.inc(dir);
+                          if (connected) {
+                              connected[connectedPoint].inc(dir);
+                          }
+                          pointOffset.inc(dir);
+                      } else {
+                          selectOffset.inc(dir);
                       }
-                      pointOffset.inc(dir);
                   } else {
-                      selectOffset.inc(dir);
+                      inflectionOffset.inc(dir);
+                      selectTool.inflectionOffset = inflectionOffset;
                   }
                   moveSpeed *= 1.02;
                   moveAccumulator %= 1;
@@ -26481,59 +26524,6 @@ function pointrect(p, r1, r2) {
   let ul = {x: Math.min(r1.x, r2.x), y: Math.min(r1.y, r2.y)},
       lr = {x: Math.max(r1.x, r2.x), y: Math.max(r1.y, r2.y)};
   return p.x >= ul.x && p.x <= lr.x && p.y >= ul.y && p.y <= lr.y;
-}
-
-/**
-* Easy one-stop function to create and set up an element or even trees of elements.
-* @param {String} tag The type of element to create
-* @param {HTMLElement} [parent] (optional) Parent element to add this one to
-* @param {Object} [properties={}] Properties (e.g. innerHTML) to set on the element
-* @param {Array<Object|HTMLElement>} [properties.children] Optional short-circuit to create nested element, but prevents returning them
-* @param {String} properties.children[].tag Tag for the child
-* @param {Object} properties.children[].* Properties for the child
-* @param {Function} [properties.oncreate] Optional function to run once the element has been fully created
-* @param {Array<String>} [properties.classes] Classes to add to the created object
-* @returns {HTMLElement} The created element
-*/
-function createElement(tag, parent, properties = {}) {
-  let element = document.createElement(tag),
-      oncreate;
-  if (parent) {
-      parent.append(element);
-  }
-  for (let i in properties) {
-      switch (i) {
-          case 'children':
-              for (let child of properties.children) {
-                  if (child instanceof HTMLElement) {
-                      element.append(child);
-                  } else {
-                      let properties = child,
-                          tag = child.tag;
-                      delete properties.tag;
-                      createElement(tag, element, properties || {});
-                  }
-              }
-              break;
-              // delay running the oncreate function until all properties have been initialized
-          case 'oncreate':
-              oncreate = properties.oncreate;
-              break;
-          case 'classes':
-              element.classList.add(...properties[i]);
-              break;
-          case 'data':
-              for (let data in properties[i]) {
-                  element.dataset[data] = properties[i][data];
-              }
-          default:
-              element[i] = properties[i];
-      }
-  }
-  if (oncreate) {
-      oncreate(element);
-  }
-  return element;
 }
 
 function doAMario(selector) {
