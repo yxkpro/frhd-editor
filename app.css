@@ -1257,6 +1257,22 @@ html.fullscreen #main_page {
     background-size: 512px 164px
 }
 
+.cube {
+    transform: scale(0.6);
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-image: url(assets/images/gui/cube.png);
+    background-position: 0px 0px;
+    width: 45px;
+    height: 44px;
+}
+
+.cube-margin {
+    margin-left: -8px;
+}
+
 .editorgui_small {
     display: inline-block;
     vertical-align: middle;
@@ -1802,8 +1818,20 @@ html.fullscreen #main_page {
     min-width: 100px
 }
 
+.bottomMenu-button_importObject {
+    min-width: 90px
+}
+
+.bottomMenu-button_selectionAsObject {
+    min-width: 112px
+}
+
 .bottomMenu-button_grid {
     min-width: 100px
+}
+
+.bottomMenu-button_object {
+    min-width: 115px
 }
 
 .bottomMenu-button_snap {
@@ -1842,7 +1870,7 @@ html.fullscreen #main_page {
 .bottomToolOptions-toolTitle {
     display: inline-block;
     float: left;
-    margin-right: 25px;
+    margin-right: 15px;
 }
 
 .bottomToolOptions-toolTitle .toolName {

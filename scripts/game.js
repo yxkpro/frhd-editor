@@ -16969,7 +16969,7 @@
               }
           });
 
-          if ((this.currentTool === ("vehiclepowerup")) || (this.currentTool === ("powerup"))) {
+          if ((this.currentTool === ("vehiclepowerup")) || (this.currentTool === ("powerup")) || this.options.object) {
             this.snapPoint.equ(nearestPoint);
             return;
           }
@@ -17045,7 +17045,19 @@
         }
         toggleLineType() {
           (this.options.lineType =
-            "physics" === this.options.lineType ? "scenery" : "physics"),
+            "physics" === this.options.lineType ? "scenery" : "physics");
+            if (this.options.lineType) {
+              this.options.object = !1}
+            this.scene.stateChanged();
+        }
+        toggleObject() {
+          (this.options.object = this.scene.state.object = !this.options.object);
+          if (this.options.object) {
+            this.options.lineType = !1}
+          if (!this.options.object) {
+            (this.options.lineType =
+              "physics" === this.options.lineType ? "scenery" : "physics")
+          }
             this.scene.stateChanged();
         }
         toggleGrid() {
@@ -17273,7 +17285,7 @@
           const t = this.toolHandler,
             e = this.options;
           return (
-            (e.lineType = t.options.lineType), (e.snap = t.options.snap), e
+            (e.lineType = t.options.lineType), (e.snap = t.options.snap), (e.object = t.options.object), e
           );
         }
         setOption(t, e) {
@@ -17361,7 +17373,7 @@
             if (n.snapPoint = this.scene.track.defaultLine.p2) {
               n.snapPoint = this.p1
             }
-            if (GameSettings.snapNear) {
+            if (GameSettings.snapNear && !this.options.object) {
           n.options.snap &&
             ((this.active = !0),
             (this.p1 = n.snapPoint),
@@ -17569,7 +17581,7 @@
           const t = this.toolHandler,
             e = this.options;
           return (
-            (e.lineType = t.options.lineType), (e.snap = t.options.snap), e
+            (e.lineType = t.options.lineType), (e.snap = t.options.snap), (e.object = t.options.object), e
           );
         }
         hold() {
@@ -17598,14 +17610,62 @@
               e = this.p2,
               s = this.scene.track,
               i = this.toolHandler;
-            let n = !1;
-            (n =
-              "physics" === i.options.lineType
-                ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
-                : s.addSceneryLine(t.x, t.y, e.x, e.y)),
-              n && i.addActionToTimeline({ type: "add", objects: [n] });
-              (this.active = !1);
-              i.snapPoint.equ(e);
+
+            let addedObjects = [];
+
+            if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0)) {
+              let newLine = null;
+              if ("physics" === i.options.lineType) {
+                newLine = s.addPhysicsLine(t.x, t.y, e.x, e.y);
+              } else {
+                newLine = s.addSceneryLine(t.x, t.y, e.x, e.y);
+              }
+              if (newLine) {
+                addedObjects.push(newLine);
+                i.addActionToTimeline({ type: "add", objects: addedObjects });
+              }
+            }
+
+            if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+
+              const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                x1: e.x + line.x1,
+                y1: e.y + line.y1,
+                x2: e.x + line.x2,
+                y2: e.y + line.y2
+              }));
+
+              const modifiedScenery = this.scene.objectScenery.map(line => ({
+                x1: e.x + line.x1,
+                y1: e.y + line.y1,
+                x2: e.x + line.x2,
+                y2: e.y + line.y2
+              }));
+
+              modifiedPhysics.forEach(point => {
+                let newLine = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                if (newLine) {
+                  addedObjects.push(newLine);
+                }
+              });
+
+              modifiedScenery.forEach(point => {
+                let newLine = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                if (newLine) {
+                  addedObjects.push(newLine);
+                }
+              });
+
+              if (addedObjects.length > 0) {
+                this.toolHandler.addActionToTimeline({
+                  type: "add",
+                  objects: addedObjects
+                });
+              }
+            }
+
+            this.active = false;
+            i.snapPoint.equ(e);
           }
         }
         update() {
@@ -17615,7 +17675,7 @@
             if (t.snapPoint = this.scene.track.defaultLine.p2) {
               t.snapPoint = this.p1
             }
-            if (GameSettings.snapNear) {
+            if (GameSettings.snapNear && !this.options.object) {
             t.options.snap &&
             ((this.active = !0), (this.p1 = t.snapPoint), this.hold()),
             (this.shouldDrawMetadata = !!e.isButtonDown("ctrl"));}
@@ -17636,6 +17696,39 @@
         drawCursor(t) {
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
+            if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+              const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                x1: e.x + line.x1 * s,
+                y1: e.y + line.y1 * s,
+                x2: e.x + line.x2 * s,
+                y2: e.y + line.y2 * s
+              }));
+  
+              const modifiedScenery = this.scene.objectScenery.map(line => ({
+                x1: e.x + line.x1 * s,
+                y1: e.y + line.y1 * s,
+                x2: e.x + line.x2 * s,
+                y2: e.y + line.y2 * s
+              }));
+  
+              t.beginPath(),
+                (t.lineWidth = 2 * s > 0.5 ? 2 * s : 0.5),
+                (t.lineCap = "round"),
+                modifiedScenery.forEach(point => {
+                  (t.strokeStyle = "#AAA");
+                  t.beginPath();
+                  t.moveTo(point.x1, point.y1);
+                  t.lineTo(point.x2, point.y2);
+                  t.stroke();
+                });
+              modifiedPhysics.forEach(point => {
+                (t.strokeStyle = "#000");
+                t.beginPath();
+                t.moveTo(point.x1, point.y1);
+                t.lineTo(point.x2, point.y2);
+                t.stroke();
+              });
+            }
           if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
             const i = 5 * s;
             t.beginPath(),
@@ -17750,7 +17843,7 @@
             });
         }
         recordActionsToToolhandler() {
-          if (GameSettings.customBrush && this.addedObjects.length > 0) {
+          if (this.toolHandler.options.object && this.addedObjects.length > 0) {
             this.toolHandler.addActionToTimeline({
               type: "add",
               objects: this.addedObjects
@@ -17780,56 +17873,93 @@
         }
         hold() {
           if (this.active) {
-            const t = this.mouse.touch.real,
-              e = this.p1,
-              s = this.p2,
-              i = this.options.trailSpeed,
-              n = this.options.breakLength * 0.2;
-            s.inc(t.sub(s).factor(i));
-            let r = screen.height + t.sub(s).len();
-            if (((r *= n), s.sub(e).lenSqr() > r)) {
-              const t = this.scene.track;
-              const points = [];
+              const t = this.mouse.touch.real,
+                  e = this.p1,
+                  s = this.p2,
+                  i = this.options.trailSpeed,
+                  n = this.options.breakLength * 0.2;
+              s.inc(t.sub(s).factor(i));
+              let r = screen.height + t.sub(s).len();
+              if (((r *= n), s.sub(e).lenSqr() > r)) {
+                  const t = this.scene.track;
+      
+                  if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0)) {
+                      let i = !1;
+                      i = "physics" === this.toolHandler.options.lineType
+                          ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
+                          : t.addSceneryLine(e.x, e.y, s.x, s.y);
+                      i && this.addedObjects.push(i);
+                  }
+      
+                  let modifiedPhysics = [];
+                  let modifiedScenery = [];
+      
+                  if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+                      if (GameSettings.brushRotate) {
+                          let offset = s.sub(e),
+                              dir = Math.atan2(offset.y, offset.x);
+                          modifiedPhysics = this.scene.objectPhysics.map((line) => {
+                              let p1 = this.rotate(line.x1, line.y1, dir),
+                                  p2 = this.rotate(line.x2, line.y2, dir);
+                              return {
+                                  x1: e.x + p1.x * this.options.brushSize,
+                                  y1: e.y + p1.y * this.options.brushSize,
+                                  x2: e.x + p2.x * this.options.brushSize,
+                                  y2: e.y + p2.y * this.options.brushSize,
+                              };
+                          });
+                      } else {
+                          modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                              x1: e.x + line.x1 * this.options.brushSize,
+                              y1: e.y + line.y1 * this.options.brushSize,
+                              x2: e.x + line.x2 * this.options.brushSize,
+                              y2: e.y + line.y2 * this.options.brushSize
+                          }));
+                      }
 
-              if (!GameSettings.customBrush || this.scene.customBrush.length === 0) {
-                let i = !1;
-                (i =
-                  "physics" === this.toolHandler.options.lineType
-                    ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
-                    : t.addSceneryLine(e.x, e.y, s.x, s.y)),
-                  i && this.addedObjects.push(i);
+                      if (GameSettings.brushRotate) {
+                        let offset = s.sub(e),
+                            dir = Math.atan2(offset.y, offset.x);
+                        modifiedScenery = this.scene.objectScenery.map((line) => {
+                            let p1 = this.rotate(line.x1, line.y1, dir),
+                                p2 = this.rotate(line.x2, line.y2, dir);
+                            return {
+                                x1: e.x + p1.x * this.options.brushSize,
+                                y1: e.y + p1.y * this.options.brushSize,
+                                x2: e.x + p2.x * this.options.brushSize,
+                                y2: e.y + p2.y * this.options.brushSize,
+                            };
+                        });
+                    } else {
+                        modifiedScenery = this.scene.objectScenery.map(line => ({
+                            x1: e.x + line.x1 * this.options.brushSize,
+                            y1: e.y + line.y1 * this.options.brushSize,
+                            x2: e.x + line.x2 * this.options.brushSize,
+                            y2: e.y + line.y2 * this.options.brushSize
+                        }));
+                    }
+      
+                      modifiedPhysics.forEach(point => {
+                          let i = false;
+                          i = t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                          i && this.addedObjects.push(i);
+                      });
+
+                      modifiedScenery.forEach(point => {
+                        let i = false;
+                        i = t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                        i && this.addedObjects.push(i);
+                    });
+                  }
+      
+                  e.equ(s);
+                  this.toolHandler.snapPoint.x = s.x;
+                  this.toolHandler.snapPoint.y = s.y;
               }
-
-              if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
-                let offset = s.sub(e),
-                    dir = Math.atan2(offset.y, offset.x);
-                const modifiedBrush = this.scene.customBrush.map((line) => {
-                    let p1 = this.rotate(line.x1, line.y1, dir),
-                        p2 = this.rotate(line.x2, line.y2, dir);
-                    return {
-                        x1: e.x + p1.x * this.options.brushSize,
-                        y1: e.y + p1.y * this.options.brushSize,
-                        x2: e.x + p2.x * this.options.brushSize,
-                        y2: e.y + p2.y * this.options.brushSize,
-                    };
-                });
-        
-                modifiedBrush.forEach(point => {
-                  let i = false;
-                  i = "physics" === this.toolHandler.options.lineType
-                    ? t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2)
-                    : t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                  i && this.addedObjects.push(i);
-                });
-              }
-
-              e.equ(s),
-                (this.toolHandler.snapPoint.x = s.x),
-                (this.toolHandler.snapPoint.y = s.y);
-            }
-            this.toolHandler.moveCameraTowardsMouse();
+              this.toolHandler.moveCameraTowardsMouse();
           }
-        }
+      }
+
         release() {
           if (this.active) {
             const t = this.p1,
@@ -17837,7 +17967,7 @@
               s = this.scene.track;
             const points = [];
 
-            if (!GameSettings.customBrush || this.scene.customBrush.length === 0) {
+            if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0)) {
             let i = !1;
             (i =
               "physics" === this.toolHandler.options.lineType
@@ -17847,19 +17977,30 @@
               this.recordActionsToToolhandler();
             }
 
-            if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
-              const modifiedBrush = this.scene.customBrush.map(line => ({
+            if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+              const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                x1: e.x + line.x1 * this.options.brushSize,
+                y1: e.y + line.y1 * this.options.brushSize,
+                x2: e.x + line.x2 * this.options.brushSize,
+                y2: e.y + line.y2 * this.options.brushSize
+              }));
+
+              const modifiedScenery = this.scene.objectScenery.map(line => ({
                 x1: e.x + line.x1 * this.options.brushSize,
                 y1: e.y + line.y1 * this.options.brushSize,
                 x2: e.x + line.x2 * this.options.brushSize,
                 y2: e.y + line.y2 * this.options.brushSize
               }));
         
-              modifiedBrush.forEach(point => {
+              modifiedPhysics.forEach(point => {
                 let i = false;
-                i = "physics" === this.toolHandler.options.lineType
-                  ? s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2)
-                  : s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                i && this.addedObjects.push(i);
+              });
+
+              modifiedScenery.forEach(point => {
+                let i = false;
+                s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
                 i && this.addedObjects.push(i);
               });
 
@@ -17876,10 +18017,63 @@
             (n.x = e.x), (n.y = e.y), (this.active = !1);
           }
         }
+        drawCursor(t) {
+          const e = this.mouse.touch.real.toScreenSnapped(this.scene),
+            s = this.camera.zoom;
+          if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+            const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+              x1: e.x + line.x1 * s * this.options.brushSize,
+              y1: e.y + line.y1 * s * this.options.brushSize,
+              x2: e.x + line.x2 * s * this.options.brushSize,
+              y2: e.y + line.y2 * s * this.options.brushSize
+            }));
+
+            const modifiedScenery = this.scene.objectScenery.map(line => ({
+              x1: e.x + line.x1 * s * this.options.brushSize,
+              y1: e.y + line.y1 * s * this.options.brushSize,
+              x2: e.x + line.x2 * s * this.options.brushSize,
+              y2: e.y + line.y2 * s * this.options.brushSize
+            }));
+
+            t.beginPath(),
+              (t.lineWidth = 2 * s > 0.5 ? 2 * s : 0.5),
+              (t.lineCap = "round"),
+              modifiedScenery.forEach(point => {
+                (t.strokeStyle = "#AAA");
+                t.beginPath();
+                t.moveTo(point.x1, point.y1);
+                t.lineTo(point.x2, point.y2);
+                t.stroke();
+              });
+            modifiedPhysics.forEach(point => {
+              (t.strokeStyle = "#000");
+              t.beginPath();
+              t.moveTo(point.x1, point.y1);
+              t.lineTo(point.x2, point.y2);
+              t.stroke();
+            });
+          }
+          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+            const i = 5 * s;
+            t.beginPath();
+            t.moveTo(e.x, e.y - i);
+            t.lineTo(e.x, e.y + i);
+            t.moveTo(e.x - i, e.y);
+            t.lineTo(e.x + i, e.y);
+            t.lineWidth = 1 * s;
+            t.stroke();
+          } else {
+            t.beginPath();
+            t.arc(e.x, e.y, 1 * s, 0, 2 * Math.PI, false);
+            t.lineWidth = 1;
+            t.fillStyle = "#1884cf";
+            t.fill();
+          }
+        }
         update() {
           const t = this.toolHandler.gamepad,
             e = this.mouse;
-          if (!GameSettings.customBrush) {t.isButtonDown("alt") && t.isButtonDown("shift")
+          if (!this.toolHandler.options.object) {t.isButtonDown("alt") && t.isButtonDown("shift")
             ? !1 !== e.mousewheel && this.adjustTrailSpeed(e.mousewheel)
             : t.isButtonDown("shift") &&
               !1 !== e.mousewheel &&
@@ -17888,7 +18082,7 @@
           if (s.snapPoint = this.scene.track.defaultLine.p2) {
             s.snapPoint = this.p1
           }
-          if (GameSettings.snapNear) {
+          if (GameSettings.snapNear && !this.options.object) {
             s.options.snap &&
             ((this.active = !0),
             (this.p1.x = s.snapPoint.x),
@@ -17896,7 +18090,7 @@
             (this.p2.x = e.touch.real.x),
             (this.p2.y = e.touch.real.y))
           }
-          if (GameSettings.customBrush) {
+          if (this.toolHandler.options.object) {
           t.isButtonDown("shift") &&
             !1 !== e.mousewheel &&
             this.adjustBrushSize(e.mousewheel)
@@ -17939,7 +18133,7 @@
           const t = this.toolHandler,
             e = this.options;
           return (
-            (e.lineType = t.options.lineType), (e.snap = t.options.snap), e
+            (e.lineType = t.options.lineType), (e.snap = t.options.snap), (e.object = t.options.object), e
           );
         }
         draw() {
@@ -17965,47 +18159,6 @@
             t.fillText("Trail speed : " + i, 10 * n, 40 * n),
             t.fillText("Break length : " + s, 10 * n, 60 * n);
         }
-        drawCursor(t) {
-          const e = this.mouse.touch.real.toScreenSnapped(this.scene),
-            s = this.camera.zoom;
-          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
-            const i = 5 * s;
-            t.beginPath();
-            t.moveTo(e.x, e.y - i);
-            t.lineTo(e.x, e.y + i);
-            t.moveTo(e.x - i, e.y);
-            t.lineTo(e.x + i, e.y);
-            t.lineWidth = 1 * s;
-            t.stroke();
-          } else {
-            t.beginPath();
-            t.arc(e.x, e.y, 1 * s, 0, 2 * Math.PI, false);
-            t.lineWidth = 1;
-            t.fillStyle = "#1884cf";
-            t.fill();
-          }
-
-          if (GameSettings.customBrush && this.scene.customBrush.length > 0) {
-            const modifiedBrush = this.scene.customBrush.map(line => ({
-              x1: e.x + line.x1 * s * this.options.brushSize,
-              y1: e.y + line.y1 * s * this.options.brushSize,
-              x2: e.x + line.x2 * s * this.options.brushSize,
-              y2: e.y + line.y2 * s * this.options.brushSize
-            }));
-        
-            const r = "physics" === this.toolHandler.options.lineType ? "#000" : "#AAA";
-            t.beginPath(),
-              (t.lineWidth = 2 * s > 0.5 ? 2 * s : 0.5),
-              (t.lineCap = "round"),
-              (t.strokeStyle = r);
-            modifiedBrush.forEach(point => {
-              t.beginPath();
-              t.moveTo(point.x1, point.y1);
-              t.lineTo(point.x2, point.y2);
-              t.stroke();
-            });
-          }
-        }
         drawPoint(t, e, s) {
           const i = e.toScreenSnapped(this.scene);
           t.beginPath(),
@@ -18020,7 +18173,7 @@
           t.beginPath(),
             (t.lineWidth = 2 * e > 0.5 ? 2 * e : 0.5),
             (t.lineCap = "round"),
-            (t.strokeStyle = (GameSettings.customBrush ? "#1884cf" : s));
+            (t.strokeStyle = (this.toolHandler.options.object ? "#1884cf" : s));
           const i = this.p1.toScreenSnapped(this.scene),
             n = this.p2.toScreenSnapped(this.scene);
           t.moveTo(i.x, i.y), t.lineTo(n.x, n.y), t.stroke();
@@ -18096,59 +18249,81 @@
               this.toolHandler.moveCameraTowardsMouse()
           }
           release() {
-              if (this.active) {
-                  const t = this.p1;
-                  const e = this.p2;
-                  const s = this.scene.track;
-                  const i = GameSettings.circle.segmentLength * 10;
-                  // calculate radius
-                  const radius = Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
-          
-                  // calculate the number of line segments
-                  const segments = Math.ceil(Math.max(4, Math.round((radius / i) / 2) * 2));
-          
-                  // calculate angle increment
-                  const angleIncrement = (2 * Math.PI) / segments;
-          
-                  // array to store the line objects
-                  const addedObjects = [];
-          
-                  // calculate and add line segments
-                  for (let j = 0; j < segments; j++) {
-                      const angle = j * angleIncrement;
-                      const x1 = t.x + radius * Math.cos(angle);
-                      const y1 = t.y + radius * Math.sin(angle);
-                      const x2 = t.x + radius * Math.cos(angle + angleIncrement);
-                      const y2 = t.y + radius * Math.sin(angle + angleIncrement);
-          
-                      // add line based on lineType option
-                      let lineObject;
-                      if (this.toolHandler.options.lineType === "physics") {
-                          lineObject = s.addPhysicsLine(x1, y1, x2, y2);
-                      } else {
-                          lineObject = s.addSceneryLine(x1, y1, x2, y2);
-                      }
-                      
-                      if (lineObject) {
-                          addedObjects.push(lineObject);
-                      }
+            if (this.active && this.toolHandler) {
+              const t = this.p1;
+              const e = this.p2;
+              const s = this.scene.track;
+              const i = GameSettings.circle.segmentLength * 10;
+
+              const radius = Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
+              const segments = Math.ceil(Math.max(4, Math.round((radius / i) / 2) * 2));
+              const angleIncrement = (2 * Math.PI) / segments;
+              const addedObjects = [];
+
+              for (let j = 0; j < segments; j++) {
+                const angle = j * angleIncrement;
+                const x1 = t.x + radius * Math.cos(angle);
+                const y1 = t.y + radius * Math.sin(angle);
+                const x2 = t.x + radius * Math.cos(angle + angleIncrement);
+                const y2 = t.y + radius * Math.sin(angle + angleIncrement);
+
+                let lineObject;
+
+                if (!this.toolHandler.options.object) {
+                  if (this.toolHandler.options.lineType === "physics") {
+                    lineObject = s.addPhysicsLine(x1, y1, x2, y2);
+                  } else {
+                    lineObject = s.addSceneryLine(x1, y1, x2, y2);
                   }
-          
-                  // add actions to timeline
-                  if (addedObjects.length > 0) {
-                      this.toolHandler.addActionToTimeline({
-                          type: "add",
-                          objects: addedObjects
-                      }
-                    );
-                  }
-          
-                  // reset snap point and active flag
-                  this.toolHandler.snapPoint.x = e.x;
-                  this.toolHandler.snapPoint.y = e.y;
-                  
-                  this.active = false;
+                }
+
+                if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+                  const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                    x1: x1 + line.x1,
+                    y1: y1 + line.y1,
+                    x2: x1 + line.x2,
+                    y2: y1 + line.y2
+                  }));
+
+                  const modifiedScenery = this.scene.objectScenery.map(line => ({
+                    x1: x1 + line.x1,
+                    y1: y1 + line.y1,
+                    x2: x1 + line.x2,
+                    y2: y1 + line.y2
+                  }));
+
+                  modifiedPhysics.forEach(point => {
+                    const lineObject = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                    if (lineObject) {
+                      addedObjects.push(lineObject);
+                    }
+                  });
+
+                  modifiedScenery.forEach(point => {
+                    const lineObject = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                    if (lineObject) {
+                      addedObjects.push(lineObject);
+                    }
+                  });
+                }
+
+                if (lineObject) {
+                  addedObjects.push(lineObject);
+                }
               }
+
+              if (addedObjects.length > 0) {
+                this.toolHandler.addActionToTimeline({
+                  type: "add",
+                  objects: addedObjects
+                });
+              }
+
+              this.toolHandler.snapPoint.x = e.x;
+              this.toolHandler.snapPoint.y = e.y;
+
+              this.active = false;
+            }
           }
           update() {
             super.update();
@@ -18161,7 +18336,7 @@
             if (t.snapPoint = this.scene.track.defaultLine.p2) {
                 t.snapPoint = this.p1
             }
-            if (GameSettings.snapNear) {
+            if (GameSettings.snapNear && !this.options.object) {
             t.options.snap && (this.active = !0,
             this.p1 = t.snapPoint,
             this.hold()),
@@ -18187,6 +18362,7 @@
                 , e = this.options;
               return e.lineType = t.options.lineType,
               e.snap = t.options.snap,
+              e.object = t.options.object,
               e
           }
           draw() {
@@ -18204,6 +18380,39 @@
           drawCursor(t) {
               const e = this.mouse.touch.real.toScreenSnapped(this.scene)
                 , s = this.camera.zoom;
+                if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+                  const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                    x1: e.x + line.x1 * s,
+                    y1: e.y + line.y1 * s,
+                    x2: e.x + line.x2 * s,
+                    y2: e.y + line.y2 * s
+                  }));
+      
+                  const modifiedScenery = this.scene.objectScenery.map(line => ({
+                    x1: e.x + line.x1 * s,
+                    y1: e.y + line.y1 * s,
+                    x2: e.x + line.x2 * s,
+                    y2: e.y + line.y2 * s
+                  }));
+      
+                  t.beginPath(),
+                    (t.lineWidth = 2 * s > 0.5 ? 2 * s : 0.5),
+                    (t.lineCap = "round"),
+                    modifiedScenery.forEach(point => {
+                      (t.strokeStyle = "#AAA");
+                      t.beginPath();
+                      t.moveTo(point.x1, point.y1);
+                      t.lineTo(point.x2, point.y2);
+                      t.stroke();
+                    });
+                  modifiedPhysics.forEach(point => {
+                    (t.strokeStyle = "#000");
+                    t.beginPath();
+                    t.moveTo(point.x1, point.y1);
+                    t.lineTo(point.x2, point.y2);
+                    t.stroke();
+                  });
+                }
               if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
                   const i = 5 * s;
                   t.beginPath(),
@@ -22624,6 +22833,9 @@
               this.tapToStartOrRestart.bind(this)
             ),
             this.customBrush = [];
+            this.objectPhysics = [];
+            this.objectScenery = [];
+
         }
         getCanvasOffset() {
           return this.settings.isStandalone
@@ -23109,7 +23321,7 @@
           switch (((this.state.dialogOptions = {}), t)) {
             case "import":
               break;
-            case "importBrush":
+            case "importObject":
               break;
             case "export":
               setTimeout(this.getTrackCode.bind(this), 750);
@@ -23164,6 +23376,12 @@
             case "grid":
               this.toolHandler.toggleGrid();
               break;
+            case "object":
+              this.toolHandler.toggleObject();
+              if (this.objectPhysics.length === 0) {
+                this.command("dialog", "importObject");
+              }
+              break;
             case "lock camera":
               this.toolHandler.toggleCameraLock();
               break;
@@ -23180,7 +23398,8 @@
               this.camera.decreaseZoom();
               break;
             case "change lineType":
-              (this.toolHandler.options.lineType = t[0]), this.stateChanged();
+              (this.toolHandler.options.lineType = t[0]), 
+              (this.toolHandler.options.object = !1), this.stateChanged();
               break;
             case "resize":
               this.resize();
@@ -23238,16 +23457,19 @@
                 this.trackUpdated = true
                 break;
             }
-            case "addBrush": {
+            case "addObject": {
               let e = t[0];
               if (e.length <= 0) {
                 e = false;
                 return;
               }
               if (e) {
-                this.customBrush = this.parseCoordinates(e);
+                const parsedLines = this.parseCoordinates(e);
+                this.objectPhysics = parsedLines.physicsLines
+                this.objectScenery = parsedLines.sceneryLines;
               } else {
-                this.customBrush = [];
+                this.objectPhysics = [];
+                this.objectScenery = [];
               }
               this.command("dialog", false);
               break;
@@ -23255,27 +23477,47 @@
           }
         }
         parseCoordinates(e) {
-          const lines = [];
+          const physicsLines = [];
+          const sceneryLines = [];
           const segments = e.split(',');
-
+        
           segments.forEach(segment => {
-            const [physicsSegment] = segment.split('#');
-
-            const points = physicsSegment.split(' ');
-            if (points.length >= 4) {
-              let prevX = parseInt(points[0], 32);
-              let prevY = parseInt(points[1], 32);
-
-              for (let i = 2; i < points.length; i += 2) {
-                const [x, y] = points.slice(i, i + 2).map(p => parseInt(p, 32));
-                lines.push({ x1: prevX, y1: prevY, x2: x, y2: y });
-                prevX = x;
-                prevY = y;
+            const [physicsSegment, scenerySegment] = segment.split('#');
+        
+            const parsePoints = (segment) => {
+              const points = segment.split(' ');
+              const segmentLines = [];
+        
+              if (points.length >= 4) {
+                let prevX = parseInt(points[0], 32);
+                let prevY = parseInt(points[1], 32);
+        
+                for (let i = 2; i < points.length; i += 2) {
+                  const [x, y] = points.slice(i, i + 2).map(p => parseInt(p, 32));
+                  segmentLines.push({ x1: prevX, y1: prevY, x2: x, y2: y });
+                  prevX = x;
+                  prevY = y;
+                }
               }
+        
+              return segmentLines;
+            };
+        
+            // Parse physics segment
+            if (physicsSegment) {
+              physicsLines.push(...parsePoints(physicsSegment));
             }
+        
+            // Parse scenery segment
+            if (scenerySegment) {
+              sceneryLines.push(...parsePoints(scenerySegment));
+            }
+        
+            // Note: If you need to handle powerups or other segments after the second hashtag,
+            // you can extend this function further to include that logic.
           });
-
-          return lines;
+        
+          return { physicsLines, sceneryLines };
         }
         combineTrackCodes(e, exportedCode) {
         let [oldPhysics, oldScenery, oldPowerups] = exportedCode.split('#');

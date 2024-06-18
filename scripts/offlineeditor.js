@@ -348,6 +348,7 @@
           x = e("./circlebottomtooloptions"),
           xx = e("./selectbottomtooloptions"),
           xxx = e("./snap"),
+          xxxx = e("./object"),
           s = e("./eraserbottomtooloptions"),
           l = e("./camerabottomtooloptions"),
           c = e("./straightlinebottomtooloptions"),
@@ -355,7 +356,9 @@
           d = e("./powerupbottomtooloptions"),
           p = e("../chromeapp/bottommenu"),
           h = e("./vehiclepowerupbottomtooloptions"),
-          v = e("./moveVehicle")
+          v = e("./moveVehicle"),
+          vv = e("./importObject"),
+          vvv = e("./selectionAsObject"),
           f = n.createClass({
             displayName: "BottomMenu",
             render: function () {
@@ -375,9 +378,6 @@
                 case "brush":
                   f = n.createElement(a, { options: t });
                   break;  
-                case "brush":
-                  f = n.createElement(a, { options: t });
-                  break;
                 case "eraser":
                   f = n.createElement(s, { options: t });
                   break;
@@ -406,8 +406,11 @@
                     e === "camera" && n.createElement(i, {active: this.props.data.cameraLocked }),
                     e !== "camera" && n.createElement(xxx, { active: this.props.data.snap }),
                     e !== "camera" && n.createElement(o, { active: this.props.data.grid }),
-                    n.createElement(r, { vehicle: this.props.data.vehicle }),
-                    n.createElement(v),
+                    e !== "camera" && n.createElement(xxxx, { active: this.props.data.object }),
+                    e === "camera" && n.createElement(r, { vehicle: this.props.data.vehicle }),
+                    e === "camera" && n.createElement(v),
+                    e !== "camera" && e !== "select" && n.createElement(vv),
+                    e === "select" && n.createElement(vvv),
                     n.createElement("span", { className: "divider" })
                   ),
                   m
@@ -428,10 +431,13 @@
         "./curvedlinebottomtooloptions": 8,
         "./eraserbottomtooloptions": 9,
         "./grid": 10,
+        "./object": 910,
         "./powerupbottomtooloptions": 11,
         "./straightlinebottomtooloptions": 12,
         "./vehicle": 13,
         "./moveVehicle": 913,
+        "./importObject": 9913,
+        "./selectionAsObject": 99913,
         "./vehiclepowerupbottomtooloptions": 14,
         react: 230,
       },
@@ -460,7 +466,7 @@
             toggleBrush: function () {
               if (!GameSettings.customBrush) {
                 "undefined" != typeof GameManager &&
-                GameManager.command("dialog", "importBrush");}
+                GameManager.command("dialog", "importObject");}
               GameSettings.customBrush = !GameSettings.customBrush;
               this.setState({ brushType: GameSettings.customBrush ? "CUSTOM" : "DEFAULT" });
             },
@@ -510,13 +516,13 @@
                       n.createElement(
                         "span",
                         { className: "bottomMenu-bold" },
-                        e.lineType
+                        e.object ? "object" : e.lineType
                       )
                     ),
-                    n.createElement("span", {},
+                    /*n.createElement("span", {},
                       n.createElement("button", {
                         onClick: this.toggleBrush
-                      }, this.state.brushType))
+                      }, this.state.brushType))*/
                   ),
                   n.createElement(
                     "div",
@@ -568,7 +574,7 @@
                       readOnly: true
                   }),
                   ),
-                  GameSettings.customBrush && n.createElement(
+                  /*GameSettings.customBrush && n.createElement(
                     "div",
                     { className: "horizontal-slider-container" },
                     n.createElement(
@@ -592,7 +598,7 @@
                       value: w.toFixed(1),
                       readOnly: true
                   }),
-                  ),
+                  ),*/
                 )
               );
             },
@@ -630,7 +636,7 @@
                   className: "toolName"
               }, "CIRCLE : ", n.createElement("span", {
                   className: "bottomMenu-bold"
-              }, e.lineType))), n.createElement("div", {
+              }, e.object ? "object" : e.lineType))), n.createElement("div", {
                   className: "horizontal-slider-container"
               }, n.createElement("span", {
                   className: "horizontal-slider-label"
@@ -878,23 +884,36 @@
                 this.setState({ scaleFactor: scale });
                 GameSettings.scaleFactor = scale;
             },
-            addBrush: function() {
-                let tool = GameManager.game.currentScene.toolHandler.tools.select,
-                    selected = tool.selected;
-                if (!selected?.length) return;
-                let {centerX, centerY} = tool.findCenter();
-                GameManager.game.currentScene.customBrush = selected
-                    .filter((i) => 'highlight' in i)
-                    .map((i) => {
-                        return {
-                            x1: i.p1.x - centerX,
-                            x2: i.p2.x - centerX,
-                            y1: i.p1.y - centerY,
-                            y2: i.p2.y - centerY,
-                        };
-                    });
-                GameSettings.customBrush = true;
-            },
+            addObject: function() {
+              let tool = GameManager.game.currentScene.toolHandler.tools.select,
+                  selected = tool.selected;
+                  if (!selected?.length) return;
+              let { centerX, centerY } = tool.findCenter();
+          
+              let objectPhysics = [];
+              let objectScenery = [];
+          
+              selected.forEach((i) => {
+                  if ('p1' in i && 'p2' in i) {
+                      let line = {
+                          x1: i.p1.x - centerX,
+                          x2: i.p2.x - centerX,
+                          y1: i.p1.y - centerY,
+                          y2: i.p2.y - centerY,
+                      };
+          
+                      if ('highlight' in i) {
+                          objectPhysics.push(line);
+                      } else {
+                          objectScenery.push(line);
+                      }
+                  }
+              });
+          
+              GameManager.game.currentScene.objectPhysics = objectPhysics;
+              GameManager.game.currentScene.objectScenery = objectScenery;
+              GameSettings.customBrush = true;
+          },
             render: function() {
                 var type = GameSettings.copy ? "COPY + PASTE" : "CUT + PASTE";
                 return n.createElement("div", {
@@ -952,9 +971,7 @@
                         readOnly: true
                     }), n.createElement("span", {
                         className: "toolName"
-                    }, n.createElement("button", {
-                        onClick: this.addBrush
-                    }, "USE SELECTION AS BRUSH")), 
+                    },), 
                 );
             }
         });
@@ -1025,7 +1042,7 @@
                     n.createElement(
                       "span",
                       { className: "bottomMenu-bold" },
-                      e.lineType
+                      e.object ? "object" : e.lineType
                     )
                   )
                 ), 
@@ -1239,6 +1256,41 @@
     }, {
       react: 230
     }],    
+    910: [function (e, t) {
+      var n = e("react"),
+        a = n.createClass({
+          displayName: "Object",
+          setObject: function (e) {
+            "undefined" != typeof GameManager && GameManager.command("object")
+          },
+          importObject: function () {
+            "undefined" != typeof GameManager && GameManager.command("dialog", "importObject");
+          },
+          stopClickPropagation: function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          },
+          render: function () {
+            var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_object ",
+              t = "cube cube-margin",
+              a = this.props.active;
+            a && (e += " bottomMenu-button-active",
+              t = "cube cube-margin");
+            var o = a ? "on" : "off";
+            return n.createElement("div", {
+              className: e,
+              onClick: this.setObject
+            }, n.createElement("span", {
+              className: t
+            }), n.createElement("span", {
+              className: "name"
+            }, "Object : ", o), a ? n.createElement("div", {}, n.createElement("span", {})) : null)
+          }
+        });
+      t.exports = a
+    }, {
+      react: 230
+    }],
     11: [
       function (e, t) {
         var n = e("react"),
@@ -1298,7 +1350,7 @@
                     n.createElement(
                       "span",
                       { className: "bottomMenu-bold" },
-                      e.lineType
+                      e.object ? "object" : e.lineType
                     )
                   )
                 )
@@ -1366,6 +1418,85 @@
                     n.createElement("button", {
                         onClick: this.moveVehicle
                     }, "SET START POSITION")))
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],
+    9913: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "importObject",
+            importObject: function () {
+              "undefined" != typeof GameManager && GameManager.command("dialog", "importObject");
+              "undefined" != typeof GameManager && GameManager.command("object");
+            },
+            render: function () {
+              var e =
+                  "bottomMenu-button-right bottomMenu-button_importObject ";
+              return (
+                    n.createElement(
+                      "div", { className: e },
+                    n.createElement("span", {},
+                      n.createElement("button", {
+                          onClick: this.importObject
+                      }, "IMPORT OBJECT")))
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],
+    99913: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "selectionAsObject",
+            selectionAsObject: function() {
+              let tool = GameManager.game.currentScene.toolHandler.tools.select,
+                  selected = tool.selected;
+                  if (!selected?.length) return;
+              let { centerX, centerY } = tool.findCenter();
+          
+              let objectPhysics = [];
+              let objectScenery = [];
+          
+              selected.forEach((i) => {
+                  if ('p1' in i && 'p2' in i) {
+                      let line = {
+                          x1: i.p1.x - centerX,
+                          x2: i.p2.x - centerX,
+                          y1: i.p1.y - centerY,
+                          y2: i.p2.y - centerY,
+                      };
+          
+                      if ('highlight' in i) {
+                          objectPhysics.push(line);
+                      } else {
+                          objectScenery.push(line);
+                      }
+                  }
+              });
+          
+              GameManager.game.currentScene.objectPhysics = objectPhysics;
+              GameManager.game.currentScene.objectScenery = objectScenery;
+              GameSettings.customBrush = true;
+              "undefined" != typeof GameManager && GameManager.command("object");
+          },
+            render: function () {
+              var e =
+                  "bottomMenu-button-right bottomMenu-button_selectionAsObject ";
+              return (
+                n.createElement(
+                    "div", { className: e, onClick: this.selectionAsObject},
+                  n.createElement("span", {},
+                    n.createElement("button", {
+                        onClick: this.selectionAsObject
+                    }, "SELECTION AS OBJECT")))
               );
             },
           });
@@ -2373,7 +2504,7 @@
           u = e("../chromeapp/upload"),
           d = e("../chromeapp/infodialog"),
           p = e("./clear"),
-          x = e("./importBrush"),
+          x = e("./importObject"),
           h = n.createClass({
             displayName: "Dialogs",
             className: "editorDialog",
@@ -2417,7 +2548,7 @@
                 case "clear":
                   f = n.createElement(p, null);
                   break;
-                case "importBrush":
+                case "importObject":
                   f = n.createElement(x, null);
                   break;
                 default:
@@ -2445,7 +2576,7 @@
         "./export": 23,
         "./help": 24,
         "./import": 25,
-        "./importBrush": 925,
+        "./importObject": 925,
         "./offline_editor_promo": 26,
         "./upload": 27,
         react: 230,
@@ -3737,8 +3868,8 @@
       function (e, t) {
         var n = e("react"),
           r = n.createClass({
-            displayName: "BrushDialog",
-            dialogName: "importBrush",
+            displayName: "ObjectDialog",
+            dialogName: "importObject",
             hasFileAPI: !!(window.File && window.FileList && window.FileReader),
             closeDialog: function () {
               "undefined" != typeof GameManager &&
@@ -3747,12 +3878,12 @@
             getInitialState: function () {
               return { isDragActive: !1 };
             },
-            addBrush: function () {
+            addObject: function () {
               var e = this.refs.code.getDOMNode(),
                 t = e.getAttribute("data-paste-code"),
                 n = e.value,
                 trackName = e.value.replace(/(\.\.\/)/g, ''),
-                url = `assets/tracks/brush/${trackName}.txt`;
+                url = `assets/tracks/object/${trackName}.txt`;
             
               if (e.value.includes('$')) {
                 e.value = `$use import to change settings`;
@@ -3760,20 +3891,20 @@
               }
             
               if (e.value === 'random') {
-                e.value = `$cannot add track as brush`;
+                e.value = `$cannot add track as object`;
                 return;
 
               } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {            
                 fetch(url)
                   .then(response => {
                     if (!response.ok) {
-                      throw new Error('no brush found, loading as track code.');
+                      throw new Error('no object found, loading as track code.');
                     }
                     return response.text();
                   })
                   .then(data => {
-                    this.processAddBrushData(data);
-                    console.log("brush loaded:", trackName);
+                    this.processAddObjectData(data);
+                    console.log("object loaded:", trackName);
                   })
                   .catch(error => {
                     console.error(error);
@@ -3782,11 +3913,11 @@
             
               t && (n = t),
                 "undefined" != typeof GameManager &&
-                GameManager.command("addBrush", n, !0);
+                GameManager.command("addObject", n, !0);
             },
-            processAddBrushData(data) {
+            processAddObjectData(data) {
               if ("undefined" != typeof GameManager) {
-                GameManager.command("addBrush", data, true);
+                GameManager.command("addObject", data, true);
               }
             },
             onDragLeave: function (e) {
@@ -3910,7 +4041,7 @@
                   n.createElement(
                     "h1",
                     { className: "editorDialog-content-title" },
-                    "IMPORT BRUSH"
+                    "IMPORT OBJECT"
                   )
                 ),
                 n.createElement(
@@ -3958,9 +4089,9 @@
                     {
                       className:
                         "primary-button primary-button-blue float-right margin-0-5",
-                      onClick: this.addBrush,
+                      onClick: this.addObject,
                     },
-                    "Add as Brush"
+                    "Add as Object"
                   ),
                   n.createElement(
                     "button",
@@ -4835,6 +4966,7 @@
           r = e("../tools/physicsline"),
           o = e("../tools/sceneryline"),
           i = e("../tools/snap"),
+          x = e("../tools/object"),
           a = n.createClass({
             displayName: "BrushToolOptions",
             render: function () {
@@ -4844,6 +4976,7 @@
                 null,
                 n.createElement(r, { active: "physics" === e.lineType }),
                 n.createElement(o, { active: "scenery" === e.lineType }),
+                n.createElement(x, { active: e.object === !0 }),
                 n.createElement(i, { active: e.snap === !0 })
               );
             },
@@ -4854,6 +4987,7 @@
         "../tools/physicsline": 47,
         "../tools/sceneryline": 49,
         "../tools/snap": 52,
+        "../tools/object": 947,
         react: 230,
       },
     ],
@@ -4862,6 +4996,7 @@
         , r = e("../tools/physicsline")
         , o = e("../tools/sceneryline")
         , i = e("../tools/snap")
+        , x = e("../tools/object")
         , a = n.createClass({
           displayName: "circleToolOptions",
           render: function() {
@@ -4870,6 +5005,8 @@
                   active: "physics" === e.lineType
               }), n.createElement(o, {
                   active: "scenery" === e.lineType
+              }), n.createElement(x, {
+                  active: e.object === !0
               }), n.createElement(i, {
                   active: e.snap === !0
               }))
@@ -4881,6 +5018,7 @@
       "../tools/physicsline": 47,
       "../tools/sceneryline": 49,
       "../tools/snap": 52,
+      "../tools/object": 947,
       react: 230
   }],
     32: [
@@ -4889,6 +5027,7 @@
           r = e("../tools/physicsline"),
           o = e("../tools/sceneryline"),
           i = e("../tools/snap"),
+          x = e("../tools/object"),
           a = n.createClass({
             displayName: "CurvedLineToolOptions",
             render: function () {
@@ -4898,6 +5037,7 @@
                 null,
                 n.createElement(r, { active: "physics" === e.lineType }),
                 n.createElement(o, { active: "scenery" === e.lineType }),
+                n.createElement(x, { active: e.object === !0 }),
                 n.createElement(i, { active: e.snap === !0 })
               );
             },
@@ -4908,6 +5048,7 @@
         "../tools/physicsline": 47,
         "../tools/sceneryline": 49,
         "../tools/snap": 52,
+        "../tools/object": 947,
         react: 230,
       },
     ],
@@ -5180,6 +5321,7 @@
           r = e("../tools/physicsline"),
           o = e("../tools/sceneryline"),
           i = e("../tools/snap"),
+          x = e("../tools/object"),
           a = n.createClass({
             displayName: "StraightLineToolOptions",
             render: function () {
@@ -5189,6 +5331,7 @@
                 null,
                 n.createElement(r, { active: "physics" === e.lineType }),
                 n.createElement(o, { active: "scenery" === e.lineType }),
+                n.createElement(x, { active: e.object === !0 }),
                 n.createElement(i, { active: e.snap === !0 })
               );
             },
@@ -5199,6 +5342,7 @@
         "../tools/physicsline": 47,
         "../tools/sceneryline": 49,
         "../tools/snap": 52,
+        "../tools/object": 947,
         react: 230,
       },
     ],
@@ -5585,6 +5729,32 @@
       },
       { react: 230 },
     ],
+    947: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "Object",
+            toggleObject: function () {
+              "undefined" != typeof GameManager && GameManager.command("object");
+            },
+            render: function () {
+              var e = "sideButton sideButton_physicsLine";
+              return (
+                this.props.active && (e += " active"),
+                n.createElement(
+                  "div",
+                  { className: e, onClick: this.toggleObject },
+                  n.createElement("span", {
+                    className: "cube",
+                  })
+                )
+              );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],
     48: [
       function (e, t) {
         var n = e("react"),
@@ -5824,7 +5994,7 @@
               a = this.props.active;
             a && (e += " bottomMenu-button-active",
               t = "editorgui_icons editorgui_icons-icon_snapbottom_on");
-            var o = ""
+            var o = a ? "" : "off";
             return n.createElement("div", {
               className: e,
               onClick: this.setSnap
@@ -5832,7 +6002,7 @@
               className: t
             }), n.createElement("span", {
               className: "name"
-            }, "Snap : ", o), n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()))
+            }, "Snap : ", o), a ? n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()) : null)
           }
         });
       t.exports = a
