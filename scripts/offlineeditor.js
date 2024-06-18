@@ -878,6 +878,23 @@
                 this.setState({ scaleFactor: scale });
                 GameSettings.scaleFactor = scale;
             },
+            addBrush: function() {
+                let tool = GameManager.game.currentScene.toolHandler.tools.select,
+                    selected = tool.selected;
+                if (!selected?.length) return;
+                let {centerX, centerY} = tool.findCenter();
+                GameManager.game.currentScene.customBrush = selected
+                    .filter((i) => 'highlight' in i)
+                    .map((i) => {
+                        return {
+                            x1: i.p1.x - centerX,
+                            x2: i.p2.x - centerX,
+                            y1: i.p1.y - centerY,
+                            y2: i.p2.y - centerY,
+                        };
+                    });
+                GameSettings.customBrush = true;
+            },
             render: function() {
                 var type = GameSettings.copy ? "COPY + PASTE" : "CUT + PASTE";
                 return n.createElement("div", {
@@ -933,7 +950,11 @@
                         className: "bottomToolOptions-input bottomToolOptions-input_vehiclepoweruptime",
                         value: this.state.scaleFactor.toFixed(2),
                         readOnly: true
-                    })
+                    }), n.createElement("span", {
+                        className: "toolName"
+                    }, n.createElement("button", {
+                        onClick: this.addBrush
+                    }, "USE SELECTION AS BRUSH")), 
                 );
             }
         });
