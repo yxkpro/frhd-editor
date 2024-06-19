@@ -23712,6 +23712,7 @@
                 this.transformObjects();
                 GameSettings.objectRotate = 0;
                 GameSettings.objectScale = 1;
+                !this.toolHandler.options.object && this.toolHandler.toggleObject();
               } else {
                 this.objectPhysics = [];
                 this.objectScenery = [];

@@ -403,13 +403,13 @@
                     "div",
                     { className: "clearfix" },
                     f,
-                    e === "camera" && n.createElement(i, {active: this.props.data.cameraLocked }),
-                    e !== "camera" && n.createElement(xxx, { active: this.props.data.snap }),
-                    e !== "camera" && n.createElement(o, { active: this.props.data.grid }),
-                    e !== "camera" && n.createElement(xxxx, { active: this.props.data.object }),
-                    e === "camera" && n.createElement(r, { vehicle: this.props.data.vehicle }),
-                    e === "camera" && n.createElement(v),
-                    e !== "camera" && e !== "select" && n.createElement(vv),
+                    (e === "camera" || e === "pete") && n.createElement(i, {active: this.props.data.cameraLocked }),
+                    e !== "camera" && e !== "pete" && n.createElement(xxx, { active: this.props.data.snap }),
+                    e !== "camera" && e !== "pete" && n.createElement(o, { active: this.props.data.grid }),
+                    e !== "camera" && e !== "pete" && e !== "select" && n.createElement(xxxx, { active: this.props.data.object }),
+                    (e === "camera" || e === "pete") && n.createElement(r, { vehicle: this.props.data.vehicle }),
+                    (e === "camera" || e === "pete") && n.createElement(v),
+                    e !== "camera" && e !== "select" && e !== "pete" && n.createElement(vv),
                     e === "select" && n.createElement(vvv),
                     n.createElement("span", { className: "divider" })
                   ),
@@ -1493,7 +1493,7 @@
             clearObject: function () {
               GameManager.game.currentScene.objectPhysics = [];
               GameManager.game.currentScene.objectScenery = [];
-              "undefined" != typeof GameManager && GameManager.command("object");
+              GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
               GameManager.game.currentScene.toolHandler.options.lineType = "physics";
             },
             render: function () {
