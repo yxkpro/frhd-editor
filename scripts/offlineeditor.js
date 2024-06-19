@@ -456,10 +456,6 @@
               "undefined" != typeof GameManager &&
                 GameManager.command("change tool option", "breakLength", e);
             },
-            adjustBrushSize: function (e) {
-              "undefined" != typeof GameManager &&
-                GameManager.command("change tool option", "brushSize", e);
-            },
             getInitialState: function () {
               return { brushType: GameSettings.customBrush ? "CUSTOM" : "DEFAULT" };
             },

@@ -16991,6 +16991,10 @@
         
           let scale = GameSettings.objectScale;
           let rotate = GameSettings.objectRotate;
+          let offsetX = GameSettings.objectOffsetX;
+          let offsetY = GameSettings.objectOffsetY;
+          let flipX = GameSettings.objectFlipX;
+          let flipY = GameSettings.objectFlipY;
                   
           const t = this.gamepad,
                 e = this.mouse;
@@ -17018,6 +17022,38 @@
             scale = Math.max(minScale, Math.min(maxScale, scale));
             GameSettings.objectScale = scale;
             t.setButtonUp("scale");
+          }
+
+          if (t.isButtonDown("flip")) {
+            if (t.isButtonDown("shift")) {
+              flipY = !flipY;
+            } else {
+              flipX = !flipX;
+            }
+            GameSettings.objectFlipX = flipX;
+            GameSettings.objectFlipY = flipY;
+            t.setButtonUp("flip");
+          }
+
+          if (t.isButtonDown("shift")) {
+            if (t.isButtonDown("up")) {
+              t.setButtonUp("up");
+              (offsetY -= 1);
+            }
+            if (t.isButtonDown("down")) {
+              t.setButtonUp("down");
+              (offsetY += 1)
+            }
+            if (t.isButtonDown("right")) {
+              t.setButtonUp("right");
+              (offsetX += 1)
+            }
+            if (t.isButtonDown("left")) {
+              t.setButtonUp("left");
+              (offsetX -= 1);
+            }
+            GameSettings.objectOffsetX = offsetX;
+            GameSettings.objectOffsetY = offsetY;
           }
 
           this.scene.transformObjects();
@@ -17916,6 +17952,7 @@
             s = t.camera.zoom;
           e.save(),
             this.drawCursor(e),
+            this.drawObjectData(e, this.p2, s),
             this.active &&
               (this.drawLine(e, s),
               this.drawPoint(e, this.p1, s),
@@ -17985,6 +18022,42 @@
             (t.lineWidth = 1),
             (t.fillStyle = "#1884cf"),
             t.fill();
+        }
+        drawObjectData(t, e) {
+          const s = this.mouse.touch.real.toScreenSnapped(this.scene);
+          if (this.options.object && this.toolHandler.gamepad.isButtonDown("ctrl")) {
+              const rotate = GameSettings.objectRotate;
+              const scale = GameSettings.objectScale.toFixed(1);
+              const offsetX = GameSettings.objectOffsetX;
+              const offsetY = GameSettings.objectOffsetY;
+              const flipX = GameSettings.objectFlipX ? "X " : "";
+              const flipY = GameSettings.objectFlipY ? "Y" : "";
+              const noFlip = !GameSettings.objectFlipX && !GameSettings.objectFlipY ? "none" : "";
+              const i = this.game.pixelRatio;
+              let n =
+                  Math.sqrt(
+                      Math.pow(this.p1.x - this.p2.x, 2) +
+                      Math.pow(this.p1.y - this.p2.y, 2)
+                  ) / 10;
+              n = n.toFixed(2);
+              let r = 100;
+
+              t.textAlign = "left";
+              t.fillStyle = "#000000";
+              t.strokeStyle = "#ffffff";
+              t.font = "bold " + 10 * i + "pt arial";
+              t.lineWidth = 5 * i;
+          
+              t.strokeText(rotate + "°", s.x + r, s.y - r + 10 * i);
+              t.strokeText(scale + "x", s.x + r, s.y - r + 25 * i);
+              t.strokeText("flip: " + flipX + flipY, s.x + r, s.y - r + 40 * i);
+              t.strokeText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
+          
+              t.fillText(rotate + "°", s.x + r, s.y - r + 10 * i);
+              t.fillText(scale + "x", s.x + r, s.y - r + 25 * i);
+              t.fillText("flip: " + flipX + flipY + noFlip, s.x + r, s.y - r + 40 * i);
+              t.fillText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
+          }
         }
         drawPointData(t, e) {
           const s = e.toScreenSnapped(this.scene);
@@ -18068,10 +18141,6 @@
               maxTrailSpeed: s.maxTrailSpeed,
               minTrailSpeed: s.minTrailSpeed,
               trailSpeedSensitivity: s.trailSpeedSensitivity,
-              brushSize: s.brushSize,
-              maxBrushSize: s.maxBrushSize,
-              minBrushSize: s.minBrushSize,
-              brushSizeSensitivity: s.brushSizeSensitivity,
             });
         }
         recordActionsToToolhandler() {
@@ -18322,11 +18391,6 @@
             (this.p2.x = e.touch.real.x),
             (this.p2.y = e.touch.real.y))
           }
-          if (this.toolHandler.options.object) {
-          t.isButtonDown("shift") &&
-            !1 !== e.mousewheel &&
-            this.adjustBrushSize(e.mousewheel)
-          }
             super.update();
         }
         adjustTrailSpeed(t) {
@@ -18345,16 +18409,6 @@
             n = this.options.minBreakLength;
           t > 0 ? ((e += s), e > i && (e = i)) : ((e -= s), n > e && (e = n)),
             this.setOption("breakLength", e);
-            this.scene.stateChanged();
-        }
-        adjustBrushSize(t) {
-          let e = this.options.brushSize;
-          const s = this.options.brushSizeSensitivity,
-            i = this.options.maxBrushSize,
-            n = this.options.minBrushSize;
-          (e += t > 0 ? s : -s),
-            (e = Math.max(n, Math.min(i, e))),
-            this.setOption("brushSize", e);
             this.scene.stateChanged();
         }
         
@@ -23699,19 +23753,18 @@
                 return;
               }
               if (e) {
-                console.log("e", e)
                 const parsedLines = this.parseCoordinates(e);
                 this.objectPhysics = parsedLines.physicsLines;
                 this.objectScenery = parsedLines.sceneryLines;
-                let { physicsLines, sceneryLines } = this.parseCoordinates(e);
-                console.log("Physics lines:", physicsLines);
-                console.log("Scenery lines:", sceneryLines);
-                console.log("objectScenery", this.objectScenery)
                 this.modObjectPhysics = [];
                 this.modObjectScenery = [];
                 this.transformObjects();
                 GameSettings.objectRotate = 0;
                 GameSettings.objectScale = 1;
+                GameSettings.objectOffsetX = 0;
+                GameSettings.objectOffsetY = 0;
+                GameSettings.objectFlipX = !1;
+                GameSettings.objectFlipY = !1;
                 !this.toolHandler.options.object && this.toolHandler.toggleObject();
               } else {
                 this.objectPhysics = [];
@@ -23772,35 +23825,39 @@
       
           const rotate = GameSettings.objectRotate;
           const scale = GameSettings.objectScale;
+          const offsetX = GameSettings.objectOffsetX;
+          const offsetY = GameSettings.objectOffsetY;
+          const flipX = GameSettings.objectFlipX ? -1 : 1;
+          const flipY = GameSettings.objectFlipY ? -1 : 1;
 
           const angle = rotate * (Math.PI / 180);
           const cosAngle = Math.cos(angle);
           const sinAngle = Math.sin(angle);
       
           this.modObjectPhysics = this.objectPhysics.map(line => {
-              const x1 = line.x1 * scale;
-              const y1 = line.y1 * scale;
-              const x2 = line.x2 * scale;
-              const y2 = line.y2 * scale;
+              const x1 = (line.x1 * scale) + offsetX;
+              const y1 = (line.y1 * scale) + offsetY;
+              const x2 = (line.x2 * scale) + offsetX;
+              const y2 = (line.y2 * scale) + offsetY;
       
-              const newX1 = x1 * cosAngle - y1 * sinAngle;
-              const newY1 = x1 * sinAngle + y1 * cosAngle;
-              const newX2 = x2 * cosAngle - y2 * sinAngle;
-              const newY2 = x2 * sinAngle + y2 * cosAngle;
+              const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
+              const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
+              const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
+              const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
       
               return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
           });
       
           this.modObjectScenery = this.objectScenery.map(line => {
-              const x1 = line.x1 * scale;
-              const y1 = line.y1 * scale;
-              const x2 = line.x2 * scale;
-              const y2 = line.y2 * scale;
-      
-              const newX1 = x1 * cosAngle - y1 * sinAngle;
-              const newY1 = x1 * sinAngle + y1 * cosAngle;
-              const newX2 = x2 * cosAngle - y2 * sinAngle;
-              const newY2 = x2 * sinAngle + y2 * cosAngle;
+              const x1 = (line.x1 * scale) + offsetX;
+              const y1 = (line.y1 * scale) + offsetY;
+              const x2 = (line.x2 * scale) + offsetX;
+              const y2 = (line.y2 * scale) + offsetY;
+    
+              const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
+              const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
+              const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
+              const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
       
               return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
           });
