@@ -1495,7 +1495,6 @@
               GameManager.game.currentScene.objectScenery = [];
               "undefined" != typeof GameManager && GameManager.command("object");
               GameManager.game.currentScene.toolHandler.options.lineType = "physics";
-              this.stateChange();
             },
             render: function () {
               var e =

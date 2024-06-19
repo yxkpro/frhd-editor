@@ -17006,7 +17006,7 @@
             }
             rotate = (rotate + 360) % 360;
             GameSettings.objectRotate = rotate;
-            console.log(GameSettings.objectRotate);
+            t.setButtonUp("rotate");
           }
 
           if (t.isButtonDown("scale")) {
@@ -17017,6 +17017,7 @@
             }
             scale = Math.max(minScale, Math.min(maxScale, scale));
             GameSettings.objectScale = scale;
+            t.setButtonUp("scale");
           }
 
           this.scene.transformObjects();
@@ -17100,8 +17101,7 @@
             t.isButtonDown("zoom_100") &&
               (t.setButtonUp("zoom_100"), this.scene.camera.resetZoom()),
             t.isButtonDown("lineType") &&
-              (t.setButtonUp("lineType"), this.toggleLineType()),
-              t.isButtonDown("scale") && (t.isButtonDown("rotate"));
+              (t.setButtonUp("lineType"), this.toggleLineType());
         }
         toggleLineType() {
           (this.options.lineType =
@@ -23699,9 +23699,14 @@
                 return;
               }
               if (e) {
+                console.log("e", e)
                 const parsedLines = this.parseCoordinates(e);
-                this.objectPhysics = parsedLines.physicsLines
+                this.objectPhysics = parsedLines.physicsLines;
                 this.objectScenery = parsedLines.sceneryLines;
+                let { physicsLines, sceneryLines } = this.parseCoordinates(e);
+                console.log("Physics lines:", physicsLines);
+                console.log("Scenery lines:", sceneryLines);
+                console.log("objectScenery", this.objectScenery)
                 this.modObjectPhysics = [];
                 this.modObjectScenery = [];
                 this.transformObjects();
@@ -23716,17 +23721,29 @@
             }
           }
         }
-        parseCoordinates(e) {
-          const physicsLines = [];
-          const sceneryLines = [];
-          const segments = e.split(',');
+        parseCoordinates(t) {
+          const e = t.split("#");
+          let s = e[0].split(",");
+          let n = [];
+          let r = [];
+          let i;
         
-          segments.forEach(segment => {
-            const [physicsSegment, scenerySegment] = segment.split('#');
+          if (e.length > 3) {
+            n = e[1].split(",");
+            r = e[2].split(",");
+            i = e[3];
+          } else if (e.length > 2) {
+            n = e[1].split(",");
+            r = e[2].split(",");
+          } else if (e.length > 1) {
+            r = e[1].split(",");
+          }
         
-            const parsePoints = (segment) => {
-              const points = segment.split(' ');
-              const segmentLines = [];
+          const parsePoints = (lines) => {
+            const segmentLines = [];
+        
+            lines.forEach(line => {
+              const points = line.trim().split(' ');
         
               if (points.length >= 4) {
                 let prevX = parseInt(points[0], 32);
@@ -23739,19 +23756,13 @@
                   prevY = y;
                 }
               }
+            });
         
-              return segmentLines;
-            };
+            return segmentLines;
+          };
         
-            if (physicsSegment) {
-              physicsLines.push(...parsePoints(physicsSegment));
-            }
-        
-            if (scenerySegment) {
-              sceneryLines.push(...parsePoints(scenerySegment));
-            }
-        
-          });
+          const physicsLines = parsePoints(s);
+          const sceneryLines = parsePoints(n.concat(r));
         
           return { physicsLines, sceneryLines };
         }
@@ -23783,7 +23794,7 @@
               const x1 = line.x1 * scale;
               const y1 = line.y1 * scale;
               const x2 = line.x2 * scale;
-              const y2 = line.x2 * scale;
+              const y2 = line.y2 * scale;
       
               const newX1 = x1 * cosAngle - y1 * sinAngle;
               const newY1 = x1 * sinAngle + y1 * cosAngle;
