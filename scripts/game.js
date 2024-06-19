@@ -17055,6 +17055,11 @@
             GameSettings.objectOffsetX = offsetX;
             GameSettings.objectOffsetY = offsetY;
           }
+          
+          if (t.isButtonDown("shift") && t.isButtonDown("alt")) {
+            GameSettings.objectInvert = !GameSettings.objectInvert;
+            t.setButtonUp("alt");
+          }
 
           this.scene.transformObjects();
           this.scene.stateChanged();
@@ -17167,6 +17172,7 @@
             this.scene.stateChanged();
         }
         toggleQuickSnap() {
+          if (this.gamepad.isButtonDown("shift")) return;
           this.options.snapLocked ||
             ((this.options.snap = !this.options.snap),
             this.resetTool(),
@@ -23829,11 +23835,13 @@
           const offsetY = GameSettings.objectOffsetY;
           const flipX = GameSettings.objectFlipX ? -1 : 1;
           const flipY = GameSettings.objectFlipY ? -1 : 1;
+          const invert = GameSettings.objectInvert;
 
           const angle = rotate * (Math.PI / 180);
           const cosAngle = Math.cos(angle);
           const sinAngle = Math.sin(angle);
       
+          if (!invert) {
           this.modObjectPhysics = this.objectPhysics.map(line => {
               const x1 = (line.x1 * scale) + offsetX;
               const y1 = (line.y1 * scale) + offsetY;
@@ -23861,6 +23869,36 @@
       
               return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
           });
+          }
+          else {
+            this.modObjectScenery = this.objectPhysics.map(line => {
+                const x1 = (line.x1 * scale) + offsetX;
+                const y1 = (line.y1 * scale) + offsetY;
+                const x2 = (line.x2 * scale) + offsetX;
+                const y2 = (line.y2 * scale) + offsetY;
+        
+                const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
+                const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
+                const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
+                const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
+        
+                return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+            });
+        
+            this.modObjectPhysics = this.objectScenery.map(line => {
+                const x1 = (line.x1 * scale) + offsetX;
+                const y1 = (line.y1 * scale) + offsetY;
+                const x2 = (line.x2 * scale) + offsetX;
+                const y2 = (line.y2 * scale) + offsetY;
+      
+                const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
+                const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
+                const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
+                const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
+        
+                return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+            });
+            }
       }
         combineTrackCodes(e, exportedCode) {
         let [oldPhysics, oldScenery, oldPowerups] = exportedCode.split('#');
