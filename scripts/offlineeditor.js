@@ -469,19 +469,15 @@
             render: function () {
               var brushType = GameSettings.customBrush ? "CUSTOM" : "DEFAULT";
               var e = this.props.options,
-                t = 0,
-                o = 0,
-                i = 100,
-                a = 1,
-                s = 0,
-                l = 0,
-                c = 100,
-                u = 1,
-                d = 0,
-                w = 1,
-                x = 5,
-                y = 1,
-                z = 0.1;
+                t = 1,
+                o = 0.01,
+                i = 1,
+                a = 0.1,
+                s = 0.2,
+                l = 0.01,
+                c = 5,
+                u = 0.1,
+                d = 0;
               return (
                 e &&
                 ((t = e.trailSpeed),
@@ -613,11 +609,11 @@
           },
           render: function() {
               var e = this.props.options
-                , s = 0
-                , l = 0
-                , c = 100
-                , u = 1
-                , d = 0;
+              , s = 0.4
+              , l = 0.1
+              , c = 1
+              , u = 0.1
+              , d = 0;
               return e && (s = e.segmentLength,
               l = e.minSegmentLength,
               c = e.maxSegmentLength,

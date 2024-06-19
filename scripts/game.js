@@ -17062,7 +17062,6 @@
           }
 
           this.scene.transformObjects();
-          this.scene.stateChanged();
         
           if (!this.mouse.mousewheel) return;
         
@@ -17079,9 +17078,7 @@
             GameSettings.objectRotate = rotate;
             this.scene.transformObjects();
           }
-
-          this.scene.stateChanged();
-        
+          
           this.mouse.mousewheel = 0;
         }
       
@@ -18647,7 +18644,6 @@
           setOption(t, e) {
               this.options[t] = e;
               GameSettings.circle.segmentLength = e;
-              this.scene.stateChanged();
           }
           getOptions() {
               const t = this.toolHandler
