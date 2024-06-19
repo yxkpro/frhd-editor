@@ -1782,6 +1782,14 @@ html.fullscreen #main_page {
     cursor: pointer
 }
 
+.margin {
+    margin: 0 5px;
+}
+
+.width {
+    min-width: 50px;
+}
+
 .bottomMenu-button>.name {
     margin-left: 5px
 }

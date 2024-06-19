@@ -65,6 +65,10 @@ var GameSettings = {
     "lineTrim": false,
     "cameraSpeed": 3,
     "brushRotate": false,
+    "objectRotate": 0,
+    "objectScale": 1,
+    "rotateSensitivity": 5,
+    "scaleSensitivity": 0.1,
     "raceColors": ["rgba(57,185,117,1)", "rgba(0,152,189,1)", "rgba(151,95,162,1)", "rgba(253,85,91,1)", "rgba(245,126,64,1)", "rgba(247,212,62,1)", "rgba(170,221,114,1)", "rgba(72,217,207,1)", "rgba(0,124,212,1)", "rgba(226,108,216,1)"],
     "toolHandler": {
         "snap": false,

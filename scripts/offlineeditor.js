@@ -1261,22 +1261,76 @@
         a = n.createClass({
           displayName: "Object",
           setObject: function (e) {
-            "undefined" != typeof GameManager && GameManager.command("object")
+            if (typeof GameManager !== "undefined") {
+              GameManager.command("object");
+            }
           },
           importObject: function () {
-            "undefined" != typeof GameManager && GameManager.command("dialog", "importObject");
+            if (typeof GameManager !== "undefined") {
+              GameManager.command("dialog", "importObject");
+            }
+          },
+          /*changeRotateSensitivity: function (e) {
+            var t = parseInt(e.target.value, 10);
+            GameSettings.rotateSensitivity = t;
+            console.log(GameSettings.rotateSensitivity);
+            GameManager.command("redraw");
+            e.preventDefault();
+            e.stopPropagation();
+            return !1;
+          },
+          changeScaleSensitivity: function (e) {
+            var t = parseInt(e.target.value, 10);
+            GameSettings.scaleSensitivity = t;
+            console.log(GameSettings.scaleSensitivity);
+            GameManager.command("redraw");
+            e.preventDefault();
+            e.stopPropagation();
+            return !1;
+          },
+          renderRotateSensitivitySelect: function () {
+            var e = GameSettings.rotateSensitivity,
+              t = [5, 15, 30, 45, 90];
+            return n.createElement("select", {
+              ref: "rotateSensitivity",
+              defaultValue: e,
+              onChange: this.changeRotateSensitivity,
+              onClick: this.stopClickPropagation
+            }, t.map(function (e) {
+              return n.createElement("option", {
+                key: e,
+                value: e
+              }, e);
+            }));
+          },
+          renderScaleSensitivitySelect: function () {
+            var e = GameSettings.scaleSensitivity,
+              t = [0.1, 0.5, 1, 2, 5];
+            return n.createElement("select", {
+              ref: "scaleSensitivity",
+              defaultValue: e,
+              onChange: this.changeScaleSensitivity,
+              onClick: this.stopClickPropagation
+            }, t.map(function (e) {
+              return n.createElement("option", {
+                key: e,
+                value: e
+              }, e);
+            }));
           },
           stopClickPropagation: function (e) {
             e.preventDefault();
             e.stopPropagation();
-          },
+          },*/
           render: function () {
             var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_object ",
               t = "cube cube-margin",
               a = this.props.active;
-            a && (e += " bottomMenu-button-active",
-              t = "cube cube-margin");
-            var o = a ? "on" : "off";
+            if (a) {
+              e += " bottomMenu-button-active";
+              t = "cube cube-margin";
+            }
+            var o = a ? "" : "off";
             return n.createElement("div", {
               className: e,
               onClick: this.setObject
@@ -1284,13 +1338,16 @@
               className: t
             }), n.createElement("span", {
               className: "name"
-            }, "Object : ", o), a ? n.createElement("div", {}, n.createElement("span", {})) : null)
+            }, "Object : ", o), a ? 
+            n.createElement("div", {}, 
+            n.createElement("span", {className: "horizontal-slider-label margin width"}, " Rotate : ", GameSettings.objectRotate, "°"), 
+            n.createElement("span", {className: "horizontal-slider-label"}, " Scale : ", GameSettings.objectScale.toFixed(1), "x")) : null);
           }
         });
-      t.exports = a
-    }, {
-      react: 230
-    }],
+      t.exports = a;
+      }, {
+        react: 230
+      }],
     11: [
       function (e, t) {
         var n = e("react"),
@@ -1432,16 +1489,27 @@
             displayName: "importObject",
             importObject: function () {
               "undefined" != typeof GameManager && GameManager.command("dialog", "importObject");
+            },
+            clearObject: function () {
+              GameManager.game.currentScene.objectPhysics = [];
+              GameManager.game.currentScene.objectScenery = [];
               "undefined" != typeof GameManager && GameManager.command("object");
+              GameManager.game.currentScene.toolHandler.options.lineType = "physics";
+              this.stateChange();
             },
             render: function () {
               var e =
-                  "bottomMenu-button-right bottomMenu-button_importObject ";
+                  "bottomMenu-button-right bottomMenu-button-2 bottomMenu-button_importObject ";
               return (
                     n.createElement(
                       "div", { className: e },
                     n.createElement("span", {},
                       n.createElement("button", {
+                        className: "margin",
+                        onClick: this.clearObject
+                    }, "CLEAR OBJECT"),
+                      n.createElement("button", {
+                          className: "margin",
                           onClick: this.importObject
                       }, "IMPORT OBJECT")))
               );
@@ -1484,15 +1552,18 @@
           
               GameManager.game.currentScene.objectPhysics = objectPhysics;
               GameManager.game.currentScene.objectScenery = objectScenery;
+              GameSettings.objectRotate = 0;
+              GameSettings.objectScale = 1;
+              GameManager.game.currentScene.transformObjects();
               GameSettings.customBrush = true;
-              "undefined" != typeof GameManager && GameManager.command("object");
+              !GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
           },
             render: function () {
               var e =
                   "bottomMenu-button-right bottomMenu-button_selectionAsObject ";
               return (
                 n.createElement(
-                    "div", { className: e, onClick: this.selectionAsObject},
+                    "div", { className: e},
                   n.createElement("span", {},
                     n.createElement("button", {
                         onClick: this.selectionAsObject

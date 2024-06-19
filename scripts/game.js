@@ -12055,6 +12055,7 @@
           }
         }
         focusOnMainPlayer() {
+          if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("shift")) return;
           (0 === this.focusIndex && this.playerFocus) ||
             ((this.focusIndex = 0), this.focusOnPlayer());
         }
@@ -16918,7 +16919,8 @@
             this.checkHotkeys(),
             this.checkMouse(),
             this.checkSnap(),
-            this.snapNear();
+            this.snapNear(),
+            this.setObjectOptions();
         }
         checkGrid() {
           const t = this.scene.camera;
@@ -16984,6 +16986,63 @@
             this.snapPointOld = this.snapPoint;
           }
         }
+        setObjectOptions() {
+          if (!this.options.object) return;
+        
+          let scale = GameSettings.objectScale;
+          let rotate = GameSettings.objectRotate;
+                  
+          const t = this.gamepad,
+                e = this.mouse;
+              
+          const maxScale = 5;
+          const minScale = 0.1;
+        
+          if (t.isButtonDown("rotate")) {
+            if (t.isButtonDown("shift")) {
+              rotate -= GameSettings.rotateSensitivity;
+            } else {
+              rotate += GameSettings.rotateSensitivity;
+            }
+            rotate = (rotate + 360) % 360;
+            GameSettings.objectRotate = rotate;
+            console.log(GameSettings.objectRotate);
+          }
+
+          if (t.isButtonDown("scale")) {
+            if (t.isButtonDown("shift")) {
+              scale -= GameSettings.scaleSensitivity;
+            } else {
+              scale += GameSettings.scaleSensitivity;
+            }
+            scale = Math.max(minScale, Math.min(maxScale, scale));
+            GameSettings.objectScale = scale;
+          }
+
+          this.scene.transformObjects();
+          this.scene.stateChanged();
+        
+          if (!this.mouse.mousewheel) return;
+        
+          if (t.isButtonDown("shift") && !t.isButtonDown("alt") && e.mousewheel !== 0) {
+            scale += e.mousewheel > 0 ? GameSettings.scaleSensitivity : -GameSettings.scaleSensitivity;
+            scale = Math.max(minScale, Math.min(maxScale, scale));
+            GameSettings.objectScale = scale;
+            this.scene.transformObjects();
+          }
+
+          if (t.isButtonDown("shift") && t.isButtonDown("alt") && e.mousewheel !== 0) {
+            rotate += e.mousewheel > 0 ? GameSettings.rotateSensitivity : -GameSettings.rotateSensitivity;
+            rotate = (rotate + 360) % 360;
+            GameSettings.objectRotate = rotate;
+            this.scene.transformObjects();
+          }
+
+          this.scene.stateChanged();
+        
+          this.mouse.mousewheel = 0;
+        }
+      
         moveCameraTowardsMouse() {
           if (!1 === this.options.cameraLocked) {
             const t = this.scene.screen,
@@ -17041,7 +17100,8 @@
             t.isButtonDown("zoom_100") &&
               (t.setButtonUp("zoom_100"), this.scene.camera.resetZoom()),
             t.isButtonDown("lineType") &&
-              (t.setButtonUp("lineType"), this.toggleLineType());
+              (t.setButtonUp("lineType"), this.toggleLineType()),
+              t.isButtonDown("scale") && (t.isButtonDown("rotate"));
         }
         toggleLineType() {
           (this.options.lineType =
@@ -17316,50 +17376,187 @@
             e = this.p2,
             s = this.midpoint,
             i = this.toolHandler;
+
           if (this.anchoring && this.active) {
             if (s.x === e.x && s.y === e.y) {
-              const s = this.scene.track;
-              let n = !1;
-              (n =
-                "physics" === i.options.lineType
-                  ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
-                  : s.addSceneryLine(t.x, t.y, e.x, e.y)),
-                n && i.addActionToTimeline({ type: "add", objects: [n] });
-                (i.snapPoint.x = e.x),
-                (i.snapPoint.y = e.y);
-                (this.active = !1);
-            } else this.splitAndAddCurve();
-            (this.anchoring = !1), (this.active = !1);
-          } else
-            this.active &&
-              (ke(Se(e.x - t.x, 2) + Se(e.y - t.y, 2)) > 0 &&
-                (this.anchoring = !0),
-              (this.active = !1));
+              const track = this.scene.track;
+              let lineObject = false;
+
+              if (!i.options.object) {
+                lineObject = i.options.lineType === "physics"
+                  ? track.addPhysicsLine(t.x, t.y, e.x, e.y)
+                  : track.addSceneryLine(t.x, t.y, e.x, e.y);
+              }
+
+              if (i.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+                const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                  x1: t.x + line.x1,
+                  y1: t.y + line.y1,
+                  x2: t.x + line.x2,
+                  y2: t.y + line.y2
+                }));
+
+                const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                  x1: t.x + line.x1,
+                  y1: t.y + line.y1,
+                  x2: t.x + line.x2,
+                  y2: t.y + line.y2
+                }));
+
+                modifiedPhysics.forEach(point => {
+                  const lineObject = track.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                  if (lineObject) {
+                    i.addActionToTimeline({ type: "add", objects: [lineObject] });
+                  }
+                });
+
+                modifiedScenery.forEach(point => {
+                  const lineObject = track.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                  if (lineObject) {
+                    i.addActionToTimeline({ type: "add", objects: [lineObject] });
+                  }
+                });
+              }
+
+              if (lineObject) {
+                i.addActionToTimeline({ type: "add", objects: [lineObject] });
+              }
+
+              i.snapPoint.x = e.x;
+              i.snapPoint.y = e.y;
+              this.active = false;
+            } else {
+              this.splitAndAddCurve();
+            }
+
+            this.anchoring = false;
+            this.active = false;
+          } else if (this.active) {
+            if (Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2)) > 0) {
+              this.anchoring = true;
+            }
+            this.active = false;
+          }
         }
+
         updateAnchor() {
           this.midpoint.equ(this.mouse.touch.real);
         }
+
         splitAndAddCurve() {
           const t = Ce()(this.p1, this.midpoint, this.p2),
             e = this.scene.track,
             s = this.toolHandler,
             i = [];
+
           for (let n = 0; n < t.length - 2; n += 2) {
             const r = Math.round(t[n]),
               o = Math.round(t[n + 1]),
               a = Math.round(t[n + 2]),
               h = Math.round(t[n + 3]);
-            let l = !1;
-            (l =
-              "physics" === s.options.lineType
+            let lineObject = false;
+
+            if (!s.options.object) {
+              lineObject = s.options.lineType === "physics"
                 ? e.addPhysicsLine(r, o, a, h)
-                : e.addSceneryLine(r, o, a, h)),
-              l && i.push(l);
-              (s.snapPoint.x = a),
-              (s.snapPoint.y = h);
-                (this.active = !1);
+                : e.addSceneryLine(r, o, a, h);
+            }
+
+            if (s.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                x1: r + line.x1,
+                y1: o + line.y1,
+                x2: r + line.x2,
+                y2: o + line.y2
+              }));
+
+              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                x1: r + line.x1,
+                y1: o + line.y1,
+                x2: r + line.x2,
+                y2: o + line.y2
+              }));
+
+              modifiedPhysics.forEach(point => {
+                const lineObject = e.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                if (lineObject) {
+                  i.push(lineObject);
+                }
+              });
+
+              modifiedScenery.forEach(point => {
+                const lineObject = e.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                if (lineObject) {
+                  i.push(lineObject);
+                }
+              });
+            }
+
+            if (lineObject) {
+              i.push(lineObject);
+            }
+
+            s.snapPoint.x = a;
+            s.snapPoint.y = h;
           }
-          i.length > 0 && s.addActionToTimeline({ type: "add", objects: i });
+
+          const lastSegment = t.length - 2;
+          if (lastSegment >= 0) {
+            const r = Math.round(t[lastSegment]),
+              o = Math.round(t[lastSegment + 1]),
+              a = Math.round(this.p2.x),
+              h = Math.round(this.p2.y);
+            let lineObject = false;
+
+            if (!s.options.object) {
+              lineObject = s.options.lineType === "physics"
+                ? e.addPhysicsLine(r, o, a, h)
+                : e.addSceneryLine(r, o, a, h);
+            }
+
+            if (s.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                x1: r + line.x1,
+                y1: o + line.y1,
+                x2: r + line.x2,
+                y2: o + line.y2
+              }));
+
+              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                x1: r + line.x1,
+                y1: o + line.y1,
+                x2: r + line.x2,
+                y2: o + line.y2
+              }));
+
+              modifiedPhysics.forEach(point => {
+                const lineObject = e.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                if (lineObject) {
+                  i.push(lineObject);
+                }
+              });
+
+              modifiedScenery.forEach(point => {
+                const lineObject = e.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                if (lineObject) {
+                  i.push(lineObject);
+                }
+              });
+            }
+
+            if (lineObject) {
+              i.push(lineObject);
+            }
+
+            s.snapPoint.x = a;
+            s.snapPoint.y = h;
+          }
+
+          if (i.length > 0) {
+            s.addActionToTimeline({ type: "add", objects: i });
+          }
+
+          this.active = false;
         }
         update() {
           const t = this.mouse,
@@ -17367,7 +17564,7 @@
             s = t.secondaryTouch,
             i = this.toolHandler.gamepad,
             n = this.toolHandler;
-            i.isButtonDown("shift") &&
+            i.isButtonDown("shift") && !this.toolHandler.options.object &&
               !1 !== t.mousewheel &&
               this.adjustSegmentLength(t.mousewheel);
             if (n.snapPoint = this.scene.track.defaultLine.p2) {
@@ -17416,6 +17613,39 @@
         }
         drawCursor(t, e) {
           const s = this.mouse.touch.real.toScreenSnapped(this.scene);
+          if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+            const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+              x1: s.x + line.x1 * e,
+              y1: s.y + line.y1 * e,
+              x2: s.x + line.x2 * e,
+              y2: s.y + line.y2 * e
+            }));
+
+            const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+              x1: s.x + line.x1 * e,
+              y1: s.y + line.y1 * e,
+              x2: s.x + line.x2 * e,
+              y2: s.y + line.y2 * e
+            }));
+
+            t.beginPath(),
+              (t.lineWidth = 2 * e > 0.5 ? 2 * e : 0.5),
+              (t.lineCap = "round"),
+              modifiedScenery.forEach(point => {
+                (t.strokeStyle = "#AAA");
+                t.beginPath();
+                t.moveTo(point.x1, point.y1);
+                t.lineTo(point.x2, point.y2);
+                t.stroke();
+              });
+            modifiedPhysics.forEach(point => {
+              (t.strokeStyle = "#000");
+              t.beginPath();
+              t.moveTo(point.x1, point.y1);
+              t.lineTo(point.x2, point.y2);
+              t.stroke();
+            });
+          }
           if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
             const i = 5 * e;
             t.beginPath(),
@@ -17628,14 +17858,14 @@
 
             if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
 
-              const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
                 x1: e.x + line.x1,
                 y1: e.y + line.y1,
                 x2: e.x + line.x2,
                 y2: e.y + line.y2
               }));
 
-              const modifiedScenery = this.scene.objectScenery.map(line => ({
+              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
                 x1: e.x + line.x1,
                 y1: e.y + line.y1,
                 x2: e.x + line.x2,
@@ -17697,14 +17927,14 @@
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
             if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-              const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
                 x1: e.x + line.x1 * s,
                 y1: e.y + line.y1 * s,
                 x2: e.x + line.x2 * s,
                 y2: e.y + line.y2 * s
               }));
   
-              const modifiedScenery = this.scene.objectScenery.map(line => ({
+              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
                 x1: e.x + line.x1 * s,
                 y1: e.y + line.y1 * s,
                 x2: e.x + line.x2 * s,
@@ -17748,6 +17978,7 @@
               t.fill();
         }
         drawPoint(t, e, s) {
+          if (this.options.object) return;
           const i = e.toScreenSnapped(this.scene);
           t.beginPath(),
             t.arc(i.x, i.y, s, 0, 2 * Math.PI, !1),
@@ -17799,6 +18030,7 @@
           }
         }
         drawLine(t, e) {
+          if (this.options.object) return;
           const s = this.scene.game.mod.getVar("customColors"),
             i = s ? Q(this.scene.game.mod.getVar("lineColor")) : "#000",
             n = s ? Q(this.scene.game.mod.getVar("sceneryColor")) : "#aaa",
@@ -17898,44 +18130,44 @@
                       if (GameSettings.brushRotate) {
                           let offset = s.sub(e),
                               dir = Math.atan2(offset.y, offset.x);
-                          modifiedPhysics = this.scene.objectPhysics.map((line) => {
+                          modifiedPhysics = this.scene.modObjectPhysics.map((line) => {
                               let p1 = this.rotate(line.x1, line.y1, dir),
                                   p2 = this.rotate(line.x2, line.y2, dir);
                               return {
-                                  x1: e.x + p1.x * this.options.brushSize,
-                                  y1: e.y + p1.y * this.options.brushSize,
-                                  x2: e.x + p2.x * this.options.brushSize,
-                                  y2: e.y + p2.y * this.options.brushSize,
+                                  x1: e.x + p1.x,
+                                  y1: e.y + p1.y,
+                                  x2: e.x + p2.x,
+                                  y2: e.y + p2.y,
                               };
                           });
                       } else {
-                          modifiedPhysics = this.scene.objectPhysics.map(line => ({
-                              x1: e.x + line.x1 * this.options.brushSize,
-                              y1: e.y + line.y1 * this.options.brushSize,
-                              x2: e.x + line.x2 * this.options.brushSize,
-                              y2: e.y + line.y2 * this.options.brushSize
+                          modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                              x1: e.x + line.x1,
+                              y1: e.y + line.y1,
+                              x2: e.x + line.x2,
+                              y2: e.y + line.y2
                           }));
                       }
 
                       if (GameSettings.brushRotate) {
                         let offset = s.sub(e),
                             dir = Math.atan2(offset.y, offset.x);
-                        modifiedScenery = this.scene.objectScenery.map((line) => {
+                        modifiedScenery = this.scene.modObjectScenery.map((line) => {
                             let p1 = this.rotate(line.x1, line.y1, dir),
                                 p2 = this.rotate(line.x2, line.y2, dir);
                             return {
-                                x1: e.x + p1.x * this.options.brushSize,
-                                y1: e.y + p1.y * this.options.brushSize,
-                                x2: e.x + p2.x * this.options.brushSize,
-                                y2: e.y + p2.y * this.options.brushSize,
+                                x1: e.x + p1.x,
+                                y1: e.y + p1.y,
+                                x2: e.x + p2.x,
+                                y2: e.y + p2.y,
                             };
                         });
                     } else {
-                        modifiedScenery = this.scene.objectScenery.map(line => ({
-                            x1: e.x + line.x1 * this.options.brushSize,
-                            y1: e.y + line.y1 * this.options.brushSize,
-                            x2: e.x + line.x2 * this.options.brushSize,
-                            y2: e.y + line.y2 * this.options.brushSize
+                        modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                            x1: e.x + line.x1,
+                            y1: e.y + line.y1,
+                            x2: e.x + line.x2,
+                            y2: e.y + line.y2,
                         }));
                     }
       
@@ -17978,18 +18210,18 @@
             }
 
             if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-              const modifiedPhysics = this.scene.objectPhysics.map(line => ({
-                x1: e.x + line.x1 * this.options.brushSize,
-                y1: e.y + line.y1 * this.options.brushSize,
-                x2: e.x + line.x2 * this.options.brushSize,
-                y2: e.y + line.y2 * this.options.brushSize
+              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                x1: e.x + line.x1,
+                y1: e.y + line.y1,
+                x2: e.x + line.x2,
+                y2: e.y + line.y2
               }));
 
-              const modifiedScenery = this.scene.objectScenery.map(line => ({
-                x1: e.x + line.x1 * this.options.brushSize,
-                y1: e.y + line.y1 * this.options.brushSize,
-                x2: e.x + line.x2 * this.options.brushSize,
-                y2: e.y + line.y2 * this.options.brushSize
+              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                x1: e.x + line.x1,
+                y1: e.y + line.y1,
+                x2: e.x + line.x2,
+                y2: e.y + line.y2
               }));
         
               modifiedPhysics.forEach(point => {
@@ -18021,18 +18253,18 @@
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
           if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-            const modifiedPhysics = this.scene.objectPhysics.map(line => ({
-              x1: e.x + line.x1 * s * this.options.brushSize,
-              y1: e.y + line.y1 * s * this.options.brushSize,
-              x2: e.x + line.x2 * s * this.options.brushSize,
-              y2: e.y + line.y2 * s * this.options.brushSize
+            const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+              x1: e.x + line.x1 * s,
+              y1: e.y + line.y1 * s,
+              x2: e.x + line.x2 * s,
+              y2: e.y + line.y2 * s
             }));
 
-            const modifiedScenery = this.scene.objectScenery.map(line => ({
-              x1: e.x + line.x1 * s * this.options.brushSize,
-              y1: e.y + line.y1 * s * this.options.brushSize,
-              x2: e.x + line.x2 * s * this.options.brushSize,
-              y2: e.y + line.y2 * s * this.options.brushSize
+            const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+              x1: e.x + line.x1 * s,
+              y1: e.y + line.y1 * s,
+              x2: e.x + line.x2 * s,
+              y2: e.y + line.y2 * s
             }));
 
             t.beginPath(),
@@ -18278,14 +18510,14 @@
                 }
 
                 if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-                  const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                  const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
                     x1: x1 + line.x1,
                     y1: y1 + line.y1,
                     x2: x1 + line.x2,
                     y2: y1 + line.y2
                   }));
 
-                  const modifiedScenery = this.scene.objectScenery.map(line => ({
+                  const modifiedScenery = this.scene.modObjectScenery.map(line => ({
                     x1: x1 + line.x1,
                     y1: y1 + line.y1,
                     x2: x1 + line.x2,
@@ -18330,7 +18562,7 @@
             const t = this.toolHandler
               , e = t.gamepad
               , m = this.mouse;
-            e.isButtonDown("shift") &&
+            e.isButtonDown("shift") && !this.toolHandler.options.object && 
               !1 !== m.mousewheel &&
               this.adjustSegmentLength(m.mousewheel)
             if (t.snapPoint = this.scene.track.defaultLine.p2) {
@@ -18381,14 +18613,14 @@
               const e = this.mouse.touch.real.toScreenSnapped(this.scene)
                 , s = this.camera.zoom;
                 if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-                  const modifiedPhysics = this.scene.objectPhysics.map(line => ({
+                  const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
                     x1: e.x + line.x1 * s,
                     y1: e.y + line.y1 * s,
                     x2: e.x + line.x2 * s,
                     y2: e.y + line.y2 * s
                   }));
       
-                  const modifiedScenery = this.scene.objectScenery.map(line => ({
+                  const modifiedScenery = this.scene.modObjectScenery.map(line => ({
                     x1: e.x + line.x1 * s,
                     y1: e.y + line.y1 * s,
                     x2: e.x + line.x2 * s,
@@ -22835,6 +23067,8 @@
             this.customBrush = [];
             this.objectPhysics = [];
             this.objectScenery = [];
+            this.modObjectPhysics = this.objectPhysics;
+            this.modObjectScenery = this.objectScenery;
 
         }
         getCanvasOffset() {
@@ -23378,7 +23612,8 @@
               break;
             case "object":
               this.toolHandler.toggleObject();
-              if (this.objectPhysics.length === 0) {
+              if (!this.toolHandler.options.object) return;
+              if (this.objectPhysics.length === 0 && this.objectScenery.length === 0) {
                 this.command("dialog", "importObject");
               }
               break;
@@ -23467,6 +23702,11 @@
                 const parsedLines = this.parseCoordinates(e);
                 this.objectPhysics = parsedLines.physicsLines
                 this.objectScenery = parsedLines.sceneryLines;
+                this.modObjectPhysics = [];
+                this.modObjectScenery = [];
+                this.transformObjects();
+                GameSettings.objectRotate = 0;
+                GameSettings.objectScale = 1;
               } else {
                 this.objectPhysics = [];
                 this.objectScenery = [];
@@ -23503,22 +23743,56 @@
               return segmentLines;
             };
         
-            // Parse physics segment
             if (physicsSegment) {
               physicsLines.push(...parsePoints(physicsSegment));
             }
         
-            // Parse scenery segment
             if (scenerySegment) {
               sceneryLines.push(...parsePoints(scenerySegment));
             }
         
-            // Note: If you need to handle powerups or other segments after the second hashtag,
-            // you can extend this function further to include that logic.
           });
         
           return { physicsLines, sceneryLines };
         }
+        transformObjects() {
+          if (!this.objectPhysics || !this.objectScenery) return;
+      
+          const rotate = GameSettings.objectRotate;
+          const scale = GameSettings.objectScale;
+
+          const angle = rotate * (Math.PI / 180);
+          const cosAngle = Math.cos(angle);
+          const sinAngle = Math.sin(angle);
+      
+          this.modObjectPhysics = this.objectPhysics.map(line => {
+              const x1 = line.x1 * scale;
+              const y1 = line.y1 * scale;
+              const x2 = line.x2 * scale;
+              const y2 = line.y2 * scale;
+      
+              const newX1 = x1 * cosAngle - y1 * sinAngle;
+              const newY1 = x1 * sinAngle + y1 * cosAngle;
+              const newX2 = x2 * cosAngle - y2 * sinAngle;
+              const newY2 = x2 * sinAngle + y2 * cosAngle;
+      
+              return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+          });
+      
+          this.modObjectScenery = this.objectScenery.map(line => {
+              const x1 = line.x1 * scale;
+              const y1 = line.y1 * scale;
+              const x2 = line.x2 * scale;
+              const y2 = line.x2 * scale;
+      
+              const newX1 = x1 * cosAngle - y1 * sinAngle;
+              const newY1 = x1 * sinAngle + y1 * cosAngle;
+              const newX2 = x2 * cosAngle - y2 * sinAngle;
+              const newY2 = x2 * sinAngle + y2 * cosAngle;
+      
+              return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+          });
+      }
         combineTrackCodes(e, exportedCode) {
         let [oldPhysics, oldScenery, oldPowerups] = exportedCode.split('#');
         let [addPhysics, addScenery, addPowerups] = e.split('#');
