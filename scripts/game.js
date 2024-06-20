@@ -18262,7 +18262,7 @@
               }
               this.toolHandler.moveCameraTowardsMouse();
           }
-      }
+        }
 
         release() {
           if (this.active) {
@@ -18272,13 +18272,12 @@
             const points = [];
 
             if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0)) {
-            let i = !1;
-            (i =
-              "physics" === this.toolHandler.options.lineType
-                ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
-                : s.addSceneryLine(t.x, t.y, e.x, e.y)),
+              let i = !1;
+              i =
+                "physics" === this.toolHandler.options.lineType
+                  ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
+                  : s.addSceneryLine(t.x, t.y, e.x, e.y);
               i && this.addedObjects.push(i);
-              this.recordActionsToToolhandler();
             }
 
             if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
@@ -18295,32 +18294,29 @@
                 x2: e.x + line.x2,
                 y2: e.y + line.y2
               }));
-        
+
               modifiedPhysics.forEach(point => {
-                let i = false;
-                s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                i && this.addedObjects.push(i);
+                let i = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                if (i) {
+                  this.addedObjects.push(i);
+                }
               });
 
               modifiedScenery.forEach(point => {
-                let i = false;
-                s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                i && this.addedObjects.push(i);
-              });
-
-              if (this.addedObjects.length > 0) {
-                this.toolHandler.addActionToTimeline({
-                    type: "add",
-                    objects: this.addedObjects
+                let i = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                if (i) {
+                  this.addedObjects.push(i);
                 }
-              );
+              });
             }
-            }
+
+            this.recordActionsToToolhandler();
 
             const n = this.toolHandler.snapPoint;
             (n.x = e.x), (n.y = e.y), (this.active = !1);
           }
         }
+
         drawCursor(t) {
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
