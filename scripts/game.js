@@ -17452,71 +17452,121 @@
         }
         release() {
           const t = this.p1,
-            e = this.p2,
-            s = this.midpoint,
-            i = this.toolHandler;
-
+                e = this.p2,
+                s = this.midpoint,
+                i = this.toolHandler;
+      
           if (this.anchoring && this.active) {
-            if (s.x === e.x && s.y === e.y) {
-              const track = this.scene.track;
-              let lineObject = false;
-
-              if (!i.options.object) {
-                lineObject = i.options.lineType === "physics"
-                  ? track.addPhysicsLine(t.x, t.y, e.x, e.y)
-                  : track.addSceneryLine(t.x, t.y, e.x, e.y);
-              }
-
-              if (i.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-                const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                  x1: t.x + line.x1,
-                  y1: t.y + line.y1,
-                  x2: t.x + line.x2,
-                  y2: t.y + line.y2
-                }));
-
-                const modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                  x1: t.x + line.x1,
-                  y1: t.y + line.y1,
-                  x2: t.x + line.x2,
-                  y2: t.y + line.y2
-                }));
-
-                modifiedPhysics.forEach(point => {
-                  const lineObject = track.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                  if (lineObject) {
-                    i.addActionToTimeline({ type: "add", objects: [lineObject] });
+              if (s.x === e.x && s.y === e.y) {
+                  const track = this.scene.track;
+                  let lineObject = false;
+      
+                  if (!i.options.object) {
+                      lineObject = i.options.lineType === "physics"
+                          ? track.addPhysicsLine(t.x, t.y, e.x, e.y)
+                          : track.addSceneryLine(t.x, t.y, e.x, e.y);
                   }
-                });
-
-                modifiedScenery.forEach(point => {
-                  const lineObject = track.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                  if (lineObject) {
-                    i.addActionToTimeline({ type: "add", objects: [lineObject] });
+      
+                  if (i.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
+                      const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                          x1: t.x + line.x1,
+                          y1: t.y + line.y1,
+                          x2: t.x + line.x2,
+                          y2: t.y + line.y2
+                      }));
+      
+                      const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                          x1: t.x + line.x1,
+                          y1: t.y + line.y1,
+                          x2: t.x + line.x2,
+                          y2: t.y + line.y2
+                      }));
+      
+                      const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                          name: powerup.name,
+                          x: t.x + powerup.x,
+                          y: t.y + powerup.y,
+                          x2: powerup.x2 !== undefined ? t.x + powerup.x2 : undefined,
+                          y2: powerup.y2 !== undefined ? t.y + powerup.y2 : undefined,
+                          angle: powerup.angle
+                      }));
+      
+                      modifiedPhysics.forEach(point => {
+                          const lineObject = track.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                          if (lineObject) {
+                              i.addActionToTimeline({ type: "add", objects: [lineObject] });
+                          }
+                      });
+      
+                      modifiedScenery.forEach(point => {
+                          const lineObject = track.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                          if (lineObject) {
+                              i.addActionToTimeline({ type: "add", objects: [lineObject] });
+                          }
+                      });
+      
+                      modifiedPowerups.forEach(powerup => {
+                          let newPowerup = null;
+                          switch (powerup.name) {
+                              case "goal":
+                                  newPowerup = new ge(powerup.x, powerup.y, this);
+                                  this.scene.track.addTarget(newPowerup);
+                                  break;
+                              case "bomb":
+                                  newPowerup = new zs(powerup.x, powerup.y, this);
+                                  break;
+                              case "gravity":
+                                  newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                                  break;
+                              case "boost":
+                                  newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                                  break;
+                              case "slowmo":
+                                  newPowerup = new xs(powerup.x, powerup.y, this);
+                                  break;
+                              case "checkpoint":
+                                  newPowerup = new Ps(powerup.x, powerup.y, this);
+                                  break;
+                              case "antigravity":
+                                  newPowerup = new Vs(powerup.x, powerup.y, this);
+                                  break;
+                              case "teleport":
+                                  const portal1 = new Xs(powerup.x, powerup.y, this),
+                                        portal2 = new Xs(powerup.x2, powerup.y2, this);
+                                  portal1.addOtherPortalRef(portal2);
+                                  portal2.addOtherPortalRef(portal1);
+                                  this.scene.track.addPowerup(portal1);
+                                  this.scene.track.addPowerup(portal2);
+                                  i.addActionToTimeline({ type: "add", objects: [portal1, portal2] });
+                                  break;
+                          }
+                          if (newPowerup) {
+                              this.scene.track.addPowerup(newPowerup);
+                              i.addActionToTimeline({ type: "add", objects: [newPowerup] });
+                          }
+                      });
                   }
-                });
+      
+                  if (lineObject) {
+                      i.addActionToTimeline({ type: "add", objects: [lineObject] });
+                  }
+      
+                  i.snapPoint.x = e.x;
+                  i.snapPoint.y = e.y;
+                  this.active = false;
+              } else {
+                  this.splitAndAddCurve();
               }
-
-              if (lineObject) {
-                i.addActionToTimeline({ type: "add", objects: [lineObject] });
-              }
-
-              i.snapPoint.x = e.x;
-              i.snapPoint.y = e.y;
+      
+              this.anchoring = false;
               this.active = false;
-            } else {
-              this.splitAndAddCurve();
-            }
-
-            this.anchoring = false;
-            this.active = false;
           } else if (this.active) {
-            if (Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2)) > 0) {
-              this.anchoring = true;
-            }
-            this.active = false;
+              if (Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2)) > 0) {
+                  this.anchoring = true;
+              }
+              this.active = false;
           }
-        }
+      }
 
         updateAnchor() {
           this.midpoint.equ(this.mouse.touch.real);
@@ -17524,119 +17574,221 @@
 
         splitAndAddCurve() {
           const t = Ce()(this.p1, this.midpoint, this.p2),
-            e = this.scene.track,
-            s = this.toolHandler,
-            i = [];
-
+                e = this.scene.track,
+                s = this.toolHandler,
+                i = [];
+      
           for (let n = 0; n < t.length - 2; n += 2) {
-            const r = Math.round(t[n]),
-              o = Math.round(t[n + 1]),
-              a = Math.round(t[n + 2]),
-              h = Math.round(t[n + 3]);
-            let lineObject = false;
-
-            if (!s.options.object) {
-              lineObject = s.options.lineType === "physics"
-                ? e.addPhysicsLine(r, o, a, h)
-                : e.addSceneryLine(r, o, a, h);
-            }
-
-            if (s.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                x1: r + line.x1,
-                y1: o + line.y1,
-                x2: r + line.x2,
-                y2: o + line.y2
-              }));
-
-              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                x1: r + line.x1,
-                y1: o + line.y1,
-                x2: r + line.x2,
-                y2: o + line.y2
-              }));
-
-              modifiedPhysics.forEach(point => {
-                const lineObject = e.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                if (lineObject) {
+              const r = Math.round(t[n]),
+                    o = Math.round(t[n + 1]),
+                    a = Math.round(t[n + 2]),
+                    h = Math.round(t[n + 3]);
+              let lineObject = false;
+      
+              if (!s.options.object) {
+                  lineObject = s.options.lineType === "physics"
+                      ? e.addPhysicsLine(r, o, a, h)
+                      : e.addSceneryLine(r, o, a, h);
+              }
+      
+              if (s.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
+                  const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                      x1: r + line.x1,
+                      y1: o + line.y1,
+                      x2: r + line.x2,
+                      y2: o + line.y2
+                  }));
+      
+                  const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                      x1: r + line.x1,
+                      y1: o + line.y1,
+                      x2: r + line.x2,
+                      y2: o + line.y2
+                  }));
+      
+                  const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                      name: powerup.name,
+                      x: r + powerup.x,
+                      y: o + powerup.y,
+                      x2: powerup.x2 !== undefined ? r + powerup.x2 : undefined,
+                      y2: powerup.y2 !== undefined ? o + powerup.y2 : undefined,
+                      angle: powerup.angle
+                  }));
+      
+                  modifiedPhysics.forEach(point => {
+                      const lineObject = e.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                      if (lineObject) {
+                          i.push(lineObject);
+                      }
+                  });
+      
+                  modifiedScenery.forEach(point => {
+                      const lineObject = e.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                      if (lineObject) {
+                          i.push(lineObject);
+                      }
+                  });
+      
+                  modifiedPowerups.forEach(powerup => {
+                      let newPowerup = null;
+                      switch (powerup.name) {
+                          case "goal":
+                              newPowerup = new ge(powerup.x, powerup.y, this);
+                              this.scene.track.addTarget(newPowerup);
+                              break;
+                          case "bomb":
+                              newPowerup = new zs(powerup.x, powerup.y, this);
+                              break;
+                          case "gravity":
+                              newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                              break;
+                          case "boost":
+                              newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                              break;
+                          case "slowmo":
+                              newPowerup = new xs(powerup.x, powerup.y, this);
+                              break;
+                          case "checkpoint":
+                              newPowerup = new Ps(powerup.x, powerup.y, this);
+                              break;
+                          case "antigravity":
+                              newPowerup = new Vs(powerup.x, powerup.y, this);
+                              break;
+                          case "teleport":
+                              const portal1 = new Xs(powerup.x, powerup.y, this),
+                                    portal2 = new Xs(powerup.x2, powerup.y2, this);
+                              portal1.addOtherPortalRef(portal2);
+                              portal2.addOtherPortalRef(portal1);
+                              this.scene.track.addPowerup(portal1);
+                              this.scene.track.addPowerup(portal2);
+                              i.push(portal1);
+                              i.push(portal2);
+                              break;
+                      }
+                      if (newPowerup) {
+                          this.scene.track.addPowerup(newPowerup);
+                          i.push(newPowerup);
+                      }
+                  });
+              }
+      
+              if (lineObject) {
                   i.push(lineObject);
-                }
-              });
-
-              modifiedScenery.forEach(point => {
-                const lineObject = e.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                if (lineObject) {
-                  i.push(lineObject);
-                }
-              });
-            }
-
-            if (lineObject) {
-              i.push(lineObject);
-            }
-
-            s.snapPoint.x = a;
-            s.snapPoint.y = h;
+              }
+      
+              s.snapPoint.x = a;
+              s.snapPoint.y = h;
           }
-
+      
           const lastSegment = t.length - 2;
           if (lastSegment >= 0) {
-            const r = Math.round(t[lastSegment]),
-              o = Math.round(t[lastSegment + 1]),
-              a = Math.round(this.p2.x),
-              h = Math.round(this.p2.y);
-            let lineObject = false;
-
-            if (!s.options.object) {
-              lineObject = s.options.lineType === "physics"
-                ? e.addPhysicsLine(r, o, a, h)
-                : e.addSceneryLine(r, o, a, h);
-            }
-
-            if (s.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                x1: r + line.x1,
-                y1: o + line.y1,
-                x2: r + line.x2,
-                y2: o + line.y2
-              }));
-
-              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                x1: r + line.x1,
-                y1: o + line.y1,
-                x2: r + line.x2,
-                y2: o + line.y2
-              }));
-
-              modifiedPhysics.forEach(point => {
-                const lineObject = e.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                if (lineObject) {
+              const r = Math.round(t[lastSegment]),
+                    o = Math.round(t[lastSegment + 1]),
+                    a = Math.round(this.p2.x),
+                    h = Math.round(this.p2.y);
+              let lineObject = false;
+      
+              if (!s.options.object) {
+                  lineObject = s.options.lineType === "physics"
+                      ? e.addPhysicsLine(r, o, a, h)
+                      : e.addSceneryLine(r, o, a, h);
+              }
+      
+              if (s.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
+                  const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                      x1: r + line.x1,
+                      y1: o + line.y1,
+                      x2: r + line.x2,
+                      y2: o + line.y2
+                  }));
+      
+                  const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                      x1: r + line.x1,
+                      y1: o + line.y1,
+                      x2: r + line.x2,
+                      y2: o + line.y2
+                  }));
+      
+                  const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                      name: powerup.name,
+                      x: r + powerup.x,
+                      y: o + powerup.y,
+                      x2: powerup.x2 !== undefined ? r + powerup.x2 : undefined,
+                      y2: powerup.y2 !== undefined ? o + powerup.y2 : undefined,
+                      angle: powerup.angle
+                  }));
+      
+                  modifiedPhysics.forEach(point => {
+                      const lineObject = e.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                      if (lineObject) {
+                          i.push(lineObject);
+                      }
+                  });
+      
+                  modifiedScenery.forEach(point => {
+                      const lineObject = e.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                      if (lineObject) {
+                          i.push(lineObject);
+                      }
+                  });
+      
+                  modifiedPowerups.forEach(powerup => {
+                      let newPowerup = null;
+                      switch (powerup.name) {
+                          case "goal":
+                              newPowerup = new ge(powerup.x, powerup.y, this);
+                              this.scene.track.addTarget(newPowerup);
+                              break;
+                          case "bomb":
+                              newPowerup = new zs(powerup.x, powerup.y, this);
+                              break;
+                          case "gravity":
+                              newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                              break;
+                          case "boost":
+                              newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                              break;
+                          case "slowmo":
+                              newPowerup = new xs(powerup.x, powerup.y, this);
+                              break;
+                          case "checkpoint":
+                              newPowerup = new Ps(powerup.x, powerup.y, this);
+                              break;
+                          case "antigravity":
+                              newPowerup = new Vs(powerup.x, powerup.y, this);
+                              break;
+                          case "teleport":
+                              const portal1 = new Xs(powerup.x, powerup.y, this),
+                                    portal2 = new Xs(powerup.x2, powerup.y2, this);
+                              portal1.addOtherPortalRef(portal2);
+                              portal2.addOtherPortalRef(portal1);
+                              this.scene.track.addPowerup(portal1);
+                              this.scene.track.addPowerup(portal2);
+                              i.push(portal1);
+                              i.push(portal2);
+                              break;
+                      }
+                      if (newPowerup) {
+                          this.scene.track.addPowerup(newPowerup);
+                          i.push(newPowerup);
+                      }
+                  });
+              }
+      
+              if (lineObject) {
                   i.push(lineObject);
-                }
-              });
-
-              modifiedScenery.forEach(point => {
-                const lineObject = e.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                if (lineObject) {
-                  i.push(lineObject);
-                }
-              });
-            }
-
-            if (lineObject) {
-              i.push(lineObject);
-            }
-
-            s.snapPoint.x = a;
-            s.snapPoint.y = h;
+              }
+      
+              s.snapPoint.x = a;
+              s.snapPoint.y = h;
           }
-
+      
           if (i.length > 0) {
-            s.addActionToTimeline({ type: "add", objects: i });
+              s.addActionToTimeline({ type: "add", objects: i });
           }
-
+      
           this.active = false;
-        }
+      }
         update() {
           const t = this.mouse,
             e = t.touch,
@@ -17915,68 +18067,117 @@
         }
         release() {
           if (this.active) {
-            const t = this.p1,
-              e = this.p2,
-              s = this.scene.track,
-              i = this.toolHandler;
-
-            let addedObjects = [];
-
-            if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0)) {
-              let newLine = null;
-              if ("physics" === i.options.lineType) {
-                newLine = s.addPhysicsLine(t.x, t.y, e.x, e.y);
-              } else {
-                newLine = s.addSceneryLine(t.x, t.y, e.x, e.y);
+              const t = this.p1,
+                    e = this.p2,
+                    s = this.scene.track,
+                    i = this.toolHandler;
+      
+              let addedObjects = [];
+      
+              if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0 && this.scene.objectPowerups.length === 0)) {
+                  let newLine = null;
+                  if ("physics" === i.options.lineType) {
+                      newLine = s.addPhysicsLine(t.x, t.y, e.x, e.y);
+                  } else {
+                      newLine = s.addSceneryLine(t.x, t.y, e.x, e.y);
+                  }
+                  if (newLine) {
+                      addedObjects.push(newLine);
+                      i.addActionToTimeline({ type: "add", objects: addedObjects });
+                  }
               }
-              if (newLine) {
-                addedObjects.push(newLine);
-                i.addActionToTimeline({ type: "add", objects: addedObjects });
+      
+              if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
+                  const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                      x1: e.x + line.x1,
+                      y1: e.y + line.y1,
+                      x2: e.x + line.x2,
+                      y2: e.y + line.y2
+                  }));
+      
+                  const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                      x1: e.x + line.x1,
+                      y1: e.y + line.y1,
+                      x2: e.x + line.x2,
+                      y2: e.y + line.y2
+                  }));
+      
+                  const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                      name: powerup.name,
+                      x: e.x + powerup.x,
+                      y: e.y + powerup.y,
+                      x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
+                      y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
+                      angle: powerup.angle
+                  }));
+      
+                  modifiedPhysics.forEach(point => {
+                      let newLine = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                      if (newLine) {
+                          addedObjects.push(newLine);
+                      }
+                  });
+      
+                  modifiedScenery.forEach(point => {
+                      let newLine = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                      if (newLine) {
+                          addedObjects.push(newLine);
+                      }
+                  });
+      
+                  modifiedPowerups.forEach(powerup => {
+                      let newPowerup = null;
+                      switch (powerup.name) {
+                          case "goal":
+                              newPowerup = new ge(powerup.x, powerup.y, this);
+                              this.scene.track.addTarget(newPowerup);
+                              break;
+                          case "bomb":
+                              newPowerup = new zs(powerup.x, powerup.y, this);
+                              break;
+                          case "gravity":
+                              newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                              break;
+                          case "boost":
+                              newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                              break;
+                          case "slowmo":
+                              newPowerup = new xs(powerup.x, powerup.y, this);
+                              break;
+                          case "checkpoint":
+                              newPowerup = new Ps(powerup.x, powerup.y, this);
+                              break;
+                          case "antigravity":
+                              newPowerup = new Vs(powerup.x, powerup.y, this);
+                              break;
+                          case "teleport":
+                              const portal1 = new Xs(powerup.x, powerup.y, this),
+                                    portal2 = new Xs(powerup.x2, powerup.y2, this);
+                              portal1.addOtherPortalRef(portal2);
+                              portal2.addOtherPortalRef(portal1);
+                              this.scene.track.addPowerup(portal1);
+                              this.scene.track.addPowerup(portal2);
+                              addedObjects.push(portal1, portal2);
+                              break;
+                      }
+                      if (newPowerup) {
+                          this.scene.track.addPowerup(newPowerup);
+                          addedObjects.push(newPowerup);
+                      }
+                  });
+      
+                  if (addedObjects.length > 0) {
+                      this.toolHandler.addActionToTimeline({
+                          type: "add",
+                          objects: addedObjects
+                      });
+                  }
               }
-            }
-
-            if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-
-              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                x1: e.x + line.x1,
-                y1: e.y + line.y1,
-                x2: e.x + line.x2,
-                y2: e.y + line.y2
-              }));
-
-              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                x1: e.x + line.x1,
-                y1: e.y + line.y1,
-                x2: e.x + line.x2,
-                y2: e.y + line.y2
-              }));
-
-              modifiedPhysics.forEach(point => {
-                let newLine = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                if (newLine) {
-                  addedObjects.push(newLine);
-                }
-              });
-
-              modifiedScenery.forEach(point => {
-                let newLine = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                if (newLine) {
-                  addedObjects.push(newLine);
-                }
-              });
-
-              if (addedObjects.length > 0) {
-                this.toolHandler.addActionToTimeline({
-                  type: "add",
-                  objects: addedObjects
-                });
-              }
-            }
-
-            this.active = false;
-            i.snapPoint.equ(e);
+      
+              this.active = false;
+              i.snapPoint.equ(e);
           }
-        }
+      }
         update() {
           super.update();
           const t = this.toolHandler,
@@ -18176,142 +18377,258 @@
           return {
               x: Math.cos(angle) * x + Math.sin(angle) * y,
               y: -Math.sin(angle) * x + Math.cos(angle) * y,
+              angle: Math.cos(angle) * x + Math.sin(angle) * y,
           };
         }
         hold() {
           if (this.active) {
-              const t = this.mouse.touch.real,
-                  e = this.p1,
-                  s = this.p2,
-                  i = this.options.trailSpeed,
-                  n = this.options.breakLength * 0.2;
-              s.inc(t.sub(s).factor(i));
-              let r = screen.height + t.sub(s).len();
-              if (((r *= n), s.sub(e).lenSqr() > r)) {
-                  const t = this.scene.track;
-      
-                  if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0)) {
-                      let i = !1;
-                      i = "physics" === this.toolHandler.options.lineType
-                          ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
-                          : t.addSceneryLine(e.x, e.y, s.x, s.y);
-                      i && this.addedObjects.push(i);
-                  }
-      
-                  let modifiedPhysics = [];
-                  let modifiedScenery = [];
-      
-                  if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-                      if (GameSettings.brushRotate) {
-                          let offset = s.sub(e),
-                              dir = Math.atan2(offset.y, offset.x);
-                          modifiedPhysics = this.scene.modObjectPhysics.map((line) => {
-                              let p1 = this.rotate(line.x1, line.y1, dir),
-                                  p2 = this.rotate(line.x2, line.y2, dir);
-                              return {
-                                  x1: e.x + p1.x,
-                                  y1: e.y + p1.y,
-                                  x2: e.x + p2.x,
-                                  y2: e.y + p2.y,
-                              };
-                          });
-                      } else {
-                          modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                              x1: e.x + line.x1,
-                              y1: e.y + line.y1,
-                              x2: e.x + line.x2,
-                              y2: e.y + line.y2
-                          }));
-                      }
+            const t = this.mouse.touch.real,
+              e = this.p1,
+              s = this.p2,
+              i = this.options.trailSpeed,
+              n = this.options.breakLength * 0.2;
+            s.inc(t.sub(s).factor(i));
+            let r = screen.height + t.sub(s).len();
+            if (((r *= n), s.sub(e).lenSqr() > r)) {
+              const t = this.scene.track;
 
-                      if (GameSettings.brushRotate) {
-                        let offset = s.sub(e),
-                            dir = Math.atan2(offset.y, offset.x);
-                        modifiedScenery = this.scene.modObjectScenery.map((line) => {
-                            let p1 = this.rotate(line.x1, line.y1, dir),
-                                p2 = this.rotate(line.x2, line.y2, dir);
-                            return {
-                                x1: e.x + p1.x,
-                                y1: e.y + p1.y,
-                                x2: e.x + p2.x,
-                                y2: e.y + p2.y,
-                            };
-                        });
-                    } else {
-                        modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                            x1: e.x + line.x1,
-                            y1: e.y + line.y1,
-                            x2: e.x + line.x2,
-                            y2: e.y + line.y2,
-                        }));
-                    }
-      
-                      modifiedPhysics.forEach(point => {
-                          let i = false;
-                          i = t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                          i && this.addedObjects.push(i);
-                      });
-
-                      modifiedScenery.forEach(point => {
-                        let i = false;
-                        i = t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                        i && this.addedObjects.push(i);
-                    });
-                  }
-      
-                  e.equ(s);
-                  this.toolHandler.snapPoint.x = s.x;
-                  this.toolHandler.snapPoint.y = s.y;
+              if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0 && this.scene.objectPowerups.length === 0)) {
+                let i = !1;
+                i = "physics" === this.toolHandler.options.lineType
+                  ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
+                  : t.addSceneryLine(e.x, e.y, s.x, s.y);
+                i && this.addedObjects.push(i);
               }
-              this.toolHandler.moveCameraTowardsMouse();
+
+              let modifiedPhysics = [];
+              let modifiedScenery = [];
+              let modifiedPowerups = [];
+
+              if (this.toolHandler.options.object) {
+                if (GameSettings.brushRotate) {
+                  let offset = s.sub(e),
+                    dir = Math.atan2(offset.y, offset.x);
+
+                  modifiedPhysics = this.scene.modObjectPhysics.map((line) => {
+                    let p1 = this.rotate(line.x1, line.y1, dir),
+                      p2 = this.rotate(line.x2, line.y2, dir);
+                    return {
+                      x1: e.x + p1.x,
+                      y1: e.y + p1.y,
+                      x2: e.x + p2.x,
+                      y2: e.y + p2.y,
+                    };
+                  });
+
+                  modifiedScenery = this.scene.modObjectScenery.map((line) => {
+                    let p1 = this.rotate(line.x1, line.y1, dir),
+                      p2 = this.rotate(line.x2, line.y2, dir);
+                    return {
+                      x1: e.x + p1.x,
+                      y1: e.y + p1.y,
+                      x2: e.x + p2.x,
+                      y2: e.y + p2.y,
+                    };
+                  });
+
+                  modifiedPowerups = this.scene.modObjectPowerups.map((powerup) => {
+                    let p = this.rotate(powerup.x, powerup.y, dir);
+                    return {
+                      name: powerup.name,
+                      x: e.x + p.x,
+                      y: e.y + p.y,
+                      x2: powerup.x2 !== undefined ? e.x + this.rotate(powerup.x2, powerup.y2, dir).x : undefined,
+                      y2: powerup.y2 !== undefined ? e.y + this.rotate(powerup.x2, powerup.y2, dir).y : undefined,
+                      angle: powerup.angle + p.angle
+                    };
+                  });
+
+                } else {
+                  modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                    x1: e.x + line.x1,
+                    y1: e.y + line.y1,
+                    x2: e.x + line.x2,
+                    y2: e.y + line.y2
+                  }));
+
+                  modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                    x1: e.x + line.x1,
+                    y1: e.y + line.y1,
+                    x2: e.x + line.x2,
+                    y2: e.y + line.y2,
+                  }));
+
+                  modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                    name: powerup.name,
+                    x: e.x + powerup.x,
+                    y: e.y + powerup.y,
+                    x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
+                    y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
+                    angle: powerup.angle
+                  }));
+                }
+
+                modifiedPhysics.forEach(point => {
+                  let i = t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                  if (i) {
+                    this.addedObjects.push(i);
+                  }
+                });
+
+                modifiedScenery.forEach(point => {
+                  let i = t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                  if (i) {
+                    this.addedObjects.push(i);
+                  }
+                });
+
+                modifiedPowerups.forEach(powerup => {
+                  let newPowerup = null;
+                  switch (powerup.name) {
+                    case "goal":
+                      newPowerup = new ge(powerup.x, powerup.y, this);
+                      this.scene.track.addTarget(newPowerup);
+                      break;
+                    case "bomb":
+                      newPowerup = new zs(powerup.x, powerup.y, this);
+                      break;
+                    case "gravity":
+                      newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                      break;
+                    case "boost":
+                      newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                      break;
+                    case "slowmo":
+                      newPowerup = new xs(powerup.x, powerup.y, this);
+                      break;
+                    case "checkpoint":
+                      newPowerup = new Ps(powerup.x, powerup.y, this);
+                      break;
+                    case "antigravity":
+                      newPowerup = new Vs(powerup.x, powerup.y, this);
+                      break;
+                    case "teleport":
+                      const portal1 = new Xs(powerup.x, powerup.y, this),
+                        portal2 = new Xs(powerup.x2, powerup.y2, this);
+                      portal1.addOtherPortalRef(portal2);
+                      portal2.addOtherPortalRef(portal1);
+                      this.scene.track.addPowerup(portal1);
+                      this.scene.track.addPowerup(portal2);
+                      this.addedObjects.push(portal1);
+                      this.addedObjects.push(portal2);
+                      break;
+                  }
+                  if (newPowerup) {
+                    this.scene.track.addPowerup(newPowerup);
+                    this.addedObjects.push(newPowerup);
+                  }
+                });
+              }
+
+              e.equ(s);
+              this.toolHandler.snapPoint.x = s.x;
+              this.toolHandler.snapPoint.y = s.y;
+            }
+            this.toolHandler.moveCameraTowardsMouse();
           }
         }
 
         release() {
           if (this.active) {
-            const t = this.p1,
-              e = this.p2,
-              s = this.scene.track;
-            const points = [];
+              const t = this.p1,
+                    e = this.p2,
+                    s = this.scene.track;
+              const points = [];
+      
+              if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0 && this.scene.objectPowerups.length === 0)) {
+                  let i = !1;
+                  i = "physics" === this.toolHandler.options.lineType
+                      ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
+                      : s.addSceneryLine(t.x, t.y, e.x, e.y);
+                  i && this.addedObjects.push(i);
+              }
+      
+              if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
+                  const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                      x1: e.x + line.x1,
+                      y1: e.y + line.y1,
+                      x2: e.x + line.x2,
+                      y2: e.y + line.y2
+                  }));
+      
+                  const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                      x1: e.x + line.x1,
+                      y1: e.y + line.y1,
+                      x2: e.x + line.x2,
+                      y2: e.y + line.y2
+                  }));
+      
+                  const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                      name: powerup.name,
+                      x: e.x + powerup.x,
+                      y: e.y + powerup.y,
+                      x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
+                      y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
+                      angle: powerup.angle
+                  }));
+      
+                  modifiedPhysics.forEach(point => {
+                      let i = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                      if (i) {
+                          this.addedObjects.push(i);
+                      }
+                  });
+      
+                  modifiedScenery.forEach(point => {
+                      let i = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                      if (i) {
+                          this.addedObjects.push(i);
+                      }
+                  });
 
-            if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0)) {
-              let i = !1;
-              i =
-                "physics" === this.toolHandler.options.lineType
-                  ? s.addPhysicsLine(t.x, t.y, e.x, e.y)
-                  : s.addSceneryLine(t.x, t.y, e.x, e.y);
-              i && this.addedObjects.push(i);
-            }
-
-            if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-              const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                x1: e.x + line.x1,
-                y1: e.y + line.y1,
-                x2: e.x + line.x2,
-                y2: e.y + line.y2
-              }));
-
-              const modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                x1: e.x + line.x1,
-                y1: e.y + line.y1,
-                x2: e.x + line.x2,
-                y2: e.y + line.y2
-              }));
-
-              modifiedPhysics.forEach(point => {
-                let i = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                if (i) {
-                  this.addedObjects.push(i);
-                }
-              });
-
-              modifiedScenery.forEach(point => {
-                let i = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                if (i) {
-                  this.addedObjects.push(i);
-                }
-              });
-            }
+                  modifiedPowerups.forEach(powerup => {
+                    let newPowerup = null;
+                    switch (powerup.name) {
+                        case "goal":
+                            newPowerup = new ge(powerup.x, powerup.y, this);
+                            this.scene.track.addTarget(newPowerup);
+                            break;
+                        case "bomb":
+                            newPowerup = new zs(powerup.x, powerup.y, this);
+                            break;
+                        case "gravity":
+                            newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                            break;
+                            case "boost":
+                              newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                              break;
+                            case "slowmo":
+                              newPowerup = new xs(powerup.x, powerup.y, this);
+                              break;
+                            case "checkpoint":
+                              newPowerup = new Ps(powerup.x, powerup.y, this);
+                              break;
+                            case "antigravity":
+                              newPowerup = new Vs(powerup.x, powerup.y, this);
+                              break;
+                            case "teleport":
+                              const portal1 = new Xs(powerup.x, powerup.y, this),
+                                portal2 = new Xs(powerup.x2, powerup.y2, this);
+                              portal1.addOtherPortalRef(portal2);
+                              portal2.addOtherPortalRef(portal1);
+                              this.scene.track.addPowerup(portal1);
+                              this.scene.track.addPowerup(portal2);
+                              this.addedObjects.push(portal1);
+                              this.addedObjects.push(portal2);
+                              break;
+                          }
+                          if (newPowerup) {
+                            this.scene.track.addPowerup(newPowerup);
+                            this.addedObjects.push(newPowerup);
+                          }
+                        });
+                      }
+            
 
             this.recordActionsToToolhandler();
 
@@ -18538,79 +18855,130 @@
           }
           release() {
             if (this.active && this.toolHandler) {
-              const t = this.p1;
-              const e = this.p2;
-              const s = this.scene.track;
-              const i = GameSettings.circle.segmentLength * 10;
-
-              const radius = Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
-              const segments = Math.ceil(Math.max(4, Math.round((radius / i) / 2) * 2));
-              const angleIncrement = (2 * Math.PI) / segments;
-              const addedObjects = [];
-
-              for (let j = 0; j < segments; j++) {
-                const angle = j * angleIncrement;
-                const x1 = t.x + radius * Math.cos(angle);
-                const y1 = t.y + radius * Math.sin(angle);
-                const x2 = t.x + radius * Math.cos(angle + angleIncrement);
-                const y2 = t.y + radius * Math.sin(angle + angleIncrement);
-
-                let lineObject;
-
-                if (!this.toolHandler.options.object) {
-                  if (this.toolHandler.options.lineType === "physics") {
-                    lineObject = s.addPhysicsLine(x1, y1, x2, y2);
-                  } else {
-                    lineObject = s.addSceneryLine(x1, y1, x2, y2);
-                  }
-                }
-
-                if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
-                  const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                    x1: x1 + line.x1,
-                    y1: y1 + line.y1,
-                    x2: x1 + line.x2,
-                    y2: y1 + line.y2
-                  }));
-
-                  const modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                    x1: x1 + line.x1,
-                    y1: y1 + line.y1,
-                    x2: x1 + line.x2,
-                    y2: y1 + line.y2
-                  }));
-
-                  modifiedPhysics.forEach(point => {
-                    const lineObject = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                    if (lineObject) {
-                      addedObjects.push(lineObject);
+                const t = this.p1;
+                const e = this.p2;
+                const s = this.scene.track;
+                const i = GameSettings.circle.segmentLength * 10;
+        
+                const radius = Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
+                const segments = Math.ceil(Math.max(4, Math.round((radius / i) / 2) * 2));
+                const angleIncrement = (2 * Math.PI) / segments;
+                const addedObjects = [];
+        
+                for (let j = 0; j < segments; j++) {
+                    const angle = j * angleIncrement;
+                    const x1 = t.x + radius * Math.cos(angle);
+                    const y1 = t.y + radius * Math.sin(angle);
+                    const x2 = t.x + radius * Math.cos(angle + angleIncrement);
+                    const y2 = t.y + radius * Math.sin(angle + angleIncrement);
+        
+                    let lineObject;
+        
+                    if (!this.toolHandler.options.object) {
+                        if (this.toolHandler.options.lineType === "physics") {
+                            lineObject = s.addPhysicsLine(x1, y1, x2, y2);
+                        } else {
+                            lineObject = s.addSceneryLine(x1, y1, x2, y2);
+                        }
                     }
-                  });
-
-                  modifiedScenery.forEach(point => {
-                    const lineObject = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                    if (lineObject) {
-                      addedObjects.push(lineObject);
+        
+                    if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
+                        const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                            x1: x1 + line.x1,
+                            y1: y1 + line.y1,
+                            x2: x1 + line.x2,
+                            y2: y1 + line.y2
+                        }));
+        
+                        const modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                            x1: x1 + line.x1,
+                            y1: y1 + line.y1,
+                            x2: x1 + line.x2,
+                            y2: y1 + line.y2
+                        }));
+        
+                        const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                            name: powerup.name,
+                            x: x1 + powerup.x,
+                            y: y1 + powerup.y,
+                            x2: powerup.x2 !== undefined ? x1 + powerup.x2 : undefined,
+                            y2: powerup.y2 !== undefined ? y1 + powerup.y2 : undefined,
+                            angle: powerup.angle
+                        }));
+        
+                        modifiedPhysics.forEach(point => {
+                            const lineObject = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                            if (lineObject) {
+                                addedObjects.push(lineObject);
+                            }
+                        });
+        
+                        modifiedScenery.forEach(point => {
+                            const lineObject = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                            if (lineObject) {
+                                addedObjects.push(lineObject);
+                            }
+                        });
+        
+                        modifiedPowerups.forEach(powerup => {
+                            let newPowerup = null;
+                            switch (powerup.name) {
+                                case "goal":
+                                    newPowerup = new ge(powerup.x, powerup.y, this);
+                                    this.scene.track.addTarget(newPowerup);
+                                    break;
+                                case "bomb":
+                                    newPowerup = new zs(powerup.x, powerup.y, this);
+                                    break;
+                                case "gravity":
+                                    newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                                    break;
+                                case "boost":
+                                    newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                                    break;
+                                case "slowmo":
+                                    newPowerup = new xs(powerup.x, powerup.y, this);
+                                    break;
+                                case "checkpoint":
+                                    newPowerup = new Ps(powerup.x, powerup.y, this);
+                                    break;
+                                case "antigravity":
+                                    newPowerup = new Vs(powerup.x, powerup.y, this);
+                                    break;
+                                case "teleport":
+                                    const portal1 = new Xs(powerup.x, powerup.y, this),
+                                          portal2 = new Xs(powerup.x2, powerup.y2, this);
+                                    portal1.addOtherPortalRef(portal2);
+                                    portal2.addOtherPortalRef(portal1);
+                                    this.scene.track.addPowerup(portal1);
+                                    this.scene.track.addPowerup(portal2);
+                                    addedObjects.push(portal1);
+                                    addedObjects.push(portal2);
+                                    break;
+                            }
+                            if (newPowerup) {
+                                this.scene.track.addPowerup(newPowerup);
+                                addedObjects.push(newPowerup);
+                            }
+                        });
                     }
-                  });
+        
+                    if (lineObject) {
+                        addedObjects.push(lineObject);
+                    }
                 }
-
-                if (lineObject) {
-                  addedObjects.push(lineObject);
+        
+                if (addedObjects.length > 0) {
+                    this.toolHandler.addActionToTimeline({
+                        type: "add",
+                        objects: addedObjects
+                    });
                 }
-              }
-
-              if (addedObjects.length > 0) {
-                this.toolHandler.addActionToTimeline({
-                  type: "add",
-                  objects: addedObjects
-                });
-              }
-
-              this.toolHandler.snapPoint.x = e.x;
-              this.toolHandler.snapPoint.y = e.y;
-
-              this.active = false;
+        
+                this.toolHandler.snapPoint.x = e.x;
+                this.toolHandler.snapPoint.y = e.y;
+        
+                this.active = false;
             }
           }
           update() {
@@ -23122,8 +23490,10 @@
             this.customBrush = [];
             this.objectPhysics = [];
             this.objectScenery = [];
+            this.objectPowerups = [];
             this.modObjectPhysics = this.objectPhysics;
             this.modObjectScenery = this.objectScenery;
+            this.modObjectPowerups = this.objectPowerups;
 
         }
         getCanvasOffset() {
@@ -23754,8 +24124,11 @@
                 const parsedLines = this.parseCoordinates(e);
                 this.objectPhysics = parsedLines.physicsLines;
                 this.objectScenery = parsedLines.sceneryLines;
+                this.objectPowerups = parsedLines.powerups;
                 this.modObjectPhysics = [];
                 this.modObjectScenery = [];
+                this.modObjectPowerups = [];
+                console.log(this.objectPowerups)
                 this.transformObjects();
                 GameSettings.objectRotate = 0;
                 GameSettings.objectScale = 1;
@@ -23780,47 +24153,118 @@
           let n = [];
           let r = [];
           let i;
-        
+      
           if (e.length > 3) {
-            n = e[1].split(",");
-            r = e[2].split(",");
-            i = e[3];
+              n = e[1].split(",");
+              r = e[2].split(",");
+              i = e[3];
           } else if (e.length > 2) {
-            n = e[1].split(",");
-            r = e[2].split(",");
+              n = e[1].split(",");
+              r = e[2].split(",");
           } else if (e.length > 1) {
-            r = e[1].split(",");
+              r = e[1].split(",");
           }
-        
+      
           const parsePoints = (lines) => {
-            const segmentLines = [];
-        
-            lines.forEach(line => {
-              const points = line.trim().split(' ');
-        
-              if (points.length >= 4) {
-                let prevX = parseInt(points[0], 32);
-                let prevY = parseInt(points[1], 32);
-        
-                for (let i = 2; i < points.length; i += 2) {
-                  const [x, y] = points.slice(i, i + 2).map(p => parseInt(p, 32));
-                  segmentLines.push({ x1: prevX, y1: prevY, x2: x, y2: y });
-                  prevX = x;
-                  prevY = y;
-                }
-              }
-            });
-        
-            return segmentLines;
+              const segmentLines = [];
+      
+              lines.forEach(line => {
+                  const points = line.trim().split(' ');
+      
+                  if (points.length >= 4) {
+                      let prevX = parseInt(points[0], 32);
+                      let prevY = parseInt(points[1], 32);
+      
+                      for (let i = 2; i < points.length; i += 2) {
+                          const [x, y] = points.slice(i, i + 2).map(p => parseInt(p, 32));
+                          segmentLines.push({ x1: prevX, y1: prevY, x2: x, y2: y });
+                          prevX = x;
+                          prevY = y;
+                      }
+                  }
+              });
+      
+              return segmentLines;
           };
-        
+      
+          const parsePowerups = (powerupData) => {
+              const powerupTypes = {
+                  T: 'goal',
+                  B: 'boost',
+                  G: 'gravity',
+                  S: 'slowmo',
+                  O: 'bomb',
+                  C: 'checkpoint',
+                  A: 'antigravity',
+                  W: 'teleport',
+                  1: 'helicopter',
+                  2: 'truck',
+                  3: 'balloon',
+                  4: 'blob'
+              };
+      
+              const powerupCoordinates = [];
+              const powerupMatches = powerupData.match(/(?:T|B|G|S|O|C|A|W) [^,]+/g);
+              const vehiclePowerupMatches = powerupData.match(/(?:V) [^,]+/g);
+      
+              if (powerupMatches) {
+                  powerupMatches.forEach((powerup) => {
+                      const parts = powerup.split(' ');
+                      const name = parts[0];
+                      const x = parseInt(parts[1], 32);
+                      const y = parseInt(parts[2], 32);
+                      const angle = (name === 'B' || name === 'G') && parts.length === 4 ? parseInt(parts[3], 32) : null;
+                      const x2 = name === 'W' && parts.length >= 5 ? parseInt(parts[3], 32) : null;
+                      const y2 = name === 'W' && parts.length >= 5 ? parseInt(parts[4], 32) : null;
+      
+                      const powerupInfo = {
+                          name: powerupTypes[name],
+                          x,
+                          y
+                      };
+      
+                      if (angle !== null) {
+                          powerupInfo.angle = angle;
+                      }
+      
+                      if (x2 !== null && y2 !== null) {
+                          powerupInfo.x2 = x2;
+                          powerupInfo.y2 = y2;
+                      }
+      
+                      powerupCoordinates.push(powerupInfo);
+                  });
+              }
+      
+              if (vehiclePowerupMatches) {
+                  vehiclePowerupMatches.forEach((powerup) => {
+                      const parts = powerup.split(' ');
+                      if (parts.length >= 5) {
+                          const name = parts[parts.length - 2];
+                          const x = parseInt(parts[1], 32);
+                          const y = parseInt(parts[2], 32);
+                          powerupCoordinates.push({
+                              name: powerupTypes[name],
+                              x,
+                              y
+                          });
+                      }
+                  });
+              }
+      
+              return powerupCoordinates;
+          };
+      
           const physicsLines = parsePoints(s);
-          const sceneryLines = parsePoints(n.concat(r));
-        
-          return { physicsLines, sceneryLines };
+          const sceneryLines = parsePoints(n);
+          const powerups = parsePowerups(r.join(','));
+      
+          console.log(powerups);
+      
+          return { physicsLines, sceneryLines, powerups };
         }
         transformObjects() {
-          if (!this.objectPhysics || !this.objectScenery) return;
+          if (!this.objectPhysics || !this.objectScenery || !this.objectPowerups) return;
       
           const rotate = GameSettings.objectRotate;
           const scale = GameSettings.objectScale;
@@ -23829,70 +24273,63 @@
           const flipX = GameSettings.objectFlipX ? -1 : 1;
           const flipY = GameSettings.objectFlipY ? -1 : 1;
           const invert = GameSettings.objectInvert;
-
+      
           const angle = rotate * (Math.PI / 180);
           const cosAngle = Math.cos(angle);
           const sinAngle = Math.sin(angle);
       
+          const transformLine = (line) => {
+              const x1 = (line.x1 * scale) + offsetX;
+              const y1 = (line.y1 * scale) + offsetY;
+              const x2 = (line.x2 * scale) + offsetX;
+              const y2 = (line.y2 * scale) + offsetY;
+      
+              const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
+              const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
+              const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
+              const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
+      
+              return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+          };
+      
+          const transformPowerup = (powerup) => {
+              const x = (powerup.x * scale) + offsetX;
+              const y = (powerup.y * scale) + offsetY;
+      
+              const newX = (x * cosAngle - y * sinAngle) * flipX;
+              const newY = (x * sinAngle + y * cosAngle) * flipY;
+      
+              const transformedPowerup = { ...powerup, x: newX, y: newY };
+      
+              if (powerup.x2 !== undefined && powerup.y2 !== undefined) {
+                  const x2 = (powerup.x2 * scale) + offsetX;
+                  const y2 = (powerup.y2 * scale) + offsetY;
+      
+                  const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
+                  const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
+      
+                  transformedPowerup.x2 = newX2;
+                  transformedPowerup.y2 = newY2;
+              }
+      
+              if (powerup.angle !== undefined) {
+                  transformedPowerup.angle = powerup.angle + rotate;
+              }
+      
+              return transformedPowerup;
+          };
+      
           if (!invert) {
-          this.modObjectPhysics = this.objectPhysics.map(line => {
-              const x1 = (line.x1 * scale) + offsetX;
-              const y1 = (line.y1 * scale) + offsetY;
-              const x2 = (line.x2 * scale) + offsetX;
-              const y2 = (line.y2 * scale) + offsetY;
-      
-              const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
-              const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
-              const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
-              const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
-      
-              return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
-          });
-      
-          this.modObjectScenery = this.objectScenery.map(line => {
-              const x1 = (line.x1 * scale) + offsetX;
-              const y1 = (line.y1 * scale) + offsetY;
-              const x2 = (line.x2 * scale) + offsetX;
-              const y2 = (line.y2 * scale) + offsetY;
-    
-              const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
-              const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
-              const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
-              const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
-      
-              return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
-          });
+              this.modObjectPhysics = this.objectPhysics.map(transformLine);
+              this.modObjectScenery = this.objectScenery.map(transformLine);
+          } else {
+              this.modObjectScenery = this.objectPhysics.map(transformLine);
+              this.modObjectPhysics = this.objectScenery.map(transformLine);
           }
-          else {
-            this.modObjectScenery = this.objectPhysics.map(line => {
-                const x1 = (line.x1 * scale) + offsetX;
-                const y1 = (line.y1 * scale) + offsetY;
-                const x2 = (line.x2 * scale) + offsetX;
-                const y2 = (line.y2 * scale) + offsetY;
-        
-                const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
-                const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
-                const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
-                const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
-        
-                return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
-            });
-        
-            this.modObjectPhysics = this.objectScenery.map(line => {
-                const x1 = (line.x1 * scale) + offsetX;
-                const y1 = (line.y1 * scale) + offsetY;
-                const x2 = (line.x2 * scale) + offsetX;
-                const y2 = (line.y2 * scale) + offsetY;
       
-                const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
-                const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
-                const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
-                const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
-        
-                return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
-            });
-            }
-      }
+          this.modObjectPowerups = this.objectPowerups.map(transformPowerup);
+          console.log(this.modObjectPowerups);
+        }
         combineTrackCodes(e, exportedCode) {
         let [oldPhysics, oldScenery, oldPowerups] = exportedCode.split('#');
         let [addPhysics, addScenery, addPowerups] = e.split('#');
@@ -25995,6 +26432,7 @@ function load() {
           return isHoverList ? hoverList : hovered ? [hovered] : [];
       }
 
+      
       keydown() {
         const t = this.gamepad,
           r = t.isButtonDown("rotate"),
