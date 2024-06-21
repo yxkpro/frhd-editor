@@ -289,6 +289,10 @@ td {
     border: 1px solid #CCC;
     border-radius: 6px;
     font-size: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .break {

@@ -17011,6 +17011,8 @@
             rotate = (rotate + 360) % 360;
             GameSettings.objectRotate = rotate;
             t.setButtonUp("rotate");
+            this.scene.transformObjects();
+            this.scene.stateChanged();
           }
 
           if (t.isButtonDown("scale")) {
@@ -17022,6 +17024,8 @@
             scale = Math.max(minScale, Math.min(maxScale, scale));
             GameSettings.objectScale = scale;
             t.setButtonUp("scale");
+            this.scene.transformObjects();
+            this.scene.stateChanged();
           }
 
           if (t.isButtonDown("flip")) {
@@ -17033,6 +17037,8 @@
             GameSettings.objectFlipX = flipX;
             GameSettings.objectFlipY = flipY;
             t.setButtonUp("flip");
+            this.scene.transformObjects();
+            this.scene.stateChanged();
           }
 
           if (t.isButtonDown("shift")) {
@@ -17054,14 +17060,16 @@
             }
             GameSettings.objectOffsetX = offsetX;
             GameSettings.objectOffsetY = offsetY;
+            this.scene.transformObjects();
+            this.scene.stateChanged();
           }
           
-          if (t.isButtonDown("shift") && t.isButtonDown("alt")) {
+          if (t.isButtonDown("invert")) {
             GameSettings.objectInvert = !GameSettings.objectInvert;
-            t.setButtonUp("alt");
+            t.setButtonUp("invert");
+            this.scene.transformObjects();
+            this.scene.stateChanged();
           }
-
-          this.scene.transformObjects();
         
           if (!this.mouse.mousewheel) return;
         
@@ -17081,7 +17089,38 @@
           
           this.mouse.mousewheel = 0;
         }
-      
+
+        drawObjectData() {
+          const s = this.mouse.touch.real.toScreenSnapped(this.scene);
+          const t = this.scene.game.canvas.getContext("2d")
+          if (this.options.object && this.gamepad.isButtonDown("ctrl") && (this.currentTool === "straightline" || this.currentTool === "circle" || this.currentTool === "curve" || this.currentTool === "brush")) {
+              const rotate = GameSettings.objectRotate;
+              const scale = GameSettings.objectScale.toFixed(1);
+              const offsetX = GameSettings.objectOffsetX;
+              const offsetY = GameSettings.objectOffsetY;
+              const flipX = GameSettings.objectFlipX ? "X " : "";
+              const flipY = GameSettings.objectFlipY ? "Y" : "";
+              const noFlip = !GameSettings.objectFlipX && !GameSettings.objectFlipY ? "none" : "";
+              const i = this.scene.game.pixelRatio;
+              let r = 100;
+
+              t.textAlign = "left";
+              t.fillStyle = "#000000";
+              t.strokeStyle = "#ffffff";
+              t.font = "bold " + 10 * i + "pt arial";
+              t.lineWidth = 5 * i;
+          
+              t.strokeText(rotate + "°", s.x + r, s.y - r + 10 * i);
+              t.strokeText(scale + "x", s.x + r, s.y - r + 25 * i);
+              t.strokeText("flip: " + flipX + flipY, s.x + r, s.y - r + 40 * i);
+              t.strokeText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
+          
+              t.fillText(rotate + "°", s.x + r, s.y - r + 10 * i);
+              t.fillText(scale + "x", s.x + r, s.y - r + 25 * i);
+              t.fillText("flip: " + flipX + flipY + noFlip, s.x + r, s.y - r + 40 * i);
+              t.fillText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
+          }
+        }
         moveCameraTowardsMouse() {
           if (!1 === this.options.cameraLocked) {
             const t = this.scene.screen,
@@ -17181,6 +17220,7 @@
         }
         draw() {
           this.mouse.enabled && this.tools[this.currentTool].draw();
+          this.drawObjectData();
         }
         drawGrid() {
           if (this.options.grid && this.options.visibleGrid) {
@@ -17955,7 +17995,6 @@
             s = t.camera.zoom;
           e.save(),
             this.drawCursor(e),
-            this.drawObjectData(e, this.p2, s),
             this.active &&
               (this.drawLine(e, s),
               this.drawPoint(e, this.p1, s),
@@ -18025,42 +18064,6 @@
             (t.lineWidth = 1),
             (t.fillStyle = "#1884cf"),
             t.fill();
-        }
-        drawObjectData(t, e) {
-          const s = this.mouse.touch.real.toScreenSnapped(this.scene);
-          if (this.options.object && this.toolHandler.gamepad.isButtonDown("ctrl")) {
-              const rotate = GameSettings.objectRotate;
-              const scale = GameSettings.objectScale.toFixed(1);
-              const offsetX = GameSettings.objectOffsetX;
-              const offsetY = GameSettings.objectOffsetY;
-              const flipX = GameSettings.objectFlipX ? "X " : "";
-              const flipY = GameSettings.objectFlipY ? "Y" : "";
-              const noFlip = !GameSettings.objectFlipX && !GameSettings.objectFlipY ? "none" : "";
-              const i = this.game.pixelRatio;
-              let n =
-                  Math.sqrt(
-                      Math.pow(this.p1.x - this.p2.x, 2) +
-                      Math.pow(this.p1.y - this.p2.y, 2)
-                  ) / 10;
-              n = n.toFixed(2);
-              let r = 100;
-
-              t.textAlign = "left";
-              t.fillStyle = "#000000";
-              t.strokeStyle = "#ffffff";
-              t.font = "bold " + 10 * i + "pt arial";
-              t.lineWidth = 5 * i;
-          
-              t.strokeText(rotate + "°", s.x + r, s.y - r + 10 * i);
-              t.strokeText(scale + "x", s.x + r, s.y - r + 25 * i);
-              t.strokeText("flip: " + flipX + flipY, s.x + r, s.y - r + 40 * i);
-              t.strokeText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
-          
-              t.fillText(rotate + "°", s.x + r, s.y - r + 10 * i);
-              t.fillText(scale + "x", s.x + r, s.y - r + 25 * i);
-              t.fillText("flip: " + flipX + flipY + noFlip, s.x + r, s.y - r + 40 * i);
-              t.fillText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
-          }
         }
         drawPointData(t, e) {
           const s = e.toScreenSnapped(this.scene);
@@ -23321,9 +23324,6 @@
             case "fullscreen":
               this.toggleFullscreen(), this.stateChanged();
               break;
-            case "import":
-              this.command("dialog", "import");
-              break;
           }
         }
         toggleFullscreen() {
@@ -23763,6 +23763,7 @@
                 GameSettings.objectOffsetY = 0;
                 GameSettings.objectFlipX = !1;
                 GameSettings.objectFlipY = !1;
+                GameSettings.objectInvert = !1;
                 !this.toolHandler.options.object && this.toolHandler.toggleObject();
               } else {
                 this.objectPhysics = [];

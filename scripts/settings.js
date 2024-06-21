@@ -184,7 +184,7 @@ var GameSettings = {
         "zoom_100": 48,
         "select" : 68,
         "circle" : 84,
-        "import" : 73,
+        "invert" : 73,
         "rotate" : 82,
         "scale" : 83,
         "flip" : 70

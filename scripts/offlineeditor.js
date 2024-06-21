@@ -1322,7 +1322,7 @@
               e += " bottomMenu-button-active";
               t = "cube cube-margin";
             }
-            var o = a ? "" : "off";
+            var o = a ? "on" : "off";
             return n.createElement("div", {
               className: e,
               onClick: this.setObject
@@ -1330,10 +1330,10 @@
               className: t
             }), n.createElement("span", {
               className: "name"
-            }, "Object : ", o), a ? 
+            }, "Object : ", o), /*a ? 
             n.createElement("div", {}, 
             n.createElement("span", {className: "horizontal-slider-label margin width"}, " Rotate : ", GameSettings.objectRotate, "°"), 
-            n.createElement("span", {className: "horizontal-slider-label"}, " Scale : ", GameSettings.objectScale.toFixed(1), "x")) : null);
+            n.createElement("span", {className: "horizontal-slider-label"}, " Scale : ", GameSettings.objectScale.toFixed(1), "x")) : null */);
           }
         });
       t.exports = a;
@@ -1545,6 +1545,9 @@
               GameManager.game.currentScene.objectScenery = objectScenery;
               GameSettings.objectRotate = 0;
               GameSettings.objectScale = 1;
+              GameSettings.objectFlipX = !1;
+              GameSettings.objectFlipY = !1;
+              GameSettings.objectInvert = !1;
               GameManager.game.currentScene.transformObjects();
               GameSettings.customBrush = true;
               !GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
@@ -3228,22 +3231,13 @@
                                     className: "helpDialog-hotkey helpDialog-hotkey_light"
                                 }, t.change_vehicle), n.createElement("span", {
                                     className: "helpDialog-hotkey-name"
-                                }, "Change Vehicle")), 
-                                
-                                n.createElement("div", {
-                                  className: "hotkey", onClick: () => this.handleHotkeyClick('import')
-                                }, n.createElement("span", {
-                                  className: "helpDialog-hotkey helpDialog-hotkey_light"
-                              }, t.import), n.createElement("span", {
-                                  className: "helpDialog-hotkey-name"
-                              }, "Import Track")),//
-
+                                }, "Change Vehicle")), //
 
 
                                 
                                     n.createElement("div", {
                                         className: "hotkeys-title"
-                                    }, "SELECT"),
+                                    }, "OBJECTS"),
 
                                     n.createElement("div", {
                                       className: "hotkey", onClick: () => this.handleHotkeyClick('rotate')
@@ -3268,6 +3262,14 @@
                                     }, t.flip), n.createElement("span", {
                                         className: "helpDialog-hotkey-name"
                                     }, "Flip Horizontally")),
+
+                                    n.createElement("div", {
+                                      className: "hotkey", onClick: () => this.handleHotkeyClick('invert')
+                                    }, n.createElement("span", {
+                                      className: "helpDialog-hotkey helpDialog-hotkey_light"
+                                    }, t.invert), n.createElement("span", {
+                                      className: "helpDialog-hotkey-name"
+                                    }, "Invert Line Type")),
 
                                     n.createElement("div", {
                                       className: "hotkey", onClick: () => this.handleHotkeyClick('rotate')
@@ -3936,6 +3938,10 @@
             closeDialog: function () {
               "undefined" != typeof GameManager &&
                 GameManager.command("dialog", !1);
+                if (GameManager.game.currentScene.objectPhysics.length === 0 && GameManager.game.currentScene.objectScenery.length === 0) {
+                  GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
+                  GameManager.game.currentScene.toolHandler.options.lineType = "physics";
+                }
             },
             getInitialState: function () {
               return { isDragActive: !1 };
