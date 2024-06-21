@@ -18131,11 +18131,12 @@
         drawLine(t, e) {
           const s = 2 * e > 0.5 ? 2 * e : 0.5,
             i =
-              "physics" === this.toolHandler.options.lineType ? "#000" : "#AAA";
+              "physics" === this.toolHandler.options.lineType ? "#000" : "#AAA"
+              , x = this.toolHandler.options.object ? "#1884cf" : i;
           t.beginPath(),
             (t.lineWidth = s),
             (t.lineCap = "round"),
-            (t.strokeStyle = i);
+            (t.strokeStyle = x);
           const n = this.p1.toScreenSnapped(this.scene),
             r = this.p2.toScreenSnapped(this.scene),
             o = this.midpoint.toScreenSnapped(this.scene);
@@ -18473,11 +18474,12 @@
           const s = this.scene.game.mod.getVar("customColors"),
             i = s ? Q(this.scene.game.mod.getVar("lineColor")) : "#000",
             n = s ? Q(this.scene.game.mod.getVar("sceneryColor")) : "#aaa",
-            r = "physics" === this.toolHandler.options.lineType ? i : n;
+            r = "physics" === this.toolHandler.options.lineType ? i : n,
+            x = this.toolHandler.options.object ? "#1884cf" : r;
           t.beginPath(),
             (t.lineWidth = 2 * e > 0.5 ? 2 * e : 0.5),
             (t.lineCap = "round"),
-            (t.strokeStyle = r);
+            (t.strokeStyle = x);
           const o = this.p1.toScreenSnapped(this.scene),
             a = this.p2.toScreenSnapped(this.scene);
           t.moveTo(o.x, o.y), t.lineTo(a.x, a.y), t.stroke();
@@ -19346,11 +19348,13 @@
               const s = this.scene.game.mod.getVar("customColors")
                 , i = s ? Q(this.scene.game.mod.getVar("lineColor")) : "#000"
                 , n = s ? Q(this.scene.game.mod.getVar("sceneryColor")) : "#aaa"
-                , r = "physics" === this.toolHandler.options.lineType ? i : n;
+                , r = "physics" === this.toolHandler.options.lineType ? i : n
+                , x = this.toolHandler.options.object ? "#1884cf" : r;
+
               t.beginPath();
               t.lineWidth = 2 * e > .5 ? 2 * e : .5;
               t.lineCap = "round",
-              t.strokeStyle = r;
+              t.strokeStyle = x;
               const center = this.p1.toScreenSnapped(this.scene);
               const cursorPosition = this.p2.toScreenSnapped(this.scene);
               const radius = Math.sqrt(Math.pow(cursorPosition.x - center.x, 2) + Math.pow(cursorPosition.y - center.y, 2));
@@ -24352,7 +24356,6 @@
                 this.modObjectPhysics = [];
                 this.modObjectScenery = [];
                 this.modObjectPowerups = [];
-                this.transformObjects();
                 GameSettings.objectRotate = 0;
                 GameSettings.objectScale = 1;
                 GameSettings.objectOffsetX = 0;
@@ -24360,6 +24363,7 @@
                 GameSettings.objectFlipX = !1;
                 GameSettings.objectFlipY = !1;
                 GameSettings.objectInvert = !1;
+                this.transformObjects();
                 !this.toolHandler.options.object && this.toolHandler.toggleObject();
               } else {
                 this.objectPhysics = [];
