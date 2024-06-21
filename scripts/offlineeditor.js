@@ -1174,7 +1174,7 @@
           },
           renderGridSizeSelect: function () {
             var e = GameSettings.toolHandler.gridSize,
-              t = [2, 4, 5, 10, 15, 20, 25, 50, 100];
+              t = [2, 4, 5, 10, 15, 20, 25, 40, 50, 100];
             return n.createElement("select", {
               ref: "gridSize",
               defaultValue: e,
@@ -1262,7 +1262,7 @@
               GameManager.command("dialog", "importObject");
             }
           },
-          /*changeRotateSensitivity: function (e) {
+          changeRotateSensitivity: function (e) {
             var t = parseInt(e.target.value, 10);
             GameSettings.rotateSensitivity = t;
             console.log(GameSettings.rotateSensitivity);
@@ -1292,7 +1292,7 @@
               return n.createElement("option", {
                 key: e,
                 value: e
-              }, e);
+              }, e + "°");
             }));
           },
           renderScaleSensitivitySelect: function () {
@@ -1313,7 +1313,7 @@
           stopClickPropagation: function (e) {
             e.preventDefault();
             e.stopPropagation();
-          },*/
+          },
           render: function () {
             var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_object ",
               t = "cube cube-margin",
@@ -1322,7 +1322,7 @@
               e += " bottomMenu-button-active";
               t = "cube cube-margin";
             }
-            var o = a ? "on" : "off";
+            var o = a ? "" : "off";
             return n.createElement("div", {
               className: e,
               onClick: this.setObject
@@ -1330,10 +1330,10 @@
               className: t
             }), n.createElement("span", {
               className: "name"
-            }, "Object : ", o), /*a ? 
+            }, "Object : ", o), a ? 
             n.createElement("div", {}, 
-            n.createElement("span", {className: "horizontal-slider-label margin width"}, " Rotate : ", GameSettings.objectRotate, "°"), 
-            n.createElement("span", {className: "horizontal-slider-label"}, " Scale : ", GameSettings.objectScale.toFixed(1), "x")) : null */);
+            n.createElement("span", {}, this.renderRotateSensitivitySelect()), 
+            n.createElement("span", {}, )) : null );
           }
         });
       t.exports = a;

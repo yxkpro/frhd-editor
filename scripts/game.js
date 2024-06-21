@@ -17488,7 +17488,8 @@
                           y: t.y + powerup.y,
                           x2: powerup.x2 !== undefined ? t.x + powerup.x2 : undefined,
                           y2: powerup.y2 !== undefined ? t.y + powerup.y2 : undefined,
-                          angle: powerup.angle
+                          angle: powerup.angle,
+                          time: powerup.time
                       }));
       
                       modifiedPhysics.forEach(point => {
@@ -17538,6 +17539,18 @@
                                   this.scene.track.addPowerup(portal1);
                                   this.scene.track.addPowerup(portal2);
                                   i.addActionToTimeline({ type: "add", objects: [portal1, portal2] });
+                                  break;
+                              case "helicopter":
+                                  newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                                  break;
+                              case "truck":
+                                  newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                                  break;
+                              case "balloon":
+                                  newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                                  break;
+                              case "blob":
+                                  newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
                                   break;
                           }
                           if (newPowerup) {
@@ -17612,7 +17625,8 @@
                       y: o + powerup.y,
                       x2: powerup.x2 !== undefined ? r + powerup.x2 : undefined,
                       y2: powerup.y2 !== undefined ? o + powerup.y2 : undefined,
-                      angle: powerup.angle
+                      angle: powerup.angle,
+                      time: powerup.time
                   }));
       
                   modifiedPhysics.forEach(point => {
@@ -17663,6 +17677,18 @@
                               this.scene.track.addPowerup(portal2);
                               i.push(portal1);
                               i.push(portal2);
+                              break;
+                          case "helicopter":
+                              newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "truck":
+                              newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "balloon":
+                              newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "blob":
+                              newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
                               break;
                       }
                       if (newPowerup) {
@@ -17715,7 +17741,8 @@
                       y: o + powerup.y,
                       x2: powerup.x2 !== undefined ? r + powerup.x2 : undefined,
                       y2: powerup.y2 !== undefined ? o + powerup.y2 : undefined,
-                      angle: powerup.angle
+                      angle: powerup.angle,
+                      time: powerup.time
                   }));
       
                   modifiedPhysics.forEach(point => {
@@ -17766,6 +17793,18 @@
                               this.scene.track.addPowerup(portal2);
                               i.push(portal1);
                               i.push(portal2);
+                              break;
+                          case "helicopter":
+                              newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "truck":
+                              newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "balloon":
+                              newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "blob":
+                              newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
                               break;
                       }
                       if (newPowerup) {
@@ -18108,7 +18147,8 @@
                       y: e.y + powerup.y,
                       x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
                       y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
-                      angle: powerup.angle
+                      angle: powerup.angle,
+                      time: powerup.time
                   }));
       
                   modifiedPhysics.forEach(point => {
@@ -18158,6 +18198,18 @@
                               this.scene.track.addPowerup(portal1);
                               this.scene.track.addPowerup(portal2);
                               addedObjects.push(portal1, portal2);
+                              break;
+                          case "helicopter":
+                              newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "truck":
+                                newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                                break;
+                          case "balloon":
+                              newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                              break;
+                          case "blob":
+                              newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
                               break;
                       }
                       if (newPowerup) {
@@ -18220,6 +18272,16 @@
                 x2: e.x + line.x2 * s,
                 y2: e.y + line.y2 * s
               }));
+
+              /*const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                name: powerup.name,
+                x: e.x + powerup.x,
+                y: e.y + powerup.y,
+                x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
+                y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
+                angle: powerup.angle,
+                time: powerup.time
+              }));*/
   
               t.beginPath(),
                 (t.lineWidth = 2 * s > 0.5 ? 2 * s : 0.5),
@@ -18464,7 +18526,8 @@
                     y: e.y + powerup.y,
                     x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
                     y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
-                    angle: powerup.angle
+                    angle: powerup.angle,
+                    time: powerup.time
                   }));
                 }
 
@@ -18517,6 +18580,18 @@
                       this.addedObjects.push(portal1);
                       this.addedObjects.push(portal2);
                       break;
+                    case "helicopter":
+                        newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                        break;
+                    case "truck":
+                        newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                        break;
+                    case "balloon":
+                        newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                        break;
+                    case "blob":
+                        newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
+                        break;
                   }
                   if (newPowerup) {
                     this.scene.track.addPowerup(newPowerup);
@@ -18569,7 +18644,8 @@
                       y: e.y + powerup.y,
                       x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
                       y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
-                      angle: powerup.angle
+                      angle: powerup.angle,
+                      time: powerup.time
                   }));
       
                   modifiedPhysics.forEach(point => {
@@ -18621,6 +18697,18 @@
                               this.addedObjects.push(portal1);
                               this.addedObjects.push(portal2);
                               break;
+                            case "helicopter":
+                                newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                                break;
+                            case "truck":
+                                newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                                break;
+                            case "balloon":
+                                newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                                break;
+                            case "blob":
+                                newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
+                                break;
                           }
                           if (newPowerup) {
                             this.scene.track.addPowerup(newPowerup);
@@ -18903,7 +18991,8 @@
                             y: y1 + powerup.y,
                             x2: powerup.x2 !== undefined ? x1 + powerup.x2 : undefined,
                             y2: powerup.y2 !== undefined ? y1 + powerup.y2 : undefined,
-                            angle: powerup.angle
+                            angle: powerup.angle,
+                            time: powerup.time
                         }));
         
                         modifiedPhysics.forEach(point => {
@@ -18954,6 +19043,18 @@
                                     this.scene.track.addPowerup(portal2);
                                     addedObjects.push(portal1);
                                     addedObjects.push(portal2);
+                                    break;
+                                case "helicopter":
+                                    newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                                    break;
+                                case "truck":
+                                    newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                                    break;
+                                case "balloon":
+                                    newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                                    break;
+                                case "blob":
+                                    newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
                                     break;
                             }
                             if (newPowerup) {
@@ -24128,7 +24229,6 @@
                 this.modObjectPhysics = [];
                 this.modObjectScenery = [];
                 this.modObjectPowerups = [];
-                console.log(this.objectPowerups)
                 this.transformObjects();
                 GameSettings.objectRotate = 0;
                 GameSettings.objectScale = 1;
@@ -24243,10 +24343,12 @@
                           const name = parts[parts.length - 2];
                           const x = parseInt(parts[1], 32);
                           const y = parseInt(parts[2], 32);
+                          const time = parseInt(parts[4], 32);
                           powerupCoordinates.push({
                               name: powerupTypes[name],
                               x,
-                              y
+                              y,
+                              time
                           });
                       }
                   });
@@ -24258,7 +24360,7 @@
           const physicsLines = parsePoints(s);
           const sceneryLines = parsePoints(n);
           const powerups = parsePowerups(r.join(','));
-      
+
           console.log(powerups);
       
           return { physicsLines, sceneryLines, powerups };
@@ -24296,8 +24398,8 @@
               const x = (powerup.x * scale) + offsetX;
               const y = (powerup.y * scale) + offsetY;
       
-              const newX = (x * cosAngle - y * sinAngle) * flipX;
-              const newY = (x * sinAngle + y * cosAngle) * flipY;
+              const newX = Math.round(x * cosAngle - y * sinAngle) * flipX;
+              const newY = Math.round(x * sinAngle + y * cosAngle) * flipY;
       
               const transformedPowerup = { ...powerup, x: newX, y: newY };
       
@@ -24305,8 +24407,8 @@
                   const x2 = (powerup.x2 * scale) + offsetX;
                   const y2 = (powerup.y2 * scale) + offsetY;
       
-                  const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
-                  const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
+                  const newX2 = Math.round(x2 * cosAngle - y2 * sinAngle) * flipX;
+                  const newY2 = Math.round(x2 * sinAngle + y2 * cosAngle) * flipY;
       
                   transformedPowerup.x2 = newX2;
                   transformedPowerup.y2 = newY2;
@@ -24328,7 +24430,6 @@
           }
       
           this.modObjectPowerups = this.objectPowerups.map(transformPowerup);
-          console.log(this.modObjectPowerups);
         }
         combineTrackCodes(e, exportedCode) {
         let [oldPhysics, oldScenery, oldPowerups] = exportedCode.split('#');
