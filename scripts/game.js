@@ -17126,13 +17126,13 @@
             ctx.globalAlpha = 0.5;
             switch (name) {
                 case 'goal':
-                    ctx.fillStyle = cr ? '#FFD700' : "#ff0";
+                    ctx.fillStyle = cr ? '#fae335' : '#ff0';
                     ctx.beginPath();
                     ctx.arc(x, y, 13 * scale, 0, 2 * Math.PI);
                     ctx.fill();
                     break;
                 case 'bomb':
-                    ctx.fillStyle = cr ? '#a784c5' : '#cdbade';
+                    ctx.fillStyle = cr ? '#d12929' : '#f00';
                     ctx.beginPath();
                     ctx.arc(x, y, 10 * scale, 0, 2 * Math.PI);
                     ctx.fill();
