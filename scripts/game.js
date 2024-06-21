@@ -17121,6 +17121,87 @@
               t.fillText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
           }
         }
+        drawPowerupCursor(ctx, name, x, y, x2, y2, angle, scale) {
+            const cr = !this.scene.game.mod.getVar("crPowerups")
+            ctx.globalAlpha = 0.5;
+            switch (name) {
+                case 'goal':
+                    ctx.fillStyle = cr ? '#FFD700' : "#ff0";
+                    ctx.beginPath();
+                    ctx.arc(x, y, 13 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'bomb':
+                    ctx.fillStyle = cr ? '#a784c5' : '#cdbade';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 10 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'gravity':
+                    ctx.fillStyle = cr ? '#376eb7' : '#0f0';
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.sqrt(1000) * 0.5 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'boost':
+                    ctx.fillStyle = cr ? '#8ac932' : '#ff0';
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.sqrt(1000) * 0.5 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'slowmo':
+                    ctx.fillStyle = cr ? '#733' : '#733';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 13 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'checkpoint':
+                    ctx.fillStyle = cr ? '#826cdc' : '#00f';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 13 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'antigravity':
+                    ctx.fillStyle = cr ? '#09faf3' : '#0ff';
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.sqrt(1000) * 0.5 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'teleport':
+                    ctx.fillStyle = cr ? '#dd45ec' : '#f0f';
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.sqrt(1000) * 0.5 * scale, 0, 2 * Math.PI);
+                    ctx.arc(x2, y2, Math.sqrt(1000) * 0.5 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'helicopter':
+                    ctx.fillStyle = cr ? '#f2902e' : '#f6b36f';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 15 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'truck':
+                    ctx.fillStyle = cr ? '#94d44e' : '#b9e38c';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 15 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'balloon':
+                    ctx.fillStyle = cr ? '#f02728' : '#f57070';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 15 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+                case 'blob':
+                    ctx.fillStyle = cr ? '#a784c5' : '#cdbade';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 15 * scale, 0, 2 * Math.PI);
+                    ctx.fill();
+                    break;
+            }
+            ctx.globalAlpha = 1;
+          
+        }
         moveCameraTowardsMouse() {
           if (!1 === this.options.cameraLocked) {
             const t = this.scene.screen,
@@ -17883,7 +17964,7 @@
         }
         drawCursor(t, e) {
           const s = this.mouse.touch.real.toScreenSnapped(this.scene);
-          if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+          if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
             const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
               x1: s.x + line.x1 * e,
               y1: s.y + line.y1 * e,
@@ -17896,6 +17977,16 @@
               y1: s.y + line.y1 * e,
               x2: s.x + line.x2 * e,
               y2: s.y + line.y2 * e
+            }));
+            
+            const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+              name: powerup.name,
+              x: s.x + powerup.x * e,
+              y: s.y + powerup.y * e,
+              x2: powerup.x2 !== undefined ? s.x + powerup.x2 * e : undefined,
+              y2: powerup.y2 !== undefined ? s.y + powerup.y2 * e : undefined,
+              angle: powerup.angle,
+              time: powerup.time
             }));
 
             t.beginPath(),
@@ -17915,6 +18006,9 @@
               t.lineTo(point.x2, point.y2);
               t.stroke();
             });
+            modifiedPowerups.forEach(powerup => {
+              this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, e);
+          });
           }
           if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
             const i = 5 * e;
@@ -18258,7 +18352,7 @@
         drawCursor(t) {
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
-            if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+            if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
               const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
                 x1: e.x + line.x1 * s,
                 y1: e.y + line.y1 * s,
@@ -18273,15 +18367,15 @@
                 y2: e.y + line.y2 * s
               }));
 
-              /*const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+              const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
                 name: powerup.name,
-                x: e.x + powerup.x,
-                y: e.y + powerup.y,
-                x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
-                y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
+                x: e.x + powerup.x * s,
+                y: e.y + powerup.y * s,
+                x2: powerup.x2 !== undefined ? e.x + powerup.x2 * s : undefined,
+                y2: powerup.y2 !== undefined ? e.y + powerup.y2 * s : undefined,
                 angle: powerup.angle,
                 time: powerup.time
-              }));*/
+              }));
   
               t.beginPath(),
                 (t.lineWidth = 2 * s > 0.5 ? 2 * s : 0.5),
@@ -18300,6 +18394,9 @@
                 t.lineTo(point.x2, point.y2);
                 t.stroke();
               });
+              modifiedPowerups.forEach(powerup => {
+                this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, s);
+            });
             }
           if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
             const i = 5 * s;
@@ -18728,7 +18825,7 @@
         drawCursor(t) {
           const e = this.mouse.touch.real.toScreenSnapped(this.scene),
             s = this.camera.zoom;
-          if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+          if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
             const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
               x1: e.x + line.x1 * s,
               y1: e.y + line.y1 * s,
@@ -18741,6 +18838,16 @@
               y1: e.y + line.y1 * s,
               x2: e.x + line.x2 * s,
               y2: e.y + line.y2 * s
+            }));
+
+            const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+              name: powerup.name,
+              x: e.x + powerup.x * s,
+              y: e.y + powerup.y * s,
+              x2: powerup.x2 !== undefined ? e.x + powerup.x2 * s : undefined,
+              y2: powerup.y2 !== undefined ? e.y + powerup.y2 * s : undefined,
+              angle: powerup.angle,
+              time: powerup.time
             }));
 
             t.beginPath(),
@@ -18759,6 +18866,9 @@
               t.moveTo(point.x1, point.y1);
               t.lineTo(point.x2, point.y2);
               t.stroke();
+            });
+            modifiedPowerups.forEach(powerup => {
+              this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, s);
             });
           }
           if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
@@ -19136,7 +19246,7 @@
           drawCursor(t) {
               const e = this.mouse.touch.real.toScreenSnapped(this.scene)
                 , s = this.camera.zoom;
-                if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0)) {
+                if (this.toolHandler.options.object && (this.scene.objectPhysics.length > 0 || this.scene.objectScenery.length > 0 || this.scene.objectPowerups.length > 0)) {
                   const modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
                     x1: e.x + line.x1 * s,
                     y1: e.y + line.y1 * s,
@@ -19149,6 +19259,16 @@
                     y1: e.y + line.y1 * s,
                     x2: e.x + line.x2 * s,
                     y2: e.y + line.y2 * s
+                  }));
+
+                  const modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
+                    name: powerup.name,
+                    x: e.x + powerup.x * s,
+                    y: e.y + powerup.y * s,
+                    x2: powerup.x2 !== undefined ? e.x + powerup.x2 * s : undefined,
+                    y2: powerup.y2 !== undefined ? e.y + powerup.y2 * s : undefined,
+                    angle: powerup.angle,
+                    time: powerup.time
                   }));
       
                   t.beginPath(),
@@ -19168,6 +19288,9 @@
                     t.lineTo(point.x2, point.y2);
                     t.stroke();
                   });
+                  modifiedPowerups.forEach(powerup => {
+                    this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, s);
+                });
                 }
               if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
                   const i = 5 * s;
