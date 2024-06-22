@@ -12114,7 +12114,7 @@
         }
         setZoom(t, e) {
           const s = this.scene;
-          (this.desiredZoom = (d(10 * t) / 10) * s.game.pixelRatio),
+          (this.desiredZoom = (d(20 * t) / 20) * s.game.pixelRatio),
             (this.zooming = !0),
             this.desiredZoom === this.zoom &&
               ((this.zooming = !1), (this.scene.state.loading = !1)),
@@ -12137,14 +12137,14 @@
         increaseZoom() {
           const t = this.scene.settings,
             e = this.scene.game.pixelRatio,
-            s = this.desiredZoom + 2 * t.cameraSensitivity * e,
+            s = this.desiredZoom + 0.5 * t.cameraSensitivity * e,
             i = t.cameraZoomMax;
           this.setZoom(s / e), this.desiredZoom > i * e && this.setZoom(i);
         }
         decreaseZoom() {
           const t = this.scene.settings,
             e = this.scene.game.pixelRatio,
-            s = this.desiredZoom - 2 * t.cameraSensitivity * e,
+            s = this.desiredZoom - 0.5 * t.cameraSensitivity * e,
             i = t.cameraZoomMin;
           this.setZoom(s / e), this.desiredZoom < i * e && this.setZoom(i);
         }
