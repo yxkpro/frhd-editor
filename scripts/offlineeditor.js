@@ -1550,6 +1550,8 @@
               GameManager.game.currentScene.objectPowerups = objectPowerups;
               GameSettings.objectRotate = 0;
               GameSettings.objectScale = 1;
+              GameSettings.objectOffsetX = 0;
+              GameSettings.objectOffsetY = 0;
               GameSettings.objectFlipX = !1;
               GameSettings.objectFlipY = !1;
               GameSettings.objectInvert = !1;
