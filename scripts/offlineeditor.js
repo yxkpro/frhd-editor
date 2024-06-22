@@ -884,6 +884,7 @@
           
               let objectPhysics = [];
               let objectScenery = [];
+              let objectPowerups = [];
           
               selected.forEach((i) => {
                   if ('p1' in i && 'p2' in i) {
@@ -904,6 +905,7 @@
           
               GameManager.game.currentScene.objectPhysics = objectPhysics;
               GameManager.game.currentScene.objectScenery = objectScenery;
+              GameManager.game.currentScene.objectPowerups = objectPowerups;
               GameSettings.customBrush = true;
           },
             render: function() {
@@ -1485,6 +1487,7 @@
             clearObject: function () {
               GameManager.game.currentScene.objectPhysics = [];
               GameManager.game.currentScene.objectScenery = [];
+              GameManager.game.currentScene.objectPowerups = [];
               GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
               GameManager.game.currentScene.toolHandler.options.lineType = "physics";
             },
@@ -1523,6 +1526,7 @@
           
               let objectPhysics = [];
               let objectScenery = [];
+              let objectPowerups = [];
           
               selected.forEach((i) => {
                   if ('p1' in i && 'p2' in i) {
@@ -1543,6 +1547,7 @@
           
               GameManager.game.currentScene.objectPhysics = objectPhysics;
               GameManager.game.currentScene.objectScenery = objectScenery;
+              GameManager.game.currentScene.objectPowerups = objectPowerups;
               GameSettings.objectRotate = 0;
               GameSettings.objectScale = 1;
               GameSettings.objectFlipX = !1;
@@ -3938,7 +3943,7 @@
             closeDialog: function () {
               "undefined" != typeof GameManager &&
                 GameManager.command("dialog", !1);
-                if (GameManager.game.currentScene.objectPhysics.length === 0 && GameManager.game.currentScene.objectScenery.length === 0) {
+                if (GameManager.game.currentScene.objectPhysics.length === 0 && GameManager.game.currentScene.objectScenery.length === 0 && GameManager.game.currentScene.objectPowerups.length === 0) {
                   GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
                   GameManager.game.currentScene.toolHandler.options.lineType = "physics";
                 }

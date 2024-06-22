@@ -12114,7 +12114,7 @@
         }
         setZoom(t, e) {
           const s = this.scene;
-          (this.desiredZoom = (d(20 * t) / 20) * s.game.pixelRatio),
+          (this.desiredZoom = (d(20 * t) / 20) * s.game.pixelRatio), //(this.desiredZoom = (d(40 * t) / 40) * s.game.pixelRatio) for 5%
             (this.zooming = !0),
             this.desiredZoom === this.zoom &&
               ((this.zooming = !1), (this.scene.state.loading = !1)),
@@ -24263,7 +24263,7 @@
             case "object":
               this.toolHandler.toggleObject();
               if (!this.toolHandler.options.object) return;
-              if (this.objectPhysics.length === 0 && this.objectScenery.length === 0) {
+              if (this.objectPhysics.length === 0 && this.objectScenery.length === 0 && this.objectPowerups.length === 0) {
                 this.command("dialog", "importObject");
               }
               break;
@@ -24368,6 +24368,7 @@
               } else {
                 this.objectPhysics = [];
                 this.objectScenery = [];
+                this.objectPowerups = [];
               }
               this.command("dialog", false);
               break;
