@@ -17290,6 +17290,7 @@
         }
         toggleQuickSnap() {
           if (this.gamepad.isButtonDown("shift")) return;
+          (this.scene.state.snap = !this.scene.state.snap);
           this.options.snapLocked ||
             ((this.options.snap = !this.options.snap),
             this.resetTool(),

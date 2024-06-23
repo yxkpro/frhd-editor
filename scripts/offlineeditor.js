@@ -5052,7 +5052,7 @@
                 n.createElement(r, { active: "physics" === e.lineType }),
                 n.createElement(o, { active: "scenery" === e.lineType }),
                 n.createElement(x, { active: e.object === !0 }),
-                n.createElement(i, { active: e.snap === !0 })
+                //n.createElement(i, { active: e.snap === !0 })
               );
             },
           });
@@ -5082,8 +5082,8 @@
                   active: "scenery" === e.lineType
               }), n.createElement(x, {
                   active: e.object === !0
-              }), n.createElement(i, {
-                  active: e.snap === !0
+            //}), n.createElement(i, {
+            //    active: e.snap === !0
               }))
           }
       });
@@ -5113,7 +5113,7 @@
                 n.createElement(r, { active: "physics" === e.lineType }),
                 n.createElement(o, { active: "scenery" === e.lineType }),
                 n.createElement(x, { active: e.object === !0 }),
-                n.createElement(i, { active: e.snap === !0 })
+                //n.createElement(i, { active: e.snap === !0 })
               );
             },
           });
@@ -5407,7 +5407,7 @@
                 n.createElement(r, { active: "physics" === e.lineType }),
                 n.createElement(o, { active: "scenery" === e.lineType }),
                 n.createElement(x, { active: e.object === !0 }),
-                n.createElement(i, { active: e.snap === !0 })
+                //n.createElement(i, { active: e.snap === !0 })
               );
             },
           });
@@ -6067,7 +6067,7 @@
             var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_snap ",
               t = "editorgui_icons_bottom editorgui_icons-icon_snapbottom",
               a = this.props.active;
-            a && (e += " bottomMenu-button-active",
+            a && (e += " active",
               t = "editorgui_icons editorgui_icons-icon_snapbottom_on");
             var o = a ? "" : "";
             return n.createElement("div", {
