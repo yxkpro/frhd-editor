@@ -33,5 +33,19 @@
     <script src="scripts/settings.js"></script>
     
     <script src="scripts/offlineeditor.js"></script>
+
+    <script>
+        function setTrackNameFromURL() {
+            const hash = window.location.hash;
+            if (hash) {
+                let trackName = hash.substring(1);
+                trackName = trackName.replace(/(\.\.\/)/g, '');
+                trackName = trackName.replace(/-/g, ' ');
+                trackName = decodeURIComponent(trackName);
+                GameSettings.trackName = trackName;
+            }
+        }
+        setTrackNameFromURL();
+    </script>
 </body>
 </html>

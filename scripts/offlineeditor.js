@@ -6069,7 +6069,7 @@
               a = this.props.active;
             a && (e += " bottomMenu-button-active",
               t = "editorgui_icons editorgui_icons-icon_snapbottom_on");
-            var o = a ? "" : "off";
+            var o = a ? "" : "";
             return n.createElement("div", {
               className: e,
               onClick: this.setSnap
@@ -6077,7 +6077,7 @@
               className: t
             }), n.createElement("span", {
               className: "name"
-            }, "Snap : ", o), a ? n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()) : null)
+            }, "Snap : ", o), n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()))
           }
         });
       t.exports = a

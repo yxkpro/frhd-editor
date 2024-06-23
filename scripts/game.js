@@ -16999,7 +16999,7 @@
           const t = this.gamepad,
                 e = this.mouse;
               
-          const maxScale = 5;
+          const maxScale = 10;
           const minScale = 0.1;
         
           if (t.isButtonDown("rotate")) {
@@ -23464,10 +23464,34 @@
               ((t.hit = !1), (t.sector.powerupCanvasDrawn = !1));
         }
         addDefaultLine() {
-          const t = this.defaultLine,
-            e = t.p1,
-            s = t.p2;
-          this.addPhysicsLine(e.x, e.y, s.x, s.y);
+          if (GameSettings.trackName === 'track.txt') {
+            const t = this.defaultLine,
+              e = t.p1,
+              s = t.p2;
+            this.addPhysicsLine(e.x, e.y, s.x, s.y);
+          }
+
+          else {
+
+            fetch(`assets/tracks/${GameSettings.trackName}.txt`)
+              .then(response => response.text())
+              .then(text => {
+                console.log("Loaded text from file:", text);
+
+                var codeMatch = text.match(/"code":"(.+?)"/);
+                var defaultCode = codeMatch ? codeMatch[1] : null;
+
+                if (defaultCode) {
+                  this.read(defaultCode);
+                } else {
+                  this.read(text);
+                }
+              })
+              .catch(error => {
+                console.error("Error loading text from file:", error);
+              });
+          }
+
         }
         erase(t, s, i) {
           this.dirty = !0;
