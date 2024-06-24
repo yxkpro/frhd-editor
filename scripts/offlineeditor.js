@@ -403,9 +403,9 @@
                     "div",
                     { className: "clearfix" },
                     f,
-                    (e === "camera" || e === "pete") && n.createElement(i, {active: this.props.data.cameraLocked }),
-                    e !== "camera" && e !== "pete" && n.createElement(xxx, { active: this.props.data.snap }),
+                    e !== "camera" && n.createElement(i, {active: this.props.data.cameraLocked }),
                     e !== "camera" && e !== "pete" && n.createElement(o, { active: this.props.data.grid }),
+                    e !== "camera" && e !== "pete" && n.createElement(xxx, { active: this.props.data.snap }),
                     e !== "camera" && e !== "pete" && e !== "select" && n.createElement(xxxx, { active: this.props.data.object }),
                     (e === "camera" || e === "pete") && n.createElement(r, { vehicle: this.props.data.vehicle }),
                     (e === "camera" || e === "pete") && n.createElement(v),
@@ -3838,6 +3838,7 @@
                   "data-ignoredragleave": "true",
                 },
                 "Paste track code, drag and drop text files here, ",
+                n.createElement("br"),
                 r,
                 " to import"
               );
@@ -3931,7 +3932,7 @@
                 ),
                 n.createElement(
                   auto,
-                  {baseURL: 'assets/tracks/'}
+                  {baseURL: 'assets/tracks/', onInput: this.onInput }
                 )
               );
             },
@@ -4187,7 +4188,7 @@
                     "Cancel"
                   )
                 ),
-                n.createElement(auto, {baseURL: "assets/tracks/object/"})
+                n.createElement(auto, {baseURL: "assets/tracks/object/", onInput: this.onInput })
               );
             },
           });
@@ -31088,12 +31089,16 @@
               if (!toRender || !toRender?.length) return null;
               return n.createElement(
                 'div',
-                {},
+                {className: "importDialog-tracklist"},
                 ...toRender.map((i) =>
                   n.createElement(
                     'p',
-                    { onClick: () => (importDialog.value = i.name) },
-                    i.name
+                    { onClick: () => {
+                      importDialog.value = i.name;
+                      this.props.onInput(); // passed through onInput to use its display change
+                      this.handleChange({ target: { value: i.name.includes('/') ? i.name : '' } }); // so clicking on a folder opens up its contents
+                    } },
+                    i.name,
                   )
                 )
               );
