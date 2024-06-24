@@ -1,0 +1,40 @@
+{
+    "tracks": [
+        "cube",
+        "ninja",
+        "square",
+        "star",
+        {
+            "name": "mario",
+            "tracks": [
+                "block",
+                "bullet",
+                "pipe 90",
+                "pipe opening"
+            ]
+        },
+        {
+            "name": "stig",
+            "tracks": [
+                "bgmushroom",
+                "bgmushroom2",
+                "bgmushroom3",
+                "bgplants",
+                "box",
+                "castletower",
+                "coin",
+                "fireflower",
+                "fish",
+                "goombas",
+                "jumboray",
+                "koopa",
+                "penguin",
+                "pillar",
+                "questionbox",
+                "shyguys",
+                "skybox",
+                "smallblocks"
+            ]
+        }
+    ]
+}

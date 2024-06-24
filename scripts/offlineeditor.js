@@ -3472,6 +3472,7 @@
     25: [
       function (e, t) {
         var n = e("react"),
+          auto = e("autocomplete"),
           r = n.createClass({
             displayName: "ImportDialog",
             hasFileAPI: !!(window.File && window.FileList && window.FileReader),
@@ -3927,17 +3928,25 @@
                     },
                     "Cancel"
                   )
+                ),
+                n.createElement(
+                  auto,
+                  {baseURL: 'assets/tracks/'}
                 )
               );
             },
           });
         t.exports = r;
       },
-      { react: 230 },
+      { 
+        react: 230,
+        autocomplete: 240,
+      },
     ],
     925: [
       function (e, t) {
         var n = e("react"),
+          auto = e("autocomplete"),
           r = n.createClass({
             displayName: "ObjectDialog",
             dialogName: "importObject",
@@ -4177,13 +4186,17 @@
                     },
                     "Cancel"
                   )
-                )
+                ),
+                n.createElement(auto, {baseURL: "assets/tracks/object/"})
               );
             },
           });
         t.exports = r;
       },
-      { react: 230 },
+      {
+        react: 230,
+        autocomplete: 240,
+      },
     ],
     26: [
       function (e, t) {
@@ -31061,6 +31074,95 @@
         "../helpers/share/interface": 233,
       },
     ],
+    240: [
+      // might want to add a limit to the number of results displayed
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "Autocomplete",
+            render: function() {
+              let toRender = this.state?.matchList,
+                importDialog = document.querySelector(
+                  'textarea.importDialog-code'
+                );
+              if (!toRender || !toRender?.length) return null;
+              return n.createElement(
+                'div',
+                {},
+                ...toRender.map((i) =>
+                  n.createElement(
+                    'p',
+                    { onClick: () => (importDialog.value = i.name) },
+                    i.name
+                  )
+                )
+              );
+            },
+            // should decide all of the things to render, and then set the state to the first n
+            handleChange: function(e) {
+              this.searchData(e.target.value);
+            },
+            componentDidMount: function() {
+              this.fetchData();
+              document.querySelector('textarea.importDialog-code')?.addEventListener?.('input', this.handleChange);
+            },
+            componentWillUnmount: function() {
+              document.querySelector('textarea.importDialog-code')?.removeEventListener?.('input', this.handleChange);
+            },
+            fetchData: function() {
+              fetch(this.props.baseURL + 'tracklist.json')
+                  .then((i) => i.json())
+                  .then((i) => {
+                      this.setState({ ...this.state, tracks: i.tracks });
+                      this.searchData(
+                          document.querySelector('textarea.importDialog-code')
+                              ?.value || ''
+                      );
+                  });
+            },
+            searchData: function(string) {
+              let tracks = this.state.tracks;
+              if (!tracks || !tracks?.length) {
+                this.setState({...this.state, matchList: []});
+                return;
+              }
+              let dirs = string.split('/'),
+                path = '';
+              while (dirs.length > 1) {
+                let current = dirs.shift(),
+                  found = false;
+                for (let i of tracks) {
+                  if (i?.name == current) {
+                    tracks = i.tracks;
+                    found = true;
+                    path += current + '/';
+                    break;
+                  }
+                }
+                if (!found) {
+                  this.setState({...this.state, matchList: []});
+                  return;
+                }
+              }
+              let search = dirs[0],
+                matches = [];
+              for (let i of tracks) {
+                let isDir = !!i?.name,
+                  name = isDir ? i.name + '/' : i,
+                  pos = name.search(search);
+                if (pos > -1) {
+                  matches.push({name: path + name, pos});
+                }
+              }
+              // can just add .slice(0, n) here to limit the number of results
+              // currently sorting by match position to get something resembling relevance, but you can very easily change the sort / something similar to make it better
+              this.setState({...this.state, matchList: matches.sort((a, b) => a.pos - b.pos)});
+            }
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ]
   },
   {},
   [3]
