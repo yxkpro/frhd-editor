@@ -31096,7 +31096,9 @@
                     { onClick: () => {
                       importDialog.value = i.name;
                       this.props.onInput(); // passed through onInput to use its display change
-                      this.handleChange({ target: { value: i.name.includes('/') ? i.name : '' } }); // so clicking on a folder opens up its contents
+                      this.handleChange({
+                        target: { value: i.name.endsWith('/') ? i.name : i.name.substring(0, i.name.lastIndexOf('/') + 1) }
+                      }); // so clicking on a folder opens up its contents
                     } },
                     i.name,
                   )
