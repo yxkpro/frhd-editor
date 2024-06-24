@@ -2051,6 +2051,10 @@ html.fullscreen #main_page {
     user-select: none;
 }
 
+.greyed {
+    color: #aaa;
+}
+
 .importDialog-code{
     width: 65%;
 }

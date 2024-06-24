@@ -31086,7 +31086,13 @@
                 importDialog = document.querySelector(
                   'textarea.importDialog-code'
                 );
-              if (!toRender || !toRender?.length) return null;
+              if (!toRender || !toRender?.length) {
+                return n.createElement(
+                  'div',
+                  { className: "importDialog-tracklist greyed" },
+                  "no results found"
+                );
+              }
               return n.createElement(
                 'div',
                 {className: "importDialog-tracklist"},
