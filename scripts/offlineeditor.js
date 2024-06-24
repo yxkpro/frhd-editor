@@ -403,7 +403,7 @@
                     "div",
                     { className: "clearfix" },
                     f,
-                    e !== "camera" && n.createElement(i, {active: this.props.data.cameraLocked }),
+                    e !== "camera" && e !== "pete" && n.createElement(i, {active: this.props.data.cameraLocked }),
                     e !== "camera" && e !== "pete" && n.createElement(o, { active: this.props.data.grid }),
                     e !== "camera" && e !== "pete" && n.createElement(xxx, { active: this.props.data.snap }),
                     e !== "camera" && e !== "pete" && e !== "select" && n.createElement(xxxx, { active: this.props.data.object }),
@@ -31094,7 +31094,7 @@
                   n.createElement(
                     'p',
                     { onClick: () => {
-                      importDialog.value = i.name;
+                      importDialog.value = i.name.replace(/</g, '');
                       this.props.onInput(); // passed through onInput to use its display change
                       this.handleChange({
                         target: { value: i.name.endsWith('/') ? i.name : i.name.substring(0, i.name.lastIndexOf('/') + 1) }
@@ -31160,6 +31160,9 @@
                 if (pos > -1) {
                   matches.push({name: path + name, pos});
                 }
+              }
+              if (path !== '') {
+                matches.push({name: "<<", pos: -1});
               }
               // can just add .slice(0, n) here to limit the number of results
               // currently sorting by match position to get something resembling relevance, but you can very easily change the sort / something similar to make it better
