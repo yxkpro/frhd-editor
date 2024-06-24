@@ -16987,7 +16987,7 @@
           }
         }
         setObjectOptions() {
-          if (!this.options.object) return;
+          if (!this.options.object || this.currentTool === "eraser") return;
         
           let scale = GameSettings.objectScale;
           let rotate = GameSettings.objectRotate;
@@ -17265,7 +17265,8 @@
           (this.options.lineType =
             "physics" === this.options.lineType ? "scenery" : "physics");
             if (this.options.lineType) {
-              this.options.object = !1}
+              this.options.object = !1;
+              this.scene.state.object = !1}
             this.scene.stateChanged();
         }
         toggleObject() {
@@ -24309,7 +24310,8 @@
               break;
             case "change lineType":
               (this.toolHandler.options.lineType = t[0]), 
-              (this.toolHandler.options.object = !1), this.stateChanged();
+              (this.toolHandler.options.object = !1),
+              (this.state.object = !1), this.stateChanged();
               break;
             case "resize":
               this.resize();

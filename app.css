@@ -1442,14 +1442,14 @@ html.fullscreen #main_page {
     width: 40px;
     height: 40px;
     transform: scale(0.8);
-    background-position: -219px -47px;
+    background-position: -219px -48px;
 }
 
 .editorgui_icons-icon_snapbottom:hover {
     width: 40px;
     height: 40px;
     transform: scale(0.8);
-    background-position: -440px -90px;
+    background-position: -440px -91px;
 }
 
 .editorgui_icons-icon_snap_on {
@@ -1462,7 +1462,7 @@ html.fullscreen #main_page {
     width: 40px;
     height: 40px;
     transform: scale(0.8);
-    background-position: -219px -91px
+    background-position: -219px -92px
 }
 
 .editorgui_icons-icon_camera_lock_off {
