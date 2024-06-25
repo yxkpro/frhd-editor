@@ -403,14 +403,14 @@
                     "div",
                     { className: "clearfix" },
                     f,
-                    e !== "camera" && e !== "pete" && n.createElement(i, {active: this.props.data.cameraLocked }),
-                    e !== "camera" && e !== "pete" && n.createElement(o, { active: this.props.data.grid }),
-                    e !== "camera" && e !== "pete" && n.createElement(xxx, { active: this.props.data.snap }),
-                    e !== "camera" && e !== "pete" && e !== "select" && n.createElement(xxxx, { active: this.props.data.object }),
-                    (e === "camera" || e === "pete") && n.createElement(r, { vehicle: this.props.data.vehicle }),
-                    (e === "camera" || e === "pete") && n.createElement(v),
-                    e !== "camera" && e !== "select" && e !== "pete" && n.createElement(vv),
+                    n.createElement(i, {active: this.props.data.cameraLocked }),
+                    n.createElement(o, { active: this.props.data.grid }),
+                    n.createElement(xxx, { active: this.props.data.snap }),
+                    //e !== "select" && n.createElement(vv),
+                    n.createElement(r, { vehicle: this.props.data.vehicle }),
+                    n.createElement(xxxx, { active: this.props.data.object }),
                     e === "select" && n.createElement(vvv),
+                    //n.createElement(v),
                     n.createElement("span", { className: "divider" })
                   ),
                   m
@@ -990,7 +990,7 @@
               this.props.active &&
                 (t =
                   "editorgui_icons_bottom editorgui_icons-icon_camera_lock_on icon");
-              var r = this.props.active ? "on" : "off";
+              var r = this.props.active ? "" : "";
               return n.createElement(
                 "div",
                 { className: e, onClick: this.setCameraLock },
@@ -998,7 +998,7 @@
                 n.createElement(
                   "span",
                   { className: "name" },
-                  "Camera Lock : ",
+                  "Camera Lock",
                   r
                 )
               );
@@ -1142,7 +1142,13 @@
         a = n.createClass({
           displayName: "Grid",
           setGrid: function (e) {
-            "undefined" != typeof GameManager && GameManager.command("grid")
+            "undefined" != typeof GameManager && GameManager.command("grid");
+          },
+          getInitialState: function () {
+            return { open: false };
+          },
+          openOptions: function () {
+            this.setState({ open: !this.state.open });
           },
           changeGridSize: function (e) {
             var t = e.target.value;
@@ -1235,15 +1241,19 @@
               a = this.props.active;
             a && (e += " bottomMenu-button-active",
               t = "editorgui_icons editorgui_icons-icon_grid_on");
-            var o = a ? "" : "off";
+            var o = this.state.open ? " : " : "";
             return n.createElement("div", {
               className: e,
-              onClick: this.setGrid
+              onClick: this.openOptions
             }, n.createElement("span", {
-              className: t
+              className: t,
+              onClick: (event) => {
+                event.stopPropagation();
+                this.setGrid(event);
+              }
             }), n.createElement("span", {
               className: "name"
-            }, "Grid : ", o), a ? n.createElement("div", {}, this.renderGridSizeSelect(), this.renderGridTypeSelect(), this.renderGridVisibleSelect()) : null)
+            }, "Grid", o), this.state.open ? n.createElement("div", {}, this.renderGridSizeSelect(), this.renderGridTypeSelect(), this.renderGridVisibleSelect()) : null)
           }
         });
       t.exports = a
@@ -1257,7 +1267,23 @@
           setObject: function (e) {
             if (typeof GameManager !== "undefined") {
               GameManager.command("object");
-            }
+            };
+          },
+          importObject: function () {
+            "undefined" != typeof GameManager && GameManager.command("dialog", "importObject");
+          },
+          clearObject: function () {
+            GameManager.game.currentScene.objectPhysics = [];
+            GameManager.game.currentScene.objectScenery = [];
+            GameManager.game.currentScene.objectPowerups = [];
+            GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
+            GameManager.game.currentScene.toolHandler.options.lineType = "physics";
+          },
+          getInitialState: function () {
+            return { open: false };
+          },
+          openOptions: function (e) {
+            this.setState({ open: !this.state.open });
           },
           importObject: function () {
             if (typeof GameManager !== "undefined") {
@@ -1318,24 +1344,43 @@
           },
           render: function () {
             var e = "bottomMenu-button bottomMenu-button-right bottomMenu-button_object ",
+              x = "bottomMenu-button-right bottomMenu-button-2 bottomMenu-button_importObject ",
               t = "cube cube-margin",
               a = this.props.active;
             if (a) {
               e += " bottomMenu-button-active";
               t = "cube cube-margin";
             }
-            var o = a ? "" : "off";
+            var o = this.state.open ? " : " : "";
             return n.createElement("div", {
               className: e,
-              onClick: this.setObject
+              onClick: this.openOptions
             }, n.createElement("span", {
-              className: t
+              className: t,
+              onClick: (event) => {
+                event.stopPropagation();
+                this.setObject(event);
+              }
             }), n.createElement("span", {
               className: "name"
-            }, "Object : ", o), a ? 
+            }, "Object", o), this.state.open ? 
             n.createElement("div", {}, 
             n.createElement("span", {}, this.renderRotateSensitivitySelect()), 
-            n.createElement("span", {}, )) : null );
+            n.createElement("span", {},
+              n.createElement("button", {
+                className: "margin",
+                onClick: (event) => {
+                  event.stopPropagation();
+                  this.importObject(event);
+                }
+            }, "IMPORT OBJECT"),
+              n.createElement("button", {
+                onClick: (event) => {
+                  event.stopPropagation();
+                  this.clearObject(event);
+                }
+              }, "CLEAR OBJECT"))) : null );
+            
           }
         });
       t.exports = a;
@@ -1421,6 +1466,12 @@
               "undefined" != typeof GameManager &&
                 GameManager.command("toggle vehicle");
             },
+            getInitialState: function () {
+              return { open: false };
+            },
+            openOptions: function (e) {
+              this.setState({ open: !this.state.open });
+            },
             moveVehicle: function () {
               "undefined" != typeof GameManager && GameManager.command("change tool", "pete");
             },
@@ -1429,19 +1480,29 @@
                   "bottomMenu-button bottomMenu-button-right bottomMenu-button_vehicle ",
                 t = "editorgui_icons editorgui_icons-icon_bmx",
                 r = "BMX";
+                var o = this.state.open ? " : " : "";
               return (
                 this.props.vehicle &&
                   ((r = this.props.vehicle.toLowerCase()),
                   (t = "editorgui_icons_bottom editorgui_icons-icon_" + r)),
                 n.createElement(
                   "div",
-                  { className: e, onClick: this.toggleVehicle },
-                  n.createElement("span", { className: t }),
+                  { className: e, onClick: this.openOptions },
+                  n.createElement("span", { className: t, onClick: (event) => {
+                    event.stopPropagation();
+                    this.toggleVehicle(event);
+                  }}),
                   n.createElement(
                     "span",
                     { className: "name" },
-                    "Vehicle : ",
-                    n.createElement("span", { className: "bottomMenu-bold" }, r)
+                    "",
+                    n.createElement("span", { className: "bottomMenu-bold" }, r, o), this.state.open && n.createElement("button", {
+                      className: "margin",
+                      onClick: (event) => {
+                        event.stopPropagation();
+                        this.moveVehicle(event);
+                      }
+                  }, "SET START POSITION")
                   ),
                 )
               );
@@ -1467,6 +1528,7 @@
                     "div", { className: e, onClick: this.moveVehicle},
                   n.createElement("span", {},
                     n.createElement("button", {
+                        className: "margin",
                         onClick: this.moveVehicle
                     }, "SET START POSITION")))
               );
@@ -5990,7 +6052,13 @@
         a = n.createClass({
           displayName: "Snap",
           setSnap: function (e) {
-            "undefined" != typeof GameManager && GameManager.command("snap")
+            "undefined" != typeof GameManager && GameManager.command("snap");
+          },
+          getInitialState: function () {
+            return { open: false };
+          },
+          openOptions: function (e) {
+            this.setState({ open: !this.state.open });
           },
           changeSnapSize: function (e) {
             var t = e.target.value;
@@ -6083,15 +6151,19 @@
               a = this.props.active;
             a && (e += " active",
               t = "editorgui_icons editorgui_icons-icon_snapbottom_on");
-            var o = a ? "" : "";
+            var o = this.state.open ? " : " : "";
             return n.createElement("div", {
               className: e,
-              onClick: this.setSnap
+              onClick: this.openOptions
             }, n.createElement("span", {
-              className: t
+              className: t,
+              onClick: (event) => {
+                event.stopPropagation();
+                this.setSnap(event);
+              }
             }), n.createElement("span", {
               className: "name"
-            }, "Snap : ", o), n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()))
+            }, "Snap", o),  this.state.open ? n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()) : null)
           }
         });
       t.exports = a

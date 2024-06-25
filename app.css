@@ -1435,34 +1435,34 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_snap {
     width: 44px;
     height: 44px;
-    background-position: -219px -46px;
+    background-position: -219px -44px;
 }
 
 .editorgui_icons-icon_snapbottom {
     width: 40px;
     height: 40px;
     transform: scale(0.8);
-    background-position: -219px -48px;
+    background-position: -219px -46px;
 }
 
 .editorgui_icons-icon_snapbottom:hover {
     width: 40px;
     height: 40px;
     transform: scale(0.8);
-    background-position: -440px -91px;
+    background-position: -440px -88px;
 }
 
 .editorgui_icons-icon_snap_on {
     width: 44px;
     height: 44px;
-    background-position: -219px -90px
+    background-position: -219px -88px
 }
 
 .editorgui_icons-icon_snapbottom_on {
     width: 40px;
     height: 40px;
     transform: scale(0.8);
-    background-position: -219px -92px
+    background-position: -219px -90px
 }
 
 .editorgui_icons-icon_camera_lock_off {
@@ -1498,7 +1498,7 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_camera_lock_on {
     width: 32px;
     height: 32px;
-    background-position: -284px -131px
+    background-position: -252px -131px
 }
 
 .editorgui_icons-speed {
@@ -1582,7 +1582,7 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_grid_on {
     width: 32px;
     height: 32px;
-    background-position: -416px 0
+    background-position: -380px -128px
 }
 
 .editorgui_icons-icon_hotkeys:hover {
@@ -1600,7 +1600,7 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_import:hover {
     width: 32px;
     height: 32px;
-    background-position: -436px -64px
+    background-position: -436px -62px
 }
 
 .editorgui_icons-icon_import {
@@ -1660,7 +1660,7 @@ html.fullscreen #main_page {
 .editorgui_icons-icon_zoom_out {
     width: 32px;
     height: 32px;
-    background-position: -476px -96px
+    background-position: -477px -96px
 }
 
 .topMenu {
@@ -1823,7 +1823,7 @@ html.fullscreen #main_page {
 }
 
 .bottomMenu-button_vehicle {
-    min-width: 135px
+    min-width: 95px
 }
 
 .bottomMenu-button_moveVehicle {
@@ -1839,21 +1839,22 @@ html.fullscreen #main_page {
 }
 
 .bottomMenu-button_grid {
-    min-width: 100px
+    min-width: 80px;
+    padding-left: 12px;
 }
 
 .bottomMenu-button_object {
-    min-width: 115px
+    min-width: 100px;
+    padding-left: 15px;
 }
 
 .bottomMenu-button_snap {
-    min-width: 110px;
-    padding-left: 0px;
-
+    min-width: 85px;
+    padding-left: 5px;
 }
 
 .bottomMenu-button_cameralock {
-    min-width: 130px;
+    min-width: 110px;
     padding-left: 8px;
     padding-right: 12px;
 }
