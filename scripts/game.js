@@ -13402,19 +13402,19 @@
                 (t.lineWidth = 5 * i);
 
               t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-              t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
-              t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+              //t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+              t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
 
               t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-              t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+              //t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
               t.fillStyle = color;
-              t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+              t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
               t.fillStyle = "#000000";
               t.strokeStyle = "#000";
             }
           }
-          drawHitboxes() {
-            if (this.shouldDrawHitboxes) {
+          drawHitboxes(clone) {
+            if (this.shouldDrawHitboxes || clone) {
                 let ctx = this.scene.game.canvas.getContext('2d'),
                     masses = this.masses,
                     springs = this.springs,
@@ -13427,6 +13427,19 @@
                     d = this.dir,
                     spinningWheels = ['rearWheel'];
                 ctx.lineCap = 'round';
+                if (clone && !this.shouldDrawHitboxes) {
+                  ctx.fillStyle = "rgb(0,0,0)";
+                  let pos = this.head.pos.toScreen(a);
+                  ctx.globalAlpha = (0.2) * opacity * (this.head.opacity || 1);
+                  ctx.beginPath();
+                  ctx.arc(pos.x, pos.y, this.head.radius * zoom, 0, Math.PI * 2);
+                  ctx.fill();
+                  ctx.globalAlpha = (1) * opacity * (this.head.opacity || 1);
+                  ctx.beginPath();
+                  ctx.arc(pos.x, pos.y, zoom, 0, Math.PI * 2);
+                  ctx.fill();
+                }
+                if (this.shouldDrawHitboxes) {
                 for (let i of masses) {
                     if (i.collide) {
                         // red channel displays if you'll die when this hitbox touches a line
@@ -13479,7 +13492,6 @@
                         }
                         
                     }
-
                 }
                 //ctx.globalAlpha = 0.5 * opacity;
                 //ctx.strokeStyle = '#000000';
@@ -13508,6 +13520,7 @@
                 ctx.strokeStyle = s;
                 ctx.fillStyle = f;
         }
+      }
       };
         drawBikeFrame() {
             const mini = this.scene.game.mod.getVar("mini") ? GameSettings.mini : 1;
@@ -15003,13 +15016,13 @@
               (t.lineWidth = 5 * i);
 
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            //t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            //t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = "#000000";
             t.strokeStyle = "#000";
           }
@@ -18512,6 +18525,8 @@
               minTrailSpeed: s.minTrailSpeed,
               trailSpeedSensitivity: s.trailSpeedSensitivity,
             });
+            this.lastBreakTimestamp = Date.now();
+            this.lastBreakPosition = new t.Z(0, 0);
         }
         recordActionsToToolhandler() {
           if (this.toolHandler.options.object && this.addedObjects.length > 0) {
@@ -18534,6 +18549,7 @@
               (this.p2.y = t.y),
               (this.active = !0);
           }
+          this.calculateSpeed();
         }
         rotate(x, y, angle) {
           angle = -angle;
@@ -18542,6 +18558,24 @@
               y: -Math.sin(angle) * x + Math.cos(angle) * y,
               angle: Math.cos(angle) * x + Math.sin(angle) * y,
           };
+        }
+        scale(x, y, factor) {
+          return {
+              x: x * factor,
+              y: y * factor,
+          };
+        }
+        calculateSpeed() {
+          const currentTimestamp = Date.now();
+          const deltaTime = (currentTimestamp - this.lastBreakTimestamp) / 5;
+          const deltaPosition = this.mouse.touch.real.sub(this.lastBreakPosition);
+          const speed = deltaPosition.len() / deltaTime;
+      
+          this.lastBreakTimestamp = currentTimestamp;
+          this.lastBreakPosition.x = this.mouse.touch.real.x;
+          this.lastBreakPosition.y = this.mouse.touch.real.y;
+      
+          return speed;
         }
         hold() {
           if (this.active) {
@@ -18567,14 +18601,37 @@
               let modifiedScenery = [];
               let modifiedPowerups = [];
 
+              let brushRotate = GameSettings.brushRotate,
+              brushScale = GameSettings.brushScale,
+              brushRotateJitter = (GameSettings.brushRotateJitter > 0),
+              brushScaleJitter = (GameSettings.brushScaleJitter > 0);
+
               if (this.toolHandler.options.object) {
-                if (GameSettings.brushRotate) {
+                if (brushRotate || brushScale || brushRotateJitter || brushScaleJitter) {
                   let offset = s.sub(e),
                     dir = Math.atan2(offset.y, offset.x);
+                  
+                    const speed = brushScale ? this.calculateSpeed() : 1;
 
-                  modifiedPhysics = this.scene.modObjectPhysics.map((line) => {
-                    let p1 = this.rotate(line.x1, line.y1, dir),
-                      p2 = this.rotate(line.x2, line.y2, dir);
+                    const dirJitter = (Math.random() - 0.5) * GameSettings.brushRotateJitter;
+                    const speedJitter = (Math.random() - 0.5) * GameSettings.brushScaleJitter;
+                    
+                    const modDir = dir + dirJitter;
+                    const modSpeed = speed + speedJitter;
+
+                    modifiedPhysics = this.scene.modObjectPhysics.map((line) => {
+                      let p1 = { x: line.x1, y: line.y1 };
+                      let p2 = { x: line.x2, y: line.y2 };
+
+                      if (brushRotate || brushRotateJitter) {
+                          p1 = this.rotate(p1.x, p1.y, modDir);
+                          p2 = this.rotate(p2.x, p2.y, modDir);
+                      }
+
+                      if (brushScale || brushScaleJitter) {
+                          p1 = this.scale(p1.x, p1.y, modSpeed);
+                          p2 = this.scale(p2.x, p2.y, modSpeed);
+                      }
                     return {
                       x1: e.x + p1.x,
                       y1: e.y + p1.y,
@@ -18584,8 +18641,18 @@
                   });
 
                   modifiedScenery = this.scene.modObjectScenery.map((line) => {
-                    let p1 = this.rotate(line.x1, line.y1, dir),
-                      p2 = this.rotate(line.x2, line.y2, dir);
+                    let p1 = { x: line.x1, y: line.y1 };
+                    let p2 = { x: line.x2, y: line.y2 };
+
+                    if (brushRotate || brushRotateJitter) {
+                        p1 = this.rotate(p1.x, p1.y, modDir);
+                        p2 = this.rotate(p2.x, p2.y, modDir);
+                    }
+
+                    if (brushScale || brushScaleJitter) {
+                        p1 = this.scale(p1.x, p1.y, modSpeed);
+                        p2 = this.scale(p2.x, p2.y, modSpeed);
+                    }
                     return {
                       x1: e.x + p1.x,
                       y1: e.y + p1.y,
@@ -18595,7 +18662,14 @@
                   });
 
                   modifiedPowerups = this.scene.modObjectPowerups.map((powerup) => {
-                    let p = this.rotate(powerup.x, powerup.y, dir);
+                    let p = { x: powerup.x, y: powerup.y };
+                    if (brushRotate || brushRotateJitter) {
+                      p = this.rotate(p.x, p.y, modDir);
+                    }
+
+                    if (brushScale || brushScaleJitter) {
+                      p = this.scale(p.x, p.y, modSpeed);
+                    }
                     return {
                       name: powerup.name,
                       x: e.x + p.x,
@@ -18921,6 +18995,7 @@
             n = this.options.minTrailSpeed;
           t > 0 ? ((e += s), e > i && (e = i)) : ((e -= s), n > e && (e = n)),
             this.setOption("trailSpeed", e);
+            GameSettings.brush.trailSpeed = e;
             this.scene.stateChanged();
         }
         adjustBreakLength(t) {
@@ -18930,6 +19005,7 @@
             n = this.options.minBreakLength;
           t > 0 ? ((e += s), e > i && (e = i)) : ((e -= s), n > e && (e = n)),
             this.setOption("breakLength", e);
+            GameSettings.brush.breakLength = e;
             this.scene.stateChanged();
         }
         
@@ -19428,9 +19504,14 @@
       }
 
       press() {
+        const distance = Math.sqrt((this.mouse.touch.real.x - this.bikeClone.head.pos.x) ** 2 + (this.mouse.touch.real.y - this.bikeClone.head.pos.y) ** 2);
+        if (distance < 14) {
+          this.grabbed = true;
+        }
       }
 
       hold() {
+        if (!this.grabbed) return;
         this.offsetPete.equ(this.mouse.touch.real);
         if (!GameSettings.freeFloppyPete) {
         GameSettings.offsetPeteX = this.offsetPete.x;
@@ -19439,12 +19520,14 @@
       }
 
       release() {
+        if (!this.grabbed) return;
         this.offsetPete.equ(this.mouse.touch.real);
         if (!GameSettings.freeFloppyPete) {
         GameSettings.offsetPeteX = this.offsetPete.x;
         GameSettings.offsetPeteY = this.offsetPete.y;}
         this.offsetPete.y -= 1;
         (this.active = !1);
+        this.grabbed = false;
       }
 
       update() {
@@ -19463,10 +19546,12 @@
       draw() {
         const t = this.scene
           , e = t.game.canvas.getContext("2d")
-          , s = t.camera.zoom;
+          , s = t.camera.zoom,
+          clone = true;
         e.save(),
         this.drawStartPosition(e),
         this.bikeClone.drawBikeFrame(),
+        this.bikeClone.drawHitboxes(clone),
         e.restore()
       }
 
@@ -24232,6 +24317,8 @@
             case "import":
               break;
             case "importObject":
+              break;
+            case "advancedBrush":
               break;
             case "export":
               setTimeout(this.getTrackCode.bind(this), 750);

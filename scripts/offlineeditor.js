@@ -451,20 +451,19 @@
             adjustTrailSpeed: function (e) {
               "undefined" != typeof GameManager &&
                 GameManager.command("change tool option", "trailSpeed", e);
+                GameSettings.brush.trailSpeed = e;
             },
             adjustBreakLength: function (e) {
               "undefined" != typeof GameManager &&
                 GameManager.command("change tool option", "breakLength", e);
+                GameSettings.brush.breakLength = e;
             },
             getInitialState: function () {
               return { brushType: GameSettings.customBrush ? "CUSTOM" : "DEFAULT" };
             },
             toggleBrush: function () {
-              if (!GameSettings.customBrush) {
                 "undefined" != typeof GameManager &&
-                GameManager.command("dialog", "importObject");}
-              GameSettings.customBrush = !GameSettings.customBrush;
-              this.setState({ brushType: GameSettings.customBrush ? "CUSTOM" : "DEFAULT" });
+                GameManager.command("dialog", "advancedBrush", this.props.options);
             },
             render: function () {
               var brushType = GameSettings.customBrush ? "CUSTOM" : "DEFAULT";
@@ -511,10 +510,10 @@
                         e.object ? "object" : e.lineType
                       )
                     ),
-                    /*n.createElement("span", {},
+                    n.createElement("span", {},
                       n.createElement("button", {
-                        onClick: this.toggleBrush
-                      }, this.state.brushType))*/
+                        onClick: this.toggleBrush,
+                      }, "ADVANCED OPTIONS"))
                   ),
                   n.createElement(
                     "div",
@@ -541,7 +540,7 @@
                       readOnly: true
                   }),
                   ),
-                  n.createElement(
+                  /*n.createElement(
                     "div",
                     { className: "horizontal-slider-container" },
                     n.createElement(
@@ -565,7 +564,7 @@
                       value: (Math.floor(t * 10) / 10).toFixed(1),
                       readOnly: true
                   }),
-                  ),
+                  ),*/
                   /*GameSettings.customBrush && n.createElement(
                     "div",
                     { className: "horizontal-slider-container" },
@@ -998,7 +997,7 @@
                 n.createElement(
                   "span",
                   { className: "name" },
-                  "Camera Lock",
+                  "Camera",
                   r
                 )
               );
@@ -1182,7 +1181,7 @@
           },
           renderGridSizeSelect: function () {
             var e = GameSettings.toolHandler.gridSize,
-              t = [2, 4, 5, 10, 15, 20, 25, 40, 50, 100];
+              t = [2, 4, 5, 10, 20, 25, 40, 50, 100];
             return n.createElement("select", {
               ref: "gridSize",
               defaultValue: e,
@@ -1373,13 +1372,13 @@
                   event.stopPropagation();
                   this.importObject(event);
                 }
-            }, "IMPORT OBJECT"),
+            }, "IMPORT"),
               n.createElement("button", {
                 onClick: (event) => {
                   event.stopPropagation();
                   this.clearObject(event);
                 }
-              }, "CLEAR OBJECT"))) : null );
+              }, "CLEAR"))) : null );
             
           }
         });
@@ -2639,6 +2638,7 @@
           d = e("../chromeapp/infodialog"),
           p = e("./clear"),
           x = e("./importObject"),
+          xx = e("./advancedBrush"),
           h = n.createClass({
             displayName: "Dialogs",
             className: "editorDialog",
@@ -2685,6 +2685,9 @@
                 case "importObject":
                   f = n.createElement(x, null);
                   break;
+                case "advancedBrush":
+                    f = n.createElement(xx, null);
+                    break;
                 default:
                   h = { display: "none" };
               }
@@ -2711,6 +2714,7 @@
         "./help": 24,
         "./import": 25,
         "./importObject": 925,
+        "./advancedBrush": 9925,
         "./offline_editor_promo": 26,
         "./upload": 27,
         react: 230,
@@ -4261,6 +4265,192 @@
         autocomplete: 240,
       },
     ],
+    9925: [
+      function (e, t) {
+        var n = e("react"),
+          x = e("react-slider"),
+          r = n.createClass({
+            displayName: "advancedBrush",
+            dialogName: "advancedBrush",
+            closeDialog: function () {
+              "undefined" != typeof GameManager &&
+                GameManager.command("dialog", !1);
+            },
+            getInitialState: function () {
+              var v = this.props.options || {};
+              return {
+                trailSpeed: v.trailSpeed || GameSettings.brush.trailSpeed,
+                breakLength: v.breakLength || GameSettings.brush.breakLength
+              };
+            },
+            adjustTrailSpeed: function (value) {
+              "undefined" != typeof GameManager &&
+                GameManager.command("change tool option", "trailSpeed", value);
+              this.setState({ trailSpeed: value });
+              GameSettings.brush.trailSpeed = value;
+            },
+            adjustBreakLength: function (value) {
+              "undefined" != typeof GameManager &&
+                GameManager.command("change tool option", "breakLength", value);
+              this.setState({ breakLength: value });
+              GameSettings.brush.breakLength = value;
+            },
+            getAdvancedSettings: function () {
+              var e = GameSettings,
+                brushScale = e.brushScale,
+                brushRotate = e.brushRotate;
+
+                var v = this.props.options,
+                t = 1,
+                l = 0;
+                if (v) {
+                  t = v.trailSpeed;
+                  l = v.breakLength;
+                }
+              return (
+                n.createElement("div", null,
+                  n.createElement("div", { className: "editorDialog-titleBar" },
+                    n.createElement("span", { className: "editorDialog-close", onClick: this.closeDialog }, "×"),
+                    n.createElement("h1", { className: "editorDialog-content-title" }, "ADVANCED BRUSH OPTIONS")
+                  ),
+                  n.createElement("div", { className: "helpDialogAdvanced" },
+                    n.createElement("table", null,
+                      n.createElement("tbody", null,
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Break Length")),
+                          n.createElement("td", null,
+                            n.createElement("div", { className: "horizontal-slider-container" },
+                              n.createElement(x, {
+                                withBars: !0,
+                                className: "horizontal-slider-2 brush-slider_trailspeed",
+                                onChanged: this.adjustBreakLength,
+                                defaultValue: this.state.breakLength,
+                                max: 5,
+                                min: 0.01,
+                                step: 0.1,
+                                value: this.state.breakLength
+                              }),
+                              n.createElement("input", {
+                                type: "text",
+                                className: "brushToolOptions-input brushToolOptions-input_vehiclepoweruptime",
+                                value: (Math.floor(this.state.breakLength * 10) / 10).toFixed(1),
+                                readOnly: true
+                              })
+                            )
+                          )
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Trail Speed")),
+                          n.createElement("td", null,
+                            n.createElement("div", { className: "horizontal-slider-container" },
+                              n.createElement(x, {
+                                withBars: !0,
+                                className: "horizontal-slider-2 brush-slider_trailspeed",
+                                onChanged: this.adjustTrailSpeed,
+                                defaultValue: this.state.trailSpeed,
+                                max: 1,
+                                min: 0.01,
+                                step: 0.1,
+                                value: this.state.trailSpeed
+                              }),
+                              n.createElement("input", {
+                                type: "text",
+                                className: "brushToolOptions-input brushToolOptions-input_vehiclepoweruptime",
+                                value: (Math.floor(this.state.trailSpeed * 10) / 10).toFixed(1),
+                                readOnly: true
+                              })
+                            )
+                          )
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Object Rotate by Direction")),
+                          n.createElement("td", { className: "settingInput" }, n.createElement("input", {
+                            type: "checkbox",
+                            ref: "brushRotate",
+                            defaultChecked: brushRotate,
+                            onChange: this.toggleBrushRotate
+                          }))
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Object Scale by Speed")),
+                          n.createElement("td", { className: "settingInput" }, n.createElement("input", {
+                            type: "checkbox",
+                            ref: "brushScale",
+                            defaultChecked: brushScale,
+                            onChange: this.toggleBrushScale
+                          }))
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Rotate Jitter")),
+                          n.createElement("td", { className: "settingInput" }, this.renderRotateJitterSelect())
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Scale Jitter")),
+                          n.createElement("td", { className: "settingInput" }, this.renderScaleJitterSelect())
+                        )
+                      )
+                    )
+                  )
+                )
+              );
+            },
+            changeRotateJitter: function (brj) {
+              var rotateJitter = brj.target.value;
+              GameSettings.brushRotateJitter = rotateJitter;
+            },
+            changeScaleJitter: function (bsj) {
+              var scaleJitter = bsj.target.value;
+              GameSettings.brushScaleJitter = scaleJitter;
+            },
+            renderRotateJitterSelect: function () {
+              var brj = GameSettings.brushRotateJitter
+                , t = [0, 1, 2, 3, 4, 5];
+              return n.createElement("select", {
+                className: "brush-select",
+                ref: "rotateJitter",
+                defaultValue: brj,
+                onChange: this.changeRotateJitter
+              }, t.map(function (brj) {
+                return n.createElement("option", {
+                  value: brj
+                }, brj)
+              }))
+            },
+            renderScaleJitterSelect: function () {
+              var bsj = GameSettings.brushScaleJitter
+                , t = [0, 1, 2, 3, 4, 5];
+              return n.createElement("select", {
+                className: "brush-select",
+                ref: "scaleJitter",
+                defaultValue: bsj,
+                onChange: this.changeScaleJitter
+              }, t.map(function (bsj) {
+                return n.createElement("option", {
+                  value: bsj
+                }, bsj)
+              }))
+            },
+            toggleBrushRotate: function () {
+              var br = this.refs.brushRotate.getDOMNode().checked;
+              GameSettings.brushRotate = br
+            },
+            toggleBrushScale: function () {
+              var bs = this.refs.brushScale.getDOMNode().checked;
+              GameSettings.brushScale = bs
+            },
+            render: function () {
+              var e = !1;
+              return e = this.getAdvancedSettings(),
+                n.createElement("div", {
+                  className: "editorDialog-content editorDialog-content_brushDialog"
+                }, e)
+
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230, "react-slider": 75 },
+    ],
     26: [
       function (e, t) {
         var n = e("react"),
@@ -5442,6 +5632,10 @@
                     (u = n.createElement(s, { options: t }));
                   break;
                 case "select":
+                  var c = { display: "none" };
+                  break;
+                case "pete":
+                  var c = { display: "none" };
                   break;
                 case "camera":
                   var c = { display: "none" };

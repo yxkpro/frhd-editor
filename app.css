@@ -1727,6 +1727,52 @@ html.fullscreen #main_page {
     float: left
 }
 
+.horizontal-slider-container-2 {
+    display: inline-block;
+    float: left
+}
+
+.horizontal-slider-2 {
+    position: relative;
+    width: 100px;
+    height: 5px;
+    background: #9B9B9B;
+    border-radius: 30px;
+    float: left;
+    margin-top: 10px;
+}
+
+.horizontal-slider-2 .bar {
+    height: 100%
+}
+
+.horizontal-slider-2 .bar-0 {
+    background: #000;
+    border-radius: 30px
+}
+
+.horizontal-slider-2 .handle {
+    width: 25px;
+    height: 25px;
+    background: #FFF;
+    border: 2px solid #000;
+    border-radius: 30px;
+    margin-top: -10px
+}
+
+.brush-select {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+    margin-left: 0px;
+}
+
+.brush-td {
+    padding: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 .horizontal-slider-label {
     float: left;
     font-weight: 700
@@ -1839,13 +1885,15 @@ html.fullscreen #main_page {
 }
 
 .bottomMenu-button_grid {
-    min-width: 80px;
-    padding-left: 12px;
+    min-width: 78px;
+    padding-left: 10px;
+    padding-right: 15px;
 }
 
 .bottomMenu-button_object {
     min-width: 100px;
     padding-left: 15px;
+    padding-right: 15px;
 }
 
 .bottomMenu-button_snap {
@@ -1854,7 +1902,7 @@ html.fullscreen #main_page {
 }
 
 .bottomMenu-button_cameralock {
-    min-width: 110px;
+    min-width: 90px;
     padding-left: 8px;
     padding-right: 12px;
 }
@@ -1869,6 +1917,26 @@ html.fullscreen #main_page {
     border-right: 1px solid #000;
     width: 1px;
     float: right
+}
+
+.brushToolOptions {
+    float: left;
+    margin-left: 40px;
+}
+
+.brushToolOptions-input {
+    float: left;
+    background: #FFF;
+    border: 1px solid #000;
+    text-align: center;
+    margin-top: 0px;
+    border-radius: 5px
+}
+
+.brushToolOptions-input_vehiclepoweruptime {
+    width: 40px;
+    height: 25px;
+    margin-left: 15px;
 }
 
 .bottomMenu .horizontal-slider {
@@ -2330,7 +2398,8 @@ html.fullscreen #main_page {
 .helpDialogAdvanced {
     font-size: .75em;
     padding: 10px;
-    min-height: 200px
+    min-height: 200px;
+    display: inline-grid;
 }
 
 .hotkeyDialogAdvanced {
@@ -2380,6 +2449,11 @@ html.fullscreen #main_page {
 
 .editorDialog-content_controlsDialog {
     width: 300px
+}
+
+.editorDialog-content_brushDialog {
+    width: 400px;
+    vertical-align: middle
 }
 
 .editorDialog-content_controlsDialog .keyboard_keys {
