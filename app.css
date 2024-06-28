@@ -1833,7 +1833,7 @@ html.fullscreen #main_page {
 }
 
 .margin {
-    margin: 0 5px;
+    margin-left: 3px;
 }
 
 .width {
@@ -1887,7 +1887,7 @@ html.fullscreen #main_page {
 .bottomMenu-button_grid {
     min-width: 78px;
     padding-left: 10px;
-    padding-right: 15px;
+    padding-right: 10px;
 }
 
 .bottomMenu-button_object {

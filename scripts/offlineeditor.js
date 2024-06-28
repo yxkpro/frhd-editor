@@ -1271,6 +1271,10 @@
           importObject: function () {
             "undefined" != typeof GameManager && GameManager.command("dialog", "importObject");
           },
+          saveObject: function () {
+            GameSettings.object = true;
+            "undefined" != typeof GameManager && GameManager.command("dialog", "export");
+          },
           clearObject: function () {
             GameManager.game.currentScene.objectPhysics = [];
             GameManager.game.currentScene.objectScenery = [];
@@ -1365,20 +1369,28 @@
             }, "Object", o), this.state.open ? 
             n.createElement("div", {}, 
             n.createElement("span", {}, this.renderRotateSensitivitySelect()), 
-            n.createElement("span", {},
-              n.createElement("button", {
-                className: "margin",
-                onClick: (event) => {
-                  event.stopPropagation();
-                  this.importObject(event);
-                }
-            }, "IMPORT"),
-              n.createElement("button", {
-                onClick: (event) => {
-                  event.stopPropagation();
-                  this.clearObject(event);
-                }
-              }, "CLEAR"))) : null );
+              n.createElement("span", {},
+                n.createElement("button", {
+                  className: "margin",
+                  onClick: (event) => {
+                    event.stopPropagation();
+                    this.importObject(event);
+                  }
+                }, "IMPORT"),
+                n.createElement("button", {
+                  className: "margin",
+                  onClick: (event) => {
+                    event.stopPropagation();
+                    this.saveObject(event);
+                  }
+                }, "EXPORT"),
+                n.createElement("button", {
+                  className: "margin",
+                  onClick: (event) => {
+                    event.stopPropagation();
+                    this.clearObject(event);
+                  }
+                }, "CLEAR"))) : null);
             
           }
         });
@@ -1479,7 +1491,7 @@
                   "bottomMenu-button bottomMenu-button-right bottomMenu-button_vehicle ",
                 t = "editorgui_icons editorgui_icons-icon_bmx",
                 r = "BMX";
-                var o = this.state.open ? " : " : "";
+                var o = this.state.open ? " :" : "";
               return (
                 this.props.vehicle &&
                   ((r = this.props.vehicle.toLowerCase()),
@@ -2039,6 +2051,7 @@
             },
             componentWillMount: function () {},
             showExportDialog: function () {
+              GameSettings.object = false;
               "undefined" != typeof GameManager &&
                 GameManager.command("dialog", "export");
             },
@@ -2838,7 +2851,7 @@
               return (
                 e &&
                 e.code &&
-                ((t = e.code),
+                ((t = (GameSettings.object ? GameManager.game.currentScene.getObjectCode() : e.code)),
                 this.fileSaverSupport &&
                 (r = n.createElement(
                   "button",
@@ -2869,7 +2882,7 @@
                     n.createElement(
                       "h1",
                       { className: "editorDialog-content-title" },
-                      "EXPORT TRACK"
+                      (GameSettings.object ? "EXPORT OBJECT" : "EXPORT TRACK")
                     )
                   ),
                   n.createElement(
@@ -6648,6 +6661,7 @@
             displayName: "ExportTrack",
             dialogName: "export",
             openDialog: function () {
+              GameSettings.object = false;
               "undefined" != typeof GameManager &&
                 GameManager.command("dialog", this.dialogName);
             },

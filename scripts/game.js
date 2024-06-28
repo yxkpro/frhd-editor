@@ -24024,12 +24024,12 @@
             case "change_vehicle":
               this.toggleVehicle(), this.stateChanged();
               break;
-            case "zoom_increase":
+          /*case "zoom_increase":
               e.increaseZoom(), this.stateChanged();
               break;
             case "zoom_decrease":
               e.decreaseZoom(), this.stateChanged();
-              break;
+              break;*/
             case "fullscreen":
               this.toggleFullscreen(), this.stateChanged();
               break;
@@ -24339,6 +24339,156 @@
             (this.state.dialogOptions.powerupCounts = trackData.powerupCounts),
             (this.state.dialogOptions.trackSize = trackData.trackSize);
         }
+        getObjectCode() {
+          const t = this.objectPowerups,
+                e = this.objectPhysics,
+                s = this.objectScenery;
+        
+          let i = "";
+          let n = false;
+        
+          for (const line of e) {
+            if (!line.recorded && line.remove !== 0) {
+              n = true;
+              i +=
+                (line.x1 - GameSettings.offsetPeteX).toString(32) + " " +
+                (line.y1 - GameSettings.offsetPeteY).toString(32) + " " +
+                (line.x2 - GameSettings.offsetPeteX).toString(32) + " " +
+                (line.y2 - GameSettings.offsetPeteY).toString(32) + ",";
+            }
+            line.recorded = false;
+          }
+          if (n) i = i.slice(0, -1);
+          i += "#";
+        
+          n = false;
+        
+          for (const line of s) {
+            if (!line.recorded && line.remove !== 0) {
+              n = true;
+              i +=
+                (line.x1 - GameSettings.offsetPeteX).toString(32) + " " +
+                (line.y1 - GameSettings.offsetPeteY).toString(32) + " " +
+                (line.x2 - GameSettings.offsetPeteX).toString(32) + " " +
+                (line.y2 - GameSettings.offsetPeteY).toString(32) + ",";
+            }
+            line.recorded = false;
+          }
+          if (n) i = i.slice(0, -1);
+          i += "#";
+        
+          n = false;
+        
+          for (const powerup of t) {
+            console.log(powerup)
+            if (!powerup.recorded && powerup.remove !== 0) {
+              n = true;
+              switch (powerup.name) {
+                  case "gravity":
+                  i +=
+                    "G " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + " " +
+                    powerup.angle.toString(32) + ",";
+                  break;
+                  
+                  case "boost":
+                  i +=
+                    "B " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + " " +
+                    powerup.angle.toString(32) + ",";
+                  break;
+
+                  case "goal":
+                  i +=
+                    "T " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + ",";
+                  break;
+
+                  case "slowmo":
+                  i +=
+                    "S " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + ",";
+                  break;
+
+                  case "bomb":
+                  i +=
+                    "O " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + ",";
+                  break;
+
+                  case "checkpoint":
+                  i +=
+                    "C " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + ",";
+                  break;
+
+                  case "teleport":
+                  i +=
+                    "W " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + " " +
+                    (powerup.x2 - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y2 - GameSettings.offsetPeteY).toString(32) + ",";
+                  break;
+
+                  case "antigravity":
+                  i +=
+                    "A " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + ",";
+                  break;
+
+                  case "helicopter":
+                  i +=
+                    "V " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + " " +
+                    "1 " + 
+                    powerup.time.toString(32) + ",";
+                  break;
+
+                  case "truck":
+                  i +=
+                    "V " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + " " +
+                    "2 " + 
+                    powerup.time.toString(32) + ",";
+                  break;
+
+                  case "balloon":
+                  i +=
+                    "V " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + " " +
+                    "3 " + 
+                    powerup.time.toString(32) + ",";
+                  break;
+
+                  case "blob":
+                  i +=
+                    "V " +
+                    (powerup.x - GameSettings.offsetPeteX).toString(32) + " " +
+                    (powerup.y - GameSettings.offsetPeteY).toString(32) + " " +
+                    "4 " + 
+                    powerup.time.toString(32) + ",";
+                  break;
+              }
+            }
+            powerup.recorded = false;
+          }
+        
+          if (n) i = i.slice(0, -1);
+          i += "#";
+          
+          return i;
+        }
         trackComplete() {
           this.verified = !this.track.dirty;
         }
@@ -24602,8 +24752,6 @@
           const physicsLines = parsePoints(s);
           const sceneryLines = parsePoints(n);
           const powerups = parsePowerups(r.join(','));
-
-          console.log(powerups);
       
           return { physicsLines, sceneryLines, powerups };
         }
@@ -24628,10 +24776,10 @@
               const x2 = (line.x2 * scale) + offsetX;
               const y2 = (line.y2 * scale) + offsetY;
       
-              const newX1 = (x1 * cosAngle - y1 * sinAngle) * flipX;
-              const newY1 = (x1 * sinAngle + y1 * cosAngle) * flipY;
-              const newX2 = (x2 * cosAngle - y2 * sinAngle) * flipX;
-              const newY2 = (x2 * sinAngle + y2 * cosAngle) * flipY;
+              const newX1 = Math.round(x1 * cosAngle - y1 * sinAngle) * flipX;
+              const newY1 = Math.round(x1 * sinAngle + y1 * cosAngle) * flipY;
+              const newX2 = Math.round(x2 * cosAngle - y2 * sinAngle) * flipX;
+              const newY2 = Math.round(x2 * sinAngle + y2 * cosAngle) * flipY;
       
               return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
           };
