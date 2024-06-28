@@ -9016,7 +9016,7 @@
           o = s.n(r)()(n());
         o.push([
           t.id,
-          ".mod-menu-container {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    z-index: 11;\r\n    opacity: 1;\r\n    background-color: white;\r\n    border: 1px solid black;\r\n    min-height: 250px;\r\n\r\n    user-select: none; /* supported by Chrome and Opera */\r\n    -webkit-user-select: none; /* Safari */\r\n    -khtml-user-select: none; /* Konqueror HTML */\r\n    -moz-user-select: none; /* Firefox */\r\n    -ms-user-select: none; /* Internet Explorer/Edge */\r\n}\r\n\r\n.mod-v-seperator {\r\n    background-color: black;\r\n    margin-top: 6px;\r\n    margin-bottom: 6px;\r\n    width: 1px;\r\n}\r\n\r\n.mod-list-container {\r\n    display: grid;\r\n    grid-template-columns: auto auto auto;\r\n}\r\n\r\n.mod-section-title {\r\n    font-size: 13pt;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    padding-bottom: 10px;\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n}\r\n\r\n.mod-menu {\r\n    padding-top: 14px;\r\n    padding-bottom: 14px;\r\n}\r\n\r\n.mod-menu-option {\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n    display: flex; font-size: 13px; align-items: center;\r\n    font-family: roboto_medium, Arial, Helvetica, sans-serif;\r\n    color: #1B5264;\r\n}\r\n.mod-menu-option:hover, .mod-menu-option.opened {\r\n    background-color: rgb(236, 236, 236);\r\n}\r\n\r\n.mod-clickable:hover {\r\n    cursor: pointer;\r\n}\r\n.mod-clickable.mod-disabled:hover {\r\n    cursor: auto;\r\n    background-color: unset;\r\n}\r\n\r\n.mod-description-container {\r\n    max-width: 200px;\r\n    min-width: 200px;\r\n    padding: 14px;\r\n}\r\n\r\n.mod-setting-description {\r\n    font-size: 13px;\r\n}\r\n\r\n.mod-title {\r\n    text-align: center;\r\n    display: flex;\r\n    flex-direction: column;\r\n    height: 100%;\r\n    cursor: pointer;\r\n}\r\n\r\n.invisible {\r\n    display: none;\r\n}\r\n\r\n.mod-menu-container input {\r\n    width: 13px; margin-right: 4px; height: auto;\r\n}\r\n\r\n\r\n\r\n.mod-icon {\r\n    position: fixed;\r\n    background-size: 32px 32px;\r\n    margin: 6px 7px;\r\n    z-index: 10;\r\n    width: 32px;\r\n    height: 32px;\r\n    bottom: 0;\r\n    left: 0;\r\n}\r\n.mod-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.mod-update-notification {\r\n    width: 100%;\r\n    height: 50px;\r\n    background-color: rgb(43, 184, 43);\r\n    color: white;\r\n    border: 2px solid rgb(3, 141, 3);\r\n    position: fixed;\r\n    top: 0;\r\n    z-index: 1002;\r\n    text-align: center;\r\n    line-height: 46px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mod-dismiss-button {\r\n    height: 30px;\r\n    background-color: rgb(39, 206, 53);\r\n    border: none;\r\n    border-radius: 4px;\r\n    color: white;\r\n}\r\n.mod-dismiss-button:hover {\r\n    background-color: rgb(20, 167, 32);\r\n}\r\n\r\n\r\n\r\n\r\n\r\n.shade-indicator {\r\n    width: 6px;\r\n    height: 6px;\r\n    border: 2px solid black;\r\n    box-sizing: unset;\r\n    border-radius: 6px;\r\n    pointer-events: none;\r\n    \r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n  }\r\n  \r\n.shade-picker-container {\r\n    position: relative;\r\n}\r\n.shade-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.hue-picker-container {\r\n    position: relative;\r\n    margin-left: 10px;\r\n}\r\n.hue-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n.hue-indicator {\r\n    position: absolute;\r\n    box-sizing: unset;\r\n    width: 28px;\r\n    height: 6px;\r\n    left: -4px;\r\n    border: 1px solid black;\r\n    border-left: none;\r\n    border-right: none;\r\n    pointer-events: none;\r\n}\r\n\r\n.color-picker-container {\r\n    padding: 10px;\r\n    width: fit-content;\r\n}\r\n\r\n.color-picker-container .graphic-container {\r\n    display: flex;\r\n    width: fit-content;\r\n    margin-bottom: 10px;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n}\r\n\r\n.textbox-container {\r\n    display: flex;\r\n}\r\n\r\n.color-box {\r\n    flex: 1;\r\n    width: 0;\r\n    padding: 2px;\r\n    margin-left: 10px;\r\n    font-size: 13px;\r\n    text-align: center;\r\n}\r\n\r\n.red-box {\r\n    margin-left: 0;\r\n    border-bottom: 4px solid red;\r\n}\r\n\r\n.green-box {\r\n    border-bottom: 4px solid green;\r\n}\r\n\r\n.blue-box {\r\n    border-bottom: 4px solid blue;\r\n}",
+          ".mod-menu-container {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    z-index: 11;\r\n    opacity: 1;\r\n    background-color: white;\r\n    border: 1px solid black;\r\n    min-height: 250px;\r\n\r\n    user-select: none; /* supported by Chrome and Opera */\r\n    -webkit-user-select: none; /* Safari */\r\n    -khtml-user-select: none; /* Konqueror HTML */\r\n    -moz-user-select: none; /* Firefox */\r\n    -ms-user-select: none; /* Internet Explorer/Edge */\r\n}\r\n\r\n.mod-v-seperator {\r\n    background-color: black;\r\n    margin-top: 6px;\r\n    margin-bottom: 6px;\r\n    width: 1px;\r\n}\r\n\r\n.mod-list-container {\r\n    display: grid;\r\n    grid-template-columns: auto auto auto;\r\n}\r\n\r\n.mod-section-title {\r\n    font-size: 13pt;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    padding-bottom: 10px;\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n}\r\n\r\n.mod-menu {\r\n    min-width: 170px;\r\n    padding-top: 14px;\r\n    padding-bottom: 14px;\r\n}\r\n\r\n.mod-menu-option {\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n    display: flex; font-size: 13px; align-items: center;\r\n    font-family: roboto_medium, Arial, Helvetica, sans-serif;\r\n    color: #1B5264;\r\n}\r\n.mod-menu-option:hover, .mod-menu-option.opened {\r\n    background-color: rgb(236, 236, 236);\r\n}\r\n\r\n.mod-clickable:hover {\r\n    cursor: pointer;\r\n}\r\n.mod-clickable.mod-disabled:hover {\r\n    cursor: auto;\r\n    background-color: unset;\r\n}\r\n\r\n.mod-description-container {\r\n    max-width: 200px;\r\n    min-width: 200px;\r\n    padding: 14px;\r\n}\r\n\r\n.mod-setting-description {\r\n    font-size: 13px;\r\n}\r\n\r\n.mod-title {\r\n    text-align: center;\r\n    display: flex;\r\n    flex-direction: column;\r\n    height: 100%;\r\n    cursor: pointer;\r\n}\r\n\r\n.invisible {\r\n    display: none;\r\n}\r\n\r\n.mod-menu-container input {\r\n    width: 13px; margin-right: 4px; height: auto;\r\n}\r\n\r\n\r\n\r\n.mod-icon {\r\n    position: fixed;\r\n    background-size: 32px 32px;\r\n    margin: 6px 7px;\r\n    z-index: 10;\r\n    width: 32px;\r\n    height: 32px;\r\n    bottom: 0;\r\n    left: 0;\r\n}\r\n.mod-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.mod-update-notification {\r\n    width: 100%;\r\n    height: 50px;\r\n    background-color: rgb(43, 184, 43);\r\n    color: white;\r\n    border: 2px solid rgb(3, 141, 3);\r\n    position: fixed;\r\n    top: 0;\r\n    z-index: 1002;\r\n    text-align: center;\r\n    line-height: 46px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mod-dismiss-button {\r\n    height: 30px;\r\n    background-color: rgb(39, 206, 53);\r\n    border: none;\r\n    border-radius: 4px;\r\n    color: white;\r\n}\r\n.mod-dismiss-button:hover {\r\n    background-color: rgb(20, 167, 32);\r\n}\r\n\r\n\r\n\r\n\r\n\r\n.shade-indicator {\r\n    width: 6px;\r\n    height: 6px;\r\n    border: 2px solid black;\r\n    box-sizing: unset;\r\n    border-radius: 6px;\r\n    pointer-events: none;\r\n    \r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n  }\r\n  \r\n.shade-picker-container {\r\n    position: relative;\r\n}\r\n.shade-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.hue-picker-container {\r\n    position: relative;\r\n    margin-left: 10px;\r\n}\r\n.hue-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n.hue-indicator {\r\n    position: absolute;\r\n    box-sizing: unset;\r\n    width: 28px;\r\n    height: 6px;\r\n    left: -4px;\r\n    border: 1px solid black;\r\n    border-left: none;\r\n    border-right: none;\r\n    pointer-events: none;\r\n}\r\n\r\n.color-picker-container {\r\n    padding: 10px;\r\n    width: fit-content;\r\n}\r\n\r\n.color-picker-container .graphic-container {\r\n    display: flex;\r\n    width: fit-content;\r\n    margin-bottom: 10px;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n}\r\n\r\n.textbox-container {\r\n    display: flex;\r\n}\r\n\r\n.color-box {\r\n    flex: 1;\r\n    width: 0;\r\n    padding: 2px;\r\n    margin-left: 10px;\r\n    font-size: 13px;\r\n    text-align: center;\r\n}\r\n\r\n.red-box {\r\n    margin-left: 0;\r\n    border-bottom: 4px solid red;\r\n}\r\n\r\n.green-box {\r\n    border-bottom: 4px solid green;\r\n}\r\n\r\n.blue-box {\r\n    border-bottom: 4px solid blue;\r\n}",
           "",
           {
             version: 3,
@@ -9025,7 +9025,7 @@
             mappings:
               "AAAA;IACI,eAAe;IACf,OAAO;IACP,SAAS;IACT,WAAW;IACX,uBAAuB;IACvB,uBAAuB;IACvB,iBAAiB;;IAEjB,iBAAiB,EAAE,kCAAkC;IACrD,yBAAyB,EAAE,WAAW;IACtC,wBAAwB,EAAE,mBAAmB;IAC7C,sBAAsB,EAAE,YAAY;IACpC,qBAAqB,EAAE,2BAA2B;AACtD;;AAEA;IACI,uBAAuB;IACvB,eAAe;IACf,kBAAkB;IAClB,UAAU;AACd;;AAEA;IACI,aAAa;IACb,qCAAqC;AACzC;;AAEA;IACI,eAAe;IACf,iBAAiB;IACjB,kBAAkB;IAClB,oBAAoB;IACpB,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,iBAAiB;IACjB,oBAAoB;AACxB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;IACnB,eAAe;IACf,wDAAwD;IACxD,cAAc;AAClB;AACA;IACI,oCAAoC;AACxC;;AAEA;IACI,eAAe;AACnB;AACA;IACI,YAAY;IACZ,uBAAuB;AAC3B;;AAEA;IACI,gBAAgB;IAChB,gBAAgB;IAChB,aAAa;AACjB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,kBAAkB;IAClB,aAAa;IACb,sBAAsB;IACtB,YAAY;IACZ,eAAe;AACnB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,YAAY;AAChB;;;;AAIA;IACI,eAAe;IACf,0BAA0B;IAC1B,WAAW;IACX,WAAW;IACX,WAAW;IACX,YAAY;IACZ,SAAS;IACT,OAAO;AACX;AACA;IACI,eAAe;AACnB;;;AAGA;IACI,WAAW;IACX,YAAY;IACZ,kCAAkC;IAClC,YAAY;IACZ,gCAAgC;IAChC,eAAe;IACf,MAAM;IACN,aAAa;IACb,kBAAkB;IAClB,iBAAiB;IACjB,eAAe;AACnB;;AAEA;IACI,YAAY;IACZ,kCAAkC;IAClC,YAAY;IACZ,kBAAkB;IAClB,YAAY;AAChB;AACA;IACI,kCAAkC;AACtC;;;;;;AAMA;IACI,UAAU;IACV,WAAW;IACX,uBAAuB;IACvB,iBAAiB;IACjB,kBAAkB;IAClB,oBAAoB;;IAEpB,kBAAkB;IAClB,MAAM;IACN,OAAO;EACT;;AAEF;IACI,kBAAkB;AACtB;AACA;IACI,eAAe;AACnB;;;AAGA;IACI,kBAAkB;IAClB,iBAAiB;AACrB;AACA;IACI,eAAe;AACnB;;AAEA;IACI,kBAAkB;IAClB,iBAAiB;IACjB,WAAW;IACX,WAAW;IACX,UAAU;IACV,uBAAuB;IACvB,iBAAiB;IACjB,kBAAkB;IAClB,oBAAoB;AACxB;;AAEA;IACI,aAAa;IACb,kBAAkB;AACtB;;AAEA;IACI,aAAa;IACb,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,SAAS;AACb;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,OAAO;IACP,QAAQ;IACR,YAAY;IACZ,iBAAiB;IACjB,eAAe;IACf,kBAAkB;AACtB;;AAEA;IACI,cAAc;IACd,4BAA4B;AAChC;;AAEA;IACI,8BAA8B;AAClC;;AAEA;IACI,6BAA6B;AACjC",
             sourcesContent: [
-              ".mod-menu-container {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    z-index: 11;\r\n    background-color: white;\r\n    border: 1px solid black;\r\n    min-height: 250px;\r\n\r\n    user-select: none; /* supported by Chrome and Opera */\r\n    -webkit-user-select: none; /* Safari */\r\n    -khtml-user-select: none; /* Konqueror HTML */\r\n    -moz-user-select: none; /* Firefox */\r\n    -ms-user-select: none; /* Internet Explorer/Edge */\r\n}\r\n\r\n.mod-v-seperator {\r\n    background-color: black;\r\n    margin-top: 6px;\r\n    margin-bottom: 6px;\r\n    width: 1px;\r\n}\r\n\r\n.mod-list-container {\r\n    display: grid;\r\n    grid-template-columns: auto auto auto;\r\n}\r\n\r\n.mod-section-title {\r\n    font-size: 13pt;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    padding-bottom: 10px;\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n}\r\n\r\n.mod-menu {\r\n    padding-top: 14px;\r\n    padding-bottom: 14px;\r\n}\r\n\r\n.mod-menu-option {\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n    font-size: 16px;\r\n    font-family: roboto_medium, Arial, Helvetica, sans-serif;\r\n    color: #1B5264;\r\n}\r\n.mod-menu-option:hover, .mod-menu-option.opened {\r\n    background-color: rgb(236, 236, 236);\r\n}\r\n\r\n.mod-clickable:hover {\r\n    cursor: pointer;\r\n}\r\n.mod-clickable.mod-disabled:hover {\r\n    cursor: auto;\r\n    background-color: unset;\r\n}\r\n\r\n.mod-description-container {\r\n    max-width: 200px;\r\n    min-width: 200px;\r\n    padding: 14px;\r\n}\r\n\r\n.mod-setting-description {\r\n    font-size: 13px;\r\n}\r\n\r\n.mod-title {\r\n    text-align: center;\r\n    display: flex;\r\n    flex-direction: column;\r\n    height: 100%;\r\n    cursor: pointer;\r\n}\r\n\r\n.invisible {\r\n    display: none;\r\n}\r\n\r\n.mod-menu-container input {\r\n    height: auto;\r\n}\r\n\r\n\r\n\r\n.mod-icon {\r\n    position: fixed;\r\n    background-size: 32px 32px;\r\n    margin: 7px;\r\n    z-index: 10;\r\n    width: 32px;\r\n    height: 32px;\r\n    bottom: 0;\r\n    left: 0;\r\n}\r\n.mod-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.mod-update-notification {\r\n    width: 100%;\r\n    height: 50px;\r\n    background-color: rgb(43, 184, 43);\r\n    color: white;\r\n    border: 2px solid rgb(3, 141, 3);\r\n    position: fixed;\r\n    top: 0;\r\n    z-index: 1002;\r\n    text-align: center;\r\n    line-height: 46px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mod-dismiss-button {\r\n    height: 30px;\r\n    background-color: rgb(39, 206, 53);\r\n    border: none;\r\n    border-radius: 4px;\r\n    color: white;\r\n}\r\n.mod-dismiss-button:hover {\r\n    background-color: rgb(20, 167, 32);\r\n}\r\n\r\n\r\n\r\n\r\n\r\n.shade-indicator {\r\n    width: 6px;\r\n    height: 6px;\r\n    border: 2px solid black;\r\n    box-sizing: unset;\r\n    border-radius: 6px;\r\n    pointer-events: none;\r\n    \r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n  }\r\n  \r\n.shade-picker-container {\r\n    position: relative;\r\n}\r\n.shade-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.hue-picker-container {\r\n    position: relative;\r\n    margin-left: 10px;\r\n}\r\n.hue-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n.hue-indicator {\r\n    position: absolute;\r\n    box-sizing: unset;\r\n    width: 28px;\r\n    height: 6px;\r\n    left: -4px;\r\n    border: 1px solid black;\r\n    border-left: none;\r\n    border-right: none;\r\n    pointer-events: none;\r\n}\r\n\r\n.color-picker-container {\r\n    padding: 10px;\r\n    width: fit-content;\r\n}\r\n\r\n.color-picker-container .graphic-container {\r\n    display: flex;\r\n    width: fit-content;\r\n    margin-bottom: 10px;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n}\r\n\r\n.textbox-container {\r\n    display: flex;\r\n}\r\n\r\n.color-box {\r\n    flex: 1;\r\n    width: 0;\r\n    padding: 2px;\r\n    margin-left: 10px;\r\n    font-size: 13px;\r\n    text-align: center;\r\n}\r\n\r\n.red-box {\r\n    margin-left: 0;\r\n    border-bottom: 4px solid red;\r\n}\r\n\r\n.green-box {\r\n    border-bottom: 4px solid green;\r\n}\r\n\r\n.blue-box {\r\n    border-bottom: 4px solid blue;\r\n}",
+              ".mod-menu-container {\r\n    position: fixed;\r\n    left: 0;\r\n    bottom: 0;\r\n    z-index: 11;\r\n    background-color: white;\r\n    border: 1px solid black;\r\n    min-height: 250px;\r\n\r\n    user-select: none; /* supported by Chrome and Opera */\r\n    -webkit-user-select: none; /* Safari */\r\n    -khtml-user-select: none; /* Konqueror HTML */\r\n    -moz-user-select: none; /* Firefox */\r\n    -ms-user-select: none; /* Internet Explorer/Edge */\r\n}\r\n\r\n.mod-v-seperator {\r\n    background-color: black;\r\n    margin-top: 6px;\r\n    margin-bottom: 6px;\r\n    width: 1px;\r\n}\r\n\r\n.mod-list-container {\r\n    display: grid;\r\n    grid-template-columns: auto auto auto;\r\n}\r\n\r\n.mod-section-title {\r\n    font-size: 13pt;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    padding-bottom: 10px;\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n}\r\n\r\n.mod-menu {\r\n    min-width: 170px;\r\n    padding-top: 14px;\r\n    padding-bottom: 14px;\r\n}\r\n\r\n.mod-menu-option {\r\n    padding-left: 14px;\r\n    padding-right: 14px;\r\n    font-size: 16px;\r\n    font-family: roboto_medium, Arial, Helvetica, sans-serif;\r\n    color: #1B5264;\r\n}\r\n.mod-menu-option:hover, .mod-menu-option.opened {\r\n    background-color: rgb(236, 236, 236);\r\n}\r\n\r\n.mod-clickable:hover {\r\n    cursor: pointer;\r\n}\r\n.mod-clickable.mod-disabled:hover {\r\n    cursor: auto;\r\n    background-color: unset;\r\n}\r\n\r\n.mod-description-container {\r\n    max-width: 200px;\r\n    min-width: 200px;\r\n    padding: 14px;\r\n}\r\n\r\n.mod-setting-description {\r\n    font-size: 13px;\r\n}\r\n\r\n.mod-title {\r\n    text-align: center;\r\n    display: flex;\r\n    flex-direction: column;\r\n    height: 100%;\r\n    cursor: pointer;\r\n}\r\n\r\n.invisible {\r\n    display: none;\r\n}\r\n\r\n.mod-menu-container input {\r\n    height: auto;\r\n}\r\n\r\n\r\n\r\n.mod-icon {\r\n    position: fixed;\r\n    background-size: 32px 32px;\r\n    margin: 7px;\r\n    z-index: 10;\r\n    width: 32px;\r\n    height: 32px;\r\n    bottom: 0;\r\n    left: 0;\r\n}\r\n.mod-icon:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.mod-update-notification {\r\n    width: 100%;\r\n    height: 50px;\r\n    background-color: rgb(43, 184, 43);\r\n    color: white;\r\n    border: 2px solid rgb(3, 141, 3);\r\n    position: fixed;\r\n    top: 0;\r\n    z-index: 1002;\r\n    text-align: center;\r\n    line-height: 46px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mod-dismiss-button {\r\n    height: 30px;\r\n    background-color: rgb(39, 206, 53);\r\n    border: none;\r\n    border-radius: 4px;\r\n    color: white;\r\n}\r\n.mod-dismiss-button:hover {\r\n    background-color: rgb(20, 167, 32);\r\n}\r\n\r\n\r\n\r\n\r\n\r\n.shade-indicator {\r\n    width: 6px;\r\n    height: 6px;\r\n    border: 2px solid black;\r\n    box-sizing: unset;\r\n    border-radius: 6px;\r\n    pointer-events: none;\r\n    \r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n  }\r\n  \r\n.shade-picker-container {\r\n    position: relative;\r\n}\r\n.shade-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n\r\n.hue-picker-container {\r\n    position: relative;\r\n    margin-left: 10px;\r\n}\r\n.hue-picker-container canvas {\r\n    cursor: pointer;\r\n}\r\n\r\n.hue-indicator {\r\n    position: absolute;\r\n    box-sizing: unset;\r\n    width: 28px;\r\n    height: 6px;\r\n    left: -4px;\r\n    border: 1px solid black;\r\n    border-left: none;\r\n    border-right: none;\r\n    pointer-events: none;\r\n}\r\n\r\n.color-picker-container {\r\n    padding: 10px;\r\n    width: fit-content;\r\n}\r\n\r\n.color-picker-container .graphic-container {\r\n    display: flex;\r\n    width: fit-content;\r\n    margin-bottom: 10px;\r\n}\r\n\r\nbody {\r\n    margin: 0;\r\n}\r\n\r\n.textbox-container {\r\n    display: flex;\r\n}\r\n\r\n.color-box {\r\n    flex: 1;\r\n    width: 0;\r\n    padding: 2px;\r\n    margin-left: 10px;\r\n    font-size: 13px;\r\n    text-align: center;\r\n}\r\n\r\n.red-box {\r\n    margin-left: 0;\r\n    border-bottom: 4px solid red;\r\n}\r\n\r\n.green-box {\r\n    border-bottom: 4px solid green;\r\n}\r\n\r\n.blue-box {\r\n    border-bottom: 4px solid blue;\r\n}",
             ],
             sourceRoot: "",
           },
@@ -11114,6 +11114,7 @@
               e > 50 &&
               ((this.cached = !0), this.cache_fixed_text());
             var o = e / s.drawFPS;
+            if (this.scene.game.mod.getVar("slowmo")) {o = o / 2}
             this.time.text = n(1e3 * o);
             var a = i.targetCount,
               h = r.getTargetsHit();
@@ -16234,8 +16235,12 @@
                   t.update();
                 for (let t = 0; t < this.deadVehicles.length; t++)
                   this.deadVehicles[t] && this.deadVehicles[t].update();
-                this._addCheckpoint &&
+                if (this._addCheckpoint) {
                   (this._createCheckpoint(), (this._addCheckpoint = !1));
+                }
+                if (this._game.mod.getVar("rewind") && !this._crashed) {
+                  this._createCheckpoint();
+                }
               }
             }
             isInFocus() {
@@ -16307,8 +16312,9 @@
                 t.isButtonDown("backspace"))
               ) {
                 const e = t.getButtonDownOccurances("backspace");
-                this.removeCheckpoint(e), t.setButtonUp("backspace");
+                this.removeCheckpoint(e), !this._game.mod.getVar("rewind") && t.setButtonUp("backspace");
               }
+              if (t.isButtonDown("shift") && t.isButtonDown("backspace")) { this._checkpoints = [];}
             }
             getDistanceBetweenPlayers(t) {
               const e = this.getActiveVehicle(),
@@ -16338,7 +16344,12 @@
                   ))),
                 (t._powerupsConsumed = JSON.stringify(this._powerupsConsumed)),
                 (t._crashed = this._crashed),
+                t._sceneTicks = this._scene.ticks;
                 this._checkpoints.push(t);
+
+                if (this._checkpoints.length > 500 && this._game.mod.getVar("rewind")) {
+                  this._checkpoints.shift();
+                }
             }
             _snapshotFilter(t, e) {
               switch (t) {
@@ -16408,6 +16419,8 @@
                   (this._crashed = s._crashed),
                   !t)
                 ) {
+                  if (this._game.mod.getVar("oldTimer")) {e.ticks = s._sceneTicks};
+                  if (!this._scene.playerManager.firstPlayer.complete && this._game.mod.getVar("oldTimer")) {e.ticks = e.ticks + 1}
                   const t = e.settings;
                   var keyCodeToChar = {8:"Backspace",9:"Tab",13:"Enter",16:"Shift",17:"Ctrl",18:"Alt",19:"Pause/Break",20:"Caps Lock",27:"Esc",32:"Space",33:"Page Up",34:"Page Down",35:"End",36:"Home",37:"Left",38:"Up",39:"Right",40:"Down",45:"Insert",46:"Delete",48:"0",49:"1",50:"2",51:"3",52:"4",53:"5",54:"6",55:"7",56:"8",57:"9",65:"A",66:"B",67:"C",68:"D",69:"E",70:"F",71:"G",72:"H",73:"I",74:"J",75:"K",76:"L",77:"M",78:"N",79:"O",80:"P",81:"Q",82:"R",83:"S",84:"T",85:"U",86:"V",87:"W",88:"X",89:"Y",90:"Z",91:"Windows",93:"Right Click",96:"Numpad 0",97:"Numpad 1",98:"Numpad 2",99:"Numpad 3",100:"Numpad 4",101:"Numpad 5",102:"Numpad 6",103:"Numpad 7",104:"Numpad 8",105:"Numpad 9",106:"Numpad Multiply",107:"Numpad Plus",109:"Numpad Minus",110:"Numpad Decimal",111:"Numpad Divide",112:"F1",113:"F2",114:"F3",115:"F4",116:"F5",117:"F6",118:"F7",119:"F8",120:"F9",121:"F10",122:"F11",123:"F12",144:"Num Lock",145:"Scroll Lock",182:"My Computer",183:"My Calculator",186:"Semi-colon",187:"Equal Sign",188:"Comma",189:"Minus",190:"Period",191:"Slash",192:"Backquote",219:"Open Bracket",220:"Backslash",221:"Close Bracket",222:"'"};
                   let y = keyCodeToChar[GameSettings.editorHotkeys.backspace];
@@ -19477,6 +19490,7 @@
         this.bikeClone.masses.forEach(
             (i) => (
                 (i.collide = true),
+                (i.crashed = !1),
                 (i.update = ((old) => () => {
                     old.apply(i);
                     let len = i.vel.len();
@@ -19496,7 +19510,7 @@
       }
 
       reset() {
-        this.active = !1
+        this.active = !1;
         if (GameSettings.freeFloppyPete) {
         this.bikeClone =
         this.scene.playerManager.firstPlayer._baseVehicle.clone();
@@ -19540,7 +19554,8 @@
         }
         if (GameSettings.offsetPeteX === 0 && GameSettings.offsetPeteY === 0 && !GameSettings.freeFloppyPete) {
           this.offsetPete.x = GameSettings.offsetPeteX;
-          this.offsetPete.y = GameSettings.offsetPeteY - 1;}
+          this.offsetPete.y = GameSettings.offsetPeteY - 1;}       
+        this.bikeClone.explosion = !1;
       }
 
       draw() {
@@ -23973,6 +23988,10 @@
             this.stage.update(),
             this.camera.updateZoom(),
             this.updateMainPlayerHotkeys();
+            this.game.mod.getVar("oldTimer") && this.score.update();
+              if (this.playerManager.firstPlayer.complete && (this.playerManager.firstPlayer._scene.ticks < this.completedTicks)){
+                  this.playerManager.firstPlayer.complete = false;
+            }
         }
         isStateDirty() {
           const t = this.oldState,
@@ -24491,6 +24510,7 @@
         }
         trackComplete() {
           this.verified = !this.track.dirty;
+          this.completedTicks = this.playerManager.firstPlayer._scene.ticks;
         }
         hideControlPlanel() {}
         showControlPlanel() {}
@@ -25708,6 +25728,8 @@
           propeller: { default: !1 },
           crouch: { default: !1 },
           slowmo: { default: !1 },
+          rewind: { default: !1 },
+          oldTimer: { default: !1 },
           frontBrake: { default: !1 },
           bikeData: { default: !1 },
           gameData: { default: !1 },
@@ -26046,24 +26068,105 @@
             ],
           },
           {
-            key: "blackHat",
-            title: "Hacker Mode",
+            type: "folder",
+            title: "Polygon's Mods",
             description:
-              "Replaces Pete's baseball cap with a classy black top hat.",
-            disables: ["crHead", "mario"],
+              "More mods that were included in Polygon's Mod.",
+            folder: [
+              {
+                key: "lineShadow",
+                title: "Line Shadows",
+                description:
+                  "Adds shadows behind the black lines to make them stand out more.",
+              },
+              {
+                key: "fadedVehiclePowerups",
+                title: "Faded Vehicle Powerups",
+                description:
+                  "When vehicle powerups are collected, they will become faded out, rather than disappearing completely.",
+              },
+              {
+                key: "accurateEraser",
+                title: "Accurate Eraser",
+                description:
+                  "Makes the eraser correctly account for line thickness. It feels more responsive, but can make precise erases difficult or impossible.",
+              },
+              {
+                key: "keepDeadRiders",
+                title: "Keep Dead Riders",
+                description: "When you restart, your old bike and rider will be kept on the map. To prevent lag, the maximum number of copies on the track at one time is 10."
+              },
+              {
+                key: "pixelSnapEverything",
+                title: "Pixel Snap Rider",
+                description:
+                  "Snaps the rider's position to pixels, along with the track. This setting trades visual smoothness for visual accuracy. It may be helpful for ghosters, but it is generally not recommended.",
+              },
+            ],
           },
           {
-            key: "mario",
-            title: "Mario Mode",
+            type: "folder",
+            title: "Bike/Vehicle Mods",
             description:
-              "Enables horizontal scrolling, replaces goals with Mario stars, and gives Pete a red or green cap depending on the bike.",
-            disables: ["blackHat"],
-          },
-          {
-            key: "lineShadow",
-            title: "Line Shadows",
-            description:
-              "Adds shadows behind the black lines to make them stand out more.",
+              "Cool and fun mods that alter the bikes and vehicles.",
+            folder: [
+              {
+                key: "blackHat",
+                title: "Hacker Mode",
+                description:
+                  "Replaces Pete's baseball cap with a classy black top hat.",
+                disables: ["crHead", "mario"],
+              },
+              {
+                key: "mario",
+                title: "Mario Mode",
+                description:
+                  "Enables horizontal scrolling, replaces goals with Mario stars, and gives Pete a red or green cap depending on the bike.",
+                disables: ["blackHat"],
+              },
+              {
+                key: "mini",
+                title: "Mini-Bike",
+                description:
+                  "Shrinks the frame and wheels of the bike.",
+              },
+              {
+                key: "propeller",
+                title: "Propeller",
+                description:
+                  "Adds a propeller to the bike, press 'x' to fly.",
+              },
+              {
+                key: "crouch",
+                title: "Crouch",
+                description:
+                  "Press 'x' to crouch.",
+              },
+              {
+                key: "frontBrake",
+                title: "Old-School Front Brake",
+                description:
+                  "Front brake is engaged when pressing down arrow key.",
+              },
+              {
+                key: "invincibility",
+                title: "Invincibility",
+                description:
+                  "Makes the rider invincible to line collisions and bombs.",
+              },
+              {
+                key: "invisibleRider",
+                title: "Invisible Rider",
+                description:
+                  "Makes the rider invisible.",
+              },
+              {
+                key: "noClip",
+                title: "No Clip",
+                description:
+                  "Collisions with the head mass are disabled.",
+              },
+            ],
           },
           /*
           {
@@ -26072,12 +26175,6 @@
             description: "Hides the grid in the editor.",
           },
           */
-          {
-            key: "fadedVehiclePowerups",
-            title: "Faded Vehicle Powerups",
-            description:
-              "When vehicle powerups are collected, they will become faded out, rather than disappearing completely.",
-          },
           /*
           {
             key: "disableDefocus",
@@ -26087,69 +26184,22 @@
           },
           */
           {
-            key: "pixelSnapEverything",
-            title: "Pixel Snap Rider",
-            description:
-              "Snaps the rider's position to pixels, along with the track. This setting trades visual smoothness for visual accuracy. It may be helpful for ghosters, but it is generally not recommended.",
-          },
-          {
-            key: "accurateEraser",
-            title: "Accurate Eraser",
-            description:
-              "Makes the eraser correctly account for line thickness. It feels more responsive, but can make precise erases difficult or impossible.",
-          },
-          {
-            key: "keepDeadRiders",
-            title: "Keep Dead Riders",
-            description: "When you restart, your old bike and rider will be kept on the map. To prevent lag, the maximum number of copies on the track at one time is 10."
-          },
-          {
-            key: "invincibility",
-            title: "Invincibility",
-            description:
-              "Makes the rider invincible to line collisions and bombs.",
-          },
-          {
-            key: "noClip",
-            title: "No Clip",
-            description:
-              "Collisions with the head mass are disabled.",
-          },
-          {
             key: "slowmo",
             title: "Slow-Mode",
             description:
-              "Toggles slow-motion mode.",
+              "Toggles slow-motion mode. The rider is constantly in a state of slow-motion, and the timer is slowed as well.",
           },
           {
-            key: "invisibleRider",
-            title: "Invisible Rider",
+            key: "rewind",
+            title: "Rewind",
             description:
-              "Makes the rider invisible.",
+              "The rider's position is saved every tick, so backspace allows you to rewind. Hold shift and backspace to restart the track.",
           },
           {
-            key: "mini",
-            title: "Mini-Bike",
+            key: "oldTimer",
+            title: "Old Timer",
             description:
-              "Shrinks the frame and wheels of the bike.",
-          },
-          {
-            key: "propeller",
-            title: "Propeller",
-            description:
-              "Adds a propeller to the bike, press 'x' to fly.",
-          },
-          {
-            key: "crouch",
-            title: "Crouch",
-            description:
-              "Press 'x' to crouch.",
-          },
-          {
-            key: "frontBrake",
-            title: "Old-School Front Brake",
-            description:
-              "Front brake is engaged when pressing down arrow key.",
+              "When restarting from a checkpoint, the timer resets to the time the checkpoint was collected, as it did in previous Free Rider games.",
           },
           {
             key: "bikeData",
