@@ -16314,7 +16314,7 @@
                 const e = t.getButtonDownOccurances("backspace");
                 this.removeCheckpoint(e), !this._game.mod.getVar("rewind") && t.setButtonUp("backspace");
               }
-              if (t.isButtonDown("shift") && t.isButtonDown("backspace")) { this._checkpoints = [];}
+              if (t.isButtonDown("shift") && t.isButtonDown("backspace")) { this._checkpoints = []; t.setButtonUp("shift")}
             }
             getDistanceBetweenPlayers(t) {
               const e = this.getActiveVehicle(),
@@ -17091,7 +17091,19 @@
           }
           
           if (t.isButtonDown("invert")) {
-            GameSettings.objectInvert = !GameSettings.objectInvert;
+            const states = [
+                { invert: false, invertFlat: false },
+                { invert: true, invertFlat: false },
+                { invert: false, invertFlat: true },
+                { invert: true, invertFlat: true }
+            ];
+            let currentIndex = states.findIndex(state => 
+                state.invert === GameSettings.objectInvert && 
+                state.invertFlat === GameSettings.objectInvertFlat
+            );
+            currentIndex = (currentIndex + 1) % states.length;
+            GameSettings.objectInvert = states[currentIndex].invert;
+            GameSettings.objectInvertFlat = states[currentIndex].invertFlat;
             t.setButtonUp("invert");
             this.scene.transformObjects();
             this.scene.stateChanged();
@@ -24647,6 +24659,7 @@
                 GameSettings.objectFlipX = !1;
                 GameSettings.objectFlipY = !1;
                 GameSettings.objectInvert = !1;
+                GameSettings.objectInvertFlat = !1;
                 this.transformObjects();
                 !this.toolHandler.options.object && this.toolHandler.toggleObject();
               } else {
@@ -24777,6 +24790,10 @@
         }
         transformObjects() {
           if (!this.objectPhysics || !this.objectScenery || !this.objectPowerups) return;
+
+          this.modObjectPhysics = [];
+          this.modObjectScenery = [];
+          this.modObjectPowerups = [];
       
           const rotate = GameSettings.objectRotate;
           const scale = GameSettings.objectScale;
@@ -24785,6 +24802,7 @@
           const flipX = GameSettings.objectFlipX ? -1 : 1;
           const flipY = GameSettings.objectFlipY ? -1 : 1;
           const invert = GameSettings.objectInvert;
+          const flat = GameSettings.objectInvertFlat;
       
           const angle = rotate * (Math.PI / 180);
           const cosAngle = Math.cos(angle);
@@ -24831,12 +24849,16 @@
               return transformedPowerup;
           };
       
-          if (!invert) {
-              this.modObjectPhysics = this.objectPhysics.map(transformLine);
-              this.modObjectScenery = this.objectScenery.map(transformLine);
+          if (!invert && !flat) {
+            this.modObjectPhysics = this.objectPhysics.map(transformLine);
+            this.modObjectScenery = this.objectScenery.map(transformLine);
+          } else if (!invert && flat) {
+            this.modObjectPhysics = [...this.objectPhysics, ...this.objectScenery].map(transformLine);
+          } else if (invert && flat) {
+            this.modObjectScenery = [...this.objectPhysics, ...this.objectScenery].map(transformLine);
           } else {
-              this.modObjectScenery = this.objectPhysics.map(transformLine);
-              this.modObjectPhysics = this.objectScenery.map(transformLine);
+            this.modObjectScenery = this.objectPhysics.map(transformLine);
+            this.modObjectPhysics = this.objectScenery.map(transformLine);
           }
       
           this.modObjectPowerups = this.objectPowerups.map(transformPowerup);
