@@ -16593,7 +16593,7 @@
           this.sector && (this.sector.powerupCanvasDrawn = !1);
         }
         markSectorsDirty() {
-          this.sector.dirty = !0;
+          this.sector.dirty = !1;
         }
         collide(t) {
           const e = t.pos.x - this.x,
@@ -16874,6 +16874,15 @@
               this.analytics.actions++);
         }
         addActionToTimeline(t) {
+          let current = this.actionTimeline[this.actionTimelinePointer];
+          if (current?.type == 'transform') {
+            current.transformations.splice(current.pointer);
+            if (current.transformations.length)
+              this.actionTimelinePointer++;
+            else {
+              this.actionTimeline.splice(this.actionTimelinePointer, 1);
+            }
+          }
           const e = [];
           this.actionTimelinePointer >= 50 &&
             (e.push(
@@ -16895,16 +16904,171 @@
             }
           }
         }
+        applyTransform(point, transform, undo = false) {
+            switch (transform.type) {
+                case 'move':
+                    point = (undo ? transform.offset.factor(-1) : transform.offset).add(point);
+                    break;
+                case 'rotate':
+                    point = this.tools.select.rotatePoint(point, transform.center.x, transform.center.y, (undo ? -1 : 1) * transform.angle * Math.PI / 180);
+                    break;
+                case 'scale':
+                    point = new t.Z(point.x, point.y).sub(transform.center).factor(undo ? 1 / transform.scaleFactor : transform.scaleFactor).add(transform.center);
+                    break;
+                case 'flip':
+                    point = new t.Z(point.x, point.y).sub(transform.center);
+                    if (transform.flipVertically)
+                        point.y = -point.y;
+                    else
+                        point.x = -point.x;
+                    point = point.add(transform.center);
+                    break;
+            }
+            return point;
+        }
+        _r(a, b) {
+            a.splice(a.indexOf(b), 1);
+        }
+        remove(object) {
+            if (!object) return;
+            object.remove = true;
+            // if you want something done (removing a powerup), you gotta do it yourself
+            if (object.name) {
+                this._r(this.scene.track.powerups, object);
+                object.name == "goal" && this._r(this.scene.track.targets, object);
+                this._r(object.sector.powerups.all, object);
+                this._r(object.sector.powerups[object.name + 's'], object);
+                object.sector.hasPowerups = object.sector.powerups.all.length;
+                object.sector.powerupCanvasDrawn = false;
+                object.oldPos = new t.Z(object.x, object.y);
+            }
+            object.markSectorsDirty();
+            object.redrawSectors();
+            object.sectors = [{scene: this.scene}];
+            this.scene.track.needsCleaning = true;
+        }
+        recreate(object) {
+            if (!object) return;
+        
+            let newObject;
+            if ('highlight' in object || object.p1) {
+                if ('highlight' in object) {
+                    newObject = this.scene.track.addPhysicsLine(object.p1.x, object.p1.y, object.p2.x, object.p2.y);
+                } else {
+                    newObject = this.scene.track.addSceneryLine(object.p1.x, object.p1.y, object.p2.x, object.p2.y);
+                }
+            } else {
+                object.remove = 0;
+                object.name == 'goal' && (this.scene.track.addTarget(object), this.scene.track.targetCount--);
+                this.scene.track.addPowerup(object);
+                return object
+            }
+        
+            object.newVersion = newObject;
+            return newObject;
+        }
         revertAction() {
-          if (this.actionTimelinePointer > 0) {
-            this.actionTimelinePointer--;
+          let old = this.actionTimeline[this.actionTimelinePointer];
+          if (this.actionTimelinePointer > 0 || (old && old.type == 'transform' && old.pointer > 0)) {
+            if (!old || old.type != 'transform' || old.pointer == 0)
+                this.actionTimelinePointer--;
             const t = this.actionTimeline[this.actionTimelinePointer];
+            console.log('Reverting', t);
+            t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
                 this.removeObjects(t.objects);
                 break;
               case "remove":
                 this.addObjects(t.objects);
+                break;
+              case 'transform':
+                  if (t.pointer == 0) break;
+                  if (this.gamepad.isButtonDown('shift')) {
+                      if (t.points) {
+                          t.objects = t.objects.map((i, j) => {
+                              if (i.remove) {
+                                  while (i.newVersion) i = i.newVersion;
+                              }
+                              this.remove(i);
+                              let point = i[t.points[j]];
+                              for (let k = t.pointer - 1; k >= 0; k--) {
+                                  point = this.applyTransform(point, t.transformations[k], true);
+                              }
+                              i[t.points[j]] = point;
+                              return this.recreate(i);
+                          })
+                      } else {
+                          t.objects = t.objects.map(i => {
+                              if (i.remove) {
+                                  while (i.newVersion) i = i.newVersion;
+                              }
+                              this.remove(i);
+                              if (i.name) {
+                                  let point = i;
+                                  for (let k = t.pointer - 1; k >= 0; k--) {
+                                      point = this.applyTransform(point, t.transformations[k], true);
+                                      if (i.angle) {
+                                          if (t.transformations[k].type == 'rotate')
+                                              i.angle -= t.transformations[k].angle;
+                                          else if (t.transformations[k].type == 'flip')
+                                              i.angle = (t.transformations[k].flipVertically ? 180 : 360) - i.angle;
+                                      }
+                                  }
+                                  i.x = point.x;
+                                  i.y = point.y;
+                              } else {
+                                  let point1 = i.p1,
+                                      point2 = i.p2;
+                                  for (let k = t.pointer - 1; k >= 0; k--) {
+                                      point1 = this.applyTransform(point1, t.transformations[k], true);
+                                      point2 = this.applyTransform(point2, t.transformations[k], true);
+                                  }
+                                  i.p1 = point1;
+                                  i.p2 = point2;
+                              }
+                              return this.recreate(i);
+                          });
+                      }
+                      t.pointer = 0;
+                  } else {
+                      let transform = t.transformations[t.pointer - 1];
+                      if (t.points) {
+                          t.objects = t.objects.map((i, j) => {
+                              if (i.remove) {
+                                  while (i.newVersion) i = i.newVersion;
+                              }
+                              this.remove(i);
+                              i[t.points[j]] = this.applyTransform(i[t.points[j]], transform, true);
+                              return this.recreate(i);
+                          })
+                      } else {
+                          t.objects = t.objects.map(i => {
+                              if (i.remove) {
+                                  while (i.newVersion) i = i.newVersion;
+                              }
+                              this.remove(i);
+                              if (i.name) {
+                                  let reverted = this.applyTransform(i, transform, true);
+                                  i.x = reverted.x;
+                                  i.y = reverted.y;
+
+                                  if (i.angle) {
+                                      if (transform.type == 'rotate')
+                                          i.angle -= transform.angle;
+                                      else if (transform.type == 'flip')
+                                          i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
+                                  }
+                              } else {
+                                  i.p1 = this.applyTransform(i.p1, transform, true);
+                                  i.p2 = this.applyTransform(i.p2, transform, true);
+                              }
+                              return this.recreate(i);
+                          });
+                      }
+                      t.pointer--;
+                  }
+                  break;
             }
           }
         }
@@ -16913,12 +17077,112 @@
             e = this.actionTimelinePointer;
           if (e < t.length) {
             const t = this.actionTimeline[e];
-            switch (((this.actionTimelinePointer = e + 1), t.type)) {
+            console.log('Applying', t);
+            t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
+            switch (t.type) {
               case "add":
                 this.addObjects(t.objects);
+                this.actionTimelinePointer++;
                 break;
               case "remove":
                 this.removeObjects(t.objects);
+                this.actionTimelinePointer++;
+                break;
+              case 'transform':
+                  if (t.pointer == t.transformations.length) break;
+                  if (this.gamepad.isButtonDown('shift')) {
+                    let len = t.transformations.length;
+                    if (t.points) {
+                        t.objects = t.objects.map((i, j) => {
+                            if (i.remove) {
+                                while (i.newVersion) i = i.newVersion;
+                            }
+                            this.remove(i);
+                            let point = i[t.points[j]];
+                            for (let k = t.pointer; k < len; k++) {
+                                point = this.applyTransform(point, t.transformations[k]);
+                            }
+                            i[t.points[j]] = point;
+                            //i[t.points[j]] = this.applyTransform(i[t.points[j]], transform, true);
+                            return this.recreate(i);
+                        })
+                    } else {
+                        t.objects = t.objects.map(i => {
+                            if (i.remove) {
+                                while (i.newVersion) i = i.newVersion;
+                            }
+                            this.remove(i);
+                            if (i.name) {
+                                let point = i;
+                                for (let k = t.pointer; k < len; k++) {
+                                    point = this.applyTransform(point, t.transformations[k]);
+                                    if (i.angle) {
+                                        if (t.transformations[k].type == 'rotate')
+                                            i.angle += t.transformations[k].angle;
+                                        else if (t.transformations[k].type == 'flip')
+                                            i.angle = (t.transformations[k].flipVertically ? 180 : 360) - i.angle;
+                                    }
+                                }
+                                i.x = point.x;
+                                i.y = point.y;
+                            } else {
+                                let point1 = i.p1,
+                                    point2 = i.p2;
+                                for (let k = t.pointer; k < len; k++) {
+                                    point1 = this.applyTransform(point1, t.transformations[k]);
+                                    point2 = this.applyTransform(point2, t.transformations[k]);
+                                }
+                                i.p1 = point1;
+                                i.p2 = point2;
+                            }
+                            return this.recreate(i);
+                            //return recreate(i, { x: -toRevert.move.x, y: -toRevert.move.y });
+                        });
+                    }
+                    t.pointer = len;
+                    this.actionTimelinePointer++;
+                } else {
+                    let transform = t.transformations[t.pointer];
+                    if (t.points) {
+                        t.objects = t.objects.map((i, j) => {
+                            if (i.remove) {
+                                while (i.newVersion) i = i.newVersion;
+                            }
+                            this.remove(i);
+                            i[t.points[j]] = this.applyTransform(i[t.points[j]], transform);
+                            return this.recreate(i);
+                        })
+                    } else {
+                        t.objects = t.objects.map(i => {
+                            if (i.remove) {
+                                while (i.newVersion) i = i.newVersion;
+                            }
+                            this.remove(i);
+                            if (i.name) {
+                                let reverted = this.applyTransform(i, transform);
+                                i.x = reverted.x;
+                                i.y = reverted.y;
+
+                                if (i.angle) {
+                                    if (transform.type == 'rotate')
+                                        i.angle += transform.angle;
+                                    else if (transform.type == 'flip')
+                                        i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
+                                }
+                            } else {
+                                i.p1 = this.applyTransform(i.p1, transform);
+                                i.p2 = this.applyTransform(i.p2, transform);
+                            }
+                            return this.recreate(i);
+                            //return recreate(i, { x: -toRevert.move.x, y: -toRevert.move.y });
+                        });
+                    }
+                    t.pointer++;
+                    if (t.pointer == t.transformations.length) {
+                        this.actionTimelinePointer++;
+                    }
+                    break;
+                }
             }
           }
         }
@@ -16998,7 +17262,7 @@
           });
 
           if ((this.currentTool === ("vehiclepowerup")) || (this.currentTool === ("powerup")) || this.options.object) {
-            this.snapPoint.equ(nearestPoint);
+            nearestPoint && this.snapPoint.equ(nearestPoint);
             return;
           }
 
@@ -26927,6 +27191,8 @@ function load() {
       isSelectedUpdated = true,
       // used to temporarily recreate the selected line while you're playing the track (so it feels nicer)
       isSelectIntangible = true,
+      // used for copying individual lines
+      shouldCopy = true,
       tempSelect;
   // for debugging
   let frameMinDist,
@@ -26982,6 +27248,8 @@ function load() {
           this.rotate = false;
           this.scale = false;
           this.flip = false;
+          // used to record the entire transformation that occurs
+          this.transformation = [];
           // make a copy
           this.oldMouse = this.mouse.touch.real.factor(1);
           document.addEventListener('keydown', this.keydown.bind(this));
@@ -26997,11 +27265,24 @@ function load() {
 
       
       keydown() {
+        if (!this.selected.length) return;
         const t = this.gamepad,
           r = t.isButtonDown("rotate"),
           s = t.isButtonDown("scale"),
           f = t.isButtonDown("flip"),
           shift = t.isButtonDown("shift");
+          // make sure that the move is properly recorded before any other transformations
+          if ((r && !this.rotate) || (s && !this.scale) || (f && !this.flip)) {
+              if (this.oldOffset) {
+                  let move = selectPoint ? pointOffset.sub(this.oldOffset) : selectOffset.sub(this.oldOffset),
+                      action = {
+                          type: 'move',
+                          offset: move,
+                      };
+                  (move.x || move.y) && this.transformation.push(action);
+                  this.oldOffset = undefined;
+              }
+          }
           if (r && !this.rotate) {
               const degrees = shift ? -1 * GameSettings.rotateFactor : GameSettings.rotateFactor;
               this.rotateSelected(degrees);
@@ -27028,8 +27309,13 @@ function load() {
               const flatY = [];
       
               this.selected.forEach(line => {
-                  flatX.push(line.p1.x, line.p2.x);
-                  flatY.push(line.p1.y, line.p2.y);
+                  if (line.p1) {
+                      flatX.push(line.p1.x, line.p2.x);
+                      flatY.push(line.p1.y, line.p2.y);
+                  } else {
+                      flatX.push(line.x);
+                      flatY.push(line.y);
+                  }
               });
       
               const minX = Math.min(...flatX);
@@ -27062,72 +27348,78 @@ function load() {
           const radians = degrees * Math.PI / 180;
 
           this.selected.forEach(line => {
-              [line.p1, line.p2].forEach(point => {
+              let toChange = line.name ? [line] : [line.p1, line.p2];
+              toChange.forEach(point => {
                   const rotatedPoint = this.rotatePoint(point, centerX, centerY, radians);
                   point.x = rotatedPoint.x;
                   point.y = rotatedPoint.y;
               });
+              // rotate boosts and gravities
+              if (line.angle) {
+                  line.angle += degrees;
+                  line.angle = ((line.angle % 360) + 360) % 360;
+              }
           });
 
           const action = {
               type: 'rotate',
-              objects: this.selected,
               angle: degrees,
-              center: { x: centerX, y: centerY },
-              applied: true
+              center: { x: centerX + selectOffset.x, y: centerY + selectOffset.y }
           };
       
           console.log('Adding to timeline:', action);
-          this.toolHandler.addActionToTimeline(action);
+          this.transformation.push(action);
       }
       
       rotatePoint(point, centerX, centerY, radians) {
           const x = point.x - centerX;
           const y = point.y - centerY;
       
-          return {
-              x: centerX + (x * Math.cos(radians) - y * Math.sin(radians)),
-              y: centerY + (x * Math.sin(radians) + y * Math.cos(radians))
-          };
+          return vector(
+              centerX + (x * Math.cos(radians) - y * Math.sin(radians)),
+              centerY + (x * Math.sin(radians) + y * Math.cos(radians))
+          );
       }
       
       scaleSelected(scaleFactor) {
-        let center = this.findCenter();
-        const centerX = center.x;
-        const centerY = center.y;
+          let center = this.findCenter();
+          const centerX = center.x;
+          const centerY = center.y;
           let scalable = true;
       
-          this.selected.forEach(line => {
-            const newP1x = centerX + (line.p1.x - centerX) * scaleFactor;
-            const newP1y = centerY + (line.p1.y - centerY) * scaleFactor;
-            const newP2x = centerX + (line.p2.x - centerX) * scaleFactor;
-            const newP2y = centerY + (line.p2.y - centerY) * scaleFactor;
+          if (GameSettings.scaleLock) {
+              for (let line of this.selected) {
+                  if (!line.p1) continue;
+                  const newP1x = centerX + (line.p1.x - centerX) * scaleFactor;
+                  const newP1y = centerY + (line.p1.y - centerY) * scaleFactor;
+                  const newP2x = centerX + (line.p2.x - centerX) * scaleFactor;
+                  const newP2y = centerY + (line.p2.y - centerY) * scaleFactor;
 
-            const newLength = Math.hypot(newP2x - newP1x, newP2y - newP1y);
-              if (newLength < 2 && GameSettings.scaleLock) {
-            scalable = false;
-      }
-
-          });
+                  const newLength = Math.hypot(newP2x - newP1x, newP2y - newP1y);
+                  if (newLength < 2) {
+                      scalable = false;
+                      break;
+                  }
+              }
+          }
       
           if (scalable) {
-          this.selected.forEach(line => {
-              [line.p1, line.p2].forEach(point => {
-                  point.x = centerX + (point.x - centerX) * scaleFactor;
-                  point.y = centerY + (point.y - centerY) * scaleFactor;
+              this.selected.forEach(line => {
+                  let toChange = line.name ? [line] : [line.p1, line.p2];
+                  toChange.forEach(point => {
+                      point.x = centerX + (point.x - centerX) * scaleFactor;
+                      point.y = centerY + (point.y - centerY) * scaleFactor;
+                  });
               });
-          });
 
-          const action = {
-              type: 'scale',
-              objects: this.selected,
-              scaleFactor: scaleFactor,
-              center: { x: centerX, y: centerY },
-              applied: true
-          };
+              const action = {
+                  type: 'scale',
+                  scaleFactor: scaleFactor,
+                  center: { x: centerX + selectOffset.x, y: centerY + selectOffset.y },
+              };
 
-          console.log('Adding to timeline:', action);
-          this.toolHandler.addActionToTimeline(action);
+              console.log('Adding to timeline:', action);
+              this.transformation.push(action);
           } else {
               console.log('scaling would cause undefined lines (too short)');
           }
@@ -27136,33 +27428,55 @@ function load() {
       
       
       flipSelected(flipVertically) {
-          const { centerX, centerY } = this.findCenter();
+          let center = this.findCenter();
+          const centerX = center.x;
+          const centerY = center.y;
       
           this.selected.forEach(line => {
-              [line.p1, line.p2].forEach(point => {
+              let toChange = line.name ? [line] : [line.p1, line.p2];
+              toChange.forEach(point => {
                   if (flipVertically) {
                       point.y = centerY * 2 - point.y;
                   } else {
                       point.x = centerX * 2 - point.x;
                   }
               });
+              // flip boosts and gravities
+              if (line.angle) {
+                  if (flipVertically)
+                      line.angle = 180 - line.angle;
+                  else
+                      line.angle = 360 - line.angle;
+                  line.angle = ((line.angle % 360) + 360) % 360;
+              }
           });
       
           const action = {
               type: 'flip',
-              objects: this.selected,
               flipVertically: flipVertically,
-              applied: true
+              flipHorizontally: !flipVertically,
+              center: { x: centerX + selectOffset.x, y: centerY + selectOffset.y }
           };
       
           console.log('Adding to timeline:', action);
-          this.toolHandler.addActionToTimeline(action);
+          this.transformation.push(action);
       }
       
       press() {
           this.down = true;
+          // this is to record when you've been moving with keys
+          if (this.oldOffset) {
+              let move = selectPoint ? pointOffset.sub(this.oldOffset) : selectOffset.sub(this.oldOffset),
+                  action = {
+                      type: 'move',
+                      offset: move,
+                  };
+              (move.x || move.y) && this.transformation.push(action);
+              this.oldOffset = undefined;
+          }
           if (hovered && hovered === tempSelect?.[0]) {
               hovered = selected;
+              window.hovered = hovered;
               console.log('clicked on temp :P');
               if (selectPoint && selected) {
                   if (selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) {
@@ -27172,7 +27486,10 @@ function load() {
                   }
               }
           }
+          // selecting a different line (or no line at all) when a line is currently selected
           if (selected && selected != hovered) {
+              this.clearTemp();
+              this.completeAction();
               let a = [recreate(selected)];
               if (selectPoint && connected) {
                   remove(connected);
@@ -27180,13 +27497,6 @@ function load() {
                   connected = connected.newVersion;
               }
               if (selectOffset.x || selectOffset.y) {
-                  let {x, y} = selectOffset;
-                  this.scene.toolHandler.addActionToTimeline({
-                      objects: a,
-                      type: 'transform',
-                      move: {x, y},
-                      applied: true,
-                  });
                   // idk man this is wack
                   if (selected.p1) {
                       selected.p1.inc(selectOffset);
@@ -27196,48 +27506,33 @@ function load() {
               } else if (pointOffset.x || pointOffset.y) {
                   let pointName = (selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2',
                       points = [pointName],
-                      objects = [selected],
-                      {x, y} = pointOffset;
+                      objects = [selected];
                   if (connected) {
                       points.push(connectedPoint);
                       objects.push(connected);
                   }
-                  this.scene.toolHandler.addActionToTimeline({
-                      objects,
-                      points,
-                      type: 'transform',
-                      move: {x, y},
-                      applied: true,
-                  });
                   pointOffset = vector();
               }
               connected = undefined;
-              console.log('recreated', a);
+              shouldCopy = true;
           }
+          // selecting outside of the current box
           if (isSelectList && (hovered || !pointrect(this.mouse.touch.real, this.p1, this.p2))) {
               for (let i of selectList) {
-                  remove(connected);
+                  remove(i);
               }
-              let a = selectList.map(s => recreate(s));
-              if (selectOffset.x || selectOffset.y || GameSettings.copy) {
-                  let {x, y} = selectOffset;
-                  this.scene.toolHandler.addActionToTimeline({
-                      objects: a,
-                      type: 'transform',
-                      move: {x, y},
-                      applied: true,
-                  });
-              }
-              console.log('recreated', a);
+              this.clearTemp();
+              this.completeAction();
+              selectList.forEach(s => recreate(s));
           }
           if (hovered) {
               // TO-DO: find a better place to put / store this
-              let oldConnected = [connected, connectedPoint];
+              let oldConnected = [connected, connectedPoint],
+                  prevSelected = selected;
               if (hovered != selected)
                   selectOffset = vector();
               else {
-                  tempSelect?.forEach(i=>remove(i));
-                  tempSelect = undefined;
+                  this.clearTemp();
                   isSelectIntangible = true;
                   if (selectPoint && connected) {
                       remove(connected);
@@ -27273,11 +27568,11 @@ function load() {
                           }
                           connected = undefined;
                           for (let i of lines) {
-                              if (!i.remove && i.p1.x == minPoint.x && i.p1.y == minPoint.y) {
+                              if (!i.remove && i.p1.x == minPoint.x + selectOffset.x && i.p1.y == minPoint.y + selectOffset.y) {
                                   connected = i;
                                   connectedPoint = 'p1';
                                   break;
-                              } else if (!i.remove && i.p2.x == minPoint.x && i.p2.y == minPoint.y) {
+                              } else if (!i.remove && i.p2.x == minPoint.x + selectOffset.x && i.p2.y == minPoint.y + selectOffset.y) {
                                   connected = i;
                                   connectedPoint = 'p2';
                                   break;
@@ -27288,45 +27583,45 @@ function load() {
                               console.log('connected to', connected);
                           }
                       }
+                  } else {
+                      prevSelected != selected && (selected.oldPos = vector(selected.x, selected.y));
+                  }
+                  if (shouldCopy && this.scene.settings.copy) {
+                      recreate(selected);
+                      connected && recreate(connected);
+                      shouldCopy = false;
                   }
                   if (selectPoint != minPoint) {
                       if (selectPoint == undefined && (selectOffset.x || selectOffset.y)) {
-                          let {x, y} = selectOffset;
-                          this.scene.toolHandler.addActionToTimeline({
-                              objects: [selected],
-                              type: 'transform',
-                              move: {x, y},
-                              applied: true,
-                          });
+                          this.completeAction();
                           selected.p1.inc(selectOffset);
                           selected.p2.inc(selectOffset);
                           selectOffset = vector();
                       } else if (pointOffset.x || pointOffset.y) {
                           let pointName = (selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2',
                               points = [pointName],
-                              objects = [selected],
-                              {x, y} = pointOffset;
+                              objects = [selected];
                           if (oldConnected[0]) {
                               points.push(oldConnected[1]);
                               objects.push(oldConnected[0]);
                           }
-                          this.scene.toolHandler.addActionToTimeline({
-                              objects,
-                              points,
-                              type: 'transform',
-                              move: {x, y},
-                              applied: true,
-                          });
+                          this.completeAction();
                           pointOffset = vector();
                       }
                   }
                   selectPoint = minPoint;
+                  if (selectPoint) {
+                      let toCenter = selected[(selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p2' : 'p1'];
+                      this.center = toCenter.factor(1);
+                  }
               }
               isSelectList = false;
               selectList = selectPhysicsList = undefined;
+              //this.oldOffset = selectPoint ? pointOffset.factor(1) : selectOffset.factor(1);
           } else if (this.p1 && pointrect(this.mouse.touch.real, this.p1, this.p2)) {
               selected = undefined;
               console.log('in rect!');
+              //this.oldOffset = vector(selectOffset.x, selectOffset.y);
           } else {
               isSelectedUpdated = false;
               isHoverList = true;
@@ -27352,14 +27647,11 @@ function load() {
                   // remove the line if it's been temporarily recreated
                   if (!isSelectIntangible) {
                       isSelectIntangible = true;
-                      tempSelect?.forEach?.(i=>remove(i));
-                      tempSelect = undefined;
+                      this.clearTemp();
                       remove(connected);
                   }
                   if (tempSelect && tempSelect.length) {
-                      for (let i of tempSelect) {
-                          remove(i);
-                      }
+                      this.clearTemp();
                       for (let x in selectPhysicsList) {
                           let row = selectPhysicsList[x];
                           for (let y in row) {
@@ -27373,8 +27665,8 @@ function load() {
                           }
                       }
                       isSelectIntangible = true;
-                      tempSelect = undefined;
                   }
+                  if (!this.oldOffset) this.oldOffset = selectPoint ? pointOffset.factor(1) : selectOffset.factor(1);
                   let dMouse = mousePos.sub(this.oldMouse);
                   dMouse.x = Math.round(dMouse.x);
                   dMouse.y = Math.round(dMouse.y);
@@ -27384,7 +27676,7 @@ function load() {
                       dMouse.y = Math.round(dMouse.y / gridSize) * gridSize;
                   }
                   // points get moved seperately (since it's only one point moving rather than a whole line or group of objects)
-                  if (selectPoint) {
+                  if (!isSelectList && selectPoint) {
                       selectPoint.inc(dMouse);
                       selected.pp = selected.p2.sub(selected.p1);
                       selected.len = selected.pp.len();
@@ -27407,6 +27699,8 @@ function load() {
 
               if (isHoverList) {
                   this.multiHover();
+              } else {
+                  this.singleHover(mousePos);
               }
           }
           if (force) return;
@@ -27415,7 +27709,83 @@ function load() {
           this.keydown();
       }
 
-      
+      singleHover(mousePos) {
+        let minDist = 1000,
+            bestLine = undefined,
+            adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
+        // selected doesn't exist on the track, so we have to check it separately
+        if (selected) {
+            let dist = selected.p1 ?
+                linesdf(mousePos.sub(selectOffset), selected) :
+            pointsdf(mousePos.sub(selectOffset), selected);
+            if (dist < minDist) {
+                minDist = dist;
+                bestLine = selected;
+            }
+        }
+
+        let sectorSize = this.scene.settings.drawSectorSize,
+            sectorPos = mousePos.factor(1 / sectorSize);
+        sectorPos.x = Math.floor(sectorPos.x);
+        sectorPos.y = Math.floor(sectorPos.y);
+        let currentSectorData = this.testSectorSingle(sectorPos);
+        if (currentSectorData[0] < minDist) {
+            [minDist, bestLine] = currentSectorData;
+        }
+        // this is all to figure out which sectors we even need to check
+        // i.e. within range to have a line that can possibly be close enough
+        // the position of the sector in track-space
+        let sectorTrackPos = sectorPos.factor(sectorSize),
+            // the position of the mouse within the sector
+            posInSector = mousePos.sub(sectorTrackPos),
+            // a zero vector (for checking the top left)
+            zeroVector = posInSector.factor(0),
+            // a vector of just the sector size (for checking the bottom right)
+            maxPos = zeroVector.add({x: sectorSize, y: sectorSize}),
+            sectorsToCheck = [],
+            positions = [zeroVector, posInSector, maxPos];
+        for (let i = -1; i < 2; i++) {
+            let x = positions[i + 1].x;
+            for (let j = -1; j < 2; j++) {
+                // we don't need to re-check the current sector
+                if (!i && !j)
+                    continue;
+                let y = positions[j + 1].y;
+                if (pointsdf(mousePos, {x, y}) <= adjustedDist * 1.5) {
+                    sectorsToCheck.push([i, j]);
+                }
+            }
+        }
+
+        for (let i of sectorsToCheck) {
+            let sectorData = this.testSectorSingle(sectorPos.add(i));
+            if (sectorData[0] < minDist) {
+                [minDist, bestLine] = sectorData;
+            }
+        }
+        [frameMinDist, frameBestLine] = [minDist, bestLine];
+        if (minDist < adjustedDist) {
+            hovered = bestLine;
+            window.hovered = bestLine;
+        } else {
+            hovered = undefined;
+            window.hovered = bestLine;
+            return;
+        }
+        minDist = HOVER_DIST / this.scene.camera.zoom;
+        let minPoint = undefined,
+            isSelected = hovered == selected;
+        if (hovered.p1) {
+            for (let i of [hovered.p1, hovered.p2]) {
+                let dist = pointsdf(mousePos, i.add(isSelected ? selectOffset : vector()));
+                if (dist < minDist) {
+                    minDist = dist;
+                    minPoint = i;
+                }
+            }
+        }
+        hoverPoint = minPoint;
+    }
 
       multiHover() {
           // this logic is very simple: decide which sectors to add, then add everything necessary from them
@@ -27439,29 +27809,47 @@ function load() {
       release() {
           this.down = false;
           isSelectedUpdated = true;
+          if (this.oldOffset) {
+              let move = selectPoint ? pointOffset.sub(this.oldOffset) : selectOffset.sub(this.oldOffset),
+                  action = {
+                      type: 'move',
+                      offset: move,
+                  };
+              (move.x || move.y) && this.transformation.push(action);
+              this.oldOffset = undefined;
+          }
           if (isHoverList) {
               selected = undefined;
-              isSelectList = true;
-              selectList = [...hoverList];
-              inflectionOffset = vector();
-              this.findCenter();
-              let c = this.center;
-              center = vector(c.centerX, c.centerY);
-              selectPhysicsList = hoverPhysicsList;
-              hoverList = [];
               isHoverList = false;
-              selectOffset = vector();
-              if (this.scene.settings.copy == true) {
-                  for (let i of selectList) {
-                      recreate(i);
+              selectList = [...hoverList];
+              if (hoverList.length) {
+                  isSelectList = true;
+                  inflectionOffset = vector();
+                  this.resetCenter();
+                  this.findCenter();
+                  let c = this.center;
+                  center = vector(c.centerX, c.centerY);
+                  selectPhysicsList = hoverPhysicsList;
+                  hoverList = [];
+                  selectOffset = vector();
+                  if (this.scene.settings.copy == true) {
+                      for (let i of selectList) {
+                          recreate(i);
+                      }
                   }
+                  for (let i of selectList) {
+                      if (i.name) {
+                          i.oldPos = vector(i.x, i.y);
+                      }
+                      remove(i);
+                  }
+                  console.log('selected!', selectList);
+                  this.resetCenter();
+                  this.findCenter();
+              } else {
+                  this.p2.equ({x: NaN, y: NaN});
+                  isSelectList = false;
               }
-              for (let i of selectList) {
-                  remove(i);
-              }
-              console.log('selected!', selectList);
-              this.findCenter();
-              this.resetCenter();
           }
       }
 
@@ -27592,6 +27980,29 @@ function load() {
           }
           return toReturn;
       }
+
+      clearTemp() {
+          tempSelect?.forEach?.(i => remove(i));
+          tempSelect = undefined;
+      }
+
+      completeAction() {
+          if (!this.transformation.length) return;
+          console.log(this.transformation);
+          let objects = this.selected;
+          if (!isSelectList && connected) objects.push(connected);
+          let completeAction = {
+              type: 'transform',
+              objects,
+              transformations: this.transformation,
+              applied: true,
+              pointer: this.transformation.length,
+          };
+          if (selectPoint && selected) completeAction.points = [(selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2', connectedPoint];
+          console.log(completeAction, this.selected, selected);
+          this.toolHandler.addActionToTimeline(completeAction);
+          this.transformation = [];
+      }
   }
 
   let game = GameManager.game,
@@ -27600,168 +28011,12 @@ function load() {
 
   scene.toolHandler.registerTool(SelectTool);
   let selectTool = scene.toolHandler.tools.select;
-
-  // fix undo / redo for moved objects
-  // this is a little bit weird but it seems to work:
-  /* - if anything in toRevert has been removed and not recreated, we assume it's been selected and cancel the action
-   * (still debating how to actually undo the lines (i.e. whether to use the same lines or recreate them every time))
-   */
-  scene.toolHandler.revertAction = (old => () => {
-      let oldPointer = scene.toolHandler.actionTimelinePointer;
-      old.apply(scene.toolHandler);
-      if (oldPointer == scene.toolHandler.actionTimelinePointer) return;
-  
-      let toRevert = scene.toolHandler.actionTimeline[scene.toolHandler.actionTimelinePointer];
-      if (toRevert) toRevert.objects = toRevert.objects.map(i => {while (i.newVersion) i = i.newVersion; return i;});
-  
-      if (toRevert && toRevert.applied) {
-          if (toRevert.objects.some(i => i.remove)) {
-              scene.toolHandler.actionTimelinePointer = oldPointer;
-              return;
-          }
-          if (GameSettings.copy) {
-              toRevert.objects = toRevert.objects.map(i => {
-                  if (i.remove) {
-                      while (i.newVersion)
-                          i = i.newVersion;
-                  }
-                  remove(i);
-                  return i;
-              });
-          } else if (!GameSettings.copy) {
-          switch (toRevert.type) {
-              case 'transform':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, { x: -toRevert.move.x, y: -toRevert.move.y });
-                  });
-                  break;
-              case 'rotate':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, { angle: -toRevert.angle, center: toRevert.center });
-                  });
-                  break;
-              case 'scale':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, {
-                          scaleFactor: 1 / toRevert.scaleFactor,
-                          center: toRevert.center
-                      });
-                  });
-                  break;
-              case 'flip':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, {
-                          flipVertically: toRevert.flipVertically,
-                          flipHorizontally: toRevert.flipHorizontally,
-                          center: toRevert.center
-                      });
-                  });
-                  break;
-          }
-          toRevert.applied = false;
-      }
-  }
-  })(scene.toolHandler.revertAction);
-
-  scene.toolHandler.applyAction = (old => () => {
-      let oldPointer = scene.toolHandler.actionTimelinePointer;
-      old.apply(scene.toolHandler);
-      if (oldPointer == scene.toolHandler.actionTimelinePointer) return;
-      let toRevert = scene.toolHandler.actionTimeline[scene.toolHandler.actionTimelinePointer - 1];
-      if (toRevert) toRevert.objects = toRevert.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
-      if (toRevert && !toRevert.applied) {
-          if (toRevert.objects.some(i => i.remove)) {
-              scene.toolHandler.actionTimelinePointer = oldPointer;
-              return;
-          }
-          switch (toRevert.type) {
-              case 'transform':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, { x: toRevert.move.x, y: toRevert.move.y });
-                  });
-                  break;
-              case 'rotate':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, { angle: toRevert.angle, center: toRevert.center });
-                  });
-                  break;
-              case 'scale':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, {
-                          scaleFactor: toRevert.scaleFactor,
-                          center: toRevert.center
-                      });
-                  });
-                  break;
-              case 'flip':
-                  toRevert.objects = toRevert.objects.map(i => {
-                      if (i.remove) {
-                          while (i.newVersion) i = i.newVersion;
-                      }
-                      remove(i);
-                      return recreate(i, {
-                          flipVertically: toRevert.flipVertically,
-                          flipHorizontally: toRevert.flipHorizontally,
-                          center: toRevert.center
-                      });
-                  });
-                  break;
-          }
-          toRevert.applied = false;
-      }
-  })(scene.toolHandler.applyAction);
-
-  // also patch removeObjects and addObjects just for fun
-  scene.toolHandler.removeObjects = (old => (t) => {
-      for (let i in t)
-          while (t[i].newVersion)
-              t[i] = t[i].newVersion;
-      //t = t.map(i => {while (i.newVersion) i = i.newVersion; return i;});
-      old.apply(scene.toolHandler, [t]);
-  })(scene.toolHandler.removeObjects);
-
-  scene.toolHandler.addObjects = (old => (t) => {
-      for (let i in t)
-          while (t[i].newVersion)
-              t[i] = t[i].newVersion;
-      //t = t.map(i => {while (i.newVersion) i = i.newVersion; return i;});
-      old.apply(scene.toolHandler, [t]);
-  })(scene.toolHandler.addObjects);
-
   
   let moveSpeed = 0.3,
       moveAccumulator = 1;
 
   createjs.Ticker.addEventListener('tick', () => {
-      if (selected && isSelectIntangible && !tempSelect?.length) {
+      if (scene.state.playing && !scene.state.paused && selected && isSelectIntangible && !tempSelect?.length) {
           tempSelect = [recreate(selected)];
           console.log('temporary', tempSelect);
           isSelectIntangible = false;
@@ -27769,8 +28024,13 @@ function load() {
               connected.remove = 0;
               scene.track.addPhysicsLineToTrack(connected);
           }
+          // fixes a bug with powerups moving super fast
+          /*if (!selected.p1 && selectTool.oldOffset) {
+              selectTool.oldOffset.subSelf(selectOffset);
+              selectOffset.equ({x: 0, y: 0});
+          }*/
       }
-      /* if (!scene.state.paused && isSelectList) {
+      if (scene.state.playing && !scene.state.paused && isSelectIntangible && isSelectList && selectList.length) {
           tempSelect = tempSelect || [];
           let sectorSize = scene.settings.drawSectorSize,
               vehicle = scene.playerManager.firstPlayer._tempVehicle || scene.playerManager.firstPlayer._baseVehicle,
@@ -27792,7 +28052,7 @@ function load() {
                   cell.mark = true;
               }
           }
-      }*/
+      }
       // allow moving the currently selected object with movement keys when paused
       if (selectTool.selected.length && !tempSelect?.length) {
           let tdb = scene.playerManager.firstPlayer._gamepad.getDownButtons(),
@@ -27836,6 +28096,7 @@ function load() {
                   dir.x = dir.x * moveAccumulator / dirLen | 0;
                   dir.y = dir.y * moveAccumulator / dirLen | 0;
                   if (moveSelection) {
+                      if (!selectTool.oldOffset) selectTool.oldOffset = selectPoint ? pointOffset.factor(1) : selectOffset.factor(1);
                       if (selectPoint) {
                           selectPoint.inc(dir);
                           if (connected) {
@@ -27847,6 +28108,7 @@ function load() {
                       }
                   } else {
                       inflectionOffset.inc(dir);
+                      selectTool.center?.inc?.(dir);
                       selectTool.inflectionOffset = inflectionOffset;
                   }
                   moveSpeed *= 1.02;
@@ -27893,7 +28155,7 @@ function load() {
                   let data = powerups[selected.name];
                   if (!data) continue;
                   let camera = scene.camera,
-                      pos = camera.position.factor(0).add(selected).add(selectOffset).toScreen(scene),
+                      pos = camera.position.factor(0).add(selected.oldPos).add(selectOffset).toScreen(scene),
                       size = data[0] / zoom;
                   ctx.globalAlpha = 0.3;
                   ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -27964,6 +28226,7 @@ function load() {
               ctx.stroke();
           } else {
               for (let hovered of selectTool.hovered) {
+                  if (selectTool.down && selected == hovered) continue;
                   if (hovered.p1) {
                       ctx.lineWidth = Math.max(2 * zoom, 1);
                       ctx.strokeStyle = '#1884cf';
@@ -28021,82 +28284,48 @@ function load() {
       }
   });
 
+  function _r(a, b) {
+      a.splice(a.indexOf(b), 1);
+  }
+
   function remove(object) {
       if (!object) return;
       object.remove = true;
-      if (polyMod) {
-          object.redrawSectors();
-      } else {
-          object.removeAllReferences();
+      // if you want something done (removing a powerup), you gotta do it yourself
+      if (object.name) {
+          _r(scene.track.powerups, object);
+          object.name == "goal" && _r(scene.track.targets, object);
+          _r(object.sector.powerups.all, object);
+          _r(object.sector.powerups[object.name + 's'], object);
+          object.sector.hasPowerups = object.sector.powerups.all.length;
+          object.sector.powerupCanvasDrawn = false;
+          //object.oldPos = vector(object.x, object.y);
       }
+      object.markSectorsDirty();
+      object.redrawSectors();
+      object.sectors = [{scene}];
+      scene.track.needsCleaning = true;
   }
 
-  function recreate(object, transformation = {}) {
+  function recreate(object) {
       if (!object) return;
-  
-      let offsetX = transformation.x !== undefined ? transformation.x : selectOffset.x;
-      let offsetY = transformation.y !== undefined ? transformation.y : selectOffset.y;
-      let angle = transformation.angle || 0;
-      let scale = transformation.scaleFactor || 1;
-      let centerX = transformation.center?.x || 0;
-      let centerY = transformation.center?.y || 0;
-      let flipHorizontally = transformation.flipHorizontally || false;
-      let flipVertically = transformation.flipVertically || false;
-  
       let newObject;
       if ('highlight' in object || object.p1) {
-          let startX = object.p1.x + offsetX;
-          let startY = object.p1.y + offsetY;
-          let endX = object.p2.x + offsetX;
-          let endY = object.p2.y + offsetY;
-  
-          if (angle !== 0 || scale !== 1) {
-              [startX, startY] = rotateAndScale(startX, startY, centerX, centerY, angle, scale);
-              [endX, endY] = rotateAndScale(endX, endY, centerX, centerY, angle, scale);
-          }
-  
-          if (flipHorizontally) {
-              let midX = (startX + endX) / 2;
-              startX = midX + (midX - startX);
-              endX = midX + (midX - endX);
-          }
-  
-          if (flipVertically) {
-              let midY = (startY + endY) / 2;
-              startY = midY + (midY - startY);
-              endY = midY + (midY - endY);
-          }
-  
           if ('highlight' in object) {
-              newObject = scene.track.addPhysicsLine(startX, startY, endX, endY);
+              newObject = scene.track.addPhysicsLine(object.p1.x + selectOffset.x, object.p1.y + selectOffset.y, object.p2.x + selectOffset.x, object.p2.y + selectOffset.y);
           } else {
-              newObject = scene.track.addSceneryLine(startX, startY, endX, endY);
+              newObject = scene.track.addSceneryLine(object.p1.x + selectOffset.x, object.p1.y + selectOffset.y, object.p2.x + selectOffset.x, object.p2.y + selectOffset.y);
           }
       } else {
-          //object.x += offset.x;
-          //object.y += offset.y;
+          object.x = object.oldPos.x + selectOffset.x;
+          object.y = object.oldPos.y + selectOffset.y;
           object.remove = 0;
-          object.name == 'goal' && scene.track.addTarget(object);
+          object.name == 'goal' && (scene.track.addTarget(object), scene.track.targetCount--);
           scene.track.addPowerup(object);
           return object
       }
-  
       object.newVersion = newObject;
       return newObject;
-  }
-  
-  function rotateAndScale(x, y, centerX, centerY, angle, scale) {
-      let translatedX = x - centerX;
-      let translatedY = y - centerY;
-  
-      translatedX *= scale;
-      translatedY *= scale;
-  
-      const radians = angle * Math.PI / 180;
-      let rotatedX = translatedX * Math.cos(radians) - translatedY * Math.sin(radians);
-      let rotatedY = translatedX * Math.sin(radians) + translatedY * Math.cos(radians);
-  
-      return [rotatedX + centerX, rotatedY + centerY];
   }
 }
 
