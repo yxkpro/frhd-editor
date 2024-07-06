@@ -3288,32 +3288,34 @@
                                 n.createElement("div", {
                                     className: "hotkey"
                                 }, n.createElement("span", {
-                                    className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                }, "Ctrl"), " + ", n.createElement("span", {
-                                    className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                }, "Z"), n.createElement("span", {
+                                    className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('ctrl')
+                                }, t.ctrl), " + ", n.createElement("span", {
+                                    className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('z')
+                                }, t.z), n.createElement("span", {
                                     className: "helpDialog-hotkey-name"
                                 }, "Undo")),
 
                                 n.createElement("div", {
                                     className: "hotkey"
                                 }, n.createElement("span", {
-                                    className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                }, "Ctrl"), " + ", n.createElement("span", {
-                                    className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                }, "Y"), n.createElement("span", {
-                                    className: "helpDialog-hotkey-name"
+                                    className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('ctrl')
+                                }, t.ctrl), " + ", n.createElement("span", {
+                                    className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('y')
+                                }, t.y), n.createElement("span", {
+                                    className: "helpDialog-hotkey-name" 
                                 }, "Redo"))), 
                                 
                                 n.createElement("div", {
                                     className: "hotkeys_more"
                                 }, n.createElement("div", {
                                     className: "hotkeys-title"
-                                }, "Settings"), n.createElement("div", {
-                                    className: "hotkey"
+                                }, "Settings"), 
+
+                                n.createElement("div", {
+                                  className: "hotkey"
                                 }, n.createElement("span", {
-                                    className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                }, "Shift"), " + ", n.createElement("span", {
+                                    className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('shift')
+                                }, t.shift), " + ", n.createElement("span", {
                                     className: "helpDialog-hotkey helpDialog-hotkey_light"
                                 }, "Click"), n.createElement("span", {
                                     className: "helpDialog-hotkey-name"
@@ -3339,7 +3341,7 @@
                                 
                                     n.createElement("div", {
                                         className: "hotkeys-title"
-                                    }, "OBJECTS"),
+                                    }, "OBJECTS / SELECT"),
 
                                     n.createElement("div", {
                                       className: "hotkey", onClick: () => this.handleHotkeyClick('rotate')
@@ -3374,31 +3376,31 @@
                                     }, "Invert Line Type")),
 
                                     n.createElement("div", {
-                                      className: "hotkey", onClick: () => this.handleHotkeyClick('rotate')
+                                      className: "hotkey"
                                     }, n.createElement("span", {
-                                        className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                    }, "Shift"), " + ", n.createElement("span", {
-                                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                                        className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('shift')
+                                    }, t.shift), " + ", n.createElement("span", {
+                                        className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('rotate')
                                     }, t.rotate), n.createElement("span", {
                                         className: "helpDialog-hotkey-name"
                                     }, "Rotate Counterclockwise")),
 
                                     n.createElement("div", {
-                                      className: "hotkey", onClick: () => this.handleHotkeyClick('scale')
+                                      className: "hotkey"
                                     }, n.createElement("span", {
-                                        className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                    }, "Shift"), " + ", n.createElement("span", {
-                                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                                        className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('shift')
+                                    }, t.shift), " + ", n.createElement("span", {
+                                        className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('scale')
                                     }, t.scale), n.createElement("span", {
                                         className: "helpDialog-hotkey-name"
                                     }, "Scale Down")),
 
                                     n.createElement("div", {
-                                      className: "hotkey", onClick: () => this.handleHotkeyClick('flip')
+                                      className: "hotkey"
                                     }, n.createElement("span", {
-                                        className: "helpDialog-hotkey helpDialog-hotkey_light"
-                                    }, "Shift"), " + ", n.createElement("span", {
-                                        className: "helpDialog-hotkey helpDialog-hotkey_light"
+                                        className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('shift')
+                                    }, t.shift), " + ", n.createElement("span", {
+                                        className: "helpDialog-hotkey helpDialog-hotkey_light", onClick: () => this.handleHotkeyClick('flip')
                                     }, t.flip), n.createElement("span", {
                                         className: "helpDialog-hotkey-name"
                                     }, "Flip Vertically")), 
@@ -3584,6 +3586,7 @@
                 n = e.value,
                 trackName = e.value.replace(/(\.\.\/)/g, ''),
                 url = `assets/tracks/${trackName}.txt`;
+                ghost = `assets/ghosts/${trackName}.json`;
 
               if (e.value.includes('$')) {
                 var commands = e.value.split('$').slice(1);
@@ -3748,6 +3751,34 @@
                     this.processTrackData(data);
                     console.log("track loaded:", trackName);
                     GameSettings.trackName = `${trackName}.txt`;
+                  })
+                  .catch(error => {
+                    console.error(error);
+                  });
+
+                  fetch(ghost)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('no ghost found.');
+                    }
+                    return response.json();
+                  })
+                  .then(parsedInput => {
+                    const raceData = parsedInput.data ? parsedInput.data[0].race : parsedInput;
+                    const parsedCode = JSON.parse(raceData.code);
+
+                    const filteredData = {
+                      code: parsedCode,
+                      vehicle: raceData.vehicle,
+                      desktop: raceData.desktop,
+                      run_ticks: raceData.run_ticks
+                    };
+
+                    if (typeof GameManager !== "undefined") {
+                      GameManager.command("add race", filteredData, true);
+                    }
+
+                    console.log("object loaded:", trackName);
                   })
                   .catch(error => {
                     console.error(error);
