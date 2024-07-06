@@ -1486,6 +1486,9 @@
             moveVehicle: function () {
               "undefined" != typeof GameManager && GameManager.command("change tool", "pete");
             },
+            importGhost: function () {
+              "undefined" != typeof GameManager && GameManager.command("dialog", "importGhost");
+            },
             render: function () {
               var e =
                   "bottomMenu-button bottomMenu-button-right bottomMenu-button_vehicle ",
@@ -1515,6 +1518,14 @@
                       }
                   }, "SET START POSITION")
                   ),
+                  this.state.open && n.createElement("button", {
+                      className: "margin",
+                      onClick: (event) => {
+                        event.stopPropagation();
+                        this.importGhost(event);
+                      }
+                  }, "IMPORT GHOST")
+                  
                 )
               );
             },
@@ -2652,6 +2663,7 @@
           p = e("./clear"),
           x = e("./importObject"),
           xx = e("./advancedBrush"),
+          xxx = e("./importGhost"),
           h = n.createClass({
             displayName: "Dialogs",
             className: "editorDialog",
@@ -2701,6 +2713,9 @@
                 case "advancedBrush":
                     f = n.createElement(xx, null);
                     break;
+                case "importGhost":
+                    f = n.createElement(xxx, null);
+                    break;
                 default:
                   h = { display: "none" };
               }
@@ -2728,6 +2743,7 @@
         "./import": 25,
         "./importObject": 925,
         "./advancedBrush": 9925,
+        "./importGhost": 241,
         "./offline_editor_promo": 26,
         "./upload": 27,
         react: 230,
@@ -4293,7 +4309,9 @@
               var v = this.props.options || {};
               return {
                 trailSpeed: v.trailSpeed || GameSettings.brush.trailSpeed,
-                breakLength: v.breakLength || GameSettings.brush.breakLength
+                breakLength: v.breakLength || GameSettings.brush.breakLength,
+                rotateJitter: GameSettings.brushRotateJitter,
+                scaleJitter: GameSettings.brushScaleJitter
               };
             },
             adjustTrailSpeed: function (value) {
@@ -4307,6 +4325,14 @@
                 GameManager.command("change tool option", "breakLength", value);
               this.setState({ breakLength: value });
               GameSettings.brush.breakLength = value;
+            },
+            adjustRotateJitter: function (value) {
+              this.setState({ rotateJitter: value });
+              GameSettings.brushRotateJitter = value;
+            },
+            adjustScaleJitter: function (value) {
+              this.setState({ scaleJitter: value });
+              GameSettings.brushScaleJitter = value;
             },
             getAdvancedSettings: function () {
               var e = GameSettings,
@@ -4393,13 +4419,59 @@
                             onChange: this.toggleBrushScale
                           }))
                         ),
-                        n.createElement("tr", null,
+                        /*n.createElement("tr", null,
                           n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Rotate Jitter")),
                           n.createElement("td", { className: "settingInput" }, this.renderRotateJitterSelect())
                         ),
                         n.createElement("tr", null,
                           n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Scale Jitter")),
                           n.createElement("td", { className: "settingInput" }, this.renderScaleJitterSelect())
+                        ),*/
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Rotate Jitter")),
+                          n.createElement("td", null,
+                            n.createElement("div", { className: "horizontal-slider-container" },
+                              n.createElement(x, {
+                                withBars: !0,
+                                className: "horizontal-slider-2 brush-slider_trailspeed",
+                                onChanged: this.adjustRotateJitter,
+                                defaultValue: this.state.rotateJitter,
+                                max: 5,
+                                min: 0,
+                                step: 0.1,
+                                value: this.state.rotateJitter
+                              }),
+                              n.createElement("input", {
+                                type: "text",
+                                className: "brushToolOptions-input brushToolOptions-input_vehiclepoweruptime",
+                                value: (Math.floor(this.state.rotateJitter * 10) / 10).toFixed(1),
+                                readOnly: true
+                              })
+                            )
+                          )
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Scale Jitter")),
+                          n.createElement("td", null,
+                            n.createElement("div", { className: "horizontal-slider-container" },
+                              n.createElement(x, {
+                                withBars: !0,
+                                className: "horizontal-slider-2 brush-slider_trailspeed",
+                                onChanged: this.adjustScaleJitter,
+                                defaultValue: this.state.scaleJitter,
+                                max: 5,
+                                min: 0,
+                                step: 0.1,
+                                value: this.state.scaleJitter
+                              }),
+                              n.createElement("input", {
+                                type: "text",
+                                className: "brushToolOptions-input brushToolOptions-input_vehiclepoweruptime",
+                                value: (Math.floor(this.state.scaleJitter * 10) / 10).toFixed(1),
+                                readOnly: true
+                              })
+                            )
+                          )
                         )
                       )
                     )
@@ -4407,7 +4479,7 @@
                 )
               );
             },
-            changeRotateJitter: function (brj) {
+            /*changeRotateJitter: function (brj) {
               var rotateJitter = brj.target.value;
               GameSettings.brushRotateJitter = rotateJitter;
             },
@@ -4442,7 +4514,7 @@
                   value: bsj
                 }, bsj)
               }))
-            },
+            },*/
             toggleBrushRotate: function () {
               var br = this.refs.brushRotate.getDOMNode().checked;
               GameSettings.brushRotate = br
@@ -31458,6 +31530,288 @@
         t.exports = r;
       },
       { react: 230 },
+    ],
+    241: [
+      function (e, t) {
+        var n = e("react"),
+          auto = e("autocomplete"),
+          r = n.createClass({
+            displayName: "GhostDialog",
+            dialogName: "importGhost",
+            hasFileAPI: !!(window.File && window.FileList && window.FileReader),
+            closeDialog: function () {
+              "undefined" != typeof GameManager &&
+                GameManager.command("dialog", !1);
+            },
+            getInitialState: function () {
+              return { isDragActive: !1 };
+            },
+            addGhost: function () {
+              var e = this.refs.code.getDOMNode(),
+                t = e.getAttribute("data-paste-code"),
+                n = e.value;
+              const trackName = e.value.replace(/(\.\.\/)/g, '');
+              const url = `assets/ghosts/${trackName}.json`;
+
+              if (!e.value.includes('{') && !t) {
+                fetch(url)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('no ghost found.');
+                    }
+                    return response.json();
+                  })
+                  .then(parsedInput => {
+                    const raceData = parsedInput.data ? parsedInput.data[0].race : parsedInput;
+                    const parsedCode = JSON.parse(raceData.code);
+
+                    const filteredData = {
+                      code: parsedCode,
+                      vehicle: raceData.vehicle,
+                      desktop: raceData.desktop,
+                      run_ticks: raceData.run_ticks
+                    };
+
+                    if (typeof GameManager !== "undefined") {
+                      GameManager.command("add race", filteredData, true);
+                    }
+
+                    console.log("object loaded:", trackName);
+                  })
+                  .catch(error => {
+                    console.error(error);
+                  });
+              }
+              else {
+                const parsedInput = JSON.parse(n);
+                const raceData = parsedInput.data ? parsedInput.data[0].race : parsedInput;
+                const parsedCode = JSON.parse(raceData.code);
+
+                const filteredData = {
+                  code: parsedCode,
+                  vehicle: raceData.vehicle,
+                  desktop: raceData.desktop,
+                  run_ticks: raceData.run_ticks
+                };
+
+                if (typeof GameManager !== "undefined") {
+                  GameManager.command("add race", filteredData, true);
+                }
+              }
+            },
+            processAddObjectData(data) {
+              if ("undefined" != typeof GameManager) {
+                GameManager.command("add race", data, true);
+              }
+            },
+            onDragLeave: function (e) {
+              var t = e.target;
+              t.getAttribute("data-ignoredragleave") ||
+                (this.setState({ isDragActive: !1 }),
+                (this.refs.dropFile.getDOMNode().style.display = "none"),
+                (this.refs.placeholder.getDOMNode().style.display = "block"));
+            },
+            onDragOver: function (e) {
+              e.preventDefault(),
+                (e.dataTransfer.dropEffect = "copy"),
+                (this.refs.dropFile.getDOMNode().style.display = "block"),
+                (this.refs.placeholder.getDOMNode().style.display = "none"),
+                this.setState({ isDragActive: !0 });
+            },
+            onDrop: function (e) {
+              e.preventDefault(), this.setState({ isDragActive: !1 });
+              var t;
+              e.dataTransfer
+                ? (t = e.dataTransfer.files)
+                : e.target && (t = e.target.files);
+              var n = new FileReader();
+              (n.onload = (event) => this.fileDropComplete(event, t[0].name)),
+                (n.onerror = this.fileDropError),
+                n.readAsText(t[0]);
+                
+            },
+            fileDropComplete: function (e, fileName) {
+              var fileContent = e.target.result;
+              var isJsonFile = fileName.endsWith('.json');
+              var n = this.refs.code.getDOMNode();
+            
+              if (isJsonFile) {
+                try {
+                  const parsedInput = JSON.parse(fileContent);
+                  const raceData = parsedInput.data ? parsedInput.data[0].race : parsedInput;
+                  const parsedCode = JSON.parse(raceData.code);
+            
+                  const filteredData = {
+                    code: parsedCode,
+                    vehicle: raceData.vehicle,
+                    desktop: raceData.desktop,
+                    run_ticks: raceData.run_ticks
+                  };
+            
+                  if (typeof GameManager !== "undefined") {
+                    GameManager.command("add race", filteredData, true);
+                  }
+                } catch (error) {
+                  console.error("Error parsing JSON file:", error);
+                }
+              } else {
+                n.value = fileContent;
+                n.setAttribute("data-paste-code", fileContent);
+                this.onInput();
+              }
+            },
+            fileDropError: function (e) {
+              console.log("There was an error", e);
+            },
+            onPaste: function (e) {
+              if (e.clipBoardData || window.clipboardData) {
+                e.preventDefault();
+                var t = !1,
+                  n = "";
+                e.clipBoardData
+                  ? ((t = e.clipboardData), (n = t.getData("text/plain")))
+                  : window.clipboardData &&
+                    (n = window.clipboardData.getData("Text"));
+                var r = n.length,
+                  o = n.slice(0, 5e4);
+                r > 5e4 &&
+                  (o +=
+                    "... track is too large to show, but will still import");
+                var i = this.refs.code.getDOMNode();
+                (i.value = o), i.setAttribute("data-paste-code", n);
+              }
+              this.onInput();
+            },
+            openFileDialog: function () {
+              this.refs.fileInput.getDOMNode().click();
+            },
+            onBlurInput: function () {
+              this.refs.placeholder.getDOMNode().style.opacity = 1;
+            },
+            onFocusInput: function () {
+              this.refs.placeholder.getDOMNode().style.opacity = 0.3;
+            },
+            onInput: function () {
+              var e = this.refs.code.getDOMNode().value,
+                t = this.refs.placeholder.getDOMNode();
+              t.style.display = e.length > 0 ? "none" : "block";
+            },
+            render: function () {
+              var e = this.state.isDragActive,
+                t = "editorDialog-content editorDialog-content_importDialog";
+              e && (t += " editorDialog-content-dragActive");
+              var r = "";
+              this.hasFileAPI &&
+                (r = n.createElement(
+                  "span",
+                  null,
+                  "or ",
+                  n.createElement(
+                    "span",
+                    { className: "link", onClick: this.openFileDialog },
+                    "select a file"
+                  )
+                ));
+              var o = n.createElement(
+                "span",
+                {
+                  className: "importDialog-placeholder",
+                  ref: "placeholder",
+                  "data-ignoredragleave": "true",
+                },
+                "Paste track code, drag and drop text files here, ",
+                r,
+                " to import"
+              );
+              return n.createElement(
+                "div",
+                { className: t },
+                n.createElement(
+                  "div",
+                  { className: "editorDialog-titleBar" },
+                  n.createElement(
+                    "span",
+                    {
+                      className: "editorDialog-close",
+                      onClick: this.closeDialog,
+                    },
+                    "×"
+                  ),
+                  n.createElement(
+                    "h1",
+                    { className: "editorDialog-content-title" },
+                    "IMPORT GHOST"
+                  )
+                ),
+                n.createElement(
+                  "div",
+                  {
+                    className: "importDialog-codeContainer",
+                    onDragLeave: this.onDragLeave,
+                    onDragOver: this.onDragOver,
+                    onDrop: this.onDrop,
+                  },
+                  o,
+                  n.createElement(
+                    "span",
+                    {
+                      className: "importDialog-dropFile",
+                      ref: "dropFile",
+                      "data-ignoredragleave": "true",
+                    },
+                    "Drop file to import"
+                  ),
+                  n.createElement("textarea", {
+                    ref: "code",
+                    className: "importDialog-code",
+                    "data-ignoredragleave": "true",
+                    autoComplete: "false",
+                    spellCheck: "false",
+                    onPaste: this.onPaste,
+                    onChange: this.onInput,
+                    onFocus: this.onFocusInput,
+                    onBlur: this.onBlurInput,
+                  }),
+                  n.createElement("input", {
+                    style: { display: "none" },
+                    type: "file",
+                    ref: "fileInput",
+                    accept: "text/plain",
+                    onChange: this.onDrop,
+                  })
+                ),
+                n.createElement(
+                  "div",
+                  { className: "editorDialog-bottomBar clearfix" },
+                  n.createElement(
+                    "button",
+                    {
+                      className:
+                        "primary-button primary-button-blue float-right margin-0-5",
+                      onClick: this.addGhost,
+                    },
+                    "Add as Race"
+                  ),
+                  n.createElement(
+                    "button",
+                    {
+                      className:
+                        "primary-button primary-button-black float-right margin-0-5",
+                      onClick: this.closeDialog,
+                    },
+                    "Cancel"
+                  )
+                ),
+                n.createElement(auto, {baseURL: "assets/ghosts/", onInput: this.onInput })
+              );
+            },
+          });
+        t.exports = r;
+      },
+      {
+        react: 230,
+        autocomplete: 240,
+      },
     ]
   },
   {},

@@ -11069,6 +11069,8 @@
               l = new createjs.Text("BEST:", "20px " + n, "#999999"),
               c = new createjs.Text("0/0", "40px " + n, "#000000"),
               u = new createjs.Bitmap(t.assets.getResult("targets_icon")),
+              g = new createjs.Bitmap(t.assets.getResult("globe_icon")),
+              v = new createjs.Text("00:00.00", "40px " + n, "#000000"),
               d = e / 2.5;
             s.mobile && (d = e / 2.5),
               (o.y = 3),
@@ -11086,10 +11088,18 @@
               a.y = 88,
               r.x = 90,
               r.y = 100,
+
+              g.x = 12,
+              g.y = 171,
+              v.x = 90,
+              v.y = 180,
+              
               i.addChild(r),
               i.addChild(a),
               i.addChild(c),
               i.addChild(u),
+              //i.addChild(g),
+              //i.addChild(v),
               //i.addChild(o),
               //i.addChild(h),
               //i.addChild(l),
@@ -11101,6 +11111,7 @@
               (this.container = i),
               (this.time = r),
               (this.goals = c),
+              //(this.best = v),
               (this.best_time = h),
               this.stage.addChild(i);
           }),
@@ -11114,8 +11125,10 @@
               e > 50 &&
               ((this.cached = !0), this.cache_fixed_text());
             var o = e / s.drawFPS;
+            //var oo = this.scene.runTicks / s.drawFPS;
             if (this.scene.game.mod.getVar("slowmo")) {o = o / 2}
             this.time.text = n(1e3 * o);
+            //this.best.text = n(1e3 * oo);
             var a = i.targetCount,
               h = r.getTargetsHit();
             this.goals.text = h + "/" + a;
@@ -12056,7 +12069,7 @@
           }
         }
         focusOnMainPlayer() {
-          if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("shift")) return;
+          if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("backspace")) return;
           (0 === this.focusIndex && this.playerFocus) ||
             ((this.focusIndex = 0), this.focusOnPlayer());
         }
@@ -12347,9 +12360,10 @@
             if (!0 === this.downButtons[t]) return !0;
           return !1;
         }
-        updatePlayback() {
+        /*updatePlayback() {
           const t = this.playback,
             e = this.scene.ticks;
+            console.log(t)
           for (const s of this.keysToPlay) {
             const i = s + "_up",
               n = s + "_down";
@@ -12357,6 +12371,43 @@
               void 0 !== t[n][e] &&
               this.setButtonDown(s, t[n][e]),
               void 0 !== t[i] && void 0 !== t[i][e] && this.setButtonUp(s);
+          }
+        }*/
+        updatePlayback() {
+          const t = this.playback;
+          let e = this.scene.ticks;
+          if (this.scene.game.mod.getVar("slowmo")) { e = e / 2 }
+
+          for (const s of this.keysToPlay) {
+            const upKey = s + "_up";
+            const downKey = s + "_down";
+
+            if (t[downKey] && Array.isArray(t[downKey]) && t[downKey].includes(e)) {
+              this.setButtonDown(s, true);
+            }
+            if (t[upKey] && Array.isArray(t[upKey]) && t[upKey].includes(e)) {
+              this.setButtonUp(s);
+            }
+            if (this.scene.game.mod.getVar("oldTimer")) {
+              if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("backspace")) {
+                this.setButtonDown("backspace", true);
+                if (t[upKey] && Array.isArray(t[upKey]) && t[upKey].includes(e)) {
+                  this.setButtonDown(s, true);
+                }
+                if (t[downKey] && Array.isArray(t[downKey]) && t[downKey].includes(e)) {
+                  this.setButtonUp(s);
+                } // as you rewind, if a key is pressed or released, this sets the opposite
+              }
+              if (!this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("backspace")) {
+                this.setButtonUp("backspace");
+              }
+              if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("enter")) {
+                this.setButtonDown("enter", true);
+              }
+              if (!this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("enter")) {
+                this.setButtonUp("enter");
+              }
+            }
           }
         }
         updateRecording() {
@@ -14176,13 +14227,13 @@
             (s.lineWidth = 5 * i);
 
             s.strokeText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 10 * i);
-            s.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
-            s.strokeText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 40 * i);
+            //s.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
+            s.strokeText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
 
             s.fillText(angle.toFixed(0) + "°", h.x + textOffsetX, h.y + textOffsetY + 10 * i);
-            s.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
+            //s.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
             s.fillStyle = color;
-            s.fillText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 40 * i);
+            s.fillText(vel.toFixed(0) + " units/second", h.x + textOffsetX, h.y + textOffsetY + 25 * i);
             s.fillStyle = "#000000";
             s.strokeStyle = "#000";
           }
@@ -14464,13 +14515,13 @@
               (t.lineWidth = 5 * i);
 
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            //t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            //t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = "#000000";
             t.strokeStyle = "#000";
           }
@@ -15557,13 +15608,13 @@
             (t.lineWidth = 5 * i);
 
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            //t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            //t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = "#000000";
             t.strokeStyle = "#000";
           }
@@ -15918,13 +15969,13 @@
             (t.lineWidth = 5 * i);
 
             t.strokeText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
-            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            //t.strokeText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            t.strokeText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
 
             t.fillText(angle.toFixed(0) + "°", s.x + textOffsetX, s.y + textOffsetY + 10 * i);
-            t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
+            //t.fillText("(" + posX.toFixed(0) + ", " + posY.toFixed(0) + ")", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = color;
-            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 40 * i);
+            t.fillText(vel.toFixed(0) + " units/second", s.x + textOffsetX, s.y + textOffsetY + 25 * i);
             t.fillStyle = "#000000";
             t.strokeStyle = "#000";
           }
@@ -16238,7 +16289,9 @@
                 if (this._addCheckpoint) {
                   (this._createCheckpoint(), (this._addCheckpoint = !1));
                 }
-                if (this._game.mod.getVar("rewind") && !this._crashed) {
+                /*const collected = (this._powerupsConsumed.targets.length > 0) && (this._powerupsConsumed.targets.length === this._scene.track.targetCount);
+                if (this._game.mod.getVar("rewind") && !this._crashed && !collected) {*/ // couldn't get this to work with ghosts, worth revisiting
+                if (this._game.mod.getVar("rewind")) {
                   this._createCheckpoint();
                 }
               }
@@ -16275,7 +16328,7 @@
                 o.lineTo(h.x + 5 * n, h.y - 50 * n),
                 o.lineTo(h.x, h.y - 40 * n),
                 o.fill();
-              const l = 9 * r * Yt(n, 1);
+              const l = 5 * r * Yt(n, 1);
               (o.font = l + "pt helsinki"),
                 (o.textAlign = "center"),
                 (o.fillStyle = e),
@@ -16424,11 +16477,13 @@
                   const t = e.settings;
                   var keyCodeToChar = {8:"Backspace",9:"Tab",13:"Enter",16:"Shift",17:"Ctrl",18:"Alt",19:"Pause/Break",20:"Caps Lock",27:"Esc",32:"Space",33:"Page Up",34:"Page Down",35:"End",36:"Home",37:"Left",38:"Up",39:"Right",40:"Down",45:"Insert",46:"Delete",48:"0",49:"1",50:"2",51:"3",52:"4",53:"5",54:"6",55:"7",56:"8",57:"9",65:"A",66:"B",67:"C",68:"D",69:"E",70:"F",71:"G",72:"H",73:"I",74:"J",75:"K",76:"L",77:"M",78:"N",79:"O",80:"P",81:"Q",82:"R",83:"S",84:"T",85:"U",86:"V",87:"W",88:"X",89:"Y",90:"Z",91:"Windows",93:"Right Click",96:"Numpad 0",97:"Numpad 1",98:"Numpad 2",99:"Numpad 3",100:"Numpad 4",101:"Numpad 5",102:"Numpad 6",103:"Numpad 7",104:"Numpad 8",105:"Numpad 9",106:"Numpad Multiply",107:"Numpad Plus",109:"Numpad Minus",110:"Numpad Decimal",111:"Numpad Divide",112:"F1",113:"F2",114:"F3",115:"F4",116:"F5",117:"F6",118:"F7",119:"F8",120:"F9",121:"F10",122:"F11",123:"F12",144:"Num Lock",145:"Scroll Lock",182:"My Computer",183:"My Calculator",186:"Semi-colon",187:"Equal Sign",188:"Comma",189:"Minus",190:"Period",191:"Slash",192:"Backquote",219:"Open Bracket",220:"Backslash",221:"Close Bracket",222:"'"};
                   let y = keyCodeToChar[GameSettings.editorHotkeys.backspace];
+                  let z = keyCodeToChar[GameSettings.editorHotkeys.shift];
+                  const x = (this._game.mod.getVar("rewind")) ? "Hold " + y + " to Rewind, Press " + z + " and " + y + " to Restart" : "Press " + y + " To Go Back Further";
                   (e.state.playerAlive = this.isAlive()),
                     e.settings.mobile
                       ? e.message.show("Tap to resume", 5, "#826cdc", "#FFFFFF")
                       : e.message.show(
-                          "Press " + y + " To Go Back Further",
+                          x,
                           5,
                           "#826cdc",
                           "#FFFFFF"
@@ -16441,6 +16496,7 @@
               } else t || this.restartScene();
             }
             restartScene() {
+              this._scene.message.hide();
               if (
                 !this._gamepad.replaying &&
                 ((this._scene.restartTrack = !0),
@@ -18634,9 +18690,8 @@
               if (this.toolHandler.options.object) {
                 if (brushRotate || brushScale || brushRotateJitter || brushScaleJitter) {
                   let offset = s.sub(e),
-                    dir = Math.atan2(offset.y, offset.x);
-                  
-                    const speed = brushScale ? this.calculateSpeed() : 1;
+                    dir = brushRotate ? Math.atan2(offset.y, offset.x) : 0,
+                    speed = brushScale ? this.calculateSpeed() : 1;
 
                     const dirJitter = (Math.random() - 0.5) * GameSettings.brushRotateJitter;
                     const speedJitter = (Math.random() - 0.5) * GameSettings.brushScaleJitter;
@@ -22198,7 +22253,7 @@
               (n.push(this.id),
               s.setTempVehicle(
                 "HELI",
-                this.time * r.settings.drawFPS,
+                this.time * r.settings.drawFPS * (this.scene.game.mod.getVar("slowmo") ? 2 : 1),
                 { x: this.x, y: this.y },
                 e.dir
               ),
@@ -22479,7 +22534,7 @@
               (n.push(this.id),
               s.setTempVehicle(
                 "TRUCK",
-                this.time * r.settings.drawFPS,
+                this.time * r.settings.drawFPS * (this.scene.game.mod.getVar("slowmo") ? 2 : 1),
                 { x: this.x, y: this.y },
                 e.dir
               ),
@@ -22647,7 +22702,7 @@
               (n.push(this.id),
               s.setTempVehicle(
                 "BALLOON",
-                this.time * r.settings.drawFPS,
+                this.time * r.settings.drawFPS * (this.scene.game.mod.getVar("slowmo") ? 2 : 1),
                 { x: this.x, y: this.y },
                 e.dir
               ),
@@ -22733,7 +22788,7 @@
               (n.push(this.id),
               s.setTempVehicle(
                 "BLOB",
-                this.time * r.settings.drawFPS,
+                this.time * r.settings.drawFPS * (this.scene.game.mod.getVar("slowmo") ? 2 : 1),
                 { x: this.x, y: this.y },
                 e.dir
               ),
@@ -24000,7 +24055,7 @@
             this.stage.update(),
             this.camera.updateZoom(),
             this.updateMainPlayerHotkeys();
-            this.game.mod.getVar("oldTimer") && this.score.update();
+            (this.game.mod.getVar("oldTimer")) && this.score.update();
               if (this.playerManager.firstPlayer.complete && (this.playerManager.firstPlayer._scene.ticks < this.completedTicks)){
                   this.playerManager.firstPlayer.complete = false;
             }
@@ -24030,6 +24085,8 @@
             (this.state.playing = !1),
             (this.ticks = 0),
             this.playerManager.reset(),
+            this.playerManager.getPlayerCount() > 0 &&
+              (this.camera.focusIndex = 1),
             this.camera.focusOnPlayer(),
             this.camera.fastforward(),
             this.score.update();
@@ -24091,7 +24148,7 @@
             this.state.loading && this.loadingcircle.draw(),
             this.message.draw();
             this.drawInputDisplay();
-            this.drawGameData();
+            //this.drawGameData();
         }
         trackData() {
           this.trackcode = this.track.getCode();
@@ -24172,6 +24229,7 @@
             trackSize
           };
         }
+        /*
         drawGameData() {
           if (this.game.mod.getVar("gameData")) {
             const t = this.game.canvas.getContext("2d");
@@ -24195,7 +24253,7 @@
               t.fillText("track: " + trackName, s.x, s.y - 15 * i);
             }
           }
-        }
+        }*/
         drawInputDisplay() {
           if (this.game.mod.getVar("inputDisplay")) {
           const t = this.game.canvas.getContext("2d");
@@ -24348,6 +24406,8 @@
             case "import":
               break;
             case "importObject":
+              break;
+            case "importGhost":
               break;
             case "advancedBrush":
               break;
@@ -24588,6 +24648,11 @@
             case "dialog": {
               const e = t[0];
               !1 === e ? this.listen() : this.unlisten(), this.openDialog(e);
+              if (this.toolHandler.options.object && (this.objectPhysics.length === 0 && this.objectScenery.length === 0 && this.objectPowerups.length === 0) && !this.state.showDialog) {
+                this.toolHandler.options.object = !1
+                this.toolHandler.options.lineType = "physics";
+                this.state.object = !1
+              }
               break;
             }
             case "focused":
@@ -24670,8 +24735,58 @@
               this.command("dialog", false);
               break;
             }
+            case "add race": {
+              const raceData = t[0];
+              this.addRaces(raceData);
+              raceData && this.command("dialog", !1);
+              break;
+            }
           }
         }
+        addRaces(raceData) {
+            this.addPlayers(raceData);
+            this.restartTrack = true;
+        }
+        addPlayers(raceData) {
+            const races = raceData;
+            const playerManager = this.playerManager;
+            playerManager.clear();
+          
+            let user = [];
+            user = {
+                "u_id": 1082,
+                "u_name": "ness",
+                "d_name": "Pete",
+                "img_url_small": "https:\/\/secure.gravatar.com\/avatar\/c7c31ff913e6990b5c44700b4d34d8ba\/?s=50&d=mm&r=pg",
+                "cosmetics": {
+                    "head": {
+                        "id": "12",
+                        "title": "Green Hat",
+                        "type": "1",
+                        "name": "classic_green",
+                        "cost": "60",
+                        "options": {
+                            "back": "#51B400"
+                        },
+                        "classname": "forward_cap",
+                        "equiped": true,
+                        "spritesheet_id": "4",
+                        "img": "head_icons_4 head_icons_4-classic_green",
+                        "show": true,
+                        "script": "https:\/\/cdn.freeriderhd.com\/free_rider_hd\/assets\/inventory\/head\/scripts\/v5\/forward_cap.js",
+                        "limited": false
+                    }
+                }}
+
+            let n = races.code;
+              "string" == typeof n && (n = JSON.parse(n));
+
+            const player = playerManager.createPlayer(this, user);
+            player.setBaseVehicle(races.vehicle);
+            player.setAsGhost();
+            player.getGamepad().loadPlayback(raceData.code, this.settings.keysToRecord);
+            playerManager.addPlayer(player);
+          }
         parseCoordinates(t) {
           const e = t.split("#");
           let s = e[0].split(",");
@@ -25754,7 +25869,7 @@
           oldTimer: { default: !1 },
           frontBrake: { default: !1 },
           bikeData: { default: !1 },
-          gameData: { default: !1 },
+          //gameData: { default: !1 },
           inputDisplay: { default: !1 },
           hitboxes: { default: !1 },
           accurateEraser: { default: !1 },
@@ -26219,7 +26334,7 @@
           },
           {
             key: "oldTimer",
-            title: "Old Timer",
+            title: "Old-Timer",
             description:
               "When restarting from a checkpoint, the timer resets to the time the checkpoint was collected, as it did in previous Free Rider games.",
           },
@@ -26227,14 +26342,14 @@
             key: "bikeData",
             title: "Bike/Vehicle Data",
             description:
-              "Shows the metadata about the rider, including head angle, position, and velocity.",
+              "Shows the metadata about the rider, including head angle and speed.",
           },
-          {
+        /*{
             key: "gameData",
             title: "Game Data",
             description:
               "Shows game data, including FPS.",
-          },
+          },*/
           {
             key: "hitboxes",
             title: "Visible Hitboxes",
