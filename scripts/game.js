@@ -16341,10 +16341,10 @@
               this._tempVehicleTicks > 0 && (t = this._tempVehicle),
                 this._effectTicks > 0 &&
                   this._effect.draw(this._effectTicks / 100),
-                t.draw();
+                (this._game.mod.getVar("seeGhost") || !this._ghost) && t.draw();
               for (let t = 0; t < this.deadVehicles.length; t++)
                 this.deadVehicles[t] && this.deadVehicles[t].draw();
-              this.isGhost() && this.drawName();
+              this.isGhost() && this._game.mod.getVar("seeGhost") && this.drawName();
             }
             checkKeys() {
               const t = this._gamepad,
@@ -24087,6 +24087,7 @@
             this.playerManager.reset(),
             this.playerManager.getPlayerCount() > 0 &&
               (this.camera.focusIndex = 1),
+            !this.game.mod.getVar("seeGhost") && (this.camera.focusIndex = 0),
             this.camera.focusOnPlayer(),
             this.camera.fastforward(),
             this.score.update();
@@ -25864,6 +25865,7 @@
           mini: { default: !1 },
           propeller: { default: !1 },
           crouch: { default: !1 },
+          seeGhost: { default: !1 },
           slowmo: { default: !1 },
           rewind: { default: !1 },
           oldTimer: { default: !1 },
@@ -26321,6 +26323,12 @@
           },
           */
           {
+            key: "seeGhost",
+            title: "See Ghost",
+            description:
+              "Shows a replay for the track if available.",
+          },
+          {
             key: "slowmo",
             title: "Slow-Mode",
             description:
@@ -26713,7 +26721,7 @@
                 (this.container = xr.cloneNode(!0).firstChild),
                   (this.settingList = this.createOptionList(
                     this.arr,
-                    "Mods"
+                    "Settings"
                   )),
                   this.container
                     .querySelector(".mod-menu")
