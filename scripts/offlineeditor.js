@@ -1520,13 +1520,13 @@
                       }
                   }, "SET START POSITION")
                   ),
-                  this.state.open && n.createElement("button", {
+                  /*this.state.open && n.createElement("button", {
                       className: "margin",
                       onClick: (event) => {
                         event.stopPropagation();
                         this.importGhost(event);
                       }
-                  }, "IMPORT GHOST")
+                  }, "IMPORT GHOST")*/
                   
                 )
               );

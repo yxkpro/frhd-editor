@@ -26593,12 +26593,12 @@
               "The game will no longer lose focus if you click elsewhere on the screen.",
           },
           */
-          {
+          /*{
             key: "seeGhost",
             title: "See Ghost",
             description:
               "Shows a replay for the track if available.",
-          },
+          },*/
           {
             key: "slowmo",
             title: "Slow-Mode",
