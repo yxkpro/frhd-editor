@@ -10312,7 +10312,7 @@
         const n = Math.sqrt,
           r = Math.floor;
         class o {
-          constructor(t, e, s, n) {
+          constructor(t, e, s, n, raw) {
             (this.p1 = new i.Z(t, e)),
               (this.p2 = new i.Z(s, n)),
               (this.p1Raw = new i.Z(raw[0], raw[1])),
