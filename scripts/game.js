@@ -24423,7 +24423,7 @@
             //this.drawGameData();
         }
         trackData() {
-          this.trackcode = this.track.getCode();
+          this.trackcode = GameSettings.object ? this.getObjectCode() : this.track.getCode();
           let trackSize = new Blob([this.trackcode]).size / 1024;
           trackSize = trackSize.toFixed(2);
         
