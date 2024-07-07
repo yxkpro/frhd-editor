@@ -409,7 +409,7 @@
                     //e !== "select" && n.createElement(vv),
                     n.createElement(r, { vehicle: this.props.data.vehicle }),
                     n.createElement(xxxx, { active: this.props.data.object }),
-                    e === "select" && n.createElement(vvv),
+                    //e === "select" && n.createElement(vvv),
                     //n.createElement(v),
                     n.createElement("span", { className: "divider" })
                   ),
@@ -513,7 +513,7 @@
                     n.createElement("span", {},
                       n.createElement("button", {
                         onClick: this.toggleBrush,
-                      }, "ADVANCED OPTIONS"))
+                      }, "OPTIONS"))
                   ),
                   n.createElement(
                     "div",
@@ -864,6 +864,10 @@
             toggleSelectType: function() {
                 GameSettings.copy = !GameSettings.copy;
             },
+            toggleOptions: function () {
+              "undefined" != typeof GameManager &&
+              GameManager.command("dialog", "advancedSelect", this.props.options);
+            },
             getInitialState: function() {
                 return { rotateFactor: 15, scaleFactor: 1.25 };
             },
@@ -875,11 +879,12 @@
                 this.setState({ scaleFactor: scale });
                 GameSettings.scaleFactor = scale;
             },
-            addObject: function() {
+            selectionAsObject: function() {
               let tool = GameManager.game.currentScene.toolHandler.tools.select,
                   selected = tool.selected;
                   if (!selected?.length) return;
               let { centerX, centerY } = tool.findCenter();
+
           
               let objectPhysics = [];
               let objectScenery = [];
@@ -898,14 +903,45 @@
                           objectPhysics.push(line);
                       } else {
                           objectScenery.push(line);
+                      }}
+
+                  else if ('name' in i) {
+                      let powerup = {
+                          name: i.name,
+                          x: i.x - centerX,
+                          y: i.y - centerY
+                      };
+                    if (i.name === 'boost' || i.name === 'gravity') {
+                      if (i.hasOwnProperty('angle')) {
+                        powerup.angle = i.angle;
                       }
-                  }
+                    } else if (i.name === 'teleport') {
+                      if (i.hasOwnProperty('x2') && i.hasOwnProperty('y2')) {
+                        powerup.x2 = i.x2 - centerX;
+                        powerup.y2 = i.y2 - centerY;
+                      }
+                    } else if (['helicopter', 'truck', 'balloon', 'blob'].includes(i.name)) {
+                      if (i.hasOwnProperty('time')) {
+                        powerup.time = i.time;
+                      }
+                    }
+                  objectPowerups.push(powerup);
+                }
               });
-          
+
               GameManager.game.currentScene.objectPhysics = objectPhysics;
               GameManager.game.currentScene.objectScenery = objectScenery;
               GameManager.game.currentScene.objectPowerups = objectPowerups;
+              GameSettings.objectRotate = 0;
+              GameSettings.objectScale = 1;
+              GameSettings.objectOffsetX = 0;
+              GameSettings.objectOffsetY = 0;
+              GameSettings.objectFlipX = !1;
+              GameSettings.objectFlipY = !1;
+              GameSettings.objectInvert = !1;
+              GameManager.game.currentScene.transformObjects();
               GameSettings.customBrush = true;
+              !GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
           },
             render: function() {
                 var type = GameSettings.copy ? "COPY + PASTE" : "CUT + PASTE";
@@ -917,10 +953,16 @@
                         className: "editorgui_icons_bottom editorgui_icons-icon_select"
                     }), n.createElement("span", {
                         className: "toolName"
-                    }, "Select : ", n.createElement("span", {},
-                    n.createElement("button", {
-                        onClick: this.toggleSelectType
-                    }, type))),
+                    }, "Select : ",
+                    n.createElement("span", {},
+                      n.createElement("button", {
+                          onClick: this.toggleOptions
+                      }, "OPTIONS")),
+                      n.createElement("span", {},
+                        n.createElement("button", {
+                            className: "margin",
+                            onClick: this.selectionAsObject
+                        }, "COPY SELECTION AS OBJECT"))),
 
                     
                     
@@ -2689,6 +2731,7 @@
           x = e("./importObject"),
           xx = e("./advancedBrush"),
           xxx = e("./importGhost"),
+          xxxx = e("./advancedSelect"),
           h = n.createClass({
             displayName: "Dialogs",
             className: "editorDialog",
@@ -2741,6 +2784,9 @@
                 case "importGhost":
                     f = n.createElement(xxx, null);
                     break;
+                case "advancedSelect":
+                    f = n.createElement(xxxx, null);
+                    break;
                 default:
                   h = { display: "none" };
               }
@@ -2769,6 +2815,7 @@
         "./importObject": 925,
         "./advancedBrush": 9925,
         "./importGhost": 241,
+        "./advancedSelect": 242,
         "./offline_editor_promo": 26,
         "./upload": 27,
         react: 230,
@@ -4406,7 +4453,7 @@
                 n.createElement("div", null,
                   n.createElement("div", { className: "editorDialog-titleBar" },
                     n.createElement("span", { className: "editorDialog-close", onClick: this.closeDialog }, "×"),
-                    n.createElement("h1", { className: "editorDialog-content-title" }, "ADVANCED BRUSH OPTIONS")
+                    n.createElement("h1", { className: "editorDialog-content-title" }, "BRUSH OPTIONS")
                   ),
                   n.createElement("div", { className: "helpDialogAdvanced" },
                     n.createElement("table", null,
@@ -31868,6 +31915,134 @@
         react: 230,
         autocomplete: 240,
       },
+    ],
+    242: [
+      function (e, t) {
+        var n = e("react"),
+          x = e("react-slider"),
+          r = n.createClass({
+            displayName: "advancedSelect",
+            dialogName: "advancedSelect",
+            closeDialog: function () {
+              "undefined" != typeof GameManager &&
+                GameManager.command("dialog", !1);
+            },
+            getInitialState: function () {
+              return {
+                scaleLock: GameSettings.scaleLock,
+                rotateFactor: 15,
+                scaleFactor: 1.25,
+                copy: false,
+              };
+            },
+            getAdvancedSettings: function () {
+              var e = GameSettings,
+                scaleLock = e.scaleLock,
+                copy = e.copy;
+              var type = GameSettings.copy ? "COPY + PASTE" : "CUT + PASTE";
+              return (
+                n.createElement("div", null,
+                  n.createElement("div", { className: "editorDialog-titleBar" },
+                    n.createElement("span", { className: "editorDialog-close", onClick: this.closeDialog }, "×"),
+                    n.createElement("h1", { className: "editorDialog-content-title" }, "SELECT OPTIONS")
+                  ),
+                  n.createElement("div", { className: "helpDialogAdvanced" },
+                    n.createElement("table", null,
+                      n.createElement("tbody", null,
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Rotation Factor")),
+                          n.createElement("td", null,
+                            n.createElement("div", { className: "horizontal-slider-container" },
+                              n.createElement(x, {
+                                withBars: !0,
+                                className: "horizontal-slider-2 brush-slider_trailspeed",
+                                onChange: this.handleRotateChange,
+                                defaultValue: GameSettings.rotateFactor || 15,
+                                max: 90,
+                                min: 5,
+                                step: 5,
+                                value: GameSettings.rotateFactor || this.state.rotateFactor
+                              }),
+                              n.createElement("input", {
+                                type: "text",
+                                className: "brushToolOptions-input brushToolOptions-input_vehiclepoweruptime",
+                                value: GameSettings.rotateFactor,
+                                readOnly: true
+                              })
+                            )
+                          )
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Scaling Factor")),
+                          n.createElement("td", null,
+                            n.createElement("div", { className: "horizontal-slider-container" },
+                              n.createElement(x, {
+                                withBars: !0,
+                                className: "horizontal-slider-2 brush-slider_trailspeed",
+                                onChange: this.handleScaleChange,
+                                defaultValue: GameSettings.scaleFactor || 1.25,
+                                max: 2,
+                                min: 0.05,
+                                step: 0.05,
+                                value: GameSettings.scaleFactor || this.state.scaleFactor
+                              }),
+                              n.createElement("input", {
+                                type: "text",
+                                className: "brushToolOptions-input brushToolOptions-input_vehiclepoweruptime",
+                                value: GameSettings.scaleFactor.toFixed(2),
+                                readOnly: true
+                              })
+                            )
+                          )
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Scale Lock")),
+                          n.createElement("td", { className: "settingInput" }, n.createElement("input", {
+                            type: "checkbox",
+                            ref: "scaleLock",
+                            defaultChecked: scaleLock,
+                            onChange: this.toggleScaleLock
+                          }))
+                        ),
+                        n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Selection Type")),
+                          n.createElement("td", { className: "settingInput" }, n.createElement("span", {},
+                            n.createElement("button", {
+                                onClick: this.toggleCopy
+                            }, type)))
+                        ),
+                      )
+                    )
+                  )
+                )
+              );
+            },
+            toggleScaleLock: function () {
+              var e = this.refs.scaleLock.getDOMNode().checked;
+              GameSettings.scaleLock = e
+            },
+            toggleCopy: function () {
+              GameSettings.copy = !GameSettings.copy
+            },
+            handleRotateChange: function (rotation) {
+              this.setState({ rotateFactor: rotation });
+              GameSettings.rotateFactor = rotation;
+            },
+            handleScaleChange: function (scale) {
+              this.setState({ scaleFactor: scale });
+              GameSettings.scaleFactor = scale;
+            },
+            render: function () {
+              var e = !1;
+              return e = this.getAdvancedSettings(),
+                n.createElement("div", {
+                  className: "editorDialog-content editorDialog-content_brushDialog"
+                }, e)
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230, "react-slider": 75 },
     ]
   },
   {},
