@@ -10195,9 +10195,11 @@
         const n = Math.sqrt,
           r = Math.pow,
           o = class {
-            constructor(t, e, s, n) {
+            constructor(t, e, s, n, raw) {
               (this.p1 = new i.Z(t, e)),
                 (this.p2 = new i.Z(s, n)),
+                (this.p1Raw = new i.Z(raw[0], raw[1])),
+                (this.p2Raw = new i.Z(raw[2], raw[3])),
                 (this.pp = this.p2.sub(this.p1)),
                 (this.len = this.pp.len()),
                 (this.sectors = []),
@@ -10313,6 +10315,8 @@
           constructor(t, e, s, n) {
             (this.p1 = new i.Z(t, e)),
               (this.p2 = new i.Z(s, n)),
+              (this.p1Raw = new i.Z(raw[0], raw[1])),
+              (this.p2Raw = new i.Z(raw[2], raw[3])),
               (this.pp = this.p2.sub(this.p1)),
               (this.len = this.pp.len()),
               (this.sectors = []);
@@ -17008,7 +17012,7 @@
                                   let point = i;
                                   for (let k = t.pointer - 1; k >= 0; k--) {
                                       point = this.applyTransform(point, t.transformations[k], true);
-                                      if (i.angle) {
+                                      if ('angle' in i) {
                                           if (t.transformations[k].type == 'rotate')
                                               i.angle -= t.transformations[k].angle;
                                           else if (t.transformations[k].type == 'flip')
@@ -17018,8 +17022,8 @@
                                   i.x = point.x;
                                   i.y = point.y;
                               } else {
-                                  let point1 = i.p1,
-                                      point2 = i.p2;
+                                  let point1 = i.p1Raw,
+                                      point2 = i.p2Raw;
                                   for (let k = t.pointer - 1; k >= 0; k--) {
                                       point1 = this.applyTransform(point1, t.transformations[k], true);
                                       point2 = this.applyTransform(point2, t.transformations[k], true);
@@ -17053,15 +17057,15 @@
                                   i.x = reverted.x;
                                   i.y = reverted.y;
 
-                                  if (i.angle) {
+                                  if ('angle' in i) {
                                       if (transform.type == 'rotate')
                                           i.angle -= transform.angle;
                                       else if (transform.type == 'flip')
                                           i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
                                   }
                               } else {
-                                  i.p1 = this.applyTransform(i.p1, transform, true);
-                                  i.p2 = this.applyTransform(i.p2, transform, true);
+                                  i.p1 = this.applyTransform(i.p1Raw, transform, true);
+                                  i.p2 = this.applyTransform(i.p2Raw, transform, true);
                               }
                               return this.recreate(i);
                           });
@@ -17116,7 +17120,7 @@
                                 let point = i;
                                 for (let k = t.pointer; k < len; k++) {
                                     point = this.applyTransform(point, t.transformations[k]);
-                                    if (i.angle) {
+                                    if ('angle' in i) {
                                         if (t.transformations[k].type == 'rotate')
                                             i.angle += t.transformations[k].angle;
                                         else if (t.transformations[k].type == 'flip')
@@ -17126,8 +17130,8 @@
                                 i.x = point.x;
                                 i.y = point.y;
                             } else {
-                                let point1 = i.p1,
-                                    point2 = i.p2;
+                                let point1 = i.p1Raw,
+                                    point2 = i.p2Raw;
                                 for (let k = t.pointer; k < len; k++) {
                                     point1 = this.applyTransform(point1, t.transformations[k]);
                                     point2 = this.applyTransform(point2, t.transformations[k]);
@@ -17163,15 +17167,15 @@
                                 i.x = reverted.x;
                                 i.y = reverted.y;
 
-                                if (i.angle) {
+                                if ('angle' in i) {
                                     if (transform.type == 'rotate')
                                         i.angle += transform.angle;
                                     else if (transform.type == 'flip')
                                         i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
                                 }
                             } else {
-                                i.p1 = this.applyTransform(i.p1, transform);
-                                i.p2 = this.applyTransform(i.p2, transform);
+                                i.p1 = this.applyTransform(i.p1Raw, transform);
+                                i.p2 = this.applyTransform(i.p2Raw, transform);
                             }
                             return this.recreate(i);
                             //return recreate(i, { x: -toRevert.move.x, y: -toRevert.move.y });
@@ -23677,11 +23681,13 @@
           }
         }
         addPhysicsLine(t, e, s, i) {
+          let raw = [t, e, s, i];
           (t = rn(t)), (e = rn(e)), (s = rn(s));
           const n = (i = rn(i)) - e;
           if (sn(nn(s - t, 2) + nn(n, 2)) >= 2) {
-            const n = new Wi.Z(t, e, s, i);
-            return this.addPhysicsLineToTrack(n), n;
+            const n = new Wi.Z(t, e, s, i, raw);
+            this.addPhysicsLineToTrack(n);
+            return n;
           }
         }
         addPhysicsLineToTrack(t) {
@@ -23707,10 +23713,11 @@
           return this.physicsLines.push(t), t;
         }
         addSceneryLine(t, e, s, i) {
+          let raw = [t, e, s, i];
           (t = rn(t)), (e = rn(e)), (s = rn(s));
           const n = (i = rn(i)) - e;
           if (sn(nn(s - t, 2) + nn(n, 2)) >= 2) {
-            const n = new Vi.Z(t, e, s, i);
+            const n = new Vi.Z(t, e, s, i, raw);
             return this.addSceneryLineToTrack(n), n;
           }
         }
@@ -27348,16 +27355,18 @@ function load() {
           const radians = degrees * Math.PI / 180;
 
           this.selected.forEach(line => {
-              let toChange = line.name ? [line] : [line.p1, line.p2];
-              toChange.forEach(point => {
-                  const rotatedPoint = this.rotatePoint(point, centerX, centerY, radians);
-                  point.x = rotatedPoint.x;
-                  point.y = rotatedPoint.y;
-              });
-              // rotate boosts and gravities
-              if (line.angle) {
-                  line.angle += degrees;
-                  line.angle = ((line.angle % 360) + 360) % 360;
+              if (line.name) {
+                  let rotated = this.rotatePoint(line, centerX, centerY, radians);
+                  line.oldPos.inc(rotated.sub(line));
+                  line.x = rotated.x;
+                  line.y = rotated.y;
+                  if ('angle' in line) {
+                      line.angle += degrees;
+                      line.angle %= 360;
+                  }
+              } else {
+                  line.p1 = this.rotatePoint(line.p1, centerX, centerY, radians);
+                  line.p2 = this.rotatePoint(line.p2, centerX, centerY, radians);
               }
           });
 
@@ -27405,11 +27414,16 @@ function load() {
       
           if (scalable) {
               this.selected.forEach(line => {
-                  let toChange = line.name ? [line] : [line.p1, line.p2];
-                  toChange.forEach(point => {
-                      point.x = centerX + (point.x - centerX) * scaleFactor;
-                      point.y = centerY + (point.y - centerY) * scaleFactor;
-                  });
+                  if (line.name) {
+                      let pos = vector(line.x, line.y),
+                          newPos = pos.sub(center).factor(scaleFactor).add(center);
+                      line.oldPos.inc(newPos.sub(pos));
+                      line.x = newPos.x;
+                      line.y = newPos.y;
+                  } else {
+                      line.p1 = line.p1.sub(center).factor(scaleFactor).add(center);
+                      line.p2 = line.p2.sub(center).factor(scaleFactor).add(center);
+                  }
               });
 
               const action = {
@@ -27433,21 +27447,25 @@ function load() {
           const centerY = center.y;
       
           this.selected.forEach(line => {
-              let toChange = line.name ? [line] : [line.p1, line.p2];
-              toChange.forEach(point => {
+              if (line.name) {
                   if (flipVertically) {
-                      point.y = centerY * 2 - point.y;
+                      line.oldPos.y += (centerY - line.y) * 2;
+                      line.y = centerY * 2 - line.y;
                   } else {
-                      point.x = centerX * 2 - point.x;
+                      line.oldPos.x += (centerX - line.x) * 2;
+                      line.x = centerX * 2 - line.x;
                   }
-              });
-              // flip boosts and gravities
-              if (line.angle) {
-                  if (flipVertically)
-                      line.angle = 180 - line.angle;
-                  else
-                      line.angle = 360 - line.angle;
-                  line.angle = ((line.angle % 360) + 360) % 360;
+                  if ('angle' in line) {
+                      line.angle = ((flipVertically ? 180 : 360) - line.angle) % 360;
+                  }
+              } else {
+                  if (flipVertically) {
+                      line.p1.y = centerY * 2 - line.p1.y;
+                      line.p2.y = centerY * 2 - line.p2.y;
+                  } else {
+                      line.p1.x = centerX * 2 - line.p1.x;
+                      line.p2.x = centerX * 2 - line.p2.x;
+                  }
               }
           });
       
@@ -27583,6 +27601,8 @@ function load() {
                               console.log('connected to', connected);
                           }
                       }
+                      selected.p1 = selected.p1Raw;
+                      selected.p2 = selected.p2Raw;
                   } else {
                       prevSelected != selected && (selected.oldPos = vector(selected.x, selected.y));
                   }
@@ -27840,6 +27860,9 @@ function load() {
                   for (let i of selectList) {
                       if (i.name) {
                           i.oldPos = vector(i.x, i.y);
+                      } else {
+                          i.p1 = i.p1Raw;
+                          i.p2 = i.p2Raw;
                       }
                       remove(i);
                   }
@@ -28285,7 +28308,8 @@ function load() {
   });
 
   function _r(a, b) {
-      a.splice(a.indexOf(b), 1);
+      let i = a.indexOf(b);
+      i >= 0 && a.splice(i, 1);
   }
 
   function remove(object) {
