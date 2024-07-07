@@ -28276,7 +28276,7 @@ function load() {
           zoom = scene.camera.zoom;
       ctx.lineCap = "round";
       // render selected
-      if (selectTool.selected.length) {
+      if (selectTool.selected.length && scene.toolHandler.currentTool === 'select') {
           // the actual line
           for (let selected of selectTool.selected) {
               if (selected.p1) {
@@ -28360,7 +28360,7 @@ function load() {
           }
       }
       // render hovered
-      if (selectTool.hovered.length) {
+      if (selectTool.hovered.length && scene.toolHandler.currentTool === 'select') {
           if (hoverPoint) {
               let isSelect = hovered == selected,
                   rsp = hoverPoint.add(isSelect ? selectOffset : vector()).toScreen(scene);
