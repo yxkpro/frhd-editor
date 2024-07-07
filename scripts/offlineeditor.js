@@ -3756,7 +3756,7 @@
                     console.error(error);
                   });
 
-                  fetch(ghost)
+                  /*fetch(ghost)
                   .then(response => {
                     if (!response.ok) {
                       throw new Error('no ghost found.');
@@ -3778,11 +3778,11 @@
                       GameManager.command("add race", filteredData, true);
                     }
 
-                    console.log("object loaded:", trackName);
+                    console.log("ghost loaded:", trackName);
                   })
                   .catch(error => {
                     console.error(error);
-                  });
+                  });*/
               }
 
               t && (n = t),
@@ -31607,7 +31607,7 @@
                       GameManager.command("add race", filteredData, true);
                     }
 
-                    console.log("object loaded:", trackName);
+                    console.log("ghost loaded:", trackName);
                   })
                   .catch(error => {
                     console.error(error);

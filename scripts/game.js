@@ -16286,7 +16286,7 @@
                   t.update();
                 for (let t = 0; t < this.deadVehicles.length; t++)
                   this.deadVehicles[t] && this.deadVehicles[t].update();
-                if (this._addCheckpoint) {
+                if (this._addCheckpoint && !this._game.mod.getVar("rewind")) {
                   (this._createCheckpoint(), (this._addCheckpoint = !1));
                 }
                 /*const collected = (this._powerupsConsumed.targets.length > 0) && (this._powerupsConsumed.targets.length === this._scene.track.targetCount);
