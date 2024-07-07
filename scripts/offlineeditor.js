@@ -924,7 +924,9 @@
 
                     
                     
-                    ), n.createElement("div", {
+                    ), 
+                    
+                    /*n.createElement("div", {
                         className: "horizontal-slider-container"
                     }, n.createElement("span", {
                         className: "horizontal-slider-label"
@@ -964,7 +966,7 @@
                         readOnly: true
                     }), n.createElement("span", {
                         className: "toolName"
-                    },), 
+                    },), */
                 );
             }
         });
@@ -1607,6 +1609,7 @@
                   selected = tool.selected;
                   if (!selected?.length) return;
               let { centerX, centerY } = tool.findCenter();
+
           
               let objectPhysics = [];
               let objectScenery = [];
@@ -1625,10 +1628,32 @@
                           objectPhysics.push(line);
                       } else {
                           objectScenery.push(line);
+                      }}
+
+                  else if ('name' in i) {
+                      let powerup = {
+                          name: i.name,
+                          x: i.x - centerX,
+                          y: i.y - centerY
+                      };
+                    if (i.name === 'boost' || i.name === 'gravity') {
+                      if (i.hasOwnProperty('angle')) {
+                        powerup.angle = i.angle;
                       }
-                  }
+                    } else if (i.name === 'teleport') {
+                      if (i.hasOwnProperty('x2') && i.hasOwnProperty('y2')) {
+                        powerup.x2 = i.x2 - centerX;
+                        powerup.y2 = i.y2 - centerY;
+                      }
+                    } else if (['helicopter', 'truck', 'balloon', 'blob'].includes(i.name)) {
+                      if (i.hasOwnProperty('time')) {
+                        powerup.time = i.time;
+                      }
+                    }
+                  objectPowerups.push(powerup);
+                }
               });
-          
+
               GameManager.game.currentScene.objectPhysics = objectPhysics;
               GameManager.game.currentScene.objectScenery = objectScenery;
               GameManager.game.currentScene.objectPowerups = objectPowerups;

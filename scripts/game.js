@@ -17321,7 +17321,7 @@
               }
           });
 
-          if ((this.currentTool === ("vehiclepowerup")) || (this.currentTool === ("powerup")) || this.options.object) {
+          if ((this.currentTool === ("vehiclepowerup")) || (this.currentTool === ("powerup")) || this.currentTool === ("select") || this.options.object) {
             nearestPoint && this.snapPoint.equ(nearestPoint);
             return;
           }
