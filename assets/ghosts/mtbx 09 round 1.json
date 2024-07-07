@@ -1,0 +1,39 @@
+{
+    "result": true,
+    "data": [
+        {
+            "user": {
+                "u_id": 1082,
+                "u_name": "ness",
+                "d_name": "Ness",
+                "img_url_small": "https:\/\/secure.gravatar.com\/avatar\/c7c31ff913e6990b5c44700b4d34d8ba\/?s=50&d=mm&r=pg",
+                "cosmetics": {
+                    "head": {
+                        "id": "12",
+                        "title": "Green Hat",
+                        "type": "1",
+                        "name": "classic_green",
+                        "cost": "60",
+                        "options": {
+                            "back": "#51B400"
+                        },
+                        "classname": "forward_cap",
+                        "equiped": true,
+                        "spritesheet_id": "4",
+                        "img": "head_icons_4 head_icons_4-classic_green",
+                        "show": true,
+                        "script": "https:\/\/cdn.freeriderhd.com\/free_rider_hd\/assets\/inventory\/head\/scripts\/v5\/forward_cap.js",
+                        "limited": false
+                    }
+                }
+            },
+            "race": {
+                "code": "{\"up_down\":[0,257,374,611,799],\"left_down\":[32,47,67,87,107,135,228,241,272,362,425,504,533,577,585,632,704,724,803,821,870,896,950,969,1008,1042],\"left_up\":[39,51,70,90,125,145,230,251,287,379,438,507,536,580,592,643,712,729,808,826,872,898,954,971,1010,1046],\"right_down\":[40,92,125,149,205,224,251,267,294,349,437,451,468,509,527,570,592,626,645,688,714,774,874,955,1017,1065,1082,1123],\"right_up\":[46,108,135,153,210,226,266,269,299,355,446,456,476,512,530,576,623,629,651,696,715,791,878,959,1021,1069,1090,1126],\"up_up\":[253,347,590,772],\"down_down\":[354],\"z_down\":[354,367],\"z_up\":[356,371],\"down_up\":[366]}",
+                "vehicle": "MTB",
+                "desktop": true,
+                "run_ticks": 1135
+            }
+        }
+    ],
+    "app_version": "87979ac2ae"
+}

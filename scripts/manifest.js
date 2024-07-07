@@ -31,6 +31,12 @@ var GameManifest = [
   },
   {
     loadTimeout: 300000,
+    id: "globe_icon",
+    src: "assets/images/icons/globe_icon.png",
+    name: "Globe Icon",
+  },
+  {
+    loadTimeout: 300000,
     id: "editor_gui",
     src: "assets/images/gui/editor_gui.png",
     name: "Editor GUI",
