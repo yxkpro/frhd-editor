@@ -12073,7 +12073,7 @@
           }
         }
         focusOnMainPlayer() {
-          if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("backspace")) return;
+          if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("backspace") || this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("shift")) return;
           (0 === this.focusIndex && this.playerFocus) ||
             ((this.focusIndex = 0), this.focusOnPlayer());
         }
@@ -16293,9 +16293,9 @@
                 if (this._addCheckpoint && !this._game.mod.getVar("rewind")) {
                   (this._createCheckpoint(), (this._addCheckpoint = !1));
                 }
-                /*const collected = (this._powerupsConsumed.targets.length > 0) && (this._powerupsConsumed.targets.length === this._scene.track.targetCount);
-                if (this._game.mod.getVar("rewind") && !this._crashed && !collected) {*/ // couldn't get this to work with ghosts, worth revisiting
-                if (this._game.mod.getVar("rewind")) {
+                const collected = (this._powerupsConsumed.targets.length > 0) && (this._powerupsConsumed.targets.length === this._scene.track.targetCount);
+                if (this._game.mod.getVar("rewind") && !this._crashed && !collected) { // couldn't get this to work with ghosts, worth revisiting
+                //if (this._game.mod.getVar("rewind")) {
                   this._createCheckpoint();
                 }
               }
