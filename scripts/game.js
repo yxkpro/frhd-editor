@@ -17023,9 +17023,16 @@
                 this.scene.track.addPowerup(object);
                 return object
             }
-        
-            object.newVersion = newObject;
-            return newObject;
+            if (newObject) {
+                object.newVersion = newObject;
+                return newObject;
+            } else {
+                if (object.p1) {
+                    object.p1Raw.equ(object.p1);
+                    object.p2Raw.equ(object.p2);
+                }
+                return object;
+            }
         }
         revertAction() {
           let old = this.actionTimeline[this.actionTimelinePointer];
@@ -23617,6 +23624,7 @@
             this.scene.selectVehicle(i);
         }
         addPowerups(t) {
+          let powerups = [];
           for (let e = 0; e < t.length; e++) {
             const s = t[e].split(" ");
             if (s.length >= 2) {
@@ -23689,8 +23697,11 @@
                     this.addPowerup(o);
                 }
               }
+              if (s[0] == 'W') powerups.push(r, o);
+              else powerups.push(n);
             }
           }
+          return powerups;
         }
         addTarget(t) {
           (this.dirty = !0), this.targetCount++, this.targets.push(t);
@@ -27724,15 +27735,19 @@ function load() {
                               console.log('connected to', connected);
                           }
                       }
-                      selected.p1 = selected.p1Raw;
-                      selected.p2 = selected.p2Raw;
+                      if (prevSelected != selected) {
+                          selected.p1.equ(selected.p1Raw);
+                          selected.p2.equ(selected.p2Raw);
+                      }
                   } else {
                       prevSelected != selected && (selected.oldPos = vector(selected.x, selected.y));
                   }
                   if (shouldCopy && this.scene.settings.copy) {
-                      recreate(selected);
-                      connected && recreate(connected);
+                      let copied = [];
+                      copied.push(recreate(selected));
+                      connected && copied.push(recreate(connected));
                       shouldCopy = false;
+                      this.toolHandler.addActionToTimeline({type: 'add', objects: copied});
                   }
                   if (selectPoint != minPoint) {
                       if (selectPoint == undefined && (selectOffset.x || selectOffset.y)) {
@@ -27813,13 +27828,16 @@ function load() {
                   let dMouse = mousePos.sub(this.oldMouse);
                   dMouse.x = Math.round(dMouse.x);
                   dMouse.y = Math.round(dMouse.y);
-                  if (this.scene.toolHandler.options.grid && GameSettings.toolHandler.snapGrid) {
-                      let gridSize = this.scene.toolHandler.options.gridSize;
-                      dMouse.x = Math.round(dMouse.x / gridSize) * gridSize;
-                      dMouse.y = Math.round(dMouse.y / gridSize) * gridSize;
-                  }
                   // points get moved seperately (since it's only one point moving rather than a whole line or group of objects)
                   if (!isSelectList && selectPoint) {
+                      if (this.scene.toolHandler.options.grid && GameSettings.toolHandler.snapGrid) {
+                          let gridSize = this.scene.toolHandler.options.gridSize,
+                              snapX = Math.round(selectPoint.x / gridSize) * gridSize,
+                              snapY = Math.round(selectPoint.y / gridSize) * gridSize,
+                              diff = selectPoint.sub({x: snapX, y: snapY}).factor(-1);
+                          pointOffset = diff.add(pointOffset);
+                          selectPoint.equ({x: snapX, y: snapY});
+                      }
                       selectPoint.inc(dMouse);
                       selected.pp = selected.p2.sub(selected.p1);
                       selected.len = selected.pp.len();
@@ -27963,6 +27981,7 @@ function load() {
           }
           if (isHoverList) {
               selected = undefined;
+              selectPoint = undefined;
               isHoverList = false;
               selectList = [...hoverList];
               if (hoverList.length) {
@@ -27976,16 +27995,24 @@ function load() {
                   hoverList = [];
                   selectOffset = vector();
                   if (this.scene.settings.copy == true) {
+                      let copied = [],
+                          powerups = [];
                       for (let i of selectList) {
-                          recreate(i);
+                          if (i.name) {
+                              powerups.push(i.getCode());
+                          } else {
+                              copied.push(recreate(i));
+                          }
                       }
+                      copied.push(...this.scene.track.addPowerups(powerups));
+                      this.toolHandler.addActionToTimeline({type: 'add', objects: copied});
                   }
                   for (let i of selectList) {
                       if (i.name) {
                           i.oldPos = vector(i.x, i.y);
                       } else {
-                          i.p1 = i.p1Raw;
-                          i.p2 = i.p2Raw;
+                          i.p1.equ(i.p1Raw);
+                          i.p2.equ(i.p2Raw);
                       }
                       remove(i);
                   }
@@ -28454,7 +28481,7 @@ function load() {
       scene.track.needsCleaning = true;
   }
 
-  function recreate(object) {
+  function recreate(object, force = false) {
       if (!object) return;
       let newObject;
       if ('highlight' in object || object.p1) {
@@ -28471,8 +28498,16 @@ function load() {
           scene.track.addPowerup(object);
           return object
       }
-      object.newVersion = newObject;
-      return newObject;
+      if (newObject) {
+          object.newVersion = newObject;
+          return newObject;
+      } else {
+          if (object.p1) {
+              object.p1Raw.equ(object.p1);
+              object.p2Raw.equ(object.p2);
+          }
+          return object;
+      }
   }
 }
 
