@@ -1562,13 +1562,13 @@
                       }
                   }, "SET START POSITION")
                   ),
-                  /*this.state.open && n.createElement("button", {
+                  this.state.open && n.createElement("button", {
                       className: "margin",
                       onClick: (event) => {
                         event.stopPropagation();
                         this.importGhost(event);
                       }
-                  }, "IMPORT GHOST")*/
+                  }, "IMPORT GHOST")
                   
                 )
               );
@@ -3828,7 +3828,7 @@
                     console.error(error);
                   });
 
-                  /*fetch(ghost)
+                  fetch(ghost)
                   .then(response => {
                     if (!response.ok) {
                       throw new Error('no ghost found.');
@@ -3836,14 +3836,24 @@
                     return response.json();
                   })
                   .then(parsedInput => {
-                    const raceData = parsedInput.data ? parsedInput.data[0].race : parsedInput;
-                    const parsedCode = JSON.parse(raceData.code);
-
+                    let raceData;
+                    if (Array.isArray(parsedInput)) {
+                        raceData = parsedInput[0].race;
+                    } 
+                    else if (parsedInput.data && Array.isArray(parsedInput.data)) {
+                        raceData = parsedInput.data[0].race;
+                    } 
+                    else {
+                        raceData = parsedInput.race;
+                    }
+            
+                    const parsedCode = JSON.parse(raceData.code || "{}");
+            
                     const filteredData = {
-                      code: parsedCode,
-                      vehicle: raceData.vehicle,
-                      desktop: raceData.desktop,
-                      run_ticks: raceData.run_ticks
+                        code: parsedCode,
+                        vehicle: raceData.vehicle,
+                        desktop: raceData.desktop,
+                        run_ticks: raceData.run_ticks
                     };
 
                     if (typeof GameManager !== "undefined") {
@@ -3854,7 +3864,7 @@
                   })
                   .catch(error => {
                     console.error(error);
-                  });*/
+                  });
               }
 
               t && (n = t),
@@ -31665,14 +31675,24 @@
                     return response.json();
                   })
                   .then(parsedInput => {
-                    const raceData = parsedInput.data ? parsedInput.data[0].race : parsedInput;
-                    const parsedCode = JSON.parse(raceData.code);
-
+                    let raceData;
+                    if (Array.isArray(parsedInput)) {
+                        raceData = parsedInput[0].race;
+                    } 
+                    else if (parsedInput.data && Array.isArray(parsedInput.data)) {
+                        raceData = parsedInput.data[0].race;
+                    } 
+                    else {
+                        raceData = parsedInput.race;
+                    }
+            
+                    const parsedCode = JSON.parse(raceData.code || "{}");
+            
                     const filteredData = {
-                      code: parsedCode,
-                      vehicle: raceData.vehicle,
-                      desktop: raceData.desktop,
-                      run_ticks: raceData.run_ticks
+                        code: parsedCode,
+                        vehicle: raceData.vehicle,
+                        desktop: raceData.desktop,
+                        run_ticks: raceData.run_ticks
                     };
 
                     if (typeof GameManager !== "undefined") {
@@ -31686,19 +31706,33 @@
                   });
               }
               else {
-                const parsedInput = JSON.parse(n);
-                const raceData = parsedInput.data ? parsedInput.data[0].race : parsedInput;
-                const parsedCode = JSON.parse(raceData.code);
-
-                const filteredData = {
-                  code: parsedCode,
-                  vehicle: raceData.vehicle,
-                  desktop: raceData.desktop,
-                  run_ticks: raceData.run_ticks
-                };
-
-                if (typeof GameManager !== "undefined") {
-                  GameManager.command("add race", filteredData, true);
+                try {
+                    const parsedInput = JSON.parse(n);
+                    let raceData;
+                    if (Array.isArray(parsedInput)) {
+                        raceData = parsedInput[0].race;
+                    } 
+                    else if (parsedInput.data && Array.isArray(parsedInput.data)) {
+                        raceData = parsedInput.data[0].race;
+                    } 
+                    else {
+                        raceData = parsedInput.race;
+                    }
+            
+                    const parsedCode = JSON.parse(raceData.code || "{}");
+            
+                    const filteredData = {
+                        code: parsedCode,
+                        vehicle: raceData.vehicle,
+                        desktop: raceData.desktop,
+                        run_ticks: raceData.run_ticks
+                    };
+            
+                    if (typeof GameManager !== "undefined") {
+                        GameManager.command("add race", filteredData, true);
+                    }
+                } catch (error) {
+                    console.error("failed to parse JSON data and add ghost.", error);
                 }
               }
             },

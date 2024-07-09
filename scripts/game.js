@@ -12388,6 +12388,7 @@
 
             if (t[downKey] && Array.isArray(t[downKey]) && t[downKey].includes(e)) {
               this.setButtonDown(s, true);
+              if (s === "enter") (console.log("ghost enter"))
             }
             if (t[upKey] && Array.isArray(t[upKey]) && t[upKey].includes(e)) {
               this.setButtonUp(s);
@@ -16293,10 +16294,13 @@
                 if (this._addCheckpoint && !this._game.mod.getVar("rewind")) {
                   (this._createCheckpoint(), (this._addCheckpoint = !1));
                 }
-                const collected = (this._powerupsConsumed.targets.length > 0) && (this._powerupsConsumed.targets.length === this._scene.track.targetCount);
-                if (this._game.mod.getVar("rewind") && !this._crashed && !collected) { // couldn't get this to work with ghosts, worth revisiting
-                //if (this._game.mod.getVar("rewind")) {
+                const collected = (this._scene.playerManager.firstPlayer._powerupsConsumed.targets.length > 0) && (this._scene.playerManager.firstPlayer._powerupsConsumed.targets.length === this._scene.track.targetCount);
+                if (this._game.mod.getVar("rewind") && !this._scene.playerManager.firstPlayer._crashed && !collected) {
                   this._createCheckpoint();
+                }
+                if (this._scene.playerManager._players[1]) {
+                  if (this._addCheckpoint) {this.checkpointTick = this._scene.ticks; this._addCheckpoint = !1};
+                  console.log(this.checkpointTick);
                 }
               }
             }
@@ -26147,7 +26151,7 @@
           mini: { default: !1 },
           propeller: { default: !1 },
           crouch: { default: !1 },
-          seeGhost: { default: !1 },
+          seeGhost: { default: !0 },
           slowmo: { default: !1 },
           rewind: { default: !1 },
           oldTimer: { default: !1 },
@@ -26604,12 +26608,13 @@
               "The game will no longer lose focus if you click elsewhere on the screen.",
           },
           */
-          /*{
+          {
             key: "seeGhost",
             title: "See Ghost",
             description:
               "Shows a replay for the track if available.",
-          },*/
+            //disables: ["slowmo", "rewind", "oldTimer"],
+          },
           {
             key: "slowmo",
             title: "Slow-Mode",
