@@ -28472,19 +28472,22 @@ function load() {
       object.remove = true;
       // if you want something done (removing a powerup), you gotta do it yourself
       if (object.name) {
+          // free ridah haitch dee editah
+          let fakeSector = object.sector,
+              sector = scene.track.sectors.physicsSectors[fakeSector.column][fakeSector.row];
+          console.log(sector);
           _r(scene.track.powerups, object);
           object.name == "goal" && _r(scene.track.targets, object);
-          _r(object.sector.powerups.all, object);
-          _r(object.sector.powerups[object.name + 's'], object);
-          object.sector.hasPowerups = object.sector.powerups.all.length;
-          object.sector.powerupCanvasDrawn = false;
-          //object.oldPos = vector(object.x, object.y);
+          _r(sector.powerups.all, object);
+          _r(sector.powerups[object.name + 's'], object);
+          sector.hasPowerups = sector.powerups.all.length;
+          sector.powerupCanvasDrawn = false;
       }
       object.markSectorsDirty();
       object.redrawSectors();
       object.sectors = [{scene}];
       scene.track.needsCleaning = true;
-  }
+}
 
   function recreate(object, force = false) {
       if (!object) return;
