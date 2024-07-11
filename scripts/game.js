@@ -28420,7 +28420,8 @@ function load() {
                       if (!data) continue;
                       let isSelect = hovered == selected,
                           camera = scene.camera,
-                          pos = camera.position.factor(0).add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
+                          //pos = camera.position.factor(0).add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
+                          pos = camera.position.factor(0).add(hovered).toScreen(scene),
                           size = data[0] / zoom;
                       ctx.globalAlpha = 0.5;
                       ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -28428,6 +28429,7 @@ function load() {
                       ctx.arc(pos.x, pos.y, Math.max(data[0] * zoom / 1.2, 1), 0, Math.PI * 2);
                       ctx.fill();
                       ctx.globalAlpha = 1;
+                      scene.track.undraw();
                   }
               }
               if (!isHoverList && hovered.p1) {
@@ -28475,7 +28477,7 @@ function load() {
           // free ridah haitch dee editah
           let fakeSector = object.sector,
               sector = scene.track.sectors.physicsSectors[fakeSector.column][fakeSector.row];
-          console.log(sector);
+          //console.log(sector);
           _r(scene.track.powerups, object);
           object.name == "goal" && _r(scene.track.targets, object);
           _r(sector.powerups.all, object);

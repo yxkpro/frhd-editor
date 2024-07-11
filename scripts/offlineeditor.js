@@ -1562,13 +1562,13 @@
                       }
                   }, "SET START POSITION")
                   ),
-                  this.state.open && n.createElement("button", {
+                  /*this.state.open && n.createElement("button", {
                       className: "margin",
                       onClick: (event) => {
                         event.stopPropagation();
                         this.importGhost(event);
                       }
-                  }, "IMPORT GHOST")
+                  }, "IMPORT GHOST")*/
                   
                 )
               );
@@ -3828,7 +3828,7 @@
                     console.error(error);
                   });
 
-                  fetch(ghost)
+                  /*fetch(ghost)
                   .then(response => {
                     if (!response.ok) {
                       throw new Error('no ghost found.');
@@ -3864,7 +3864,7 @@
                   })
                   .catch(error => {
                     console.error(error);
-                  });
+                  });*/
               }
 
               t && (n = t),
