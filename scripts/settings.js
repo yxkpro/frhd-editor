@@ -17,7 +17,7 @@ var GameSettings = {
     "fullscreen": false,
     "editorFullscreen": true,
     "drawSectorSize": 200,
-    "physicsSectorSize": 200,
+    "physicsSectorSize": 100,
     "startVehicle": "BMX",
     "startTool": "straightline",
     "startPowerup": "goal",

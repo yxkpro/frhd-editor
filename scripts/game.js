@@ -27792,6 +27792,7 @@ function load() {
               }
               isSelectList = false;
               selectList = selectPhysicsList = undefined;
+              this.temp();
               //this.oldOffset = selectPoint ? pointOffset.factor(1) : selectOffset.factor(1);
           } else if (this.p1 && pointrect(this.mouse.touch.real, this.p1, this.p2)) {
               selected = undefined;
@@ -27872,6 +27873,7 @@ function load() {
                           this.p2.inc(dMouse);
                       }
                   }
+                  this.temp();
                   break shouldUpdate;
               }
 
@@ -27888,82 +27890,82 @@ function load() {
       }
 
       singleHover(mousePos) {
-        let minDist = 1000,
-            bestLine = undefined,
-            adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
-        // selected doesn't exist on the track, so we have to check it separately
-        if (selected) {
-            let dist = selected.p1 ?
-                linesdf(mousePos.sub(selectOffset), selected) :
-            pointsdf(mousePos.sub(selectOffset), selected);
-            if (dist < minDist) {
-                minDist = dist;
-                bestLine = selected;
-            }
-        }
+          let minDist = 1000,
+              bestLine = undefined,
+              adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
+          // selected doesn't exist on the track, so we have to check it separately
+          if (selected) {
+              let dist = selected.p1 ?
+                  linesdf(mousePos.sub(selectOffset), selected) :
+              pointsdf(mousePos.sub(selectOffset), selected);
+              if (dist < minDist) {
+                  minDist = dist;
+                  bestLine = selected;
+              }
+          }
 
-        let sectorSize = this.scene.settings.drawSectorSize,
-            sectorPos = mousePos.factor(1 / sectorSize);
-        sectorPos.x = Math.floor(sectorPos.x);
-        sectorPos.y = Math.floor(sectorPos.y);
-        let currentSectorData = this.testSectorSingle(sectorPos);
-        if (currentSectorData[0] < minDist) {
-            [minDist, bestLine] = currentSectorData;
-        }
-        // this is all to figure out which sectors we even need to check
-        // i.e. within range to have a line that can possibly be close enough
-        // the position of the sector in track-space
-        let sectorTrackPos = sectorPos.factor(sectorSize),
-            // the position of the mouse within the sector
-            posInSector = mousePos.sub(sectorTrackPos),
-            // a zero vector (for checking the top left)
-            zeroVector = posInSector.factor(0),
-            // a vector of just the sector size (for checking the bottom right)
-            maxPos = zeroVector.add({x: sectorSize, y: sectorSize}),
-            sectorsToCheck = [],
-            positions = [zeroVector, posInSector, maxPos];
-        for (let i = -1; i < 2; i++) {
-            let x = positions[i + 1].x;
-            for (let j = -1; j < 2; j++) {
-                // we don't need to re-check the current sector
-                if (!i && !j)
-                    continue;
-                let y = positions[j + 1].y;
-                if (pointsdf(mousePos, {x, y}) <= adjustedDist * 1.5) {
-                    sectorsToCheck.push([i, j]);
-                }
-            }
-        }
+          let sectorSize = this.scene.settings.drawSectorSize,
+              sectorPos = mousePos.factor(1 / sectorSize);
+          sectorPos.x = Math.floor(sectorPos.x);
+          sectorPos.y = Math.floor(sectorPos.y);
+          let currentSectorData = this.testSectorSingle(sectorPos);
+          if (currentSectorData[0] < minDist) {
+              [minDist, bestLine] = currentSectorData;
+          }
+          // this is all to figure out which sectors we even need to check
+          // i.e. within range to have a line that can possibly be close enough
+          // the position of the sector in track-space
+          let sectorTrackPos = sectorPos.factor(sectorSize),
+              // the position of the mouse within the sector
+              posInSector = mousePos.sub(sectorTrackPos),
+              // a zero vector (for checking the top left)
+              zeroVector = posInSector.factor(0),
+              // a vector of just the sector size (for checking the bottom right)
+              maxPos = zeroVector.add({x: sectorSize, y: sectorSize}),
+              sectorsToCheck = [],
+              positions = [zeroVector, posInSector, maxPos];
+          for (let i = -1; i < 2; i++) {
+              let x = positions[i + 1].x;
+              for (let j = -1; j < 2; j++) {
+                  // we don't need to re-check the current sector
+                  if (!i && !j)
+                      continue;
+                  let y = positions[j + 1].y;
+                  if (pointsdf(mousePos, {x, y}) <= adjustedDist * 1.5) {
+                      sectorsToCheck.push([i, j]);
+                  }
+              }
+          }
 
-        for (let i of sectorsToCheck) {
-            let sectorData = this.testSectorSingle(sectorPos.add(i));
-            if (sectorData[0] < minDist) {
-                [minDist, bestLine] = sectorData;
-            }
-        }
-        [frameMinDist, frameBestLine] = [minDist, bestLine];
-        if (minDist < adjustedDist) {
-            hovered = bestLine;
-            window.hovered = bestLine;
-        } else {
-            hovered = undefined;
-            window.hovered = bestLine;
-            return;
-        }
-        minDist = HOVER_DIST / this.scene.camera.zoom;
-        let minPoint = undefined,
-            isSelected = hovered == selected;
-        if (hovered.p1) {
-            for (let i of [hovered.p1, hovered.p2]) {
-                let dist = pointsdf(mousePos, i.add(isSelected ? selectOffset : vector()));
-                if (dist < minDist) {
-                    minDist = dist;
-                    minPoint = i;
-                }
-            }
-        }
-        hoverPoint = minPoint;
-    }
+          for (let i of sectorsToCheck) {
+              let sectorData = this.testSectorSingle(sectorPos.add(i));
+              if (sectorData[0] < minDist) {
+                  [minDist, bestLine] = sectorData;
+              }
+          }
+          [frameMinDist, frameBestLine] = [minDist, bestLine];
+          if (minDist < adjustedDist) {
+              hovered = bestLine;
+              window.hovered = bestLine;
+          } else {
+              hovered = undefined;
+              window.hovered = bestLine;
+              return;
+          }
+          minDist = HOVER_DIST / this.scene.camera.zoom;
+          let minPoint = undefined,
+              isSelected = hovered == selected;
+          if (hovered.p1) {
+              for (let i of [hovered.p1, hovered.p2]) {
+                  let dist = pointsdf(mousePos, i.add(isSelected ? selectOffset : vector()));
+                  if (dist < minDist) {
+                      minDist = dist;
+                      minPoint = i;
+                  }
+              }
+          }
+          hoverPoint = minPoint;
+      }
 
       multiHover() {
           // this logic is very simple: decide which sectors to add, then add everything necessary from them
@@ -28033,9 +28035,9 @@ function load() {
                       }
                       remove(i);
                   }
-                  console.log('selected!', selectList);
                   this.resetCenter();
                   this.findCenter();
+                  this.temp();
               } else {
                   this.p2.equ({x: NaN, y: NaN});
                   isSelectList = false;
@@ -28178,7 +28180,6 @@ function load() {
 
       completeAction() {
           if (!this.transformation.length) return;
-          console.log(this.transformation);
           let objects = this.selected;
           if (!isSelectList && connected) objects.push(connected);
           let completeAction = {
@@ -28189,9 +28190,43 @@ function load() {
               pointer: this.transformation.length,
           };
           if (selectPoint && selected) completeAction.points = [(selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2', connectedPoint];
-          console.log(completeAction, this.selected, selected);
           this.toolHandler.addActionToTimeline(completeAction);
           this.transformation = [];
+      }
+
+      temp() {
+          if (!this.scene.state.playing || this.scene.state.paused || !isSelectIntangible) return;
+          if (selected && !tempSelect?.length) {
+              tempSelect = [recreate(selected)];
+              console.log('temporary', tempSelect);
+              isSelectIntangible = false;
+              if (connected) {
+                  connected.remove = 0;
+                  scene.track.addPhysicsLineToTrack(connected);
+              }
+          } else if (isSelectList && selectList.length) {
+              tempSelect = tempSelect || [];
+              let sectorSize = scene.settings.drawSectorSize,
+                  vehicle = scene.playerManager.firstPlayer._tempVehicle || scene.playerManager.firstPlayer._baseVehicle,
+                  pos = vehicle.masses[0].pos,
+                  sector = pos.factor(1 / sectorSize);
+              sector.x = Math.floor(sector.x);
+              sector.y = Math.floor(sector.y);
+              for (let x = -1; x < 2; x++) {
+                  if (!selectPhysicsList[x]) continue;
+                  for (let y = -1; y < 2; y++) {
+                      let cell = selectPhysicsList[x][y];
+                      if (!cell || !cell.length || cell.mark) continue;
+                      for (let i of cell) {
+                          if (i.temp) continue;
+                          let line = recreate(i);
+                          tempSelect.push(line);
+                          i.temp = true;
+                      }
+                      cell.mark = true;
+                  }
+              }
+          }
       }
   }
 
@@ -28206,7 +28241,7 @@ function load() {
       moveAccumulator = 1;
 
   createjs.Ticker.addEventListener('tick', () => {
-      if (scene.state.playing && !scene.state.paused && selected && isSelectIntangible && !tempSelect?.length) {
+      /*if (scene.state.playing && !scene.state.paused && selected && isSelectIntangible && !tempSelect?.length) {
           tempSelect = [recreate(selected)];
           console.log('temporary', tempSelect);
           isSelectIntangible = false;
@@ -28214,11 +28249,6 @@ function load() {
               connected.remove = 0;
               scene.track.addPhysicsLineToTrack(connected);
           }
-          // fixes a bug with powerups moving super fast
-          /*if (!selected.p1 && selectTool.oldOffset) {
-              selectTool.oldOffset.subSelf(selectOffset);
-              selectOffset.equ({x: 0, y: 0});
-          }*/
       }
       if (scene.state.playing && !scene.state.paused && isSelectIntangible && isSelectList && selectList.length) {
           tempSelect = tempSelect || [];
@@ -28242,7 +28272,8 @@ function load() {
                   cell.mark = true;
               }
           }
-      }
+      }*/
+      selectTool.temp();
       // allow moving the currently selected object with movement keys when paused
       if (selectTool.selected.length && !tempSelect?.length) {
           let tdb = scene.playerManager.firstPlayer._gamepad.getDownButtons(),
@@ -28345,7 +28376,7 @@ function load() {
                   let data = powerups[selected.name];
                   if (!data) continue;
                   let camera = scene.camera,
-                      pos = camera.position.factor(0).add(selected.oldPos).add(selectOffset).toScreen(scene),
+                      pos = selected.oldPos.add(selectOffset).toScreen(scene),
                       size = data[0] / zoom;
                   ctx.globalAlpha = 0.3;
                   ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -28433,7 +28464,7 @@ function load() {
                       let isSelect = hovered == selected,
                           camera = scene.camera,
                           //pos = camera.position.factor(0).add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
-                          pos = camera.position.factor(0).add(hovered).toScreen(scene),
+                          pos = vector().add(hovered).toScreen(scene),
                           size = data[0] / zoom;
                       ctx.globalAlpha = 0.5;
                       ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -28487,20 +28518,22 @@ function load() {
       // if you want something done (removing a powerup), you gotta do it yourself
       if (object.name) {
           // free ridah haitch dee editah
-          let fakeSector = object.sector,
-              sector = scene.track.sectors.physicsSectors[fakeSector.column][fakeSector.row];
-          //console.log(sector);
+          let drawSector = object.sector,
+              p = GameSettings.physicsSectorSize,
+              sector = scene.track.sectors.physicsSectors[Math.floor(object.x / p)][Math.floor(object.y / p)];
           _r(scene.track.powerups, object);
           object.name == "goal" && _r(scene.track.targets, object);
-          _r(sector.powerups.all, object);
-          _r(sector.powerups[object.name + 's'], object);
-          sector.hasPowerups = sector.powerups.all.length;
-          sector.powerupCanvasDrawn = false;
+          if (sector) {
+              _r(sector.powerups.all, object);
+              _r(sector.powerups[object.name + 's'], object);
+              sector.hasPowerups = sector.powerups.all.length;
+              sector.powerupCanvasDrawn = false;
+          }
           //added old method back in as well, multihover was duplicating
-          _r(object.sector.powerups.all, object);
-          _r(object.sector.powerups[object.name + 's'], object);
-          object.sector.hasPowerups = object.sector.powerups.all.length;
-          object.sector.powerupCanvasDrawn = false;
+          _r(drawSector.powerups.all, object);
+          _r(drawSector.powerups[object.name + 's'], object);
+          drawSector.hasPowerups = drawSector.powerups.all.length;
+          drawSector.powerupCanvasDrawn = false;
       }
       object.markSectorsDirty();
       object.redrawSectors();
@@ -28508,7 +28541,7 @@ function load() {
       scene.track.needsCleaning = true;
 }
 
-  function recreate(object, force = false) {
+  function recreate(object) {
       if (!object) return;
       let newObject;
       if ('highlight' in object || object.p1) {
