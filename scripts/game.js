@@ -27748,12 +27748,24 @@ function load() {
                       prevSelected != selected && (selected.oldPos = vector(selected.x, selected.y));
                   }
                   if (shouldCopy && this.scene.settings.copy) {
-                      let copied = [];
-                      copied.push(recreate(selected));
-                      connected && copied.push(recreate(connected));
-                      shouldCopy = false;
-                      this.toolHandler.addActionToTimeline({type: 'add', objects: copied});
-                  }
+                    let copied = [],
+                        powerups = [];
+                    if (selected.name) {
+                        powerups.push(selected.getCode());
+                    } else {
+                        copied.push(recreate(selected));
+                    }
+                    if (connected) {
+                        if (connected.name) {
+                            powerups.push(connected.getCode());
+                        } else {
+                            copied.push(recreate(connected));
+                        }
+                    }
+                    copied.push(...this.scene.track.addPowerups(powerups));
+                    shouldCopy = false;
+                    this.toolHandler.addActionToTimeline({type: 'add', objects: copied});
+                }
                   if (selectPoint != minPoint) {
                       if (selectPoint == undefined && (selectOffset.x || selectOffset.y)) {
                           this.completeAction();
@@ -28484,6 +28496,11 @@ function load() {
           _r(sector.powerups[object.name + 's'], object);
           sector.hasPowerups = sector.powerups.all.length;
           sector.powerupCanvasDrawn = false;
+          //added old method back in as well, multihover was duplicating
+          _r(object.sector.powerups.all, object);
+          _r(object.sector.powerups[object.name + 's'], object);
+          object.sector.hasPowerups = object.sector.powerups.all.length;
+          object.sector.powerupCanvasDrawn = false;
       }
       object.markSectorsDirty();
       object.redrawSectors();
