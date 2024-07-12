@@ -27502,6 +27502,11 @@ function load() {
                   if ('angle' in line) {
                       line.angle += degrees;
                       line.angle %= 360;
+                      line.realAngle = line.angle;
+                      const r = ((line.angle - 180) / 360) * 2 * Math.PI;
+                      const n = Math.hypot(line.directionX, line.directionY) || 1;
+                      (line.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                      (line.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                   }
               } else {
                   line.p1 = this.rotatePoint(line.p1, centerX, centerY, radians);
@@ -27596,6 +27601,11 @@ function load() {
                   }
                   if ('angle' in line) {
                       line.angle = ((flipVertically ? 180 : 360) - line.angle) % 360;
+                      line.realAngle = line.angle;
+                      const r = ((line.realAngle - 180) / 360) * 2 * Math.PI;
+                      const n = Math.hypot(line.directionX, line.directionY) || 1;
+                      line.directionX = parseFloat((-n * Math.sin(r)).toFixed(15));
+                      line.directionY = parseFloat((n * Math.cos(r)).toFixed(15));
                   }
               } else {
                   if (flipVertically) {
