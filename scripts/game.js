@@ -16998,13 +16998,23 @@
             object.remove = true;
             // if you want something done (removing a powerup), you gotta do it yourself
             if (object.name) {
+                // free ridah haitch dee editah
+                let drawSector = object.sector,
+                    p = GameSettings.physicsSectorSize,
+                    sector = this.scene.track.sectors.physicsSectors[Math.floor(object.x / p)]?.[Math.floor(object.y / p)];
                 this._r(this.scene.track.powerups, object);
                 object.name == "goal" && this._r(this.scene.track.targets, object);
-                this._r(object.sector.powerups.all, object);
-                this._r(object.sector.powerups[object.name + 's'], object);
-                object.sector.hasPowerups = object.sector.powerups.all.length;
-                object.sector.powerupCanvasDrawn = false;
-                object.oldPos = new t.Z(object.x, object.y);
+                if (sector) {
+                    this._r(sector.powerups.all, object);
+                    this._r(sector.powerups[object.name + 's'], object);
+                    sector.hasPowerups = sector.powerups.all.length;
+                    sector.powerupCanvasDrawn = false;
+                }
+                //added old method back in as well, multihover was duplicating
+                this._r(drawSector.powerups.all, object);
+                this._r(drawSector.powerups[object.name + 's'], object);
+                drawSector.hasPowerups = drawSector.powerups.all.length;
+                drawSector.powerupCanvasDrawn = false;
             }
             object.markSectorsDirty();
             object.redrawSectors();
@@ -17084,6 +17094,10 @@
                                               i.angle -= t.transformations[k].angle;
                                           else if (t.transformations[k].type == 'flip')
                                               i.angle = (t.transformations[k].flipVertically ? 180 : 360) - i.angle;
+                                          const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                          const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                          (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                          (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                       }
                                   }
                                   i.x = point.x;
@@ -17129,6 +17143,10 @@
                                           i.angle -= transform.angle;
                                       else if (transform.type == 'flip')
                                           i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
+                                      const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                      const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                      (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                      (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                   }
                               } else {
                                   i.p1 = this.applyTransform(i.p1Raw, transform, true);
@@ -17192,6 +17210,10 @@
                                             i.angle += t.transformations[k].angle;
                                         else if (t.transformations[k].type == 'flip')
                                             i.angle = (t.transformations[k].flipVertically ? 180 : 360) - i.angle;
+                                        const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                        const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                        (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                        (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                     }
                                 }
                                 i.x = point.x;
@@ -17239,6 +17261,10 @@
                                         i.angle += transform.angle;
                                     else if (transform.type == 'flip')
                                         i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
+                                    const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                    const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                    (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                    (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                 }
                             } else {
                                 i.p1 = this.applyTransform(i.p1Raw, transform);
@@ -20162,8 +20188,7 @@
             super(),
               (this.x = t),
               (this.y = e),
-              (this.angle = s),
-              (this.realAngle = s);
+              (this.angle = s);
             const r = ((this.angle - 180) / 360) * 2 * Math.PI;
             (this.directionX = parseFloat((-n * Math.sin(r)).toFixed(15))),
               (this.directionY = parseFloat((n * Math.cos(r)).toFixed(15))),
@@ -20199,7 +20224,7 @@
             " " +
             (this.y - GameSettings.offsetPeteY).toString(32) +
             " " +
-            this.realAngle.toString(32)
+            this.angle.toString(32)
           );
         }
         drawPowerup(t, e) {
@@ -20263,7 +20288,6 @@
       (Ze.x = 0),
         (Ze.y = 0),
         (Ze.angle = 0),
-        (Ze.realAngle = 0),
         (Ze.name = "gravity");
       const Ue = Ne,
         qe = Math.PI,
@@ -20458,7 +20482,7 @@
             " " +
             (this.y - GameSettings.offsetPeteY).toString(32) +
             " " +
-            this.realAngle.toString(32)
+            this.angle.toString(32)
           );
         }
         drawPowerup(t, e) {
@@ -20524,7 +20548,6 @@
         (us.y = 0),
         (us.name = "boost"),
         (us.angle = 0),
-        (us.realAngle = 0),
         (us.directionX = 0),
         (us.directionY = 0);
       const ds = cs;
@@ -27339,7 +27362,8 @@ function load() {
       isSelectIntangible = true,
       // used for copying individual lines
       shouldCopy = true,
-      tempSelect;
+      tempSelect,
+      invert = 0;
   // for debugging
   let frameMinDist,
       frameBestLine;
@@ -27428,6 +27452,7 @@ function load() {
                   (move.x || move.y) && this.transformation.push(action);
                   this.oldOffset = undefined;
               }
+              this.clearTemp();
           }
           if (r && !this.rotate) {
               const degrees = shift ? -1 * GameSettings.rotateFactor : GameSettings.rotateFactor;
@@ -27502,7 +27527,6 @@ function load() {
                   if ('angle' in line) {
                       line.angle += degrees;
                       line.angle %= 360;
-                      line.realAngle = line.angle;
                       const r = ((line.angle - 180) / 360) * 2 * Math.PI;
                       const n = Math.hypot(line.directionX, line.directionY) || 1;
                       (line.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
@@ -27601,8 +27625,7 @@ function load() {
                   }
                   if ('angle' in line) {
                       line.angle = ((flipVertically ? 180 : 360) - line.angle) % 360;
-                      line.realAngle = line.angle;
-                      const r = ((line.realAngle - 180) / 360) * 2 * Math.PI;
+                      const r = ((line.angle - 180) / 360) * 2 * Math.PI;
                       const n = Math.hypot(line.directionX, line.directionY) || 1;
                       line.directionX = parseFloat((-n * Math.sin(r)).toFixed(15));
                       line.directionY = parseFloat((n * Math.cos(r)).toFixed(15));
@@ -28248,41 +28271,10 @@ function load() {
   let selectTool = scene.toolHandler.tools.select;
   
   let moveSpeed = 0.3,
-      moveAccumulator = 1;
+      moveAccumulator = 1,
+      invertWait = false;
 
   createjs.Ticker.addEventListener('tick', () => {
-      /*if (scene.state.playing && !scene.state.paused && selected && isSelectIntangible && !tempSelect?.length) {
-          tempSelect = [recreate(selected)];
-          console.log('temporary', tempSelect);
-          isSelectIntangible = false;
-          if (connected) {
-              connected.remove = 0;
-              scene.track.addPhysicsLineToTrack(connected);
-          }
-      }
-      if (scene.state.playing && !scene.state.paused && isSelectIntangible && isSelectList && selectList.length) {
-          tempSelect = tempSelect || [];
-          let sectorSize = scene.settings.drawSectorSize,
-              vehicle = scene.playerManager.firstPlayer._tempVehicle || scene.playerManager.firstPlayer._baseVehicle,
-              pos = vehicle.masses[0].pos,
-              sector = pos.factor(1 / sectorSize);
-          sector.x = Math.floor(sector.x);
-          sector.y = Math.floor(sector.y);
-          for (let x = -1; x < 2; x++) {
-              if (!selectPhysicsList[x]) continue;
-              for (let y = -1; y < 2; y++) {
-                  let cell = selectPhysicsList[x][y];
-                  if (!cell || !cell.length || cell.mark) continue;
-                  for (let i of cell) {
-                      if (i.temp) continue;
-                      let line = recreate(i);
-                      tempSelect.push(line);
-                      i.temp = true;
-                  }
-                  cell.mark = true;
-              }
-          }
-      }*/
       selectTool.temp();
       // allow moving the currently selected object with movement keys when paused
       if (selectTool.selected.length && !tempSelect?.length) {
@@ -28319,8 +28311,16 @@ function load() {
                   case "shift":
                       moveSelection = false;
                       break;
+                  case "invert":
+                      if (!invertWait) {
+                          invert++;
+                          invertWait++;
+                      }
+                      invertWait++;
+                      break;
               }
           }
+          invertWait > 0 && invertWait--;
           if (selectTool.selected.length) {
               let dirLen = Math.sqrt(dir.x ** 2 + dir.y ** 2);
               if (dirLen > 0) {
@@ -28369,14 +28369,17 @@ function load() {
                       rp2 = selected.p2.add(selectOffset).toScreen(scene);
                   if (isSelectIntangible) {
                       ctx.lineWidth = Math.max(2 * zoom, 0.5);
-                      ctx.strokeStyle = 'highlight' in selected ? '#000000' : '#AAAAAA';
+                      let isPhysics = 'highlight' in selected;
+                      if (isSelectList && (invert >> 1) & 1) isPhysics = !(invert & 1);
+                      else isPhysics ^= invert & 1;
+                      ctx.strokeStyle = isPhysics ? '#000000' : '#AAAAAA';
                       ctx.beginPath();
                       ctx.moveTo(rp1.x, rp1.y);
                       ctx.lineTo(rp2.x, rp2.y);
                       ctx.stroke();
                   }
                   // the highlight on the line
-                  ctx.lineWidth = Math.max(2 * zoom, 1);
+                  ctx.lineWidth = Math.max(zoom, 1);
                   ctx.strokeStyle = selectPoint ? '#1884cf' : '#1884cf';
                   ctx.beginPath();
                   ctx.moveTo(rp1.x, rp1.y);
@@ -28530,7 +28533,7 @@ function load() {
           // free ridah haitch dee editah
           let drawSector = object.sector,
               p = GameSettings.physicsSectorSize,
-              sector = scene.track.sectors.physicsSectors[Math.floor(object.x / p)][Math.floor(object.y / p)];
+              sector = scene.track.sectors.physicsSectors[Math.floor(object.x / p)]?.[Math.floor(object.y / p)];
           _r(scene.track.powerups, object);
           object.name == "goal" && _r(scene.track.targets, object);
           if (sector) {
@@ -28549,13 +28552,16 @@ function load() {
       object.redrawSectors();
       object.sectors = [{scene}];
       scene.track.needsCleaning = true;
-}
+  }
 
   function recreate(object) {
       if (!object) return;
       let newObject;
-      if ('highlight' in object || object.p1) {
-          if ('highlight' in object) {
+      if (object.p1) {
+          let isPhysics = 'highlight' in object;
+          if (isSelectList && (invert >> 1) & 1) isPhysics = !(invert & 1);
+          else isPhysics ^= invert & 1;
+          if (isPhysics) {
               newObject = scene.track.addPhysicsLine(object.p1.x + selectOffset.x, object.p1.y + selectOffset.y, object.p2.x + selectOffset.x, object.p2.y + selectOffset.y);
           } else {
               newObject = scene.track.addSceneryLine(object.p1.x + selectOffset.x, object.p1.y + selectOffset.y, object.p2.x + selectOffset.x, object.p2.y + selectOffset.y);
