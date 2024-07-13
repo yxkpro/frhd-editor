@@ -10211,14 +10211,23 @@
             getCode(t) {
               this.recorded = !0;
               let e =
-                " " + (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
+                (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
               const s = this.checkForConnectedLine(t, this.p2);
-              return s && (e += s.getCode(t)), e;
+              return s && (e += " " + s.getCode(t)), e;
             }
             checkForConnectedLine(t, e) {
               const s = t.physicsLines.indexOf(this);
               if (s + 1 === t.physicsLines.length) return !1;
               const i = t.physicsLines[s + 1];
+              if (t.scene.cleanCode) {
+                  if (
+                      (i.p1.x === e.x && i.p1.y === e.y && i.p2.x === this.p1.x && i.p2.y === this.p1.y) ||
+                      (i.p2.x === e.x && i.p2.y === e.y && i.p1.x === this.p1.x && i.p1.y === this.p1.y)
+                  ) {
+                      i.remove = true;
+                      return false;
+                  }
+              }
               return i.p1.x === e.x && i.p1.y === e.y && 0 === i.remove && i;
             }
             addSectorReference(t) {
@@ -10323,16 +10332,24 @@
           }
           getCode(t) {
             this.recorded = !0;
-            let e = " " + (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
+            let e = (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
             const s = this.checkForConnectedLine(t, this.p2);
-            return s && (e += s.getCode(t)), e;
+            return s && (e += " " + s.getCode(t)), e;
           }
           checkForConnectedLine(t, e) {
-            const s = t.settings.drawSectorSize,
-              i = t.sectors.drawSectors,
-              n = r(e.x / s),
-              o = r(e.y / s);
-            return i[n][o].searchForLine("sceneryLines", e);
+            const s = t.sceneryLines.indexOf(this);
+            if (s + 1 === t.sceneryLines.length) return !1;
+            const i = t.sceneryLines[s + 1];
+            if (t.scene.cleanCode) {
+                if (
+                    (i.p1.x === e.x && i.p1.y === e.y && i.p2.x === this.p1.x && i.p2.y === this.p1.y) ||
+                    (i.p2.x === e.x && i.p2.y === e.y && i.p1.x === this.p1.x && i.p1.y === this.p1.y)
+                ) {
+                    i.remove = true;
+                    return false;
+                }
+            }
+            return i.p1.x === e.x && i.p1.y === e.y && 0 === i.remove && i;
           }
           erase(t, e) {
             let s = !1;
@@ -23894,46 +23911,62 @@
             s = this.sceneryLines;
           let i = "",
             n = !1;
-          for (const t of e)
-            t.recorded ||
-              0 !== t.remove ||
-              ((n = !0),
-              (i +=
-                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
-                " " +
-                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
-                t.getCode(this) +
-                ","));
+        
+          const uniquePhysicsLines = new Set();
+          const uniqueSceneryLines = new Set();
+          const uniquePowerups = new Set();
+        
+          for (const t of e) {
+            if (!t.recorded && t.remove === 0) {
+              const code = (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32) + " " + t.getCode(this);
+              const codeReversed = t.getCode(this) + " " + (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32);
+              if (!this.scene.cleanCode || (!uniquePhysicsLines.has(code) && !uniquePhysicsLines.has(codeReversed))) {
+                uniquePhysicsLines.add(code);
+                n = !0;
+                i += code + ",";
+              }
+            }
+          }
           n && (i = i.slice(0, -1));
           for (const t of e) t.recorded = !1;
-          (i += "#"), (n = !1);
-          for (const t of s)
-            t.recorded ||
-              0 !== t.remove ||
-              ((n = !0),
-              (i +=
-                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
-                " " +
-                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
-                t.getCode(this) +
-                ","));
+        
+          i += "#";
+          n = !1;
+        
+          for (const t of s) {
+            if (!t.recorded && t.remove === 0) {
+              const code = (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32) + " " + t.getCode(this);
+              const codeReversed = t.getCode(this) + " " + (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32);
+              if (!this.scene.cleanCode || (!uniqueSceneryLines.has(code) && !uniqueSceneryLines.has(codeReversed))) {
+                uniqueSceneryLines.add(code);
+                n = !0;
+                i += code + ",";
+              }
+            }
+          }
           n && (i = i.slice(0, -1));
           for (const t of s) t.recorded = !1;
-          (i += "#"), (n = !1);
-          for (const e of t)
-            if (0 === e.remove) {
-              n = !0;
-              const t = e.getCode();
-              t && (i += t + ",");
+        
+          i += "#";
+          n = !1;
+        
+          for (const e of t) {
+            if (e.remove === 0) {
+              const code = e.getCode();
+              if (code && (!this.scene.cleanCode || !uniquePowerups.has(code))) {
+                uniquePowerups.add(code);
+                n = !0;
+                i += code + ",";
+              }
             }
-          return (
-            n && (i = i.slice(0, -1)),
-            (i += "#"),
-            (i +=
-              this.scene.playerManager.firstPlayer._baseVehicle.vehicleName ||
-              "MTB"),
-            i
-          );
+          }
+          n && (i = i.slice(0, -1));
+        
+          i += "#";
+          i += this.scene.playerManager.firstPlayer._baseVehicle.vehicleName || "MTB";
+        
+          this.scene.cleanCode = false;
+          return i;
         }
         resetPowerups() {
           for (const t of this.powerups)
@@ -24224,6 +24257,7 @@
             this.modObjectPhysics = this.objectPhysics;
             this.modObjectScenery = this.objectScenery;
             this.modObjectPowerups = this.objectPowerups;
+            this.cleanCode = false;
 
         }
         getCanvasOffset() {
@@ -28074,6 +28108,7 @@ function load() {
               } else {
                   this.p2.equ({x: NaN, y: NaN});
                   isSelectList = false;
+                  this.resetCenter();
               }
           }
       }
@@ -28372,11 +28407,13 @@ function load() {
                       let isPhysics = 'highlight' in selected;
                       if (isSelectList && (invert >> 1) & 1) isPhysics = !(invert & 1);
                       else isPhysics ^= invert & 1;
+                      //isPhysics ? ctx.globalAlpha = 0.5 : ctx.globalAlpha = 0.3;
                       ctx.strokeStyle = isPhysics ? '#000000' : '#AAAAAA';
                       ctx.beginPath();
                       ctx.moveTo(rp1.x, rp1.y);
                       ctx.lineTo(rp2.x, rp2.y);
                       ctx.stroke();
+                      //ctx.globalAlpha = 1;
                   }
                   // the highlight on the line
                   ctx.lineWidth = Math.max(zoom, 1);
@@ -28485,7 +28522,6 @@ function load() {
                       ctx.arc(pos.x, pos.y, Math.max(data[0] * zoom / 1.2, 1), 0, Math.PI * 2);
                       ctx.fill();
                       ctx.globalAlpha = 1;
-                      scene.track.undraw();
                   }
               }
               if (!isHoverList && hovered.p1) {

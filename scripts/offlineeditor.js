@@ -2832,6 +2832,10 @@
               "undefined" != typeof GameManager &&
                 GameManager.command("dialog", !1);
             },
+            cleanTrack: function () {
+                GameManager.game.currentScene.cleanCode = true;
+                setTimeout(GameManager.game.currentScene.getTrackCode.bind(GameManager.game.currentScene), 750);
+            },
             chromeApp: !1,
             fileSaverSupport: !1,
             isFileSaverSupported: function () {
@@ -2939,7 +2943,7 @@
               return (
                 e &&
                 e.code &&
-                ((t = (GameSettings.object ? GameManager.game.currentScene.getObjectCode() : e.code)),
+                ((t = (GameSettings.object ? GameManager.game.currentScene.getObjectCode() : GameManager.game.currentScene.trackcode)),
                 this.fileSaverSupport &&
                 (r = n.createElement(
                   "button",
@@ -3024,10 +3028,19 @@
                       "button",
                       {
                         className:
-                          "primary-button primary-button-black float-right margin-0-5",
+                          "primary-button primary-button-black float-right",
                         onClick: this.closeDialog,
                       },
                       "Close"
+                    ),
+                    n.createElement(
+                      "button",
+                      {
+                        className:
+                          "primary-button primary-button-blue float-right margin-0-5",
+                        onClick: this.cleanTrack,
+                      },
+                      "Clean Track"
                     ),
                     r
                   )

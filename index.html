@@ -47,5 +47,13 @@
         }
         setTrackNameFromURL();
     </script>
+
+    <script>
+    window.addEventListener('beforeunload', function (e) {
+        const confirmationMessage = 'You have unsaved changes. Are you sure you want to leave without saving?';
+        e.returnValue = confirmationMessage;
+        return confirmationMessage;
+    });
+    </script>
 </body>
 </html>
