@@ -28346,13 +28346,13 @@ function load() {
                   case "shift":
                       moveSelection = false;
                       break;
-                  case "invert":
+                  /*case "invert":
                       if (!invertWait) {
                           invert++;
                           invertWait++;
                       }
                       invertWait++;
-                      break;
+                      break;*/
               }
           }
           invertWait > 0 && invertWait--;
