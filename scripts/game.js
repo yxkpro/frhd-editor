@@ -10211,14 +10211,23 @@
             getCode(t) {
               this.recorded = !0;
               let e =
-                " " + (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
+                (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
               const s = this.checkForConnectedLine(t, this.p2);
-              return s && (e += s.getCode(t)), e;
+              return s && (e += " " + s.getCode(t)), e;
             }
             checkForConnectedLine(t, e) {
               const s = t.physicsLines.indexOf(this);
               if (s + 1 === t.physicsLines.length) return !1;
               const i = t.physicsLines[s + 1];
+              if (t.scene.cleanCode) {
+                  if (
+                      (i.p1.x === e.x && i.p1.y === e.y && i.p2.x === this.p1.x && i.p2.y === this.p1.y) ||
+                      (i.p2.x === e.x && i.p2.y === e.y && i.p1.x === this.p1.x && i.p1.y === this.p1.y)
+                  ) {
+                      i.remove = true;
+                      return false;
+                  }
+              }
               return i.p1.x === e.x && i.p1.y === e.y && 0 === i.remove && i;
             }
             addSectorReference(t) {
@@ -10323,16 +10332,24 @@
           }
           getCode(t) {
             this.recorded = !0;
-            let e = " " + (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
+            let e = (this.p2.x - GameSettings.offsetPeteX).toString(32) + " " + (this.p2.y - GameSettings.offsetPeteY).toString(32);
             const s = this.checkForConnectedLine(t, this.p2);
-            return s && (e += s.getCode(t)), e;
+            return s && (e += " " + s.getCode(t)), e;
           }
           checkForConnectedLine(t, e) {
-            const s = t.settings.drawSectorSize,
-              i = t.sectors.drawSectors,
-              n = r(e.x / s),
-              o = r(e.y / s);
-            return i[n][o].searchForLine("sceneryLines", e);
+            const s = t.sceneryLines.indexOf(this);
+            if (s + 1 === t.sceneryLines.length) return !1;
+            const i = t.sceneryLines[s + 1];
+            if (t.scene.cleanCode) {
+                if (
+                    (i.p1.x === e.x && i.p1.y === e.y && i.p2.x === this.p1.x && i.p2.y === this.p1.y) ||
+                    (i.p2.x === e.x && i.p2.y === e.y && i.p1.x === this.p1.x && i.p1.y === this.p1.y)
+                ) {
+                    i.remove = true;
+                    return false;
+                }
+            }
+            return i.p1.x === e.x && i.p1.y === e.y && 0 === i.remove && i;
           }
           erase(t, e) {
             let s = !1;
@@ -16998,13 +17015,23 @@
             object.remove = true;
             // if you want something done (removing a powerup), you gotta do it yourself
             if (object.name) {
+                // free ridah haitch dee editah
+                let drawSector = object.sector,
+                    p = GameSettings.physicsSectorSize,
+                    sector = this.scene.track.sectors.physicsSectors[Math.floor(object.x / p)]?.[Math.floor(object.y / p)];
                 this._r(this.scene.track.powerups, object);
                 object.name == "goal" && this._r(this.scene.track.targets, object);
-                this._r(object.sector.powerups.all, object);
-                this._r(object.sector.powerups[object.name + 's'], object);
-                object.sector.hasPowerups = object.sector.powerups.all.length;
-                object.sector.powerupCanvasDrawn = false;
-                object.oldPos = new t.Z(object.x, object.y);
+                if (sector) {
+                    this._r(sector.powerups.all, object);
+                    this._r(sector.powerups[object.name + 's'], object);
+                    sector.hasPowerups = sector.powerups.all.length;
+                    sector.powerupCanvasDrawn = false;
+                }
+                //added old method back in as well, multihover was duplicating
+                this._r(drawSector.powerups.all, object);
+                this._r(drawSector.powerups[object.name + 's'], object);
+                drawSector.hasPowerups = drawSector.powerups.all.length;
+                drawSector.powerupCanvasDrawn = false;
             }
             object.markSectorsDirty();
             object.redrawSectors();
@@ -17084,6 +17111,10 @@
                                               i.angle -= t.transformations[k].angle;
                                           else if (t.transformations[k].type == 'flip')
                                               i.angle = (t.transformations[k].flipVertically ? 180 : 360) - i.angle;
+                                          const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                          const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                          (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                          (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                       }
                                   }
                                   i.x = point.x;
@@ -17129,6 +17160,10 @@
                                           i.angle -= transform.angle;
                                       else if (transform.type == 'flip')
                                           i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
+                                      const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                      const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                      (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                      (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                   }
                               } else {
                                   i.p1 = this.applyTransform(i.p1Raw, transform, true);
@@ -17192,6 +17227,10 @@
                                             i.angle += t.transformations[k].angle;
                                         else if (t.transformations[k].type == 'flip')
                                             i.angle = (t.transformations[k].flipVertically ? 180 : 360) - i.angle;
+                                        const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                        const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                        (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                        (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                     }
                                 }
                                 i.x = point.x;
@@ -17239,6 +17278,10 @@
                                         i.angle += transform.angle;
                                     else if (transform.type == 'flip')
                                         i.angle = (transform.flipVertically ? 180 : 360) - i.angle;
+                                    const r = ((i.angle - 180) / 360) * 2 * Math.PI;
+                                    const n = Math.hypot(i.directionX, i.directionY) || 1;
+                                    (i.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
+                                    (i.directionY = parseFloat((n * Math.cos(r)).toFixed(15)));
                                 }
                             } else {
                                 i.p1 = this.applyTransform(i.p1Raw, transform);
@@ -20162,8 +20205,7 @@
             super(),
               (this.x = t),
               (this.y = e),
-              (this.angle = s),
-              (this.realAngle = s);
+              (this.angle = s);
             const r = ((this.angle - 180) / 360) * 2 * Math.PI;
             (this.directionX = parseFloat((-n * Math.sin(r)).toFixed(15))),
               (this.directionY = parseFloat((n * Math.cos(r)).toFixed(15))),
@@ -20199,7 +20241,7 @@
             " " +
             (this.y - GameSettings.offsetPeteY).toString(32) +
             " " +
-            this.realAngle.toString(32)
+            this.angle.toString(32)
           );
         }
         drawPowerup(t, e) {
@@ -20263,7 +20305,6 @@
       (Ze.x = 0),
         (Ze.y = 0),
         (Ze.angle = 0),
-        (Ze.realAngle = 0),
         (Ze.name = "gravity");
       const Ue = Ne,
         qe = Math.PI,
@@ -20458,7 +20499,7 @@
             " " +
             (this.y - GameSettings.offsetPeteY).toString(32) +
             " " +
-            this.realAngle.toString(32)
+            this.angle.toString(32)
           );
         }
         drawPowerup(t, e) {
@@ -20524,7 +20565,6 @@
         (us.y = 0),
         (us.name = "boost"),
         (us.angle = 0),
-        (us.realAngle = 0),
         (us.directionX = 0),
         (us.directionY = 0);
       const ds = cs;
@@ -23871,46 +23911,62 @@
             s = this.sceneryLines;
           let i = "",
             n = !1;
-          for (const t of e)
-            t.recorded ||
-              0 !== t.remove ||
-              ((n = !0),
-              (i +=
-                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
-                " " +
-                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
-                t.getCode(this) +
-                ","));
+        
+          const uniquePhysicsLines = new Set();
+          const uniqueSceneryLines = new Set();
+          const uniquePowerups = new Set();
+        
+          for (const t of e) {
+            if (!t.recorded && t.remove === 0) {
+              const code = (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32) + " " + t.getCode(this);
+              const codeReversed = t.getCode(this) + " " + (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32);
+              if (!this.scene.cleanCode || (!uniquePhysicsLines.has(code) && !uniquePhysicsLines.has(codeReversed))) {
+                uniquePhysicsLines.add(code);
+                n = !0;
+                i += code + ",";
+              }
+            }
+          }
           n && (i = i.slice(0, -1));
           for (const t of e) t.recorded = !1;
-          (i += "#"), (n = !1);
-          for (const t of s)
-            t.recorded ||
-              0 !== t.remove ||
-              ((n = !0),
-              (i +=
-                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
-                " " +
-                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
-                t.getCode(this) +
-                ","));
+        
+          i += "#";
+          n = !1;
+        
+          for (const t of s) {
+            if (!t.recorded && t.remove === 0) {
+              const code = (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32) + " " + t.getCode(this);
+              const codeReversed = t.getCode(this) + " " + (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32);
+              if (!this.scene.cleanCode || (!uniqueSceneryLines.has(code) && !uniqueSceneryLines.has(codeReversed))) {
+                uniqueSceneryLines.add(code);
+                n = !0;
+                i += code + ",";
+              }
+            }
+          }
           n && (i = i.slice(0, -1));
           for (const t of s) t.recorded = !1;
-          (i += "#"), (n = !1);
-          for (const e of t)
-            if (0 === e.remove) {
-              n = !0;
-              const t = e.getCode();
-              t && (i += t + ",");
+        
+          i += "#";
+          n = !1;
+        
+          for (const e of t) {
+            if (e.remove === 0) {
+              const code = e.getCode();
+              if (code && (!this.scene.cleanCode || !uniquePowerups.has(code))) {
+                uniquePowerups.add(code);
+                n = !0;
+                i += code + ",";
+              }
             }
-          return (
-            n && (i = i.slice(0, -1)),
-            (i += "#"),
-            (i +=
-              this.scene.playerManager.firstPlayer._baseVehicle.vehicleName ||
-              "MTB"),
-            i
-          );
+          }
+          n && (i = i.slice(0, -1));
+        
+          i += "#";
+          i += this.scene.playerManager.firstPlayer._baseVehicle.vehicleName || "MTB";
+        
+          this.scene.cleanCode = false;
+          return i;
         }
         resetPowerups() {
           for (const t of this.powerups)
@@ -24201,6 +24257,7 @@
             this.modObjectPhysics = this.objectPhysics;
             this.modObjectScenery = this.objectScenery;
             this.modObjectPowerups = this.objectPowerups;
+            this.cleanCode = false;
 
         }
         getCanvasOffset() {
@@ -27339,7 +27396,8 @@ function load() {
       isSelectIntangible = true,
       // used for copying individual lines
       shouldCopy = true,
-      tempSelect;
+      tempSelect,
+      invert = 0;
   // for debugging
   let frameMinDist,
       frameBestLine;
@@ -27428,6 +27486,7 @@ function load() {
                   (move.x || move.y) && this.transformation.push(action);
                   this.oldOffset = undefined;
               }
+              this.clearTemp();
           }
           if (r && !this.rotate) {
               const degrees = shift ? -1 * GameSettings.rotateFactor : GameSettings.rotateFactor;
@@ -27502,7 +27561,6 @@ function load() {
                   if ('angle' in line) {
                       line.angle += degrees;
                       line.angle %= 360;
-                      line.realAngle = line.angle;
                       const r = ((line.angle - 180) / 360) * 2 * Math.PI;
                       const n = Math.hypot(line.directionX, line.directionY) || 1;
                       (line.directionX = parseFloat((-n * Math.sin(r)).toFixed(15)));
@@ -27601,8 +27659,7 @@ function load() {
                   }
                   if ('angle' in line) {
                       line.angle = ((flipVertically ? 180 : 360) - line.angle) % 360;
-                      line.realAngle = line.angle;
-                      const r = ((line.realAngle - 180) / 360) * 2 * Math.PI;
+                      const r = ((line.angle - 180) / 360) * 2 * Math.PI;
                       const n = Math.hypot(line.directionX, line.directionY) || 1;
                       line.directionX = parseFloat((-n * Math.sin(r)).toFixed(15));
                       line.directionY = parseFloat((n * Math.cos(r)).toFixed(15));
@@ -27802,6 +27859,7 @@ function load() {
               }
               isSelectList = false;
               selectList = selectPhysicsList = undefined;
+              this.temp();
               //this.oldOffset = selectPoint ? pointOffset.factor(1) : selectOffset.factor(1);
           } else if (this.p1 && pointrect(this.mouse.touch.real, this.p1, this.p2)) {
               selected = undefined;
@@ -27882,6 +27940,7 @@ function load() {
                           this.p2.inc(dMouse);
                       }
                   }
+                  this.temp();
                   break shouldUpdate;
               }
 
@@ -27898,82 +27957,82 @@ function load() {
       }
 
       singleHover(mousePos) {
-        let minDist = 1000,
-            bestLine = undefined,
-            adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
-        // selected doesn't exist on the track, so we have to check it separately
-        if (selected) {
-            let dist = selected.p1 ?
-                linesdf(mousePos.sub(selectOffset), selected) :
-            pointsdf(mousePos.sub(selectOffset), selected);
-            if (dist < minDist) {
-                minDist = dist;
-                bestLine = selected;
-            }
-        }
+          let minDist = 1000,
+              bestLine = undefined,
+              adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
+          // selected doesn't exist on the track, so we have to check it separately
+          if (selected) {
+              let dist = selected.p1 ?
+                  linesdf(mousePos.sub(selectOffset), selected) :
+              pointsdf(mousePos.sub(selectOffset), selected);
+              if (dist < minDist) {
+                  minDist = dist;
+                  bestLine = selected;
+              }
+          }
 
-        let sectorSize = this.scene.settings.drawSectorSize,
-            sectorPos = mousePos.factor(1 / sectorSize);
-        sectorPos.x = Math.floor(sectorPos.x);
-        sectorPos.y = Math.floor(sectorPos.y);
-        let currentSectorData = this.testSectorSingle(sectorPos);
-        if (currentSectorData[0] < minDist) {
-            [minDist, bestLine] = currentSectorData;
-        }
-        // this is all to figure out which sectors we even need to check
-        // i.e. within range to have a line that can possibly be close enough
-        // the position of the sector in track-space
-        let sectorTrackPos = sectorPos.factor(sectorSize),
-            // the position of the mouse within the sector
-            posInSector = mousePos.sub(sectorTrackPos),
-            // a zero vector (for checking the top left)
-            zeroVector = posInSector.factor(0),
-            // a vector of just the sector size (for checking the bottom right)
-            maxPos = zeroVector.add({x: sectorSize, y: sectorSize}),
-            sectorsToCheck = [],
-            positions = [zeroVector, posInSector, maxPos];
-        for (let i = -1; i < 2; i++) {
-            let x = positions[i + 1].x;
-            for (let j = -1; j < 2; j++) {
-                // we don't need to re-check the current sector
-                if (!i && !j)
-                    continue;
-                let y = positions[j + 1].y;
-                if (pointsdf(mousePos, {x, y}) <= adjustedDist * 1.5) {
-                    sectorsToCheck.push([i, j]);
-                }
-            }
-        }
+          let sectorSize = this.scene.settings.drawSectorSize,
+              sectorPos = mousePos.factor(1 / sectorSize);
+          sectorPos.x = Math.floor(sectorPos.x);
+          sectorPos.y = Math.floor(sectorPos.y);
+          let currentSectorData = this.testSectorSingle(sectorPos);
+          if (currentSectorData[0] < minDist) {
+              [minDist, bestLine] = currentSectorData;
+          }
+          // this is all to figure out which sectors we even need to check
+          // i.e. within range to have a line that can possibly be close enough
+          // the position of the sector in track-space
+          let sectorTrackPos = sectorPos.factor(sectorSize),
+              // the position of the mouse within the sector
+              posInSector = mousePos.sub(sectorTrackPos),
+              // a zero vector (for checking the top left)
+              zeroVector = posInSector.factor(0),
+              // a vector of just the sector size (for checking the bottom right)
+              maxPos = zeroVector.add({x: sectorSize, y: sectorSize}),
+              sectorsToCheck = [],
+              positions = [zeroVector, posInSector, maxPos];
+          for (let i = -1; i < 2; i++) {
+              let x = positions[i + 1].x;
+              for (let j = -1; j < 2; j++) {
+                  // we don't need to re-check the current sector
+                  if (!i && !j)
+                      continue;
+                  let y = positions[j + 1].y;
+                  if (pointsdf(mousePos, {x, y}) <= adjustedDist * 1.5) {
+                      sectorsToCheck.push([i, j]);
+                  }
+              }
+          }
 
-        for (let i of sectorsToCheck) {
-            let sectorData = this.testSectorSingle(sectorPos.add(i));
-            if (sectorData[0] < minDist) {
-                [minDist, bestLine] = sectorData;
-            }
-        }
-        [frameMinDist, frameBestLine] = [minDist, bestLine];
-        if (minDist < adjustedDist) {
-            hovered = bestLine;
-            window.hovered = bestLine;
-        } else {
-            hovered = undefined;
-            window.hovered = bestLine;
-            return;
-        }
-        minDist = HOVER_DIST / this.scene.camera.zoom;
-        let minPoint = undefined,
-            isSelected = hovered == selected;
-        if (hovered.p1) {
-            for (let i of [hovered.p1, hovered.p2]) {
-                let dist = pointsdf(mousePos, i.add(isSelected ? selectOffset : vector()));
-                if (dist < minDist) {
-                    minDist = dist;
-                    minPoint = i;
-                }
-            }
-        }
-        hoverPoint = minPoint;
-    }
+          for (let i of sectorsToCheck) {
+              let sectorData = this.testSectorSingle(sectorPos.add(i));
+              if (sectorData[0] < minDist) {
+                  [minDist, bestLine] = sectorData;
+              }
+          }
+          [frameMinDist, frameBestLine] = [minDist, bestLine];
+          if (minDist < adjustedDist) {
+              hovered = bestLine;
+              window.hovered = bestLine;
+          } else {
+              hovered = undefined;
+              window.hovered = bestLine;
+              return;
+          }
+          minDist = HOVER_DIST / this.scene.camera.zoom;
+          let minPoint = undefined,
+              isSelected = hovered == selected;
+          if (hovered.p1) {
+              for (let i of [hovered.p1, hovered.p2]) {
+                  let dist = pointsdf(mousePos, i.add(isSelected ? selectOffset : vector()));
+                  if (dist < minDist) {
+                      minDist = dist;
+                      minPoint = i;
+                  }
+              }
+          }
+          hoverPoint = minPoint;
+      }
 
       multiHover() {
           // this logic is very simple: decide which sectors to add, then add everything necessary from them
@@ -28043,12 +28102,13 @@ function load() {
                       }
                       remove(i);
                   }
-                  console.log('selected!', selectList);
                   this.resetCenter();
                   this.findCenter();
+                  this.temp();
               } else {
                   this.p2.equ({x: NaN, y: NaN});
                   isSelectList = false;
+                  this.resetCenter();
               }
           }
       }
@@ -28188,7 +28248,6 @@ function load() {
 
       completeAction() {
           if (!this.transformation.length) return;
-          console.log(this.transformation);
           let objects = this.selected;
           if (!isSelectList && connected) objects.push(connected);
           let completeAction = {
@@ -28199,9 +28258,43 @@ function load() {
               pointer: this.transformation.length,
           };
           if (selectPoint && selected) completeAction.points = [(selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2', connectedPoint];
-          console.log(completeAction, this.selected, selected);
           this.toolHandler.addActionToTimeline(completeAction);
           this.transformation = [];
+      }
+
+      temp() {
+          if (!this.scene.state.playing || this.scene.state.paused || !isSelectIntangible) return;
+          if (selected && !tempSelect?.length) {
+              tempSelect = [recreate(selected)];
+              console.log('temporary', tempSelect);
+              isSelectIntangible = false;
+              if (connected) {
+                  connected.remove = 0;
+                  scene.track.addPhysicsLineToTrack(connected);
+              }
+          } else if (isSelectList && selectList.length) {
+              tempSelect = tempSelect || [];
+              let sectorSize = scene.settings.drawSectorSize,
+                  vehicle = scene.playerManager.firstPlayer._tempVehicle || scene.playerManager.firstPlayer._baseVehicle,
+                  pos = vehicle.masses[0].pos,
+                  sector = pos.factor(1 / sectorSize);
+              sector.x = Math.floor(sector.x);
+              sector.y = Math.floor(sector.y);
+              for (let x = -1; x < 2; x++) {
+                  if (!selectPhysicsList[x]) continue;
+                  for (let y = -1; y < 2; y++) {
+                      let cell = selectPhysicsList[x][y];
+                      if (!cell || !cell.length || cell.mark) continue;
+                      for (let i of cell) {
+                          if (i.temp) continue;
+                          let line = recreate(i);
+                          tempSelect.push(line);
+                          i.temp = true;
+                      }
+                      cell.mark = true;
+                  }
+              }
+          }
       }
   }
 
@@ -28213,46 +28306,11 @@ function load() {
   let selectTool = scene.toolHandler.tools.select;
   
   let moveSpeed = 0.3,
-      moveAccumulator = 1;
+      moveAccumulator = 1,
+      invertWait = false;
 
   createjs.Ticker.addEventListener('tick', () => {
-      if (scene.state.playing && !scene.state.paused && selected && isSelectIntangible && !tempSelect?.length) {
-          tempSelect = [recreate(selected)];
-          console.log('temporary', tempSelect);
-          isSelectIntangible = false;
-          if (connected) {
-              connected.remove = 0;
-              scene.track.addPhysicsLineToTrack(connected);
-          }
-          // fixes a bug with powerups moving super fast
-          /*if (!selected.p1 && selectTool.oldOffset) {
-              selectTool.oldOffset.subSelf(selectOffset);
-              selectOffset.equ({x: 0, y: 0});
-          }*/
-      }
-      if (scene.state.playing && !scene.state.paused && isSelectIntangible && isSelectList && selectList.length) {
-          tempSelect = tempSelect || [];
-          let sectorSize = scene.settings.drawSectorSize,
-              vehicle = scene.playerManager.firstPlayer._tempVehicle || scene.playerManager.firstPlayer._baseVehicle,
-              pos = vehicle.masses[0].pos,
-              sector = pos.factor(1 / sectorSize);
-          sector.x = Math.floor(sector.x);
-          sector.y = Math.floor(sector.y);
-          for (let x = -1; x < 2; x++) {
-              if (!selectPhysicsList[x]) continue;
-              for (let y = -1; y < 2; y++) {
-                  let cell = selectPhysicsList[x][y];
-                  if (!cell || !cell.length || cell.mark) continue;
-                  for (let i of cell) {
-                      if (i.temp) continue;
-                      let line = recreate(i);
-                      tempSelect.push(line);
-                      i.temp = true;
-                  }
-                  cell.mark = true;
-              }
-          }
-      }
+      selectTool.temp();
       // allow moving the currently selected object with movement keys when paused
       if (selectTool.selected.length && !tempSelect?.length) {
           let tdb = scene.playerManager.firstPlayer._gamepad.getDownButtons(),
@@ -28288,8 +28346,16 @@ function load() {
                   case "shift":
                       moveSelection = false;
                       break;
+                  case "invert":
+                      if (!invertWait) {
+                          invert++;
+                          invertWait++;
+                      }
+                      invertWait++;
+                      break;
               }
           }
+          invertWait > 0 && invertWait--;
           if (selectTool.selected.length) {
               let dirLen = Math.sqrt(dir.x ** 2 + dir.y ** 2);
               if (dirLen > 0) {
@@ -28338,14 +28404,19 @@ function load() {
                       rp2 = selected.p2.add(selectOffset).toScreen(scene);
                   if (isSelectIntangible) {
                       ctx.lineWidth = Math.max(2 * zoom, 0.5);
-                      ctx.strokeStyle = 'highlight' in selected ? '#000000' : '#AAAAAA';
+                      let isPhysics = 'highlight' in selected;
+                      if (isSelectList && (invert >> 1) & 1) isPhysics = !(invert & 1);
+                      else isPhysics ^= invert & 1;
+                      //isPhysics ? ctx.globalAlpha = 0.5 : ctx.globalAlpha = 0.3;
+                      ctx.strokeStyle = isPhysics ? '#000000' : '#AAAAAA';
                       ctx.beginPath();
                       ctx.moveTo(rp1.x, rp1.y);
                       ctx.lineTo(rp2.x, rp2.y);
                       ctx.stroke();
+                      //ctx.globalAlpha = 1;
                   }
                   // the highlight on the line
-                  ctx.lineWidth = Math.max(2 * zoom, 1);
+                  ctx.lineWidth = Math.max(zoom, 1);
                   ctx.strokeStyle = selectPoint ? '#1884cf' : '#1884cf';
                   ctx.beginPath();
                   ctx.moveTo(rp1.x, rp1.y);
@@ -28355,7 +28426,7 @@ function load() {
                   let data = powerups[selected.name];
                   if (!data) continue;
                   let camera = scene.camera,
-                      pos = camera.position.factor(0).add(selected.oldPos).add(selectOffset).toScreen(scene),
+                      pos = selected.oldPos.add(selectOffset).toScreen(scene),
                       size = data[0] / zoom;
                   ctx.globalAlpha = 0.3;
                   ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -28443,7 +28514,7 @@ function load() {
                       let isSelect = hovered == selected,
                           camera = scene.camera,
                           //pos = camera.position.factor(0).add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
-                          pos = camera.position.factor(0).add(hovered).toScreen(scene),
+                          pos = vector().add(hovered).toScreen(scene),
                           size = data[0] / zoom;
                       ctx.globalAlpha = 0.5;
                       ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -28451,7 +28522,6 @@ function load() {
                       ctx.arc(pos.x, pos.y, Math.max(data[0] * zoom / 1.2, 1), 0, Math.PI * 2);
                       ctx.fill();
                       ctx.globalAlpha = 1;
-                      scene.track.undraw();
                   }
               }
               if (!isHoverList && hovered.p1) {
@@ -28497,32 +28567,37 @@ function load() {
       // if you want something done (removing a powerup), you gotta do it yourself
       if (object.name) {
           // free ridah haitch dee editah
-          let fakeSector = object.sector,
-              sector = scene.track.sectors.physicsSectors[fakeSector.column][fakeSector.row];
-          //console.log(sector);
+          let drawSector = object.sector,
+              p = GameSettings.physicsSectorSize,
+              sector = scene.track.sectors.physicsSectors[Math.floor(object.x / p)]?.[Math.floor(object.y / p)];
           _r(scene.track.powerups, object);
           object.name == "goal" && _r(scene.track.targets, object);
-          _r(sector.powerups.all, object);
-          _r(sector.powerups[object.name + 's'], object);
-          sector.hasPowerups = sector.powerups.all.length;
-          sector.powerupCanvasDrawn = false;
+          if (sector) {
+              _r(sector.powerups.all, object);
+              _r(sector.powerups[object.name + 's'], object);
+              sector.hasPowerups = sector.powerups.all.length;
+              sector.powerupCanvasDrawn = false;
+          }
           //added old method back in as well, multihover was duplicating
-          _r(object.sector.powerups.all, object);
-          _r(object.sector.powerups[object.name + 's'], object);
-          object.sector.hasPowerups = object.sector.powerups.all.length;
-          object.sector.powerupCanvasDrawn = false;
+          _r(drawSector.powerups.all, object);
+          _r(drawSector.powerups[object.name + 's'], object);
+          drawSector.hasPowerups = drawSector.powerups.all.length;
+          drawSector.powerupCanvasDrawn = false;
       }
       object.markSectorsDirty();
       object.redrawSectors();
       object.sectors = [{scene}];
       scene.track.needsCleaning = true;
-}
+  }
 
-  function recreate(object, force = false) {
+  function recreate(object) {
       if (!object) return;
       let newObject;
-      if ('highlight' in object || object.p1) {
-          if ('highlight' in object) {
+      if (object.p1) {
+          let isPhysics = 'highlight' in object;
+          if (isSelectList && (invert >> 1) & 1) isPhysics = !(invert & 1);
+          else isPhysics ^= invert & 1;
+          if (isPhysics) {
               newObject = scene.track.addPhysicsLine(object.p1.x + selectOffset.x, object.p1.y + selectOffset.y, object.p2.x + selectOffset.x, object.p2.y + selectOffset.y);
           } else {
               newObject = scene.track.addSceneryLine(object.p1.x + selectOffset.x, object.p1.y + selectOffset.y, object.p2.x + selectOffset.x, object.p2.y + selectOffset.y);
