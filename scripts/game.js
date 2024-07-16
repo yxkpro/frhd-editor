@@ -27959,7 +27959,10 @@ function load() {
       }
 
       singleHover(mousePos) {
-        if (isSelectList) return;
+        if (this.gamepad.isButtonDown("ctrl")) {
+          hovered = undefined;
+        }
+        if (isSelectList || this.gamepad.isButtonDown("ctrl")) return;
           let minDist = 1000,
               bestLine = undefined,
               adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
