@@ -19920,6 +19920,7 @@
         GameSettings.offsetPeteX = this.offsetPete.x;
         GameSettings.offsetPeteY = this.offsetPete.y;}
         this.offsetPete.y -= 1;
+        this.toolHandler.moveCameraTowardsMouse();
       }
 
       release() {
@@ -22216,6 +22217,7 @@
           this.p2.equ(this.mouse.touch.real);
           this.shouldDrawMetadata =
             this.toolHandler.gamepad.isButtonDown("ctrl");
+            this.toolHandler.moveCameraTowardsMouse();
         }
         release() {
           this.shouldDrawMetadata = !1;
@@ -27957,6 +27959,7 @@ function load() {
       }
 
       singleHover(mousePos) {
+        if (isSelectList) return;
           let minDist = 1000,
               bestLine = undefined,
               adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
