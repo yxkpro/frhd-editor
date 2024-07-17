@@ -27471,6 +27471,7 @@ function load() {
 
       
       keydown() {
+        if (this.gamepad.isButtonDown("ctrl")) hovered = undefined;
         if (!this.selected.length) return;
         const t = this.gamepad,
           r = t.isButtonDown("rotate"),
@@ -27879,6 +27880,7 @@ function load() {
       hold() {
           if (isHoverList) {
               this.p2 = this.mouse.touch.real.factor(1);
+              this.toolHandler.moveCameraTowardsMouse();
           }
       }
 
@@ -27942,13 +27944,14 @@ function load() {
                           this.p2.inc(dMouse);
                       }
                   }
+                  this.toolHandler.moveCameraTowardsMouse();
                   this.temp();
                   break shouldUpdate;
               }
 
               if (isHoverList) {
                   this.multiHover();
-              } else {
+              } else if (!(this.gamepad.isButtonDown("ctrl") || (isSelectList && pointrect(this.mouse.touch.real, this.p1, this.p2)))) {
                   this.singleHover(mousePos);
               }
           }
@@ -27959,10 +27962,6 @@ function load() {
       }
 
       singleHover(mousePos) {
-        if (this.gamepad.isButtonDown("ctrl")) {
-          hovered = undefined;
-        }
-        if (isSelectList || this.gamepad.isButtonDown("ctrl")) return;
           let minDist = 1000,
               bestLine = undefined,
               adjustedDist = 2 * HOVER_DIST / this.scene.camera.zoom;
