@@ -40,7 +40,8 @@
             if (hash) {
                 let trackName = hash.substring(1);
                 trackName = trackName.replace(/(\.\.\/)/g, '');
-                trackName = trackName.replace(/-/g, ' ');
+                if (trackName !== "1-4" || "covid-19 dreamin" || "demi-goddess demi-diety")
+                {trackName.replace(/-/g, ' ')};
                 trackName = decodeURIComponent(trackName);
                 GameSettings.trackName = trackName;
             }
