@@ -1338,9 +1338,12 @@
             delete GameManager.game.currentScene.objects[name];
             this.clearObject();
             GameManager.game.currentScene.saveObjects();
+            this.setState({ selectedObjectName: name });
           },
           getInitialState: function () {
-            return { open: false };
+            const currentScene = GameManager && GameManager.game && GameManager.game.currentScene;
+            const objectName = currentScene ? currentScene.objectName || '' : '';
+            return { open: false, selectedObjectName: objectName };
           },
           openOptions: function (e) {
             this.setState({ open: !this.state.open });
@@ -1365,6 +1368,7 @@
             delete GameManager.game.currentScene.objects[oldName];
             this.forceUpdate();
             GameManager.game.currentScene.saveObjects();
+            this.setState({ selectedObjectName: name });
           },
           changeRotateSensitivity: function (e) {
             var t = parseInt(e.target.value, 10);
@@ -1403,6 +1407,7 @@
             GameSettings.objectInvert = !1;
             GameManager.game.currentScene.transformObjects();
             GameManager.game.currentScene.toolHandler.options.object || this.setObject();
+            this.setState({ selectedObjectName: name });
           },
           renderRotateSensitivitySelect: function () {
             var e = GameSettings.rotateSensitivity,
@@ -1442,7 +1447,8 @@
             if (names.length) {
               return n.createElement("select", {
                 ref: "object",
-                defaultValue: selected ? GameManager.game.currentScene.objectName : '##default',
+                //defaultValue: selected ? GameManager.game.currentScene.objectName : '##default',
+                value: this.state.selectedObjectName,
                 onChange: this.changeObject,
                 onClick: this.stopClickPropagation
               }, !selected && n.createElement("option", {
