@@ -27454,6 +27454,7 @@ function load() {
           this.rotate = false;
           this.scale = false;
           this.flip = false;
+          this.options = s.scene.settings.select;
           // used to record the entire transformation that occurs
           this.transformation = [];
           // make a copy
@@ -27469,6 +27470,12 @@ function load() {
           return isHoverList ? hoverList : hovered ? [hovered] : [];
       }
 
+      setOption(t, e) {
+        this.options[t] = e;
+      }
+      getOptions() {
+        return this.options;
+      }
       
       keydown() {
         if (this.gamepad.isButtonDown("ctrl")) hovered = undefined;
@@ -28177,31 +28184,37 @@ function load() {
           if (sector == undefined) {
               return [minDist, bestLine];
           }
-          for (let i of sector.physicsLines) {
-              if (i.remove)
-                  continue;
-              let dist = linesdf(mousePos, i);
-              if (dist < minDist && i != tempSelect) {
-                  minDist = dist;
-                  bestLine = i;
+          if (this.options.types.physics) {
+              for (let i of sector.physicsLines) {
+                  if (i.remove)
+                      continue;
+                  let dist = linesdf(mousePos, i);
+                  if (dist < minDist && i != tempSelect) {
+                      minDist = dist;
+                      bestLine = i;
+                  }
               }
           }
-          for (let i of sector.sceneryLines) {
-              if (i.remove)
-                  continue;
-              let dist = linesdf(mousePos, i);
-              if (dist < minDist) {
-                  minDist = dist;
-                  bestLine = i;
+          if (this.options.types.scenery) {
+              for (let i of sector.sceneryLines) {
+                  if (i.remove)
+                      continue;
+                  let dist = linesdf(mousePos, i);
+                  if (dist < minDist) {
+                      minDist = dist;
+                      bestLine = i;
+                  }
               }
           }
-          for (let i of sector.powerups.all) {
-              if (i.remove)
-                  continue;
-              let dist = pointsdf(mousePos, i);
-              if (dist < minDist) {
-                  minDist = dist;
-                  bestLine = i;
+          if (this.options.types.powerups) {
+              for (let i of sector.powerups.all) {
+                  if (i.remove)
+                      continue;
+                  let dist = pointsdf(mousePos, i);
+                  if (dist < minDist) {
+                      minDist = dist;
+                      bestLine = i;
+                  }
               }
           }
           return [minDist, bestLine];
@@ -28218,30 +28231,41 @@ function load() {
               minVec.y <= sectorTrackPos.y &&
               maxVec.x >= sectorTrackPos.x + sectorSize &&
               maxVec.y >= sectorTrackPos.y + sectorSize) {
-              hoverPhysicsList[sectorPos.x][sectorPos.y] = sector.physicsLines.filter(i => !i.remove)
+              /*hoverPhysicsList[sectorPos.x][sectorPos.y] = sector.physicsLines.filter(i => !i.remove)
                   .concat(sector.powerups.all.filter(i => !i.remove));
               return hoverPhysicsList[sectorPos.x][sectorPos.y]
-                  .concat(sector.sceneryLines.filter(i => !i.remove));
+                  .concat(sector.sceneryLines.filter(i => !i.remove));//*/
+              hoverPhysicsList[sectorPos.x][sectorPos.y] = 
+                  (this.options.types.physics ? sector.physicsLines.filter(i => !i.remove) : [])
+                  .concat((this.options.types.powerups ? sector.powerups.all.filter(i => !i.remove) : []));
+              return hoverPhysicsList[sectorPos.x][sectorPos.y]
+                  .concat((this.options.types.scenery ? sector.sceneryLines.filter(i => !i.remove) : []));
           }
           let toReturn = [];
-          for (let i of sector.physicsLines) {
-              if (i.remove)
-                  continue;
-              if (rectcollide(i.p1, i.p2, minVec, maxVec))
-                  toReturn.push(i);
+          if (this.options.types.physics) {
+              for (let i of sector.physicsLines) {
+                  if (i.remove)
+                      continue;
+                  if (rectcollide(i.p1, i.p2, minVec, maxVec))
+                      toReturn.push(i);
+              }
           }
-          for (let i of sector.powerups.all) {
-              if (i.remove)
-                  continue;
-              if (pointrect(i, minVec, maxVec))
-                  toReturn.push(i);
+          if (this.options.types.powerups) {
+              for (let i of sector.powerups.all) {
+                  if (i.remove)
+                      continue;
+                  if (pointrect(i, minVec, maxVec))
+                      toReturn.push(i);
+              }
           }
           hoverPhysicsList[sectorPos.x][sectorPos.y] = [...toReturn];
-          for (let i of sector.sceneryLines) {
-              if (i.remove)
-                  continue;
-              if (rectcollide(i.p1, i.p2, minVec, maxVec))
-                  toReturn.push(i);
+          if (this.options.types.scenery) {
+              for (let i of sector.sceneryLines) {
+                  if (i.remove)
+                      continue;
+                  if (rectcollide(i.p1, i.p2, minVec, maxVec))
+                      toReturn.push(i);
+              }
           }
           return toReturn;
       }

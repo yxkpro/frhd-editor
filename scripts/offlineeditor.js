@@ -5843,7 +5843,8 @@
                     (u = n.createElement(s, { options: t }));
                   break;
                 case "select":
-                  var c = { display: "none" };
+                  (c.marginTop = -((3 * d) / 2)),
+                    (u = n.createElement(l, { options: t }));
                   break;
                 case "pete":
                   var c = { display: "none" };

@@ -136,6 +136,13 @@ var GameSettings = {
         "minTrailSpeed": 0.01,
         "trailSpeedSensitivity": 0.1,
     },
+    "select": {
+        "types": {
+            "scenery": true,
+            "physics": true,
+            "powerups": true
+        }
+    },
     "playHotkeys": {
         "up": [38],
         "down": [40],
