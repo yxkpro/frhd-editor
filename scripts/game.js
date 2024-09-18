@@ -17071,7 +17071,6 @@
             if (!old || old.type != 'transform' || old.pointer == 0)
                 this.actionTimelinePointer--;
             const t = this.actionTimeline[this.actionTimelinePointer];
-            console.log('Reverting', t);
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
@@ -17183,7 +17182,6 @@
             e = this.actionTimelinePointer;
           if (e < t.length) {
             const t = this.actionTimeline[e];
-            console.log('Applying', t);
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
@@ -27547,7 +27545,6 @@ function load() {
       
               this.center = vector(centerX, centerY);
               Object.assign(this.center, { centerX, centerY, width, height, minX, maxX, minY, maxY });
-              console.log('Center info:', this.center);
           }
       
           return this.center;
@@ -27777,7 +27774,6 @@ function load() {
               window.selected = hovered;
               isHoverSelected = true;
               if (selected) {
-                  console.log('selected', selected);
                   remove(selected);
                   let minDist = HOVER_DIST / this.scene.camera.zoom,
                       minPoint = undefined;
@@ -27813,7 +27809,6 @@ function load() {
                           }
                           if (connected) {
                               remove(connected);
-                              console.log('connected to', connected);
                           }
                       }
                       if (prevSelected != selected) {
@@ -27872,7 +27867,6 @@ function load() {
               //this.oldOffset = selectPoint ? pointOffset.factor(1) : selectOffset.factor(1);
           } else if (this.p1 && pointrect(this.mouse.touch.real, this.p1, this.p2)) {
               selected = undefined;
-              console.log('in rect!');
               //this.oldOffset = vector(selectOffset.x, selectOffset.y);
           } else {
               isSelectedUpdated = false;
@@ -28317,7 +28311,6 @@ function load() {
           if (!this.scene.state.playing || this.scene.state.paused || !isSelectIntangible) return;
           if (selected && !tempSelect?.length) {
               tempSelect = [recreate(selected)];
-              console.log('temporary', tempSelect);
               isSelectIntangible = false;
               if (connected) {
                   connected.remove = 0;
@@ -28364,23 +28357,17 @@ function load() {
               (move.x || move.y) && this.transformation.push(action);
               this.oldOffset = undefined;
           }
-          /*if (selectOffset.x || selectOffset.y) {
-              for (let i of this.selected) {
-                  if (i.name) {
-                      i.x += selectOffset.x;
-                      i.y += selectOffset.y;
-                  } else {
-                      i.p1.inc(selectOffset);
-                      i.p2.inc(selectOffset);
-                  }
-              }
-          }*/
           this.clearTemp();
           this.completeAction();
           if (selected) {
-              selected = recreate(selected);
+              while (selected.newVersion)
+                  selected = selected.newVersion;
+              selected = selected.remove ? recreate(selected) : selected;
           } else if (selectList) {
-              selectList = selectList.map(i => recreate(i));
+              selectList = selectList.map(i => {
+                  while (i.newVersion) i = i.newVersion; 
+                  return i.remove ? recreate(i) : i
+              });
           }
           for (let object of objects) {
               while (object.newVersion)
@@ -28396,8 +28383,6 @@ function load() {
                       selectList.push(object);
                   }
               } else {
-                  this.clearTemp();
-                  this.completeAction();
                   if (object == selected) {
                       selectList = [];
                   } else if (selected) {
@@ -28427,14 +28412,15 @@ function load() {
                   selected = undefined;
               }
           }
-          this.clearTemp();
-          this.completeAction();
           if (selectList.length == 1) {
               selected = selectList[0];
               selectList = [];
               isSelectList = false;
               if (selected.name) {
                   selected.oldPos = vector(selected.x, selected.y);
+              } else {
+                  selected.p1.equ(selected.p1Raw);
+                  selected.p2.equ(selected.p2Raw);
               }
               remove(selected);
               selectOffset = vector();
@@ -28445,8 +28431,8 @@ function load() {
               this.findCenter();
               let c = this.center;
               center = vector(c.centerX, c.centerY);
-              this.p1 = vector(c.minX, c.minY);
-              this.p2 = vector(c.maxX, c.maxY);
+              this.p1 = vector(c.minX - 5, c.minY - 5);
+              this.p2 = vector(c.maxX + 5, c.maxY + 5);
               selectPhysicsList = hoverPhysicsList;
               hoverList = [];
               selectOffset = vector();
@@ -28480,6 +28466,7 @@ function load() {
               isSelectList = false;
               this.resetCenter();
           }
+          this.update(true);
       }
   }
 
@@ -28778,7 +28765,6 @@ function load() {
 
   function recreate(object) {
       if (!object) return;
-      console.error('recreating', object);
       let newObject;
       if (object.p1) {
           let isPhysics = 'highlight' in object;
