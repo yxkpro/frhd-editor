@@ -27388,6 +27388,7 @@ function load() {
       inflectionOffset = vector(),
       center = vector(),
       isHoverList = false,
+      isHoverSelected = false,
       isSelectList = false,
       hoverPoint,
       selectPoint,
@@ -27545,7 +27546,7 @@ function load() {
               const centerY = minY + height / 2 + inflectionOffset.y;
       
               this.center = vector(centerX, centerY);
-              Object.assign(this.center, { centerX, centerY, width, height });
+              Object.assign(this.center, { centerX, centerY, width, height, minX, maxX, minY, maxY });
               console.log('Center info:', this.center);
           }
       
@@ -27651,8 +27652,6 @@ function load() {
           }
       }
       
-      
-      
       flipSelected(flipVertically) {
           let center = this.findCenter();
           const centerX = center.x;
@@ -27708,6 +27707,11 @@ function load() {
               (move.x || move.y) && this.transformation.push(action);
               this.oldOffset = undefined;
           }
+          if (this.gamepad.isButtonDown("alt") && hovered) {
+              this.toggleSelect(hovered);
+              hovered = undefined;
+              return;
+          }
           if (hovered && hovered === tempSelect?.[0]) {
               hovered = selected;
               window.hovered = hovered;
@@ -27721,7 +27725,7 @@ function load() {
               }
           }
           // selecting a different line (or no line at all) when a line is currently selected
-          if (selected && selected != hovered && !this.gamepad.isButtonDown("alt")) {
+          if (selected && selected != hovered) {
               this.clearTemp();
               this.completeAction();
               let a = [recreate(selected)];
@@ -27738,13 +27742,6 @@ function load() {
                   }
                   selectOffset = vector();
               } else if (pointOffset.x || pointOffset.y) {
-                  let pointName = (selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2',
-                      points = [pointName],
-                      objects = [selected];
-                  if (connected) {
-                      points.push(connectedPoint);
-                      objects.push(connected);
-                  }
                   pointOffset = vector();
               }
               connected = undefined;
@@ -27757,16 +27754,13 @@ function load() {
               }
               this.clearTemp();
               this.completeAction();
-              selectList.forEach(s => recreate(s));
+              selectList = selectList.map(s => recreate(s));
+              selectOffset = vector();
           }
           if (hovered) {
               // TO-DO: find a better place to put / store this
               let oldConnected = [connected, connectedPoint],
                   prevSelected = selected;
-              if (this.gamepad.isButtonDown("alt")) {
-                  this.toggleSelect(hovered);
-                  return;
-              }
               if (hovered != selected)
                   selectOffset = vector();
               else {
@@ -27781,6 +27775,7 @@ function load() {
               selected = hovered;
               isHoverList = false;
               window.selected = hovered;
+              isHoverSelected = true;
               if (selected) {
                   console.log('selected', selected);
                   remove(selected);
@@ -27882,6 +27877,8 @@ function load() {
           } else {
               isSelectedUpdated = false;
               isHoverList = true;
+              // selected gets recreated here, so we don't need to worry
+              isHoverSelected = false;
               hoverList = [];
               this.p1 = this.mouse.touch.real.factor(1);
               this.p2 = this.mouse.touch.real.factor(1);
@@ -27962,8 +27959,13 @@ function load() {
 
               if (isHoverList) {
                   this.multiHover();
-              } else if (this.gamepad.isButtonDown("shift") || !(this.gamepad.isButtonDown("ctrl") || (isSelectList && pointrect(this.mouse.touch.real, this.p1, this.p2)))) {
+              } else if (this.gamepad.isButtonDown("alt") || 
+                        !(this.gamepad.isButtonDown("ctrl") ||
+                          (isSelectList && pointrect(this.mouse.touch.real, this.p1, this.p2))
+                        )) {
                   this.singleHover(mousePos);
+              } else if (pointrect(this.mouse.touch.real, this.p1, this.p2)) {
+                  hovered = undefined;
               }
           }
           if (force) return;
@@ -27980,10 +27982,22 @@ function load() {
           if (selected) {
               let dist = selected.p1 ?
                   linesdf(mousePos.sub(selectOffset), selected) :
-              pointsdf(mousePos.sub(selectOffset), selected);
+                  pointsdf(mousePos.sub(selectOffset), selected);
               if (dist < minDist) {
                   minDist = dist;
                   bestLine = selected;
+                  isHoverSelected = true;
+              }
+          } else if (this.gamepad.isButtonDown("alt") && isSelectList) {
+              for (let i of selectList) {
+                  let dist = i.p1 ?
+                      linesdf(mousePos.sub(selectOffset), i) :
+                      pointsdf(mousePos.sub(selectOffset), i);
+                  if (dist < minDist) {
+                      minDist = dist;
+                      bestLine = i;
+                      isHoverSelected = true;
+                  }
               }
           }
 
@@ -27994,6 +28008,7 @@ function load() {
           let currentSectorData = this.testSectorSingle(sectorPos);
           if (currentSectorData[0] < minDist) {
               [minDist, bestLine] = currentSectorData;
+              isHoverSelected = false;
           }
           // this is all to figure out which sectors we even need to check
           // i.e. within range to have a line that can possibly be close enough
@@ -28024,6 +28039,7 @@ function load() {
               let sectorData = this.testSectorSingle(sectorPos.add(i));
               if (sectorData[0] < minDist) {
                   [minDist, bestLine] = sectorData;
+                  isHoverSelected = false;
               }
           }
           [frameMinDist, frameBestLine] = [minDist, bestLine];
@@ -28084,6 +28100,8 @@ function load() {
           if (isHoverList) {
               if (this.gamepad.isButtonDown("alt")) {
                   this.toggleSelect(hoverList);
+                  hoverList = [];
+                  isHoverList = false;
                   return;
               }
               selected = undefined;
@@ -28337,7 +28355,36 @@ function load() {
               objects = [objects];
               alsoRemove = true;
           }
+          if (this.oldOffset) {
+              let move = selectPoint ? pointOffset.sub(this.oldOffset) : selectOffset.sub(this.oldOffset),
+                  action = {
+                      type: 'move',
+                      offset: move,
+                  };
+              (move.x || move.y) && this.transformation.push(action);
+              this.oldOffset = undefined;
+          }
+          /*if (selectOffset.x || selectOffset.y) {
+              for (let i of this.selected) {
+                  if (i.name) {
+                      i.x += selectOffset.x;
+                      i.y += selectOffset.y;
+                  } else {
+                      i.p1.inc(selectOffset);
+                      i.p2.inc(selectOffset);
+                  }
+              }
+          }*/
+          this.clearTemp();
+          this.completeAction();
+          if (selected) {
+              selected = recreate(selected);
+          } else if (selectList) {
+              selectList = selectList.map(i => recreate(i));
+          }
           for (let object of objects) {
+              while (object.newVersion)
+                  object = object.newVersion;
               if (isSelectList) {
                   let index = selectList.indexOf(object);
                   if (index >= 0) {
@@ -28345,6 +28392,7 @@ function load() {
                           selectList.splice(index, 1);
                       }
                   } else {
+                      remove(object);
                       selectList.push(object);
                   }
               } else {
@@ -28352,10 +28400,11 @@ function load() {
                   this.completeAction();
                   if (object == selected) {
                       selectList = [];
-                      recreate(selected);
-                  } else {
+                  } else if (selected) {
                       selectList = [selected, object];
                       remove(selected);
+                  } else {
+                      selectList = [object];
                   }
                   if (selectPoint && connected) {
                       remove(connected);
@@ -28370,30 +28419,34 @@ function load() {
                       }
                       selectOffset = vector();
                   } else if (pointOffset.x || pointOffset.y) {
-                      let pointName = (selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2',
-                          points = [pointName];
-                          //objects = [selected];
-                      if (connected) {
-                          points.push(connectedPoint);
-                          //objects.push(connected);
-                      }
                       pointOffset = vector();
                   }
                   connected = undefined;
                   shouldCopy = true;
                   isSelectList = true;
+                  selected = undefined;
               }
           }
           this.clearTemp();
           this.completeAction();
-          if (selectList.length) {
+          if (selectList.length == 1) {
+              selected = selectList[0];
+              selectList = [];
+              isSelectList = false;
+              if (selected.name) {
+                  selected.oldPos = vector(selected.x, selected.y);
+              }
+              remove(selected);
+              selectOffset = vector();
+          }
+          else if (selectList.length) {
               inflectionOffset = vector();
               this.resetCenter();
               this.findCenter();
               let c = this.center;
               center = vector(c.centerX, c.centerY);
-              this.p1 = vector(c.centerX - c.width / 2, c.centerY - c.height / 2);
-              this.p2 = vector(c.centerX + c.width / 2, c.centerY + c.height / 2);
+              this.p1 = vector(c.minX, c.minY);
+              this.p2 = vector(c.maxX, c.maxY);
               selectPhysicsList = hoverPhysicsList;
               hoverList = [];
               selectOffset = vector();
@@ -28619,7 +28672,8 @@ function load() {
       // render hovered
       if (selectTool.hovered.length && scene.toolHandler.currentTool === 'select') {
           if (hoverPoint) {
-              let isSelect = hovered == selected,
+              //let isSelect = hovered == selected,
+              let isSelect = isHoverSelected,
                   rsp = hoverPoint.add(isSelect ? selectOffset : vector()).toScreen(scene);
               ctx.beginPath();
               ctx.strokeStyle = '#1884cf';
@@ -28634,7 +28688,7 @@ function load() {
                       ctx.lineWidth = Math.max(2 * zoom, 1);
                       ctx.strokeStyle = '#1884cf';
                       ctx.beginPath();
-                      let isSelect = hovered == selected,
+                      let isSelect = isHoverSelected,
                           rp1 = hovered.p1.add(isSelect ? selectOffset : vector()).toScreen(scene),
                           rp2 = hovered.p2.add(isSelect ? selectOffset : vector()).toScreen(scene);
                       ctx.moveTo(rp1.x, rp1.y);
@@ -28643,10 +28697,10 @@ function load() {
                   } else {
                       let data = powerups[hovered.name];
                       if (!data) continue;
-                      let isSelect = hovered == selected,
+                      let isSelect = isHoverSelected,
                           camera = scene.camera,
                           //pos = camera.position.factor(0).add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
-                          pos = vector().add(hovered).toScreen(scene),
+                          pos = vector().add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
                           size = data[0] / zoom;
                       ctx.globalAlpha = 0.5;
                       ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -28657,7 +28711,7 @@ function load() {
                   }
               }
               if (!isHoverList && hovered.p1) {
-                  let isSelect = hovered == selected,
+                  let isSelect = isHoverSelected,
                       rp1 = hovered.p1.add(isSelect ? selectOffset : vector()).toScreen(scene),
                       rp2 = hovered.p2.add(isSelect ? selectOffset : vector()).toScreen(scene);
                   //handles
@@ -28724,6 +28778,7 @@ function load() {
 
   function recreate(object) {
       if (!object) return;
+      console.error('recreating', object);
       let newObject;
       if (object.p1) {
           let isPhysics = 'highlight' in object;
