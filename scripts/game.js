@@ -23023,7 +23023,7 @@
               (n.push(this.id),
               s.setTempVehicle(
                 "BALLOON",
-                this.time * r.settings.drawFPS * (this.scene.game.mod.getVar("slowmo") ? 2 : 1),
+                this.time * r.settings.drawFPS,
                 { x: this.x, y: this.y },
                 e.dir
               ),
