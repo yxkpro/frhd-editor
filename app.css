@@ -1995,7 +1995,8 @@ html.fullscreen #main_page {
     top: 50%;
     background: #FFF;
     opacity: .95;
-    position: absolute
+    position: absolute;
+    transform: scale(1);
 }
 
 .leftMenu {
@@ -2009,6 +2010,21 @@ html.fullscreen #main_page {
     right: 0;
     border: 1px solid #000;
     border-right: 0
+}
+
+@media (max-height: 720px) {
+    .leftMenu,
+    .rightMenu {
+        transform: scale(0.8);
+    }
+
+    .leftMenu {
+        left: -5px;
+    }
+
+    .rightMenu {
+        right: -5px;
+    }
 }
 
 .editorDialog {
