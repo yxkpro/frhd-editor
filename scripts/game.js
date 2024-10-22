@@ -17071,7 +17071,6 @@
             if (!old || old.type != 'transform' || old.pointer == 0)
                 this.actionTimelinePointer--;
             const t = this.actionTimeline[this.actionTimelinePointer];
-            console.log('Reverting', t);
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
@@ -17183,7 +17182,6 @@
             e = this.actionTimelinePointer;
           if (e < t.length) {
             const t = this.actionTimeline[e];
-            console.log('Applying', t);
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
@@ -27389,6 +27387,7 @@ function load() {
       inflectionOffset = vector(),
       center = vector(),
       isHoverList = false,
+      isHoverSelected = false,
       isSelectList = false,
       hoverPoint,
       selectPoint,
@@ -27455,6 +27454,7 @@ function load() {
           this.rotate = false;
           this.scale = false;
           this.flip = false;
+          this.options = s.scene.settings.select;
           // used to record the entire transformation that occurs
           this.transformation = [];
           // make a copy
@@ -27470,6 +27470,12 @@ function load() {
           return isHoverList ? hoverList : hovered ? [hovered] : [];
       }
 
+      setOption(t, e) {
+        this.options[t] = e;
+      }
+      getOptions() {
+        return this.options;
+      }
       
       keydown() {
         if (this.gamepad.isButtonDown("ctrl")) hovered = undefined;
@@ -27539,8 +27545,7 @@ function load() {
               const centerY = minY + height / 2 + inflectionOffset.y;
       
               this.center = vector(centerX, centerY);
-              Object.assign(this.center, { centerX, centerY, width, height });
-              console.log('Center info:', this.center);
+              Object.assign(this.center, { centerX, centerY, width, height, minX, maxX, minY, maxY });
           }
       
           return this.center;
@@ -27645,8 +27650,6 @@ function load() {
           }
       }
       
-      
-      
       flipSelected(flipVertically) {
           let center = this.findCenter();
           const centerX = center.x;
@@ -27702,6 +27705,11 @@ function load() {
               (move.x || move.y) && this.transformation.push(action);
               this.oldOffset = undefined;
           }
+          if (this.gamepad.isButtonDown("alt") && hovered) {
+              this.toggleSelect(hovered);
+              hovered = undefined;
+              return;
+          }
           if (hovered && hovered === tempSelect?.[0]) {
               hovered = selected;
               window.hovered = hovered;
@@ -27732,13 +27740,6 @@ function load() {
                   }
                   selectOffset = vector();
               } else if (pointOffset.x || pointOffset.y) {
-                  let pointName = (selectPoint.x == selected.p1.x && selectPoint.y == selected.p1.y) ? 'p1' : 'p2',
-                      points = [pointName],
-                      objects = [selected];
-                  if (connected) {
-                      points.push(connectedPoint);
-                      objects.push(connected);
-                  }
                   pointOffset = vector();
               }
               connected = undefined;
@@ -27751,7 +27752,8 @@ function load() {
               }
               this.clearTemp();
               this.completeAction();
-              selectList.forEach(s => recreate(s));
+              selectList = selectList.map(s => recreate(s));
+              selectOffset = vector();
           }
           if (hovered) {
               // TO-DO: find a better place to put / store this
@@ -27771,8 +27773,8 @@ function load() {
               selected = hovered;
               isHoverList = false;
               window.selected = hovered;
+              isHoverSelected = true;
               if (selected) {
-                  console.log('selected', selected);
                   remove(selected);
                   let minDist = HOVER_DIST / this.scene.camera.zoom,
                       minPoint = undefined;
@@ -27808,7 +27810,6 @@ function load() {
                           }
                           if (connected) {
                               remove(connected);
-                              console.log('connected to', connected);
                           }
                       }
                       if (prevSelected != selected) {
@@ -27867,11 +27868,12 @@ function load() {
               //this.oldOffset = selectPoint ? pointOffset.factor(1) : selectOffset.factor(1);
           } else if (this.p1 && pointrect(this.mouse.touch.real, this.p1, this.p2)) {
               selected = undefined;
-              console.log('in rect!');
               //this.oldOffset = vector(selectOffset.x, selectOffset.y);
           } else {
               isSelectedUpdated = false;
               isHoverList = true;
+              // selected gets recreated here, so we don't need to worry
+              isHoverSelected = false;
               hoverList = [];
               this.p1 = this.mouse.touch.real.factor(1);
               this.p2 = this.mouse.touch.real.factor(1);
@@ -27952,8 +27954,13 @@ function load() {
 
               if (isHoverList) {
                   this.multiHover();
-              } else if (!(this.gamepad.isButtonDown("ctrl") || (isSelectList && pointrect(this.mouse.touch.real, this.p1, this.p2)))) {
+              } else if (this.gamepad.isButtonDown("alt") || 
+                        !(this.gamepad.isButtonDown("ctrl") ||
+                          (isSelectList && pointrect(this.mouse.touch.real, this.p1, this.p2))
+                        )) {
                   this.singleHover(mousePos);
+              } else if (pointrect(this.mouse.touch.real, this.p1, this.p2)) {
+                  hovered = undefined;
               }
           }
           if (force) return;
@@ -27970,10 +27977,22 @@ function load() {
           if (selected) {
               let dist = selected.p1 ?
                   linesdf(mousePos.sub(selectOffset), selected) :
-              pointsdf(mousePos.sub(selectOffset), selected);
+                  pointsdf(mousePos.sub(selectOffset), selected);
               if (dist < minDist) {
                   minDist = dist;
                   bestLine = selected;
+                  isHoverSelected = true;
+              }
+          } else if (this.gamepad.isButtonDown("alt") && isSelectList) {
+              for (let i of selectList) {
+                  let dist = i.p1 ?
+                      linesdf(mousePos.sub(selectOffset), i) :
+                      pointsdf(mousePos.sub(selectOffset), i);
+                  if (dist < minDist) {
+                      minDist = dist;
+                      bestLine = i;
+                      isHoverSelected = true;
+                  }
               }
           }
 
@@ -27984,6 +28003,7 @@ function load() {
           let currentSectorData = this.testSectorSingle(sectorPos);
           if (currentSectorData[0] < minDist) {
               [minDist, bestLine] = currentSectorData;
+              isHoverSelected = false;
           }
           // this is all to figure out which sectors we even need to check
           // i.e. within range to have a line that can possibly be close enough
@@ -28014,6 +28034,7 @@ function load() {
               let sectorData = this.testSectorSingle(sectorPos.add(i));
               if (sectorData[0] < minDist) {
                   [minDist, bestLine] = sectorData;
+                  isHoverSelected = false;
               }
           }
           [frameMinDist, frameBestLine] = [minDist, bestLine];
@@ -28072,6 +28093,12 @@ function load() {
               this.oldOffset = undefined;
           }
           if (isHoverList) {
+              if (this.gamepad.isButtonDown("alt")) {
+                  this.toggleSelect(hoverList);
+                  hoverList = [];
+                  isHoverList = false;
+                  return;
+              }
               selected = undefined;
               selectPoint = undefined;
               isHoverList = false;
@@ -28178,31 +28205,37 @@ function load() {
           if (sector == undefined) {
               return [minDist, bestLine];
           }
-          for (let i of sector.physicsLines) {
-              if (i.remove)
-                  continue;
-              let dist = linesdf(mousePos, i);
-              if (dist < minDist && i != tempSelect) {
-                  minDist = dist;
-                  bestLine = i;
+          if (this.options.types.physics) {
+              for (let i of sector.physicsLines) {
+                  if (i.remove)
+                      continue;
+                  let dist = linesdf(mousePos, i);
+                  if (dist < minDist && i != tempSelect) {
+                      minDist = dist;
+                      bestLine = i;
+                  }
               }
           }
-          for (let i of sector.sceneryLines) {
-              if (i.remove)
-                  continue;
-              let dist = linesdf(mousePos, i);
-              if (dist < minDist) {
-                  minDist = dist;
-                  bestLine = i;
+          if (this.options.types.scenery) {
+              for (let i of sector.sceneryLines) {
+                  if (i.remove)
+                      continue;
+                  let dist = linesdf(mousePos, i);
+                  if (dist < minDist) {
+                      minDist = dist;
+                      bestLine = i;
+                  }
               }
           }
-          for (let i of sector.powerups.all) {
-              if (i.remove)
-                  continue;
-              let dist = pointsdf(mousePos, i);
-              if (dist < minDist) {
-                  minDist = dist;
-                  bestLine = i;
+          if (this.options.types.powerups) {
+              for (let i of sector.powerups.all) {
+                  if (i.remove)
+                      continue;
+                  let dist = pointsdf(mousePos, i);
+                  if (dist < minDist) {
+                      minDist = dist;
+                      bestLine = i;
+                  }
               }
           }
           return [minDist, bestLine];
@@ -28219,30 +28252,37 @@ function load() {
               minVec.y <= sectorTrackPos.y &&
               maxVec.x >= sectorTrackPos.x + sectorSize &&
               maxVec.y >= sectorTrackPos.y + sectorSize) {
-              hoverPhysicsList[sectorPos.x][sectorPos.y] = sector.physicsLines.filter(i => !i.remove)
-                  .concat(sector.powerups.all.filter(i => !i.remove));
+              hoverPhysicsList[sectorPos.x][sectorPos.y] = 
+                  (this.options.types.physics ? sector.physicsLines.filter(i => !i.remove) : [])
+                  .concat((this.options.types.powerups ? sector.powerups.all.filter(i => !i.remove) : []));
               return hoverPhysicsList[sectorPos.x][sectorPos.y]
-                  .concat(sector.sceneryLines.filter(i => !i.remove));
+                  .concat((this.options.types.scenery ? sector.sceneryLines.filter(i => !i.remove) : []));
           }
           let toReturn = [];
-          for (let i of sector.physicsLines) {
-              if (i.remove)
-                  continue;
-              if (rectcollide(i.p1, i.p2, minVec, maxVec))
-                  toReturn.push(i);
+          if (this.options.types.physics) {
+              for (let i of sector.physicsLines) {
+                  if (i.remove)
+                      continue;
+                  if (rectcollide(i.p1, i.p2, minVec, maxVec))
+                      toReturn.push(i);
+              }
           }
-          for (let i of sector.powerups.all) {
-              if (i.remove)
-                  continue;
-              if (pointrect(i, minVec, maxVec))
-                  toReturn.push(i);
+          if (this.options.types.powerups) {
+              for (let i of sector.powerups.all) {
+                  if (i.remove)
+                      continue;
+                  if (pointrect(i, minVec, maxVec))
+                      toReturn.push(i);
+              }
           }
           hoverPhysicsList[sectorPos.x][sectorPos.y] = [...toReturn];
-          for (let i of sector.sceneryLines) {
-              if (i.remove)
-                  continue;
-              if (rectcollide(i.p1, i.p2, minVec, maxVec))
-                  toReturn.push(i);
+          if (this.options.types.scenery) {
+              for (let i of sector.sceneryLines) {
+                  if (i.remove)
+                      continue;
+                  if (rectcollide(i.p1, i.p2, minVec, maxVec))
+                      toReturn.push(i);
+              }
           }
           return toReturn;
       }
@@ -28272,7 +28312,6 @@ function load() {
           if (!this.scene.state.playing || this.scene.state.paused || !isSelectIntangible) return;
           if (selected && !tempSelect?.length) {
               tempSelect = [recreate(selected)];
-              console.log('temporary', tempSelect);
               isSelectIntangible = false;
               if (connected) {
                   connected.remove = 0;
@@ -28301,6 +28340,134 @@ function load() {
                   }
               }
           }
+      }
+
+      toggleSelect(objects) {
+          // at least for now, support passing single objects individually
+          let alsoRemove = false;
+          if (!('length' in objects)) {
+              objects = [objects];
+              alsoRemove = true;
+          }
+          if (this.oldOffset) {
+              let move = selectPoint ? pointOffset.sub(this.oldOffset) : selectOffset.sub(this.oldOffset),
+                  action = {
+                      type: 'move',
+                      offset: move,
+                  };
+              (move.x || move.y) && this.transformation.push(action);
+              this.oldOffset = undefined;
+          }
+          this.clearTemp();
+          this.completeAction();
+          if (selected) {
+              while (selected.newVersion)
+                  selected = selected.newVersion;
+              selected = selected.remove ? recreate(selected) : selected;
+          } else if (selectList) {
+              selectList = selectList.map(i => {
+                  while (i.newVersion) i = i.newVersion; 
+                  return i.remove ? recreate(i) : i
+              });
+          }
+          for (let object of objects) {
+              while (object.newVersion)
+                  object = object.newVersion;
+              if (isSelectList) {
+                  let index = selectList.indexOf(object);
+                  if (index >= 0) {
+                      if (alsoRemove) {
+                          selectList.splice(index, 1);
+                      }
+                  } else {
+                      remove(object);
+                      selectList.push(object);
+                  }
+              } else {
+                  if (object == selected) {
+                      selectList = [];
+                  } else if (selected) {
+                      selectList = [selected, object];
+                      remove(selected);
+                  } else {
+                      selectList = [object];
+                  }
+                  if (selectPoint && connected) {
+                      remove(connected);
+                      recreate(connected);
+                      connected = connected.newVersion;
+                  }
+                  if (selectOffset.x || selectOffset.y) {
+                      // idk man this is wack
+                      if (selected.p1) {
+                          selected.p1.inc(selectOffset);
+                          selected.p2.inc(selectOffset);
+                      }
+                      selectOffset = vector();
+                  } else if (pointOffset.x || pointOffset.y) {
+                      pointOffset = vector();
+                  }
+                  connected = undefined;
+                  shouldCopy = true;
+                  isSelectList = true;
+                  selected = undefined;
+              }
+          }
+          if (selectList.length == 1) {
+              selected = selectList[0];
+              selectList = [];
+              isSelectList = false;
+              if (selected.name) {
+                  selected.oldPos = vector(selected.x, selected.y);
+              } else {
+                  selected.p1.equ(selected.p1Raw);
+                  selected.p2.equ(selected.p2Raw);
+              }
+              remove(selected);
+              selectOffset = vector();
+          }
+          else if (selectList.length) {
+              inflectionOffset = vector();
+              this.resetCenter();
+              this.findCenter();
+              let c = this.center;
+              center = vector(c.centerX, c.centerY);
+              this.p1 = vector(c.minX - 5, c.minY - 5);
+              this.p2 = vector(c.maxX + 5, c.maxY + 5);
+              selectPhysicsList = hoverPhysicsList;
+              hoverList = [];
+              selectOffset = vector();
+              if (this.scene.settings.copy == true) {
+                  let copied = [],
+                      powerups = [];
+                  for (let i of selectList) {
+                      if (i.name) {
+                          powerups.push(i.getCode());
+                      } else {
+                          copied.push(recreate(i));
+                      }
+                  }
+                  copied.push(...this.scene.track.addPowerups(powerups));
+                  this.toolHandler.addActionToTimeline({type: 'add', objects: copied});
+              }
+              for (let i of selectList) {
+                  if (i.name) {
+                      i.oldPos = vector(i.x, i.y);
+                  } else {
+                      i.p1.equ(i.p1Raw);
+                      i.p2.equ(i.p2Raw);
+                  }
+                  remove(i);
+              }
+              this.resetCenter();
+              this.findCenter();
+              this.temp();
+          } else {
+              this.p2.equ({x: NaN, y: NaN});
+              isSelectList = false;
+              this.resetCenter();
+          }
+          this.update(true);
       }
   }
 
@@ -28493,7 +28660,8 @@ function load() {
       // render hovered
       if (selectTool.hovered.length && scene.toolHandler.currentTool === 'select') {
           if (hoverPoint) {
-              let isSelect = hovered == selected,
+              //let isSelect = hovered == selected,
+              let isSelect = isHoverSelected,
                   rsp = hoverPoint.add(isSelect ? selectOffset : vector()).toScreen(scene);
               ctx.beginPath();
               ctx.strokeStyle = '#1884cf';
@@ -28508,7 +28676,7 @@ function load() {
                       ctx.lineWidth = Math.max(2 * zoom, 1);
                       ctx.strokeStyle = '#1884cf';
                       ctx.beginPath();
-                      let isSelect = hovered == selected,
+                      let isSelect = isHoverSelected,
                           rp1 = hovered.p1.add(isSelect ? selectOffset : vector()).toScreen(scene),
                           rp2 = hovered.p2.add(isSelect ? selectOffset : vector()).toScreen(scene);
                       ctx.moveTo(rp1.x, rp1.y);
@@ -28517,10 +28685,10 @@ function load() {
                   } else {
                       let data = powerups[hovered.name];
                       if (!data) continue;
-                      let isSelect = hovered == selected,
+                      let isSelect = isHoverSelected,
                           camera = scene.camera,
                           //pos = camera.position.factor(0).add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
-                          pos = vector().add(hovered).toScreen(scene),
+                          pos = vector().add(hovered).add(isSelect ? selectOffset : vector()).toScreen(scene),
                           size = data[0] / zoom;
                       ctx.globalAlpha = 0.5;
                       ctx.fillStyle = data[1 + !!polyMod?.getVar("crPowerups")];
@@ -28531,7 +28699,7 @@ function load() {
                   }
               }
               if (!isHoverList && hovered.p1) {
-                  let isSelect = hovered == selected,
+                  let isSelect = isHoverSelected,
                       rp1 = hovered.p1.add(isSelect ? selectOffset : vector()).toScreen(scene),
                       rp2 = hovered.p2.add(isSelect ? selectOffset : vector()).toScreen(scene);
                   //handles
