@@ -26667,13 +26667,14 @@
               "The game will no longer lose focus if you click elsewhere on the screen.",
           },
           */
+          /*
           {
             key: "seeGhost",
             title: "See Ghost",
             description:
               "Shows a replay for the track if available.",
             //disables: ["slowmo", "rewind", "oldTimer"],
-          },
+          },*/
           {
             key: "slowmo",
             title: "Slow-Mode",
@@ -27006,7 +27007,7 @@
       }
       let xr = document.createElement("template");
       (xr.innerHTML =
-        '<div class="mod-menu-container"> <div style="display:grid;grid-template-columns:auto auto auto"> <div class="mod-menu"> </div> <div class="mod-v-seperator"></div> <div class="mod-description-container"> <div class="mod-setting-description invisible"></div> <div class="mod-title" onclick=\'window.open("https://community.freeriderhd.com/threads/14964/")\'> <div style="flex:1"></div> <div> <p style="font-family:monospace;font-size:14pt">Free Rider<br><span style="font-size:10pt">track editor v1.1</span></p><br><p style="font-family:monospace;font-size:8pt">credits:<br>Ness<br>Pie42<br>Polygon<br>Calculus<br>Char</div></p> <div style="flex:1"></div> </div> </div> </div> </div> '),
+        '<div class="mod-menu-container"> <div style="display:grid;grid-template-columns:auto auto auto"> <div class="mod-menu"> </div> <div class="mod-v-seperator"></div> <div class="mod-description-container"> <div class="mod-setting-description invisible"></div> <div class="mod-title" onclick=\'window.open("https://community.freeriderhd.com/threads/14964/")\'> <div style="flex:0.5"></div> <div> <p style="font-family:monospace;font-size:14pt">Free Rider<br><span style="font-size:10pt">track editor v1.1</span></p><br><p style="font-family:monospace;font-size:8pt">credits:<br>Ness<br>Pie42<br>Polygon<br>Calculus<br>Char</div></p><br><p style="font-family:monospace;font-size:8pt">click for app info</div></p> <div style="flex:1"></div> </div> </div> </div> </div> '),
         (xr = xr.content);
       const br = {
         bool: (t, e, s, i) => new lr(t, s[e], i),
