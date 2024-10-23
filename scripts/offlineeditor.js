@@ -1354,6 +1354,10 @@
             }
           },
           renameObject: function () {
+            if (!GameManager.game.currentScene.objectName || 
+              Object.keys(GameManager.game.currentScene.objects).length === 0) {
+            return;
+            }
             let oldName = GameManager.game.currentScene.objectName,
               name = prompt("What would you like to name the object?");
             if (!name || name == oldName) return;
@@ -1494,7 +1498,7 @@
               className: "name"
             }, "Object", o), this.state.open ? 
             n.createElement("div", {}, 
-            n.createElement("span", {}, this.renderRotateSensitivitySelect()), 
+            Object.keys(GameManager.game.currentScene.objects).length !== 0 ? n.createElement("span", {}, this.renderRotateSensitivitySelect()) : null, 
             //n.createElement("span", {}, this.renderScaleSensitivitySelect()),
             n.createElement("span", {}, this.renderObjectSelect()),
               n.createElement("span", {},
@@ -1502,30 +1506,31 @@
                   className: "margin",
                   onClick: (event) => {
                     event.stopPropagation();
-                    this.renameObject();
-                  }
-                }, "RENAME"),
-                n.createElement("button", {
-                  className: "margin",
-                  onClick: (event) => {
-                    event.stopPropagation();
                     this.importObject(event);
                   }
-                }, "IMPORT"),
-                n.createElement("button", {
-                  className: "margin",
-                  onClick: (event) => {
-                    event.stopPropagation();
-                    this.saveObject(event);
-                  }
-                }, "EXPORT"),
-                n.createElement("button", {
-                  className: "margin",
-                  onClick: (event) => {
-                    event.stopPropagation();
-                    this.deleteObject(event);
-                  }
-                }, "REMOVE"))) : null);
+                }, "IMPORT")),
+                Object.keys(GameManager.game.currentScene.objects).length !== 0 ? n.createElement("span", {},
+                  n.createElement("button", {
+                    className: "margin",
+                    onClick: (event) => {
+                      event.stopPropagation();
+                      this.saveObject(event);
+                    }
+                  }, "EXPORT"),
+                  n.createElement("button", {
+                    className: "margin",
+                    onClick: (event) => {
+                      event.stopPropagation();
+                      this.renameObject();
+                    }
+                  }, "RENAME"),
+                  n.createElement("button", {
+                    className: "margin",
+                    onClick: (event) => {
+                      event.stopPropagation();
+                      this.deleteObject(event);
+                    }
+                  }, "REMOVE")) : null) : null)
             
           }
         });
