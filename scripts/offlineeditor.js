@@ -1464,7 +1464,7 @@
                 value: name
               }, name)));
             } else {
-              return n.createElement("span", {}, " (EMPTY)");
+              return n.createElement("span", {}, " ");
             }
           },
           stopClickPropagation: function (e) {
