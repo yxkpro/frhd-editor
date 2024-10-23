@@ -25085,7 +25085,7 @@
                 this.objectScenery = parsedLines.sceneryLines;
                 this.objectPowerups = parsedLines.powerups;
                 this.objectName = parsedLines.extra;
-                if (this.objectName === "BMX" || this.objectName === "MTB") {
+                if (this.objectName === "BMX" || this.objectName === "MTB" || !this.objectName) {
                   this.objectName = `object-${this.objectNamegen++}`;
                 }
                 if (this.objects[this.objectName]) {
