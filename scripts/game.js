@@ -24948,6 +24948,7 @@
             save[i] = this.getObjectCode(this.objects[i]) + i;
           }
           localStorage.setItem("objects", JSON.stringify(save));
+          this.stateChanged();
         }
         trackComplete() {
           this.verified = !this.track.dirty;
