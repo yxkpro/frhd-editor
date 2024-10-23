@@ -932,6 +932,11 @@
               GameManager.game.currentScene.objectPhysics = objectPhysics;
               GameManager.game.currentScene.objectScenery = objectScenery;
               GameManager.game.currentScene.objectPowerups = objectPowerups;
+              let name;
+              while (!name || GameManager.game.currentScene.objects[name])
+                name = `object-${GameManager.game.currentScene.objectNamegen++}`;
+              GameManager.game.currentScene.objectName = name;
+              GameManager.game.currentScene.objects[name] = {objectPhysics, objectScenery, objectPowerups};
               GameSettings.objectRotate = 0;
               GameSettings.objectScale = 1;
               GameSettings.objectOffsetX = 0;
@@ -940,6 +945,7 @@
               GameSettings.objectFlipY = !1;
               GameSettings.objectInvert = !1;
               GameManager.game.currentScene.transformObjects();
+              GameManager.game.currentScene.saveObjects();
               GameSettings.customBrush = true;
               !GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
           },
@@ -1323,11 +1329,21 @@
             GameManager.game.currentScene.objectPhysics = [];
             GameManager.game.currentScene.objectScenery = [];
             GameManager.game.currentScene.objectPowerups = [];
+            GameManager.game.currentScene.objectName = "";
             GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
             GameManager.game.currentScene.toolHandler.options.lineType = "physics";
           },
+          deleteObject: function () {
+            let name = GameManager.game.currentScene.objectName;
+            delete GameManager.game.currentScene.objects[name];
+            this.clearObject();
+            GameManager.game.currentScene.saveObjects();
+            this.setState({ selectedObjectName: name });
+          },
           getInitialState: function () {
-            return { open: false };
+            const currentScene = GameManager && GameManager.game && GameManager.game.currentScene;
+            const objectName = currentScene ? currentScene.objectName || '' : '';
+            return { open: false, selectedObjectName: objectName };
           },
           openOptions: function (e) {
             this.setState({ open: !this.state.open });
@@ -1336,6 +1352,24 @@
             if (typeof GameManager !== "undefined") {
               GameManager.command("dialog", "importObject");
             }
+          },
+          renameObject: function () {
+            let oldName = GameManager.game.currentScene.objectName,
+              name = prompt("What would you like to name the object?");
+            if (!name || name == oldName) return;
+            if (GameManager.game.currentScene.objects[name]) {
+              let num = +(name.match(/-?\d+$/)?.[0] || '0'),
+                numless = name.replace('' + num, '');
+              num = Math.abs(num) + 1;
+              while (GameManager.game.currentScene.objects[`${numless}-${num}`]) num++;
+              name = `${numless}-${num}`;
+            }
+            GameManager.game.currentScene.objects[name] = GameManager.game.currentScene.objects[oldName];
+            delete GameManager.game.currentScene.objects[oldName];
+            this.forceUpdate();
+            GameManager.game.currentScene.saveObjects();
+            this.setState({ selectedObjectName: name });
+            GameManager.game.currentScene.objectName = name;
           },
           changeRotateSensitivity: function (e) {
             var t = parseInt(e.target.value, 10);
@@ -1354,6 +1388,27 @@
             e.preventDefault();
             e.stopPropagation();
             return !1;
+          },
+          changeObject: function (e) {
+            let name = e.target.value,
+              object = GameManager.game.currentScene.objects[name];
+            console.log(object);
+            // this shouldn't happen
+            if (!object) return;
+            GameManager.game.currentScene.objectName = name;
+            for (let i in object) {
+              GameManager.game.currentScene[i] = object[i];
+            }
+            GameSettings.objectRotate = 0;
+            GameSettings.objectScale = 1;
+            GameSettings.objectOffsetX = 0;
+            GameSettings.objectOffsetY = 0;
+            GameSettings.objectFlipX = !1;
+            GameSettings.objectFlipY = !1;
+            GameSettings.objectInvert = !1;
+            GameManager.game.currentScene.transformObjects();
+            GameManager.game.currentScene.toolHandler.options.object || this.setObject();
+            this.setState({ selectedObjectName: name });
           },
           renderRotateSensitivitySelect: function () {
             var e = GameSettings.rotateSensitivity,
@@ -1385,6 +1440,33 @@
               }, e);
             }));
           },
+          renderObjectSelect: function () {
+            let objects = GameManager.game.currentScene.objects,
+              selected = GameManager.game.currentScene.objectName != '',
+              names = objects ? Object.keys(objects) : [];
+            //console.log(objects, names);
+            if (names.length) {
+              return n.createElement("select", {
+                ref: "object",
+                //defaultValue: selected ? GameManager.game.currentScene.objectName : '##default',
+                value: GameManager.game.currentScene.objectName,
+                onChange: this.changeObject,
+                onClick: this.stopClickPropagation
+              }, !selected && n.createElement("option", {
+                key: '##default',
+                value: '',
+                disabled: true,
+                selected: true,
+                style: {display: "none"},
+              }, 'pick...'), 
+              ...names.map(name => n.createElement("option", {
+                key: name,
+                value: name
+              }, name)));
+            } else {
+              return n.createElement("span", {}, " (EMPTY)");
+            }
+          },
           stopClickPropagation: function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -1413,7 +1495,16 @@
             }, "Object", o), this.state.open ? 
             n.createElement("div", {}, 
             n.createElement("span", {}, this.renderRotateSensitivitySelect()), 
+            //n.createElement("span", {}, this.renderScaleSensitivitySelect()),
+            n.createElement("span", {}, this.renderObjectSelect()),
               n.createElement("span", {},
+                n.createElement("button", {
+                  className: "margin",
+                  onClick: (event) => {
+                    event.stopPropagation();
+                    this.renameObject();
+                  }
+                }, "RENAME"),
                 n.createElement("button", {
                   className: "margin",
                   onClick: (event) => {
@@ -1432,9 +1523,9 @@
                   className: "margin",
                   onClick: (event) => {
                     event.stopPropagation();
-                    this.clearObject(event);
+                    this.deleteObject(event);
                   }
-                }, "CLEAR"))) : null);
+                }, "REMOVE"))) : null);
             
           }
         });
@@ -1616,6 +1707,7 @@
               GameManager.game.currentScene.objectPhysics = [];
               GameManager.game.currentScene.objectScenery = [];
               GameManager.game.currentScene.objectPowerups = [];
+              GameManager.game.currentScene.objectName = "";
               GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
               GameManager.game.currentScene.toolHandler.options.lineType = "physics";
             },
@@ -1699,6 +1791,11 @@
               GameManager.game.currentScene.objectPhysics = objectPhysics;
               GameManager.game.currentScene.objectScenery = objectScenery;
               GameManager.game.currentScene.objectPowerups = objectPowerups;
+              let name;
+              while (!name || GameManager.game.currentScene.objects[name])
+                name = `object-${GameManager.game.currentScene.objectNamegen++}`;
+              GameManager.game.currentScene.objectName = name;
+              GameManager.game.currentScene.objects[name] = {objectPhysics, objectScenery, objectPowerups};
               GameSettings.objectRotate = 0;
               GameSettings.objectScale = 1;
               GameSettings.objectOffsetX = 0;
@@ -1707,6 +1804,7 @@
               GameSettings.objectFlipY = !1;
               GameSettings.objectInvert = !1;
               GameManager.game.currentScene.transformObjects();
+              GameManager.game.currentScene.saveObjects();
               GameSettings.customBrush = true;
               !GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
           },
@@ -4215,6 +4313,7 @@
                   .catch(error => {
                     console.error(error);
                   });
+                return;
               }
             
               t && (n = t),

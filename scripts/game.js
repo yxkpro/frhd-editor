@@ -24254,6 +24254,10 @@
             this.objectPhysics = [];
             this.objectScenery = [];
             this.objectPowerups = [];
+            this.objectName = "";
+            this.objectNamegen = 0;
+            this.objects = {};
+            this.loadObjects();
             this.modObjectPhysics = this.objectPhysics;
             this.modObjectScenery = this.objectScenery;
             this.modObjectPowerups = this.objectPowerups;
@@ -24774,10 +24778,11 @@
             (this.state.dialogOptions.powerupCounts = trackData.powerupCounts),
             (this.state.dialogOptions.trackSize = trackData.trackSize);
         }
-        getObjectCode() {
-          const t = this.objectPowerups,
-                e = this.objectPhysics,
-                s = this.objectScenery;
+        getObjectCode(object) {
+          object ||= this;
+          const t = object.objectPowerups || [],
+                e = object.objectPhysics || [],
+                s = object.objectScenery || [];
         
           let i = "";
           let n = false;
@@ -24921,8 +24926,28 @@
         
           if (n) i = i.slice(0, -1);
           i += "#";
+          if (object.objectName) i += object.objectName;
           
           return i;
+        }
+        loadObjects() {
+          let objects = JSON.parse(localStorage.getItem("objects") || "{}");
+          for (let i in objects) {
+            let object = this.parseCoordinates(objects[i]);
+            this.objects[i] = {
+              objectPhysics: object.physicsLines,
+              objectScenery: object.sceneryLines,
+              objectPowerups: object.powerups,
+            };
+          }
+        }
+        saveObjects() {
+          let save = {};
+          for (let i in this.objects) {
+            // the "+ i" is to add the name of the object to the end
+            save[i] = this.getObjectCode(this.objects[i]) + i;
+          }
+          localStorage.setItem("objects", JSON.stringify(save));
         }
         trackComplete() {
           this.verified = !this.track.dirty;
@@ -25058,6 +25083,22 @@
                 this.objectPhysics = parsedLines.physicsLines;
                 this.objectScenery = parsedLines.sceneryLines;
                 this.objectPowerups = parsedLines.powerups;
+                this.objectName = parsedLines.extra;
+                if (this.objectName === "BMX" || this.objectName === "MTB") {
+                  this.objectName = `object-${this.objectNamegen++}`;
+                }
+                if (this.objects[this.objectName]) {
+                  let num = +(this.objectName.match(/-?\d+$/)?.[0] || '0'),
+                    numless = this.objectName.replace('' + num, '');
+                  num = Math.abs(num) + 1;
+                  while (this.objects[`${numless}-${num}`]) num++;
+                  this.objectName = `${numless}-${num}`;
+                }
+                this.objects[this.objectName] = {
+                  objectPhysics: this.objectPhysics,
+                  objectScenery: this.objectScenery,
+                  objectPowerups: this.objectPowerups
+                };
                 this.modObjectPhysics = [];
                 this.modObjectScenery = [];
                 this.modObjectPowerups = [];
@@ -25070,11 +25111,13 @@
                 GameSettings.objectInvert = !1;
                 GameSettings.objectInvertFlat = !1;
                 this.transformObjects();
+                this.saveObjects();
                 !this.toolHandler.options.object && this.toolHandler.toggleObject();
               } else {
                 this.objectPhysics = [];
                 this.objectScenery = [];
                 this.objectPowerups = [];
+                this.objectName = "";
               }
               this.command("dialog", false);
               break;
@@ -25245,7 +25288,7 @@
           const sceneryLines = parsePoints(n);
           const powerups = parsePowerups(r.join(','));
       
-          return { physicsLines, sceneryLines, powerups };
+          return { physicsLines, sceneryLines, powerups, extra: i };
         }
         transformObjects() {
           if (!this.objectPhysics || !this.objectScenery || !this.objectPowerups) return;
