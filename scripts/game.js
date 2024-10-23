@@ -25022,7 +25022,10 @@
                 this.objectPhysics = parsedLines.physicsLines;
                 this.objectScenery = parsedLines.sceneryLines;
                 this.objectPowerups = parsedLines.powerups;
-                this.objectName = parsedLines.extra || `object-${this.objectNamegen++}`;
+                this.objectName = parsedLines.extra;
+                if (this.objectName === "BMX" || this.objectName === "MTB") {
+                  this.objectName = `object-${this.objectNamegen++}`;
+                }
                 if (this.objects[this.objectName]) {
                   let num = +(this.objectName.match(/-?\d+$/)?.[0] || '0'),
                     numless = this.objectName.replace('' + num, '');

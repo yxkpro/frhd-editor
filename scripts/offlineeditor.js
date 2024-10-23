@@ -1369,6 +1369,7 @@
             this.forceUpdate();
             GameManager.game.currentScene.saveObjects();
             this.setState({ selectedObjectName: name });
+            GameManager.game.currentScene.objectName = name;
           },
           changeRotateSensitivity: function (e) {
             var t = parseInt(e.target.value, 10);
@@ -1448,7 +1449,7 @@
               return n.createElement("select", {
                 ref: "object",
                 //defaultValue: selected ? GameManager.game.currentScene.objectName : '##default',
-                value: this.state.selectedObjectName,
+                value: GameManager.game.currentScene.objectName,
                 onChange: this.changeObject,
                 onClick: this.stopClickPropagation
               }, !selected && n.createElement("option", {
@@ -1463,7 +1464,7 @@
                 value: name
               }, name)));
             } else {
-              return n.createElement("span", {}, "(EMPTY)");
+              return n.createElement("span", {}, " (EMPTY)");
             }
           },
           stopClickPropagation: function (e) {
