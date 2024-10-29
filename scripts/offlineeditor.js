@@ -1333,10 +1333,15 @@
             GameManager.game.currentScene.toolHandler.options.object && "undefined" != typeof GameManager && GameManager.command("object");
             GameManager.game.currentScene.toolHandler.options.lineType = "physics";
           },
-          deleteObject: function () {
+          deleteObject: function (altKey) {
+            if (altKey) {
+              GameManager.game.currentScene.objects = {};
+              this.clearObject();
+            } else {
             let name = GameManager.game.currentScene.objectName;
             delete GameManager.game.currentScene.objects[name];
             this.clearObject();
+            }
             GameManager.game.currentScene.saveObjects();
             this.setState({ selectedObjectName: name });
           },
@@ -1528,7 +1533,7 @@
                     className: "margin",
                     onClick: (event) => {
                       event.stopPropagation();
-                      this.deleteObject(event);
+                      this.deleteObject(event.altKey);
                     }
                   }, "REMOVE")) : null) : null)
             
