@@ -3931,6 +3931,58 @@
                   .catch(error => {
                     console.error('Error loading tracklist:', error);
                   });
+              }
+              else if (e.value.startsWith('daily')) {
+                let specifiedDate;
+                const parts = e.value.split(' ');
+            
+                if (parts.length === 2) {
+                    specifiedDate = new Date(parts[1]);
+                } else {
+                    specifiedDate = new Date();
+                }
+            
+                const formattedDate = specifiedDate.toISOString().slice(0, 10);
+
+                fetch('assets/tracks/trackdata.json')
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('Failed to load trackdata.json');
+                    }
+                    return response.json();
+                  })
+
+                  .then(data => {
+                    const trackEntry = data.tracks.find(entry => entry.date === formattedDate);
+
+                    if (trackEntry && trackEntry.trackname) {
+                      const { trackname, username, collaborators } = trackEntry;
+                      console.log("Loaded track details:", { trackname, username, collaborators });
+
+                      const url = `assets/tracks/${encodeURIComponent(trackname)}.txt`;
+
+                      fetch(url)
+                        .then(response => {
+                          if (!response.ok) {
+                            throw new Error('track file not found, loading as track code.');
+                          }
+                          return response.text();
+                        })
+                        .then(trackData => {
+                          this.processTrackData(trackData);
+                          console.log("track loaded:", trackname);
+                          GameSettings.trackName = `${trackname}.txt`;
+                        })
+                        .catch(error => {
+                          console.error('error loading track:', error);
+                        });
+                    } else {
+                      console.log("no track entry found for today’s date.");
+                    }
+                  })
+                  .catch(error => {
+                    console.error('error loading tracklist:', error);
+                  });
               } else if (!e.value.includes('$') && !e.value.includes('#') && !t) {
             
                 fetch(url)
