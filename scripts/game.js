@@ -16956,9 +16956,10 @@
         }
         addActionToTimeline(t) {
           let current = this.actionTimeline[this.actionTimelinePointer];
-          if (current?.type == 'transform') {
-            current.transformations.splice(current.pointer);
-            if (current.transformations.length)
+          if (current && 'pointer' in current) {
+            let field = current.type == 'transform' ? 'transformations' : 'objects';
+            current[field].splice(current.pointer);
+            if (current[field].length)
               this.actionTimelinePointer++;
             else {
               this.actionTimeline.splice(this.actionTimelinePointer, 1);
@@ -17067,14 +17068,24 @@
         }
         revertAction() {
           let old = this.actionTimeline[this.actionTimelinePointer];
-          if (this.actionTimelinePointer > 0 || (old && old.type == 'transform' && old.pointer > 0)) {
-            if (!old || old.type != 'transform' || old.pointer == 0)
+          if (this.actionTimelinePointer > 0 || (old && 'pointer' in old && old.pointer > 0)) {
+            if (!old || !'pointer' in old || old.pointer == 0)
                 this.actionTimelinePointer--;
             const t = this.actionTimeline[this.actionTimelinePointer];
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
-                this.removeObjects(t.objects);
+                let objects = t.objects;
+                if ('pointer' in t) {
+                    if (t.pointer == 0) break;
+                    if (this.gamepad.isButtonDown('shift')) {
+                        objects = objects.slice(0, t.pointer).flat(1);
+                        t.pointer = 0;
+                    } else {
+                        objects = [objects[--t.pointer]].flat(1);
+                    }
+                }
+                this.removeObjects(objects);
                 break;
               case "remove":
                 this.addObjects(t.objects);
@@ -17185,7 +17196,20 @@
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
-                this.addObjects(t.objects);
+                let objects = t.objects;
+                if ('pointer' in t) {
+                    if (t.pointer == t.objects.length) break;
+                    if (this.gamepad.isButtonDown('shift')) {
+                        objects = objects.slice(t.pointer).flat(1);
+                        t.pointer = t.objects.length;
+                    } else {
+                        objects = [objects[t.pointer++]].flat(1);
+                        if (t.pointer < t.objects.length) {
+                            this.actionTimelinePointer--;
+                        }
+                    }
+                }
+                this.addObjects(objects);
                 this.actionTimelinePointer++;
                 break;
               case "remove":
@@ -18930,16 +18954,14 @@
             this.lastBreakPosition = new t.Z(0, 0);
         }
         recordActionsToToolhandler() {
-          if (this.toolHandler.options.object && this.addedObjects.length > 0) {
-            this.toolHandler.addActionToTimeline({
-              type: "add",
-              objects: this.addedObjects
-            });
-          } else {
-            for (const t of this.addedObjects)
-              this.toolHandler.addActionToTimeline({ type: "add", objects: [t] });
-          }
-          this.addedObjects = [];
+            if (this.addedObjects.length == 0) return;
+            let action = {
+                type: "add",
+                objects: this.addedObjects,
+                pointer: this.addedObjects.length,
+            };
+            this.toolHandler.addActionToTimeline(action);
+            this.addedObjects = [];
         }
         press() {
           if ((this.recordActionsToToolhandler(), !this.active)) {
@@ -19222,18 +19244,20 @@
                       angle: powerup.angle,
                       time: powerup.time
                   }));
+
+                  let toAdd = [];
       
                   modifiedPhysics.forEach(point => {
                       let i = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
                       if (i) {
-                          this.addedObjects.push(i);
+                          toAdd.push(i);
                       }
                   });
       
                   modifiedScenery.forEach(point => {
                       let i = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
                       if (i) {
-                          this.addedObjects.push(i);
+                          toAdd.push(i);
                       }
                   });
 
@@ -19250,47 +19274,48 @@
                         case "gravity":
                             newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
                             break;
-                            case "boost":
-                              newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
-                              break;
-                            case "slowmo":
-                              newPowerup = new xs(powerup.x, powerup.y, this);
-                              break;
-                            case "checkpoint":
-                              newPowerup = new Ps(powerup.x, powerup.y, this);
-                              break;
-                            case "antigravity":
-                              newPowerup = new Vs(powerup.x, powerup.y, this);
-                              break;
-                            case "teleport":
-                              const portal1 = new Xs(powerup.x, powerup.y, this),
+                        case "boost":
+                            newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                            break;
+                        case "slowmo":
+                            newPowerup = new xs(powerup.x, powerup.y, this);
+                            break;
+                        case "checkpoint":
+                            newPowerup = new Ps(powerup.x, powerup.y, this);
+                            break;
+                        case "antigravity":
+                            newPowerup = new Vs(powerup.x, powerup.y, this);
+                            break;
+                        case "teleport":
+                            const portal1 = new Xs(powerup.x, powerup.y, this),
                                 portal2 = new Xs(powerup.x2, powerup.y2, this);
-                              portal1.addOtherPortalRef(portal2);
-                              portal2.addOtherPortalRef(portal1);
-                              this.scene.track.addPowerup(portal1);
-                              this.scene.track.addPowerup(portal2);
-                              this.addedObjects.push(portal1);
-                              this.addedObjects.push(portal2);
-                              break;
-                            case "helicopter":
-                                newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                            case "truck":
-                                newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                            case "balloon":
-                                newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                            case "blob":
-                                newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                          }
-                          if (newPowerup) {
-                            this.scene.track.addPowerup(newPowerup);
-                            this.addedObjects.push(newPowerup);
-                          }
-                        });
-                      }
+                            portal1.addOtherPortalRef(portal2);
+                            portal2.addOtherPortalRef(portal1);
+                            this.scene.track.addPowerup(portal1);
+                            this.scene.track.addPowerup(portal2);
+                            toAdd.push(portal1);
+                            toAdd.push(portal2);
+                            break;
+                        case "helicopter":
+                            newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                        case "truck":
+                            newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                        case "balloon":
+                            newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                        case "blob":
+                            newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                    }
+                    if (newPowerup) {
+                      this.scene.track.addPowerup(newPowerup);
+                      toAdd.push(newPowerup);
+                    }
+                });
+                this.addedObjects.push(toAdd);
+            }
             
 
             this.recordActionsToToolhandler();
