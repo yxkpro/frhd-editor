@@ -11851,6 +11851,8 @@
             (this.touch.old = this.getTouchObject()),
             (this.secondaryTouch = this.getTouchObject()),
             (this.secondaryTouch.old = this.getTouchObject()),
+            (this.tickMoves = []),
+            (this.nextTickMoves = []),
             this.initAnalytics(),
             this.bindToMouseEvents(),
             (this.updateCallback = !1);
@@ -11871,6 +11873,17 @@
             real: new t.Z(0, 0),
             type: 1,
           };
+        }
+        cloneTouchObject(t) {
+          return {
+            id: t.id,
+            down: t.down,
+            press: t.down,
+            release: t.down,
+            pos: t.pos.clone(),
+            real: t.real.clone(),
+            type: t.type,
+          }
         }
         bindToMouseEvents() {
           const t = this.scene.game.stage,
@@ -11999,12 +12012,15 @@
         onMouseMove(t) {
           this.updatePosition(t, this.touch),
             this.updatePosition(t, this.secondaryTouch);
+          this.nextTickMoves.push(this.cloneTouchObject(this.touch));
         }
         update() {
           this.enabled &&
             (this.updateTouch(this.touch),
             this.updateTouch(this.secondaryTouch),
             this.updateWheel());
+          this.tickMoves = this.nextTickMoves;
+          this.nextTickMoves = [];
         }
         updateTouch(t) {
           const e = t.old,
@@ -16956,9 +16972,10 @@
         }
         addActionToTimeline(t) {
           let current = this.actionTimeline[this.actionTimelinePointer];
-          if (current?.type == 'transform') {
-            current.transformations.splice(current.pointer);
-            if (current.transformations.length)
+          if (current && 'pointer' in current) {
+            let field = current.type == 'transform' ? 'transformations' : 'objects';
+            current[field].splice(current.pointer);
+            if (current[field].length)
               this.actionTimelinePointer++;
             else {
               this.actionTimeline.splice(this.actionTimelinePointer, 1);
@@ -17067,14 +17084,24 @@
         }
         revertAction() {
           let old = this.actionTimeline[this.actionTimelinePointer];
-          if (this.actionTimelinePointer > 0 || (old && old.type == 'transform' && old.pointer > 0)) {
-            if (!old || old.type != 'transform' || old.pointer == 0)
+          if (this.actionTimelinePointer > 0 || (old && 'pointer' in old && old.pointer > 0)) {
+            if (!old || !'pointer' in old || old.pointer == 0)
                 this.actionTimelinePointer--;
             const t = this.actionTimeline[this.actionTimelinePointer];
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
-                this.removeObjects(t.objects);
+                let objects = t.objects;
+                if ('pointer' in t) {
+                    if (t.pointer == 0) break;
+                    if (this.gamepad.isButtonDown('shift')) {
+                        objects = objects.slice(0, t.pointer).flat(1);
+                        t.pointer = 0;
+                    } else {
+                        objects = [objects[--t.pointer]].flat(1);
+                    }
+                }
+                this.removeObjects(objects);
                 break;
               case "remove":
                 this.addObjects(t.objects);
@@ -17185,7 +17212,20 @@
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
             switch (t.type) {
               case "add":
-                this.addObjects(t.objects);
+                let objects = t.objects;
+                if ('pointer' in t) {
+                    if (t.pointer == t.objects.length) break;
+                    if (this.gamepad.isButtonDown('shift')) {
+                        objects = objects.slice(t.pointer).flat(1);
+                        t.pointer = t.objects.length;
+                    } else {
+                        objects = [objects[t.pointer++]].flat(1);
+                        if (t.pointer < t.objects.length) {
+                            this.actionTimelinePointer--;
+                        }
+                    }
+                }
+                this.addObjects(objects);
                 this.actionTimelinePointer++;
                 break;
               case "remove":
@@ -18930,20 +18970,18 @@
             this.lastBreakPosition = new t.Z(0, 0);
         }
         recordActionsToToolhandler() {
-          if (this.toolHandler.options.object && this.addedObjects.length > 0) {
-            this.toolHandler.addActionToTimeline({
-              type: "add",
-              objects: this.addedObjects
-            });
-          } else {
-            for (const t of this.addedObjects)
-              this.toolHandler.addActionToTimeline({ type: "add", objects: [t] });
-          }
-          this.addedObjects = [];
+            if (this.addedObjects.length == 0) return;
+            let action = {
+                type: "add",
+                objects: this.addedObjects,
+                pointer: this.addedObjects.length,
+            };
+            this.toolHandler.addActionToTimeline(action);
+            this.addedObjects = [];
         }
         press() {
           if ((this.recordActionsToToolhandler(), !this.active)) {
-            const t = this.mouse.touch.real;
+            const t = this.mouse.tickMoves.length ? this.mouse.tickMoves[0].real : this.mouse.touch.real;
             (this.p1.x = t.x),
               (this.p1.y = t.y),
               (this.p2.x = t.x),
@@ -18980,46 +19018,68 @@
         }
         hold() {
           if (this.active) {
-            const t = this.mouse.touch.real,
-              e = this.p1,
-              s = this.p2,
-              i = this.options.trailSpeed,
-              n = this.options.breakLength * 0.2;
-            s.inc(t.sub(s).factor(i));
-            let r = screen.height + t.sub(s).len();
-            if (((r *= n), s.sub(e).lenSqr() > r)) {
-              const t = this.scene.track;
+            for (let ev of this.mouse.tickMoves) {
+              const t = ev.real,
+                e = this.p1,
+                s = this.p2,
+                i = this.options.trailSpeed,
+                n = this.options.breakLength * 0.2;
+              s.inc(t.sub(s).factor(i));
+              let r = screen.height + t.sub(s).len();
+              if (((r *= n), s.sub(e).lenSqr() > r)) {
+                const t = this.scene.track;
 
-              if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0 && this.scene.objectPowerups.length === 0)) {
-                let i = !1;
-                i = "physics" === this.toolHandler.options.lineType
-                  ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
-                  : t.addSceneryLine(e.x, e.y, s.x, s.y);
-                i && this.addedObjects.push(i);
-              }
+                if (!this.toolHandler.options.object || (this.scene.objectPhysics.length === 0 && this.scene.objectScenery.length === 0 && this.scene.objectPowerups.length === 0)) {
+                  let i = !1;
+                  i = "physics" === this.toolHandler.options.lineType
+                    ? t.addPhysicsLine(e.x, e.y, s.x, s.y)
+                    : t.addSceneryLine(e.x, e.y, s.x, s.y);
+                  i && this.addedObjects.push(i);
+                }
 
-              let modifiedPhysics = [];
-              let modifiedScenery = [];
-              let modifiedPowerups = [];
+                let modifiedPhysics = [];
+                let modifiedScenery = [];
+                let modifiedPowerups = [];
 
-              let brushRotate = GameSettings.brushRotate,
-              brushScale = GameSettings.brushScale,
-              brushRotateJitter = (GameSettings.brushRotateJitter > 0),
-              brushScaleJitter = (GameSettings.brushScaleJitter > 0);
+                let brushRotate = GameSettings.brushRotate,
+                brushScale = GameSettings.brushScale,
+                brushRotateJitter = (GameSettings.brushRotateJitter > 0),
+                brushScaleJitter = (GameSettings.brushScaleJitter > 0);
 
-              if (this.toolHandler.options.object) {
-                if (brushRotate || brushScale || brushRotateJitter || brushScaleJitter) {
-                  let offset = s.sub(e),
-                    dir = brushRotate ? Math.atan2(offset.y, offset.x) : 0,
-                    speed = brushScale ? this.calculateSpeed() : 1;
+                if (this.toolHandler.options.object) {
+                  if (brushRotate || brushScale || brushRotateJitter || brushScaleJitter) {
+                    let offset = s.sub(e),
+                      dir = brushRotate ? Math.atan2(offset.y, offset.x) : 0,
+                      speed = brushScale ? this.calculateSpeed() : 1;
 
-                    const dirJitter = (Math.random() - 0.5) * GameSettings.brushRotateJitter;
-                    const speedJitter = (Math.random() - 0.5) * GameSettings.brushScaleJitter;
-                    
-                    const modDir = dir + dirJitter;
-                    const modSpeed = speed + speedJitter;
+                      const dirJitter = (Math.random() - 0.5) * GameSettings.brushRotateJitter;
+                      const speedJitter = (Math.random() - 0.5) * GameSettings.brushScaleJitter;
+                      
+                      const modDir = dir + dirJitter;
+                      const modSpeed = speed + speedJitter;
 
-                    modifiedPhysics = this.scene.modObjectPhysics.map((line) => {
+                      modifiedPhysics = this.scene.modObjectPhysics.map((line) => {
+                        let p1 = { x: line.x1, y: line.y1 };
+                        let p2 = { x: line.x2, y: line.y2 };
+
+                        if (brushRotate || brushRotateJitter) {
+                            p1 = this.rotate(p1.x, p1.y, modDir);
+                            p2 = this.rotate(p2.x, p2.y, modDir);
+                        }
+
+                        if (brushScale || brushScaleJitter) {
+                            p1 = this.scale(p1.x, p1.y, modSpeed);
+                            p2 = this.scale(p2.x, p2.y, modSpeed);
+                        }
+                      return {
+                        x1: e.x + p1.x,
+                        y1: e.y + p1.y,
+                        x2: e.x + p2.x,
+                        y2: e.y + p2.y,
+                      };
+                    });
+
+                    modifiedScenery = this.scene.modObjectScenery.map((line) => {
                       let p1 = { x: line.x1, y: line.y1 };
                       let p2 = { x: line.x2, y: line.y2 };
 
@@ -19032,154 +19092,137 @@
                           p1 = this.scale(p1.x, p1.y, modSpeed);
                           p2 = this.scale(p2.x, p2.y, modSpeed);
                       }
-                    return {
-                      x1: e.x + p1.x,
-                      y1: e.y + p1.y,
-                      x2: e.x + p2.x,
-                      y2: e.y + p2.y,
-                    };
-                  });
+                      return {
+                        x1: e.x + p1.x,
+                        y1: e.y + p1.y,
+                        x2: e.x + p2.x,
+                        y2: e.y + p2.y,
+                      };
+                    });
 
-                  modifiedScenery = this.scene.modObjectScenery.map((line) => {
-                    let p1 = { x: line.x1, y: line.y1 };
-                    let p2 = { x: line.x2, y: line.y2 };
+                    modifiedPowerups = this.scene.modObjectPowerups.map((powerup) => {
+                      let p = { x: powerup.x, y: powerup.y };
+                      if (brushRotate || brushRotateJitter) {
+                        p = this.rotate(p.x, p.y, modDir);
+                      }
 
-                    if (brushRotate || brushRotateJitter) {
-                        p1 = this.rotate(p1.x, p1.y, modDir);
-                        p2 = this.rotate(p2.x, p2.y, modDir);
-                    }
+                      if (brushScale || brushScaleJitter) {
+                        p = this.scale(p.x, p.y, modSpeed);
+                      }
+                      return {
+                        name: powerup.name,
+                        x: e.x + p.x,
+                        y: e.y + p.y,
+                        x2: powerup.x2 !== undefined ? e.x + this.rotate(powerup.x2, powerup.y2, dir).x : undefined,
+                        y2: powerup.y2 !== undefined ? e.y + this.rotate(powerup.x2, powerup.y2, dir).y : undefined,
+                        angle: powerup.angle + p.angle
+                      };
+                    });
 
-                    if (brushScale || brushScaleJitter) {
-                        p1 = this.scale(p1.x, p1.y, modSpeed);
-                        p2 = this.scale(p2.x, p2.y, modSpeed);
-                    }
-                    return {
-                      x1: e.x + p1.x,
-                      y1: e.y + p1.y,
-                      x2: e.x + p2.x,
-                      y2: e.y + p2.y,
-                    };
-                  });
+                  } else {
+                    modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
+                      x1: e.x + line.x1,
+                      y1: e.y + line.y1,
+                      x2: e.x + line.x2,
+                      y2: e.y + line.y2
+                    }));
 
-                  modifiedPowerups = this.scene.modObjectPowerups.map((powerup) => {
-                    let p = { x: powerup.x, y: powerup.y };
-                    if (brushRotate || brushRotateJitter) {
-                      p = this.rotate(p.x, p.y, modDir);
-                    }
+                    modifiedScenery = this.scene.modObjectScenery.map(line => ({
+                      x1: e.x + line.x1,
+                      y1: e.y + line.y1,
+                      x2: e.x + line.x2,
+                      y2: e.y + line.y2,
+                    }));
 
-                    if (brushScale || brushScaleJitter) {
-                      p = this.scale(p.x, p.y, modSpeed);
-                    }
-                    return {
+                    modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
                       name: powerup.name,
-                      x: e.x + p.x,
-                      y: e.y + p.y,
-                      x2: powerup.x2 !== undefined ? e.x + this.rotate(powerup.x2, powerup.y2, dir).x : undefined,
-                      y2: powerup.y2 !== undefined ? e.y + this.rotate(powerup.x2, powerup.y2, dir).y : undefined,
-                      angle: powerup.angle + p.angle
-                    };
+                      x: e.x + powerup.x,
+                      y: e.y + powerup.y,
+                      x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
+                      y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
+                      angle: powerup.angle,
+                      time: powerup.time
+                    }));
+                  }
+
+                  let toAdd = [];
+
+                  modifiedPhysics.forEach(point => {
+                    let i = t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
+                    if (i) {
+                      toAdd.push(i);
+                    }
                   });
 
-                } else {
-                  modifiedPhysics = this.scene.modObjectPhysics.map(line => ({
-                    x1: e.x + line.x1,
-                    y1: e.y + line.y1,
-                    x2: e.x + line.x2,
-                    y2: e.y + line.y2
-                  }));
+                  modifiedScenery.forEach(point => {
+                    let i = t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
+                    if (i) {
+                      toAdd.push(i);
+                    }
+                  });
 
-                  modifiedScenery = this.scene.modObjectScenery.map(line => ({
-                    x1: e.x + line.x1,
-                    y1: e.y + line.y1,
-                    x2: e.x + line.x2,
-                    y2: e.y + line.y2,
-                  }));
-
-                  modifiedPowerups = this.scene.modObjectPowerups.map(powerup => ({
-                    name: powerup.name,
-                    x: e.x + powerup.x,
-                    y: e.y + powerup.y,
-                    x2: powerup.x2 !== undefined ? e.x + powerup.x2 : undefined,
-                    y2: powerup.y2 !== undefined ? e.y + powerup.y2 : undefined,
-                    angle: powerup.angle,
-                    time: powerup.time
-                  }));
+                  modifiedPowerups.forEach(powerup => {
+                    let newPowerup = null;
+                    switch (powerup.name) {
+                      case "goal":
+                        newPowerup = new ge(powerup.x, powerup.y, this);
+                        this.scene.track.addTarget(newPowerup);
+                        break;
+                      case "bomb":
+                        newPowerup = new zs(powerup.x, powerup.y, this);
+                        break;
+                      case "gravity":
+                        newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
+                        break;
+                      case "boost":
+                        newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                        break;
+                      case "slowmo":
+                        newPowerup = new xs(powerup.x, powerup.y, this);
+                        break;
+                      case "checkpoint":
+                        newPowerup = new Ps(powerup.x, powerup.y, this);
+                        break;
+                      case "antigravity":
+                        newPowerup = new Vs(powerup.x, powerup.y, this);
+                        break;
+                      case "teleport":
+                        const portal1 = new Xs(powerup.x, powerup.y, this),
+                          portal2 = new Xs(powerup.x2, powerup.y2, this);
+                        portal1.addOtherPortalRef(portal2);
+                        portal2.addOtherPortalRef(portal1);
+                        this.scene.track.addPowerup(portal1);
+                        this.scene.track.addPowerup(portal2);
+                        toAdd.push(portal1);
+                        toAdd.push(portal2);
+                        break;
+                      case "helicopter":
+                          newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                          break;
+                      case "truck":
+                          newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                          break;
+                      case "balloon":
+                          newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                          break;
+                      case "blob":
+                          newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
+                          break;
+                    }
+                    if (newPowerup) {
+                      this.scene.track.addPowerup(newPowerup);
+                      toAdd.push(newPowerup);
+                    }
+                  });
+                  this.addedObjects.push(toAdd);
                 }
 
-                modifiedPhysics.forEach(point => {
-                  let i = t.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
-                  if (i) {
-                    this.addedObjects.push(i);
-                  }
-                });
-
-                modifiedScenery.forEach(point => {
-                  let i = t.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
-                  if (i) {
-                    this.addedObjects.push(i);
-                  }
-                });
-
-                modifiedPowerups.forEach(powerup => {
-                  let newPowerup = null;
-                  switch (powerup.name) {
-                    case "goal":
-                      newPowerup = new ge(powerup.x, powerup.y, this);
-                      this.scene.track.addTarget(newPowerup);
-                      break;
-                    case "bomb":
-                      newPowerup = new zs(powerup.x, powerup.y, this);
-                      break;
-                    case "gravity":
-                      newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
-                      break;
-                    case "boost":
-                      newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
-                      break;
-                    case "slowmo":
-                      newPowerup = new xs(powerup.x, powerup.y, this);
-                      break;
-                    case "checkpoint":
-                      newPowerup = new Ps(powerup.x, powerup.y, this);
-                      break;
-                    case "antigravity":
-                      newPowerup = new Vs(powerup.x, powerup.y, this);
-                      break;
-                    case "teleport":
-                      const portal1 = new Xs(powerup.x, powerup.y, this),
-                        portal2 = new Xs(powerup.x2, powerup.y2, this);
-                      portal1.addOtherPortalRef(portal2);
-                      portal2.addOtherPortalRef(portal1);
-                      this.scene.track.addPowerup(portal1);
-                      this.scene.track.addPowerup(portal2);
-                      this.addedObjects.push(portal1);
-                      this.addedObjects.push(portal2);
-                      break;
-                    case "helicopter":
-                        newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
-                        break;
-                    case "truck":
-                        newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
-                        break;
-                    case "balloon":
-                        newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
-                        break;
-                    case "blob":
-                        newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
-                        break;
-                  }
-                  if (newPowerup) {
-                    this.scene.track.addPowerup(newPowerup);
-                    this.addedObjects.push(newPowerup);
-                  }
-                });
+                e.equ(s);
+                this.toolHandler.snapPoint.x = s.x;
+                this.toolHandler.snapPoint.y = s.y;
               }
-
-              e.equ(s);
-              this.toolHandler.snapPoint.x = s.x;
-              this.toolHandler.snapPoint.y = s.y;
+              this.toolHandler.moveCameraTowardsMouse();
             }
-            this.toolHandler.moveCameraTowardsMouse();
           }
         }
 
@@ -19222,18 +19265,20 @@
                       angle: powerup.angle,
                       time: powerup.time
                   }));
+
+                  let toAdd = [];
       
                   modifiedPhysics.forEach(point => {
                       let i = s.addPhysicsLine(point.x1, point.y1, point.x2, point.y2);
                       if (i) {
-                          this.addedObjects.push(i);
+                          toAdd.push(i);
                       }
                   });
       
                   modifiedScenery.forEach(point => {
                       let i = s.addSceneryLine(point.x1, point.y1, point.x2, point.y2);
                       if (i) {
-                          this.addedObjects.push(i);
+                          toAdd.push(i);
                       }
                   });
 
@@ -19250,47 +19295,48 @@
                         case "gravity":
                             newPowerup = new Ue(powerup.x, powerup.y, powerup.angle, this);
                             break;
-                            case "boost":
-                              newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
-                              break;
-                            case "slowmo":
-                              newPowerup = new xs(powerup.x, powerup.y, this);
-                              break;
-                            case "checkpoint":
-                              newPowerup = new Ps(powerup.x, powerup.y, this);
-                              break;
-                            case "antigravity":
-                              newPowerup = new Vs(powerup.x, powerup.y, this);
-                              break;
-                            case "teleport":
-                              const portal1 = new Xs(powerup.x, powerup.y, this),
+                        case "boost":
+                            newPowerup = new ds(powerup.x, powerup.y, powerup.angle, this);
+                            break;
+                        case "slowmo":
+                            newPowerup = new xs(powerup.x, powerup.y, this);
+                            break;
+                        case "checkpoint":
+                            newPowerup = new Ps(powerup.x, powerup.y, this);
+                            break;
+                        case "antigravity":
+                            newPowerup = new Vs(powerup.x, powerup.y, this);
+                            break;
+                        case "teleport":
+                            const portal1 = new Xs(powerup.x, powerup.y, this),
                                 portal2 = new Xs(powerup.x2, powerup.y2, this);
-                              portal1.addOtherPortalRef(portal2);
-                              portal2.addOtherPortalRef(portal1);
-                              this.scene.track.addPowerup(portal1);
-                              this.scene.track.addPowerup(portal2);
-                              this.addedObjects.push(portal1);
-                              this.addedObjects.push(portal2);
-                              break;
-                            case "helicopter":
-                                newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                            case "truck":
-                                newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                            case "balloon":
-                                newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                            case "blob":
-                                newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
-                                break;
-                          }
-                          if (newPowerup) {
-                            this.scene.track.addPowerup(newPowerup);
-                            this.addedObjects.push(newPowerup);
-                          }
-                        });
-                      }
+                            portal1.addOtherPortalRef(portal2);
+                            portal2.addOtherPortalRef(portal1);
+                            this.scene.track.addPowerup(portal1);
+                            this.scene.track.addPowerup(portal2);
+                            toAdd.push(portal1);
+                            toAdd.push(portal2);
+                            break;
+                        case "helicopter":
+                            newPowerup = new hi(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                        case "truck":
+                            newPowerup = new yi(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                        case "balloon":
+                            newPowerup = new Si(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                        case "blob":
+                            newPowerup = new Li(powerup.x, powerup.y, powerup.time, this);
+                            break;
+                    }
+                    if (newPowerup) {
+                      this.scene.track.addPowerup(newPowerup);
+                      toAdd.push(newPowerup);
+                    }
+                });
+                this.addedObjects.push(toAdd);
+            }
             
 
             this.recordActionsToToolhandler();
