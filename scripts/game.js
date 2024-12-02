@@ -17085,7 +17085,7 @@
         revertAction() {
           let old = this.actionTimeline[this.actionTimelinePointer];
           if (this.actionTimelinePointer > 0 || (old && 'pointer' in old && old.pointer > 0)) {
-            if (!old || !'pointer' in old || old.pointer == 0)
+            if (!old || !('pointer' in old) || old.pointer == 0)
                 this.actionTimelinePointer--;
             const t = this.actionTimeline[this.actionTimelinePointer];
             t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
