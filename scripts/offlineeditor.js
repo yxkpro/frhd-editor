@@ -1390,7 +1390,7 @@
             return !1;
           },
           changeScaleSensitivity: function (e) {
-            var t = parseInt(e.target.value, 10);
+            var t = parseFloat(e.target.value);
             GameSettings.scaleSensitivity = t;
             console.log(GameSettings.scaleSensitivity);
             GameManager.command("redraw");
@@ -1436,7 +1436,7 @@
           },
           renderScaleSensitivitySelect: function () {
             var e = GameSettings.scaleSensitivity,
-              t = [0.1, 0.5, 1, 2, 5];
+              t = [0.05, 0.10, 0.25, 0.50, 1, 2, 5];
             return n.createElement("select", {
               ref: "scaleSensitivity",
               defaultValue: e,
@@ -1504,7 +1504,7 @@
             }, "Object", o), this.state.open ? 
             n.createElement("div", {}, 
             Object.keys(GameManager.game.currentScene.objects).length !== 0 ? n.createElement("span", {}, this.renderRotateSensitivitySelect()) : null, 
-            //n.createElement("span", {}, this.renderScaleSensitivitySelect()),
+            n.createElement("span", {}, this.renderScaleSensitivitySelect()),
             n.createElement("span", {}, this.renderObjectSelect()),
               n.createElement("span", {},
                 n.createElement("button", {
