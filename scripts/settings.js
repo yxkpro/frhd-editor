@@ -94,7 +94,8 @@ var GameSettings = {
         "cameraMoveSpeed": 0.02,
         "rightClickMove": false,
         "copy": true,
-        "isometricGrid": false
+        "isometricGrid": false,
+        "isoWidth": 1
     },
     "vehiclePowerup": {
         "selected": "helicopter",

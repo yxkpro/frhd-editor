@@ -17871,7 +17871,7 @@
           for (let width = Math.floor(e / r), l = 0; width >= l; l++)
             for (let height = Math.floor(i / r), b = 0; height >= b; b += .5) {
               a.beginPath();
-              a.arc(2 * b * r, (l + b % 1) * r, 1 * t, 0, 2 * Math.PI)
+              a.arc(2 * b * r, (l + b % 1) * r, GameSettings.toolHandler.isoWidth * t, 0, 2 * Math.PI)
               a.fill()
             }
           this.gridCache = o,

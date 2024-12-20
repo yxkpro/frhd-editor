@@ -1504,7 +1504,7 @@
             }, "Object", o), this.state.open ? 
             n.createElement("div", {}, 
             Object.keys(GameManager.game.currentScene.objects).length !== 0 ? n.createElement("span", {}, this.renderRotateSensitivitySelect()) : null, 
-            n.createElement("span", {}, this.renderScaleSensitivitySelect()),
+            Object.keys(GameManager.game.currentScene.objects).length !== 0 ? n.createElement("span", {}, this.renderScaleSensitivitySelect()) : null,
             n.createElement("span", {}, this.renderObjectSelect()),
               n.createElement("span", {},
                 n.createElement("button", {
