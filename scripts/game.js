@@ -24031,7 +24031,12 @@
           else {
 
             fetch(`assets/tracks/${GameSettings.trackName}.txt`)
-              .then(response => response.text())
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('no track name found');
+                }
+                return response.text();
+              })
               .then(text => {
                 console.log("Loaded text from file:", text);
 
@@ -24045,7 +24050,28 @@
                 }
               })
               .catch(error => {
-                console.error("Error loading text from file:", error);
+                console.error('primary fetch failed.', error);
+
+                const script = document.createElement('script');
+                script.src = `https://cdn.freeriderhd.com/free_rider_hd/tracks/prd/${GameSettings.trackName}/track-data-v1.js?callback=t`;
+                script.onerror = () => {
+                  console.error("fallback fetch failed.");
+                };
+
+                // define a temporary global callback for the fallback fetch
+                window.t = ({ code, title }) => {
+                  if (code) {
+                    GameSettings.trackName = title;
+                    console.log(title)
+                    this.read(code);
+                    console.log("track loaded from FRHD.");
+                  } else {
+                    console.error("failed to load track code from FRHD.");
+                  }
+                  delete window.t;
+                };
+
+                document.body.appendChild(script);
               });
           }
 
@@ -24367,22 +24393,26 @@
             (this.clear = !1),
             (this.track = t);
             const message = this.message;
-            
-              
-              if (GameSettings.trackName === "track.txt") return;
-              let trackName = GameSettings.trackName;
-              trackName = trackName.replace(".txt", "");
-              message.show(
-                trackName,
-                !1,
-                "#000000",
-                "#FFFFFF"
-              );
-            
-              // Hide the message after 3 seconds (3000 milliseconds)
-              setTimeout(() => {
-                message.hide();
-              }, 3000);
+
+          let iteration = 0;
+          const showMessage = () => {
+            if (GameSettings.trackName === "track.txt") return;
+
+            let trackName = GameSettings.trackName;
+            trackName = trackName.replace(".txt", "");
+            message.show(trackName, !1, "#000000", "#FFFFFF");
+
+            setTimeout(() => {
+              message.hide();
+
+              iteration++;
+              if (iteration < 3) {
+                showMessage();
+              }
+            }, 1500);
+          };
+
+          showMessage();
         }
         updateControls() {
           if (this.controls) {

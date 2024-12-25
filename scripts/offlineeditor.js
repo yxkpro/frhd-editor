@@ -3998,7 +3998,27 @@
                     GameSettings.trackName = `${trackName}.txt`;
                   })
                   .catch(error => {
-                    console.error(error);
+                    console.error('primary fetch failed.', error);
+
+                    const script = document.createElement('script');
+                    script.src = `https://cdn.freeriderhd.com/free_rider_hd/tracks/prd/${trackName}/track-data-v1.js?callback=t)`;
+                    script.onerror = () => {
+                      console.error("fallback fetch failed.");
+                    };
+
+                    // define a temporary global callback for the fallback fetch
+                    window.t = ({ code, title }) => {
+                      if (code) {
+                        GameSettings.trackName = title;
+                        this.processTrackData(code);
+                        console.log("track loaded from FRHD.");
+                      } else {
+                        console.error("failed to load track code from FRHD.");
+                      }
+                      delete window.t;
+                    };
+
+                    document.body.appendChild(script);
                   });
 
                   /*fetch(ghost)
