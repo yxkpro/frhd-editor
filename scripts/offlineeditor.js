@@ -6655,24 +6655,24 @@
               e.stopPropagation();
             return !1
           },
-          changeSnapType: function () {
+          /*changeSnapType: function () {
             GameSettings.snapNear = !GameSettings.snapNear,
               GameManager.command("redraw");
-          },
-          /*changeSnapType: function(e) {
+          },*/
+          changeSnapType: function(e) {
             var selectedOption = e.target.value;
-            if (selectedOption === "VISIBLE") {
-                GameSettings.toolHandler.visibleGrid = true;
-                GameSettings.toolHandler.snapGrid = true;
-            } else if (selectedOption === "HIDDEN") {
-                GameSettings.toolHandler.visibleGrid = false;
-                GameSettings.toolHandler.snapGrid = true;
-            } else if (selectedOption === "NO-SNAP") {
-                GameSettings.toolHandler.visibleGrid = true;
-                GameSettings.toolHandler.snapGrid = false;
+            if (selectedOption === "Line Snap") {
+                GameSettings.snapNear = true;
+                GameSettings.snapClick = false;
+            } else if (selectedOption === "Point Snap") {
+                GameSettings.snapNear = false;
+                GameSettings.snapClick = false;
+            } else if (selectedOption === "Click Snap") {
+                GameSettings.snapNear = true;
+                GameSettings.snapClick = true;
             }
             GameManager.command("redraw");
-        },*/
+          },
           stopClickPropagation: function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -6694,8 +6694,8 @@
           },
           renderSnapTypeSelect: function () {
             var f = GameSettings.snapNear,
-              u = ["Line Snap", "Point Snap"];
-            var snapType = f ? "Line Snap" : "Point Snap";
+              u = ["Line Snap", "Point Snap", "Click Snap"];
+            var snapType = GameSettings.snapClick ? "Click Snap" : f ? "Line Snap" : "Point Snap";
             return n.createElement("select", {
               ref: "snapType",
               defaultValue: snapType,
@@ -32169,6 +32169,7 @@
                 scaleLock = e.scaleLock,
                 copy = e.copy;
               var type = GameSettings.copy ? "COPY + PASTE" : "CUT + PASTE";
+              /*var shape = ? "RECT" : "LASSO";*/
               return (
                 n.createElement("div", null,
                   n.createElement("div", { className: "editorDialog-titleBar" },
@@ -32240,6 +32241,13 @@
                                 onClick: this.toggleCopy
                             }, type)))
                         ),
+                        /*n.createElement("tr", null,
+                          n.createElement("td", { className: "settingTitle brush-td" }, n.createElement("span", { className: "name" }, "Selection Shape")),
+                          n.createElement("td", { className: "settingInput" }, n.createElement("span", {},
+                            n.createElement("button", {
+                                onClick: this.toggleSelectShape
+                            }, type)))
+                        ),*/
                       )
                     )
                   )
@@ -32252,6 +32260,10 @@
             },
             toggleCopy: function () {
               GameSettings.copy = !GameSettings.copy
+              this.forceUpdate();
+            },
+            toggleSelectShape: function () {
+              this.forceUpdate();
             },
             handleRotateChange: function (rotation) {
               this.setState({ rotateFactor: rotation });

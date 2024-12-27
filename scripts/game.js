@@ -17361,7 +17361,7 @@
             this.checkHotkeys(),
             this.checkMouse(),
             this.checkSnap(),
-            this.snapNear(),
+            !GameSettings.snapClick && this.snapNear(),
             this.setObjectOptions();
         }
         checkGrid() {
@@ -18381,8 +18381,8 @@
           n.options.snap &&
             ((this.active = !0),
             (this.p1 = n.snapPoint),
-            this.anchoring || this.hold()),
-            (this.shouldDrawMetadata = !!i.isButtonDown("ctrl"));}
+            this.anchoring || this.hold())}
+            (this.shouldDrawMetadata = !!i.isButtonDown("ctrl"));
           const r = this.toolHandler.options;
           let o = (s.old.down || i.isButtonDown("shift"));
           r.rightClickMove && (o = s.old.down),
@@ -18790,8 +18790,8 @@
             }
             if (GameSettings.snapNear && !this.options.object) {
             t.options.snap &&
-            ((this.active = !0), (this.p1 = t.snapPoint), this.hold()),
-            (this.shouldDrawMetadata = !!e.isButtonDown("ctrl"));}
+            ((this.active = !0), (this.p1 = t.snapPoint), this.hold())}
+            (this.shouldDrawMetadata = !!e.isButtonDown("ctrl"));
         }
         draw() {
           const t = this.scene,
@@ -19732,8 +19732,8 @@
             if (GameSettings.snapNear && !this.options.object) {
             t.options.snap && (this.active = !0,
             this.p1 = t.snapPoint,
-            this.hold()),
-            this.shouldDrawMetadata = !!e.isButtonDown("ctrl")}
+            this.hold())}
+            this.shouldDrawMetadata = !!e.isButtonDown("ctrl");
           }
           adjustSegmentLength(t) {
             let e = this.options.segmentLength;

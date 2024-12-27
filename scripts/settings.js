@@ -54,6 +54,7 @@ var GameSettings = {
     "add": true,
     "switchHotkeys": false,
     "snapNear": true,
+    "snapClick": false,
     "snapDistance": 10,
     "visibleHitboxes": false,
     "textOffset": 100,
