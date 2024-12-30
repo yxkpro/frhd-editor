@@ -1,0 +1,34 @@
+{
+    "tracks": [
+        {
+            "name": "brush",
+            "tracks": [
+                "4v",
+                "4x",
+                "susuwatari"
+            ]
+        },
+        {
+            "name": "mammoth",
+            "tracks": [
+                "antimony",
+                "argon",
+                "bismuth",
+                "carbon",
+                "hydrogen",
+                "iron",
+                "lead",
+                "magnesium",
+                "neon",
+                "nitrogen",
+                "oxygen",
+                "radon",
+                "silver",
+                "tin",
+                "uranium"
+            ]
+        },
+        "cube",
+        "tube"
+    ]
+}

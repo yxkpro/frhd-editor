@@ -2179,7 +2179,7 @@ html.fullscreen #main_page {
     right: 18px;
     padding: 6px;
     width: 30%;
-    height: 294px;
+    height: 180px;
     overflow-y: scroll;
     border: 1px solid #CCC;
     border-radius: 6px;
@@ -2188,6 +2188,32 @@ html.fullscreen #main_page {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.importDialog-preview {
+    position: absolute;
+    top: 251px;
+    right: 18px;
+    width: 30%;
+    height: auto;
+    max-width: 100%;
+    aspect-ratio: 5 / 3;
+    overflow-y: hidden;
+    z-index: 1;
+    border: 1px solid #CCC;
+    border-radius: 6px;
+    font-size: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.importDialog-preview img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 6px;
 }
 
 .greyed {

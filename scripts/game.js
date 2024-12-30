@@ -28019,7 +28019,7 @@ function load() {
               if (isHoverList)
                   this.p2 = mousePos.factor(1);
               // this is my current best guess for if there exists something to move and we should move it
-              if (this.down && this.selected.length && isSelectedUpdated) {
+              if (this.down && this.selected.length && isSelectedUpdated && !this.gamepad.isButtonDown("alt")) {
                   // remove the line if it's been temporarily recreated
                   if (!isSelectIntangible) {
                       isSelectIntangible = true;

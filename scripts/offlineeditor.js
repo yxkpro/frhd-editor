@@ -934,7 +934,7 @@
               GameManager.game.currentScene.objectPowerups = objectPowerups;
               let name;
               while (!name || GameManager.game.currentScene.objects[name])
-                name = `object-${GameManager.game.currentScene.objectNamegen++}`;
+                name = `object-${String(GameManager.game.currentScene.objectNamegen++).padStart(2, '0')}`
               GameManager.game.currentScene.objectName = name;
               GameManager.game.currentScene.objects[name] = {objectPhysics, objectScenery, objectPowerups};
               GameSettings.objectRotate = 0;
@@ -1454,6 +1454,8 @@
               selected = GameManager.game.currentScene.objectName != '',
               names = objects ? Object.keys(objects) : [];
             //console.log(objects, names);
+
+            names.sort((a, b) => a.localeCompare(b));
             if (names.length) {
               return n.createElement("select", {
                 ref: "object",
@@ -1803,7 +1805,7 @@
               GameManager.game.currentScene.objectPowerups = objectPowerups;
               let name;
               while (!name || GameManager.game.currentScene.objects[name])
-                name = `object-${GameManager.game.currentScene.objectNamegen++}`;
+                name = `object-${String(GameManager.game.currentScene.objectNamegen++).padStart(2, '0')}`
               GameManager.game.currentScene.objectName = name;
               GameManager.game.currentScene.objects[name] = {objectPhysics, objectScenery, objectPowerups};
               GameSettings.objectRotate = 0;
@@ -31742,33 +31744,79 @@
           r = n.createClass({
             displayName: "Autocomplete",
             render: function() {
-              let toRender = this.state?.matchList,
+              let toRender = this.state?.matchList || [],
                 importDialog = document.querySelector(
-                  'textarea.importDialog-code'
+                  "textarea.importDialog-code"
                 );
-              if (!toRender || !toRender?.length) {
-                return n.createElement(
-                  'div',
-                  { className: "importDialog-tracklist greyed" },
-                  "no results found"
-                );
-              }
-              return n.createElement(
-                'div',
-                {className: "importDialog-tracklist"},
+
+              let previewImage = n.createElement("img", {
+                className: "importDialog-preview",
+                src:
+                  this.state?.previewSrc || "/assets/images/objects/test.png",
+                onError: (e) => {
+                  if (e.target.src.includes("250x150-v12.png")) {
+                      e.target.src = e.target.src.replace("250x150-v12.png", "250x150-v5.png");
+                  } else {
+                      e.target.src = "/assets/images/objects/test.png";
+                  }
+              },
+              });
+
+              let trackList = n.createElement(
+                "div",
+                { className: "importDialog-tracklist" },
                 ...toRender.map((i) =>
                   n.createElement(
-                    'p',
-                    { onClick: () => {
-                      importDialog.value = i.name.replace(/</g, '');
-                      this.props.onInput(); // passed through onInput to use its display change
-                      this.handleChange({
-                        target: { value: i.name.endsWith('/') ? i.name : i.name.substring(0, i.name.lastIndexOf('/') + 1) }
-                      }); // so clicking on a folder opens up its contents
-                    } },
-                    i.name,
+                    "p",
+                    {
+                      onClick: () => {
+                        if (this.props.baseURL === "assets/tracks/") {
+                            importDialog.value = i.name.replace(/</g, "");
+                            this.props.onInput();
+                            this.handleChange({
+                                target: {
+                                    value: i.name.endsWith("/")
+                                        ? i.name
+                                        : i.name.substring(0, i.name.lastIndexOf("/") + 1),
+                                },
+                            });
+                    
+                            let trackId =
+                                typeof i === "object" && i["track-id"]
+                                    ? i["track-id"]
+                                    : null;
+                    
+                            let previewSrc = trackId
+                                ? `/assets/images/tracks/${i.name}.png` // `https://cdn.freeriderhd.com/free_rider_hd/tracks/prd/${trackId}/250x150-v12.png`
+                                : "/assets/images/objects/test.png";
+                    
+                            this.setState({ previewSrc });
+                        } else {
+                            importDialog.value = i.name.replace(/</g, "");
+                            this.props.onInput();
+                            this.handleChange({
+                                target: {
+                                    value: i.name.endsWith("/")
+                                        ? i.name
+                                        : i.name.substring(0, i.name.lastIndexOf("/") + 1),
+                                },
+                            });
+                    
+                            let previewSrc = `/assets/images/objects/${i.name.replace(/</g, "")}.png`;
+                            this.setState({ previewSrc });
+                        }
+                    
+                    }
+                    },
+                    i.name
                   )
                 )
+              );
+              return n.createElement(
+                "div",
+                { className: "importDialog-container" },
+                trackList,
+                previewImage
               );
             },
             // should decide all of the things to render, and then set the state to the first n
@@ -31783,17 +31831,71 @@
               document.querySelector('textarea.importDialog-code')?.removeEventListener?.('input', this.handleChange);
             },
             fetchData: function() {
-              fetch(this.props.baseURL + 'tracklist.json')
-                  .then((i) => i.json())
-                  .then((i) => {
-                      this.setState({ ...this.state, tracks: i.tracks });
-                      this.searchData(
-                          document.querySelector('textarea.importDialog-code')
-                              ?.value || ''
-                      );
+              fetch(this.props.baseURL + "tracklist-data.json")
+                .then((i) => i.json())
+                .then((i) => {
+                  this.setState({ tracks: i.tracks || [] }, () => {
+                    this.searchData(
+                      document.querySelector("textarea.importDialog-code")
+                        ?.value || ""
+                    );
                   });
+                })
+                .catch((error) =>
+                  console.error("Error fetching tracklist:", error)
+                );
             },
             searchData: function(string) {
+              if (this.props.baseURL === "assets/tracks/") {
+              let tracks = this.state.tracks;
+              if (!tracks || !tracks?.length) {
+                this.setState({...this.state, matchList: []});
+                return;
+              }
+              let dirs = string.split('/'),
+                path = '';
+              while (dirs.length > 1) {
+                let current = dirs.shift(),
+                  found = false;
+                for (let i of tracks) {
+                  let name = typeof i === "string" ? i : i?.["track-name"];
+                  if (name === current) {
+                    tracks = i.tracks || [];
+                    found = true;
+                    path += current + "/";
+                    break;
+                  }
+                }
+                if (!found) {
+                  this.setState({...this.state, matchList: []});
+                  return;
+                }
+              }
+              let search = dirs[0],
+                matches = [];
+              for (let i of tracks) {
+                let isDir = typeof i === "object" && i?.["track-name"],
+                  name = isDir ? i["track-name"] : i,
+                  pos = name?.search(search);
+                if (pos > -1) {
+                  matches.push({
+                    name: path + name,
+                    pos,
+                    "track-id": isDir ? i["track-id"] : null,
+                  });
+                }
+              }
+              if (path !== "") {
+                matches.push({ name: "<<", pos: -1 });
+              }
+              // can just add .slice(0, n) here to limit the number of results
+              // currently sorting by match position to get something resembling relevance, but you can very easily change the sort / something similar to make it better
+              this.setState({
+                ...this.state,
+                matchList: matches.sort((a, b) => a.pos - b.pos),
+              });
+            }
+            else {
               let tracks = this.state.tracks;
               if (!tracks || !tracks?.length) {
                 this.setState({...this.state, matchList: []});
@@ -31833,6 +31935,7 @@
               // can just add .slice(0, n) here to limit the number of results
               // currently sorting by match position to get something resembling relevance, but you can very easily change the sort / something similar to make it better
               this.setState({...this.state, matchList: matches.sort((a, b) => a.pos - b.pos)});
+            }
             }
           });
         t.exports = r;
