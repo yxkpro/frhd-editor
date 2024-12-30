@@ -12106,7 +12106,7 @@
           }
         }
         focusOnMainPlayer() {
-          if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("backspace") || this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("shift")) return;
+          if (this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("backspace") || this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("shift") || this.scene.game.currentScene.playerManager.firstPlayer._gamepad.isButtonDown("ctrl")) return;
           (0 === this.focusIndex && this.playerFocus) ||
             ((this.focusIndex = 0), this.focusOnPlayer());
         }
