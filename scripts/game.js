@@ -17726,6 +17726,10 @@
             this.scene.stateChanged();
         }
         toggleObject() {
+          if (this.options.object && this.options.lineType === !1) {
+            this.scene.command("dialog", "importObject");
+            return;
+          }
           (this.options.object = this.scene.state.object = !this.options.object);
           if (this.options.object) {
             this.options.lineType = !1}
