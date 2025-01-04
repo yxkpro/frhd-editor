@@ -13817,12 +13817,12 @@
                     y.strokeStyle = e.game.mod.getVar("hatColor"),
                     this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : (e.game.mod.getVar("mario") ? y.fillStyle = "#e4000f" : y.fillStyle = GameSettings.hatColor);
                     y.lineWidth = 2 * v;
-                    if (!this.drawHeadAngle) {
+                    if (!this.drawHeadAngle && this.dir >= 0) {
                       y.beginPath();
                       y.arc(a.x, a.y, 5 * v, 1 * Math.PI - 8 * Math.PI / 180, -24 * Math.PI / 180);
                       y.fill();
                     }  
-                    if (this.dir < 0 ) {
+                    else if (this.dir < 0) {
                       y.beginPath();
                       y.arc(a.x, a.y, 5 * v, this.drawHeadAngle + 1 * Math.PI + 24 * Math.PI / 180 + Math.PI, this.drawHeadAngle + 8 * Math.PI / 180 + Math.PI);
                       y.fill();
@@ -15438,12 +15438,12 @@
                   u.fill(),
                   u.closePath(),
                   this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgba(0,0,0,0)" : ((this.scene.game.mod.getVar("mario") ? u.fillStyle = "#48ad16" : u.fillStyle = GameSettings.hatColor));
-                if (!this.drawHeadAngle) {
+                if (!this.drawHeadAngle && this.dir >= 0) {
                   u.beginPath();
                   u.arc(z.x, z.y, 4.2 * c, Math.PI - 13 * Math.PI / 180, -18 * Math.PI / 180);
                   u.fill();
                 }
-                if (this.dir < 0) {
+                else if (this.dir < 0) {
                   u.beginPath();
                   u.arc(z.x, z.y, 4.2 * c, this.drawHeadAngle + Math.PI + 18 * Math.PI / 180 + Math.PI, this.drawHeadAngle + 13 * Math.PI / 180 + Math.PI);
                   u.fill();
