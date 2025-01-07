@@ -2419,7 +2419,7 @@ html.fullscreen #main_page {
 }
 
 .editorDialog-content_helpDialog {
-    width: 640px;
+    width: fit-content;
     height: 445px
 }
 

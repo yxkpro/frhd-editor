@@ -18648,7 +18648,7 @@
             (this.p2.y = t.y),
             this.p2.equ(this.mouse.touch.real),
             this.toolHandler.gamepad.isButtonDown("ctrl") &&
-              this.toolHandler.gamepad.isButtonDown("shift"))
+              (this.toolHandler.gamepad.isButtonDown("shift") || this.scene.game.mod.getVar("snap15")))
           ) {
             let t = Math.atan2(this.p2.y - this.p1.y, this.p2.x - this.p1.x);
             const e = Math.sqrt(
@@ -19574,7 +19574,8 @@
               if (this.p2.x = t.x,
               this.p2.y = t.y,
               this.p2.equ(this.mouse.touch.real),
-              this.toolHandler.gamepad.isButtonDown("ctrl") && this.toolHandler.gamepad.isButtonDown("shift")) {
+              this.toolHandler.gamepad.isButtonDown("ctrl") &&
+              (this.toolHandler.gamepad.isButtonDown("shift") || this.scene.game.mod.getVar("snap15"))) {
                   let t = Math.atan2(this.p2.y - this.p1.y, this.p2.x - this.p1.x);
                   const e = Math.sqrt(Math.pow(this.p1.x - this.p2.x, 2) + Math.pow(this.p1.y - this.p2.y, 2));
                   t = Math.round(12 * t / Math.PI) * Math.PI / 12,
@@ -20388,7 +20389,7 @@
             e.x === s.x && e.y === s.y && (i = -qe / 2),
             (i = Math.round(i * (180 / qe) + 90) % 360),
             this.toolHandler.gamepad.isButtonDown("ctrl") &&
-              this.toolHandler.gamepad.isButtonDown("shift") &&
+              (this.toolHandler.gamepad.isButtonDown("shift") || this.scene.game.mod.getVar("snap15")) &&
               ((i = 15 * Math.round(i / 15)), 360 === i && (i = 0));
           const n = new t.Z(
               -Math.sin((i * qe) / 180),
@@ -26344,6 +26345,7 @@
           inputDisplay: { default: !1 },
           hitboxes: { default: !1 },
           accurateEraser: { default: !1 },
+          snap15: { default: !1 },
           keepDeadRiders: {
             default: !1,
             set(t, e, s) {
@@ -26709,6 +26711,12 @@
                 title: "Pixel Snap Rider",
                 description:
                   "Snaps the rider's position to pixels, along with the track. This setting trades visual smoothness for visual accuracy. It may be helpful for ghosters, but it is generally not recommended.",
+              },
+              {
+                key: "snap15",
+                title: "Snap to 15",
+                description:
+                  "When holding CTRL to show line or powerup data, the angle of the tool will change in 15 degree increments.",
               },
             ],
           },
