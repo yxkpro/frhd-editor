@@ -10893,7 +10893,7 @@
               this.scene.state.paused &&
                 ((s = !1),
                 (i = !1),
-                (t = this.scene.settings.mobile || this._game.mod.getVar("mobile")
+                (t = this.scene.settings.mobile || this.scene.game.mod.getVar("mobile")
                   ? "Paused"
                   : "Paused - Press " + y + " to Continue")),
               !1 === s && (s = "#333333"),
@@ -16219,7 +16219,7 @@
 
                 (t.state.playerAlive = this.isAlive()),
                   this._checkpoints.length > 0
-                    ? e.mobile
+                    ? e.mobile || this._game.mod.getVar("mobile")
                       ? s.show(
                           "Tap to go to checkpoint!",
                           !1,
@@ -16232,7 +16232,7 @@
                           "#000000",
                           "#FFFFFF"
                         )
-                    : e.mobile
+                    : e.mobile || this._game.mod.getVar("mobile")
                     ? s.show("Tap to Restart!", !1, "#000000", "#FFFFFF")
                     : s.show(
                       "Press " + x + " To Restart",
