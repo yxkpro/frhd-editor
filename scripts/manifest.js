@@ -7,6 +7,12 @@ var GameManifest = [
   },
   {
     loadTimeout: 300000,
+    id: "phone_controls",
+    src: "assets/images/controls/controls.png",
+    name: "Phone Controls"
+  },
+  {
+    loadTimeout: 300000,
     id: "pause_controls",
     src: "assets/images/controls/pause.png",
     name: "Pause Icon",

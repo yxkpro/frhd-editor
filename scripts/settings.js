@@ -19,7 +19,7 @@ var GameSettings = {
     "drawSectorSize": 200,
     "physicsSectorSize": 100,
     "startVehicle": "BMX",
-    "startTool": "straightline",
+    "startTool": "camera",
     "startPowerup": "goal",
     "defaultGravityX": 0,
     "defaultGravityY": 0.3,
@@ -146,10 +146,10 @@ var GameSettings = {
         }
     },
     "playHotkeys": {
-        "up": [38],
-        "down": [40],
-        "left": [37],
-        "right": [39],
+        "up": [38, 87, 73],
+        "down": [40, 83, 75],
+        "left": [37, 65, 74],
+        "right": [39, 68, 76],
         "pause": 32,
         "enter": 13,
         "backspace": 8,

@@ -9483,7 +9483,6 @@
               left: 100,
               hitArea: { width: 250, height: 200, x: -30, y: -65 },
             },
-            last_checkpoint: { key: "enter", top: 60, left: 160 },
             left: {
               key: "left",
               bottom: 100,
@@ -9496,7 +9495,8 @@
               right: 100,
               hitArea: { width: 200, height: 200, x: -10, y: -15 },
             },
-            replay: { key: "restart", top: 60, left: 80 },
+            last_checkpoint: { key: "enter", top: 60, right: 160 },
+            replay: { key: "backspace", top: 60, right: 240 },
             zoom_in: { key: "zoom_increase", bottom: 100, right: 100 },
             zoom_out: { key: "zoom_decrease", bottom: 100, left: 100 },
           }),
@@ -9523,8 +9523,8 @@
               (this.replayButton = e),
               (this.controlsContainer = n),
               (this.zoomControlsContainer = r),
-              this.stage.addChild(n),
-              this.stage.addChild(r);
+              this.stage.addChild(n);
+              //this.stage.addChild(r);
           }),
           (r.resize = function () {
             var t = this.scene.game,
@@ -9548,8 +9548,8 @@
           }),
           (r.update = function () {
             var t = this.scene;
-            this.lastCheckpointButton.visible =
-              !!t.playerManager.firstPlayer.hasCheckpoints();
+            /*this.lastCheckpointButton.visible =
+              !!t.playerManager.firstPlayer.hasCheckpoints();*/
           }),
           (t.exports = i);
       },
@@ -24373,17 +24373,14 @@
           const t = this.playerManager.firstPlayer;
           if (t) {
             const e = t.getGamepad();
-            const hotkeys = this.settings.editorHotkeys;
+            const hotkeys = this.game.mod.getVar("mobile") || this.game.mod.getVar("play") ? this.settings.playHotkeys : this.settings.editorHotkeys;
             e.setKeyMap(hotkeys);
           }
         }
         createControls() {
-          "tablet" === this.settings.controls &&
-            ((this.controls = new (fn())(this)), this.controls.hide()),
-            "phone" === this.settings.controls &&
-              ((this.controls = new (mn())(this)), this.controls.hide()),
-            (this.redoundoControls = new _n(this)),
-            (this.pauseControls = new wn(this));
+            this.game.mod.getVar("mobile") && (this.controls = new (mn())(this));
+            !this.redoundoControls && (this.redoundoControls = new _n(this));
+            !this.pauseControls && (this.pauseControls = new wn(this));
         }
         createTrack() {
           this.track && this.track.close();
@@ -24430,9 +24427,25 @@
                 this.camera.focusOnMainPlayer(),
                 this.toolHandler.setTool("camera")),
               this.controls.setVisibility(!t),
+              this.controls.setZoomControlsVisibilty(t),
               this.updateState()),
               this.controls.update();
+              this.redoundoControls.controlsContainer.visible = false;
+
+              if (!this.game.mod.getVar("mobile")) {
+                  this.controls.setVisibility(false),
+                  this.controls.setZoomControlsVisibilty(false),
+                  this.redoundoControls.controlsContainer.visible = true,
+                  this.controls = false;
+              }
           }
+
+          if (!this.controls && this.game.mod.getVar("mobile")) {
+            this.createControls();
+            this.redoundoControls.controlsContainer.visible = false;
+          };
+          
+          this.updateState();
           this.pauseControls.update();
         }
         registerTools() {
@@ -24783,6 +24796,7 @@
               (t.zoomPercentage = this.camera.zoomPercentage),
               (t.vehicle = this.vehicle),
               this.game.onStateChange(this.state);
+              t.hideMenus = this.game.mod.getVar("play") || this.game.mod.getVar("mobile");
           }
         }
         stateChanged() {
@@ -26346,6 +26360,8 @@
           hitboxes: { default: !1 },
           accurateEraser: { default: !1 },
           snap15: { default: !1 },
+          mobile: { default: !1 },
+          play: { default: !1 },
           keepDeadRiders: {
             default: !1,
             set(t, e, s) {
@@ -26848,6 +26864,18 @@
             title: "Input Display",
             description:
               "Shows the keys that are pressed.",
+          },
+          {
+            key: "mobile",
+            title: "Mobile Mode",
+            description:
+              "Adds touchscreen controls for playing.",
+          },
+          {
+            key: "play",
+            title: "Play Mode",
+            description:
+              "Hides side toolbars and turns on play hotkeys.",
           },
           {
             type: "folder",
