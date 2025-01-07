@@ -10893,7 +10893,7 @@
               this.scene.state.paused &&
                 ((s = !1),
                 (i = !1),
-                (t = this.scene.settings.mobile
+                (t = this.scene.settings.mobile || this._game.mod.getVar("mobile")
                   ? "Paused"
                   : "Paused - Press " + y + " to Continue")),
               !1 === s && (s = "#333333"),
@@ -16521,7 +16521,7 @@
                   let z = keyCodeToChar[GameSettings.editorHotkeys.shift];
                   const x = (this._game.mod.getVar("rewind")) ? "Hold " + y + " to Rewind, Press " + z + " and " + y + " to Restart" : "Press " + y + " To Go Back Further";
                   (e.state.playerAlive = this.isAlive()),
-                    e.settings.mobile
+                    e.settings.mobile || this._game.mod.getVar("mobile")
                       ? e.message.show("Tap to resume", 5, "#826cdc", "#FFFFFF")
                       : e.message.show(
                           x,
@@ -24349,7 +24349,7 @@
             : { height: 90, width: 0 };
         }
         tapToStartOrRestart() {
-          if (this.settings.mobile) {
+          if (this.settings.mobile || this.game.mod.getVar("mobile")) {
             const t = this.playerManager.firstPlayer;
             t && t._crashed && !this.state.paused
               ? t.getGamepad().setButtonDown("enter")
