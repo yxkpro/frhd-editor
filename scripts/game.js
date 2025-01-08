@@ -18427,7 +18427,7 @@
               (this.drawLine(e, s),
               this.drawPoint(e, this.p1, s),
               this.drawPoint(e, this.p2, s),
-              (this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways")) && this.drawPointData(e, this.p2, s),
+              this.drawPointData(e, this.p2, s),
               this.drawAnchorData(e, this.midpoint, s));
 
         }
@@ -18505,7 +18505,7 @@
         }
         drawPointData(t, e) {
           const s = e.toScreenSnapped(this.scene);
-          if (this.shouldDrawMetadata) {
+          if (this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways")) {
             const e = this.p1.getAngleInDegrees(this.p2).toFixed(2),
               i = this.game.pixelRatio;
             let n =
@@ -18548,7 +18548,7 @@
         }
         drawAnchorData(t, e) {
           const s = e.toScreenSnapped(this.scene);
-          if (this.shouldDrawMetadata) {
+          if ((this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways"))) {
             const e = this.p1.getAngleInDegrees(this.midpoint).toFixed(2),
               i = this.game.pixelRatio;
             let n =
@@ -26367,6 +26367,7 @@
           hitboxes: { default: !1 },
           accurateEraser: { default: !1 },
           snap15: { default: !1 },
+          pointDataAlways: { default: !1 },
           mobile: { default: !1 },
           play: { default: !1 },
           keepDeadRiders: {
