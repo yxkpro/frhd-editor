@@ -18427,7 +18427,7 @@
               (this.drawLine(e, s),
               this.drawPoint(e, this.p1, s),
               this.drawPoint(e, this.p2, s),
-              this.drawPointData(e, this.p2, s),
+              (this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways")) && this.drawPointData(e, this.p2, s),
               this.drawAnchorData(e, this.midpoint, s));
 
         }
@@ -18816,7 +18816,7 @@
               (this.drawLine(e, s),
               this.drawPoint(e, this.p1, s),
               this.drawPoint(e, this.p2, s),
-              this.drawPointData(e, this.p2, s)),
+              (this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways")) && this.drawPointData(e, this.p2, s)),
             e.restore();
         }
         drawCursor(t) {
@@ -18897,7 +18897,7 @@
         }
         drawPointData(t, e) {
           const s = e.toScreenSnapped(this.scene);
-          if (this.shouldDrawMetadata) {
+          if ((this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways"))) {
             const e = this.p1.getAngleInDegrees(this.p2).toFixed(2),
               i = this.game.pixelRatio;
             let n =
@@ -19860,7 +19860,7 @@
           }
           drawPointData(t, e) {
               const s = e.toScreenSnapped(this.scene);
-              if (this.shouldDrawMetadata) {
+              if ((this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways"))) {
                   const e = this.p1.getAngleInDegrees(this.p2).toFixed(2)
                     , i = this.game.pixelRatio;
                   let n = Math.sqrt(Math.pow(this.p1.x - this.p2.x, 2) + Math.pow(this.p1.y - this.p2.y, 2)) / 10;
@@ -20435,7 +20435,7 @@
               this.powerup.draw(s.x, s.y, e, t),
               (t.globalAlpha = 1);
           }
-          this.shouldDrawMetadata && this.drawPointData(t, this.p2);
+          (this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways")) && this.drawPointData(t, this.p2);
         }
         drawPathToMouse(t, e) {
           const s = this.scene.camera.zoom,
@@ -22323,7 +22323,7 @@
             this.powerup.draw(n, r, e, t),
             (t.globalAlpha = 1);
           }
-          this.shouldDrawMetadata && this.drawPointData(t, this.p1, this.p2);
+          (this.shouldDrawMetadata || this.scene.game.mod.getVar("pointDataAlways")) && this.drawPointData(t, this.p1, this.p2);
         }
         drawPathToMouse(t) {
           const e = this.p1,
@@ -26741,6 +26741,11 @@
                 description:
                   "When holding CTRL to show line or powerup data, the angle of the tool will change in 15 degree increments.",
               },
+              {
+                key: "pointDataAlways",
+                title: "Always Show Point Data",
+                description: "Point data for tools that support it will always be shown, even without CTRL held. Does not cause the above setting to always be active."
+              }
             ],
           },
           {
