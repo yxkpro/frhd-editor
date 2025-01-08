@@ -153,6 +153,7 @@ var GameSettings = {
         "pause": 32,
         "enter": 13,
         "backspace": 8,
+        "shift": 16,
         "z": 90,
         "x": 88,
         "zoom_increase": 187,
