@@ -1723,6 +1723,13 @@ html.fullscreen #main_page {
     }
 }
 
+@media screen and (max-width: 720px) {
+    .topMenu-button_help,
+    .topMenu-button_controls {
+        display: none
+    }
+}
+
 .horizontal-slider-container {
     display: inline-block;
     float: left
@@ -2013,39 +2020,6 @@ html.fullscreen #main_page {
     border-right: 0
 }
 
-@media (max-height: 720px) {
-    .leftMenu,
-    .rightMenu {
-        transform: scale(0.8);
-    }
-
-    .leftMenu {
-        left: -5px;
-    }
-
-    .rightMenu {
-        right: -5px;
-    }
-
-    .topMenu {
-        top: -5px;
-        width: 125%;
-        transform: scale(0.8);
-        transform-origin: left;
-    }
-
-    .bottomMenu {
-        bottom: -5px;
-        width: 125%;
-        transform: scale(0.8);
-        transform-origin: left;
-    }
-
-    .editorGui {
-        height: 35px;
-    }
-}
-
 /*
 @media (max-height: 480px) {
     .leftMenu,
@@ -2179,7 +2153,8 @@ html.fullscreen #main_page {
     right: 18px;
     padding: 6px;
     width: 30%;
-    height: 180px;
+    min-width: 168px;
+    height: 42%;
     overflow-y: scroll;
     border: 1px solid #CCC;
     border-radius: 6px;
@@ -2192,9 +2167,10 @@ html.fullscreen #main_page {
 
 .importDialog-preview {
     position: absolute;
-    top: 251px;
+    bottom: 84px;
     right: 18px;
     width: 30%;
+    min-width: 168px;
     height: auto;
     max-width: 100%;
     aspect-ratio: 5 / 3;
@@ -2221,7 +2197,7 @@ html.fullscreen #main_page {
 }
 
 .importDialog-code{
-    width: 65%;
+    width: 66%;
 }
 
 .exportDialog-code{
@@ -2252,7 +2228,7 @@ html.fullscreen #main_page {
     font-size: 14px;
     padding: 15px;
     position: absolute;
-    width: 330px
+    width: 60%;
 }
 
 .exportDialog-saveAsFile,
@@ -3066,4 +3042,75 @@ only screen and (min-device-pixel-ratio:3) {
     display: block;
     height: auto;
     border: 1px solid transparent
+}
+
+@media (max-height: 720px) {
+    .leftMenu,
+    .rightMenu {
+        transform: scale(0.8);
+    }
+
+    .leftMenu {
+        left: -5px;
+    }
+
+    .rightMenu {
+        right: -5px;
+    }
+
+    .topMenu {
+        top: -5px;
+        width: 125%;
+        transform: scale(0.8);
+        transform-origin: left;
+    }
+
+    .bottomMenu {
+        bottom: -5px;
+        width: 125%;
+        transform: scale(0.8);
+        transform-origin: left;
+    }
+
+    .editorGui {
+        height: 35px;
+    }
+}
+
+@media (max-width: 720px) or (max-height: 600px) {
+    .editorDialog-content {
+        width: 360px;
+    }
+
+    .importDialog-placeholder {
+        width: 40%;
+    }
+
+    .importDialog-code {
+        width: 45%;
+        height: 250px;
+    }
+
+    .importDialog-tracklist {
+        height: 36%;
+    }
+
+    .editorDialog-content {
+        transform: scale(0.8);
+    }
+
+    .editorDialog-content_exportDialog {
+        min-width: 400px;
+        transform: scale(0.6);
+    }
+}
+
+@media screen and (max-width: 720px) {
+    .bottomToolOptions-toolTitle,
+    .bottomMenu-button_object,
+    .bottomMenu-button_snap,
+    .bottomMenu-button_grid,
+    .bottomMenu-button_cameralock {
+        display: none
+    }
 }

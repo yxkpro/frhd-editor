@@ -9384,7 +9384,7 @@
               for (let t = 0; t < e.keys.length; t++)
                 s.setButtonDown(e.keys[t]);
             e.downCallback && e.downCallback(t),
-              this.settings.mobile && (this.mouse.enabled = !1),
+            this.scene.game.mod.getVar("mobile") && (this.mouse.enabled = !1),
               (t.target.alpha = 1);
           }
           controlUp(t) {
@@ -9393,7 +9393,7 @@
             if ((e.key && s.setButtonUp(e.key), e.keys))
               for (let t = 0; t < e.keys.length; t++) s.setButtonUp(e.keys[t]);
             e.upCallback && e.upCallback(t),
-              this.settings.mobile
+            this.scene.game.mod.getVar("mobile")
                 ? ((this.mouse.enabled = !0), (t.target.alpha = 0.5))
                 : (t.target.alpha = 0.8);
           }
@@ -9460,7 +9460,7 @@
               left: [4],
               replay: [5],
               right: [6],
-              zoom_in: [7],
+              special: [7],
               zoom_out: [8],
             },
           }),
@@ -9470,6 +9470,12 @@
               bottom: 100,
               left: 100,
               hitArea: { width: 250, height: 200, x: -30, y: -15 },
+            },
+            special: {
+              key: "x",
+              bottom: 100,
+              left: 250,
+              hitArea: { width: 230, height: 230, x: 0, y: -15 },
             },
             direction: {
               key: "z",
@@ -9511,6 +9517,7 @@
               n.addChild(this.createControl("forward")),
               n.addChild(this.createControl("brake")),
               n.addChild(this.createControl("direction")),
+              n.addChild(this.createControl("special")),
               n.addChild(t),
               n.addChild(e),
               n.addChild(s),

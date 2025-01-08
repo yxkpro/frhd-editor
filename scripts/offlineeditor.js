@@ -364,6 +364,7 @@
             render: function () {
               var e = this.props.data.tool,
                 t = this.props.data.toolOptions,
+                mobile = GameManager.game && GameManager.game.currentScene.mod.getVar("mobile"),
                 f = "";
               switch (e) {
                 case "straightline":
@@ -403,12 +404,12 @@
                     "div",
                     { className: "clearfix" },
                     f,
-                    n.createElement(i, {active: this.props.data.cameraLocked }),
-                    n.createElement(o, { active: this.props.data.grid }),
-                    n.createElement(xxx, { active: this.props.data.snap }),
+                    !mobile ? n.createElement(i, {active: this.props.data.cameraLocked }) : null,
+                    !mobile ? n.createElement(o, { active: this.props.data.grid }) : null,
+                    !mobile ? n.createElement(xxx, { active: this.props.data.snap }) : null,
                     //e !== "select" && n.createElement(vv),
                     n.createElement(r, { vehicle: this.props.data.vehicle }),
-                    n.createElement(xxxx, { active: this.props.data.object }),
+                    !mobile ? n.createElement(xxxx, { active: this.props.data.object }) : null,
                     //e === "select" && n.createElement(vvv),
                     //n.createElement(v),
                     n.createElement("span", { className: "divider" })
@@ -1628,6 +1629,10 @@
               return { open: false };
             },
             openOptions: function (e) {
+              if (GameManager.game.currentScene.mod.getVar("mobile"))
+              { this.toggleVehicle();
+                return;
+              }
               this.setState({ open: !this.state.open });
             },
             moveVehicle: function () {
