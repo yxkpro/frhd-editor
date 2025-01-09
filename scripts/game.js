@@ -24388,6 +24388,7 @@
             this.game.mod.getVar("mobile") && (this.controls = new (mn())(this));
             !this.redoundoControls && (this.redoundoControls = new _n(this));
             !this.pauseControls && (this.pauseControls = new wn(this));
+            this.updateState();
         }
         createTrack() {
           this.track && this.track.close();
@@ -24447,12 +24448,12 @@
               }
           }
 
-          if (!this.controls && this.game.mod.getVar("mobile")) {
+          if (!this.controls && this.game.mod.getVar("mobile") || this.game.mod.getVar("play")) {
             this.createControls();
+            this.toolHandler.setTool("camera");
             this.redoundoControls.controlsContainer.visible = false;
           };
           
-          this.updateState();
           this.pauseControls.update();
         }
         registerTools() {
