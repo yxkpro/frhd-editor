@@ -364,7 +364,7 @@
             render: function () {
               var e = this.props.data.tool,
                 t = this.props.data.toolOptions,
-                mobile = GameManager.game && GameManager.game.currentScene.mod.getVar("mobile"),
+                mobile = GameManager.game && (GameManager.game.currentScene.mod.getVar("mobile") || GameManager.game.currentScene.mod.getVar("play")),
                 f = "";
               switch (e) {
                 case "straightline":

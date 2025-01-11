@@ -1669,6 +1669,7 @@ html.fullscreen #main_page {
     background: #E2E2E2;
     border-bottom: 1px solid #000;
     position: relative;
+    overflow: hidden;
 }
 
 .topMenu-button {
@@ -3104,7 +3105,7 @@ only screen and (min-device-pixel-ratio:3) {
         transform: scale(0.6);
     }
 }
-
+/*
 @media screen and (max-width: 720px) {
     .bottomToolOptions-toolTitle,
     .bottomMenu-button_object,
@@ -3113,4 +3114,4 @@ only screen and (min-device-pixel-ratio:3) {
     .bottomMenu-button_cameralock {
         display: none
     }
-}
+}*/

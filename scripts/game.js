@@ -24043,7 +24043,7 @@
           }
 
           else {
-
+            this.game.mod.vars.play = true;
             fetch(`assets/tracks/${GameSettings.trackName}.txt`)
               .then(response => {
                 if (!response.ok) {
