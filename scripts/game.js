@@ -24385,7 +24385,7 @@
           }
         }
         createControls() {
-            this.game.mod.getVar("mobile") && (this.controls = new (mn())(this));
+            this.game.mod.getVar("mobile") && !this.controls && (this.controls = new (mn())(this));
             !this.redoundoControls && (this.redoundoControls = new _n(this));
             !this.pauseControls && (this.pauseControls = new wn(this));
             this.updateState();
