@@ -17441,6 +17441,8 @@
           if (!this.options.object || this.currentTool === "eraser") return;
         
           let scale = GameSettings.objectScale;
+          let stretchX = GameSettings.objectStretchX;
+          let stretchY = GameSettings.objectStretchY;
           let rotate = GameSettings.objectRotate;
           let offsetX = GameSettings.objectOffsetX;
           let offsetY = GameSettings.objectOffsetY;
@@ -17475,6 +17477,32 @@
             scale = Math.max(minScale, Math.min(maxScale, scale));
             GameSettings.objectScale = scale;
             t.setButtonUp("scale");
+            this.scene.transformObjects();
+            this.scene.stateChanged();
+          }
+
+          if (t.isButtonDown("stretchX")) {
+            if (t.isButtonDown("shift")) {
+              stretchX -= GameSettings.stretchSensitivity;
+            } else {
+              stretchX += GameSettings.stretchSensitivity;
+            }
+            stretchX = Math.max(minScale, Math.min(maxScale, stretchX));
+            GameSettings.objectStretchX = stretchX;
+            t.setButtonUp("stretchX");
+            this.scene.transformObjects();
+            this.scene.stateChanged();
+          }
+
+          if (t.isButtonDown("stretchY")) {
+            if (t.isButtonDown("shift")) {
+              stretchY -= GameSettings.stretchSensitivity;
+            } else {
+              stretchY += GameSettings.stretchSensitivity;
+            }
+            stretchY = Math.max(minScale, Math.min(maxScale, stretchY));
+            GameSettings.objectStretchY = stretchY;
+            t.setButtonUp("stretchY");
             this.scene.transformObjects();
             this.scene.stateChanged();
           }
@@ -17559,6 +17587,8 @@
           if (this.options.object && this.gamepad.isButtonDown("ctrl") && (this.currentTool === "straightline" || this.currentTool === "circle" || this.currentTool === "curve" || this.currentTool === "brush")) {
               const rotate = GameSettings.objectRotate;
               const scale = GameSettings.objectScale.toFixed(2);
+              const stretchX = GameSettings.objectStretchX.toFixed(2);
+              const stretchY = GameSettings.objectStretchY.toFixed(2);
               const offsetX = GameSettings.objectOffsetX;
               const offsetY = GameSettings.objectOffsetY;
               const flipX = GameSettings.objectFlipX ? "X " : "";
@@ -17577,11 +17607,13 @@
               t.strokeText(scale + "x", s.x + r, s.y - r + 25 * i);
               t.strokeText("flip: " + flipX + flipY, s.x + r, s.y - r + 40 * i);
               t.strokeText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
+              t.strokeText("stretch: " + stretchX + "x" + stretchY, s.x + r, s.y - r + 70 * i);
           
               t.fillText(rotate + "°", s.x + r, s.y - r + 10 * i);
               t.fillText(scale + "x", s.x + r, s.y - r + 25 * i);
               t.fillText("flip: " + flipX + flipY + noFlip, s.x + r, s.y - r + 40 * i);
               t.fillText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
+              t.fillText("stretch: " + stretchX + "x" + stretchY, s.x + r, s.y - r + 70 * i);
           }
         }
         drawPowerupCursor(ctx, name, x, y, x2, y2, angle, scale) {
@@ -25219,6 +25251,8 @@
                 this.modObjectPowerups = [];
                 GameSettings.objectRotate = 0;
                 GameSettings.objectScale = 1;
+                GameSettings.objectStretchX = 1;
+                GameSettings.objectStretchY = 1;
                 GameSettings.objectOffsetX = 0;
                 GameSettings.objectOffsetY = 0;
                 GameSettings.objectFlipX = !1;
@@ -25414,6 +25448,8 @@
       
           const rotate = GameSettings.objectRotate;
           const scale = GameSettings.objectScale;
+          const stretchX = GameSettings.objectStretchX;
+          const stretchY = GameSettings.objectStretchY;
           const offsetX = GameSettings.objectOffsetX;
           const offsetY = GameSettings.objectOffsetY;
           const flipX = GameSettings.objectFlipX ? -1 : 1;
@@ -25426,10 +25462,10 @@
           const sinAngle = Math.sin(angle);
       
           const transformLine = (line) => {
-              const x1 = (line.x1 * scale) + offsetX;
-              const y1 = (line.y1 * scale) + offsetY;
-              const x2 = (line.x2 * scale) + offsetX;
-              const y2 = (line.y2 * scale) + offsetY;
+              const x1 = (line.x1 * scale * stretchX) + offsetX;
+              const y1 = (line.y1 * scale * stretchY) + offsetY;
+              const x2 = (line.x2 * scale * stretchX) + offsetX;
+              const y2 = (line.y2 * scale * stretchY) + offsetY;
       
               const newX1 = Math.round(x1 * cosAngle - y1 * sinAngle) * flipX;
               const newY1 = Math.round(x1 * sinAngle + y1 * cosAngle) * flipY;
