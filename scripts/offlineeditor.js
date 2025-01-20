@@ -607,7 +607,15 @@
           adjustSegmentLength: function(e) {
               "undefined" != typeof GameManager && GameManager.command("change tool option", "segmentLength", e)
           },
+          getInitialState: function() {
+            return { ellipse : true };
+          },
+          toggleCircleType: function () {
+              this.setState({ ellipse : !this.state.ellipse });
+              GameSettings.ellipse = !GameSettings.ellipse;
+          },
           render: function() {
+              var type = GameSettings.ellipse ? "ELLIPSE" : "CIRCLE";
               var e = this.props.options
               , s = 0.4
               , l = 0.1
@@ -628,7 +636,12 @@
                   className: "toolName"
               }, "CIRCLE : ", n.createElement("span", {
                   className: "bottomMenu-bold"
-              }, e.object ? "object" : e.lineType))), n.createElement("div", {
+              }, e.object ? "object" : e.lineType)),
+              n.createElement("span", {},
+              n.createElement("button", {
+                    onClick: this.toggleCircleType
+                }, type))),
+              n.createElement("div", {
                   className: "horizontal-slider-container"
               }, n.createElement("span", {
                   className: "horizontal-slider-label"

@@ -19597,18 +19597,20 @@
                 const e = this.p2;
                 const s = this.scene.track;
                 const i = GameSettings.circle.segmentLength * 10;
-        
-                const radius = Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
-                const segments = Math.ceil(Math.max(4, Math.round((radius / i) / 2) * 2));
+                
+                const radiusX = GameSettings.ellipse ? Math.abs(e.x - t.x) : Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
+                const radiusY = GameSettings.ellipse ? Math.abs(e.y - t.y) : Math.sqrt(Math.pow(e.x - t.x, 2) + Math.pow(e.y - t.y, 2));
+
+                const segments = Math.ceil(Math.max(4, Math.round(((radiusX + radiusY) * 0.5 / i) / 2) * 2));
                 const angleIncrement = (2 * Math.PI) / segments;
                 const addedObjects = [];
         
                 for (let j = 0; j < segments; j++) {
                     const angle = j * angleIncrement;
-                    const x1 = t.x + radius * Math.cos(angle);
-                    const y1 = t.y + radius * Math.sin(angle);
-                    const x2 = t.x + radius * Math.cos(angle + angleIncrement);
-                    const y2 = t.y + radius * Math.sin(angle + angleIncrement);
+                    const x1 = t.x + radiusX * Math.cos(angle);
+                    const y1 = t.y + radiusY * Math.sin(angle);
+                    const x2 = t.x + radiusX * Math.cos(angle + angleIncrement);
+                    const y2 = t.y + radiusY * Math.sin(angle + angleIncrement);
         
                     let lineObject;
         
@@ -19895,10 +19897,17 @@
               t.strokeStyle = x;
               const center = this.p1.toScreenSnapped(this.scene);
               const cursorPosition = this.p2.toScreenSnapped(this.scene);
-              const radius = Math.sqrt(Math.pow(cursorPosition.x - center.x, 2) + Math.pow(cursorPosition.y - center.y, 2));
-          
-              // draw circle
-              t.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+
+              if (GameSettings.ellipse) {
+                const radiusX = Math.abs(cursorPosition.x - center.x);
+                const radiusY = Math.abs(cursorPosition.y - center.y);
+                t.ellipse(center.x, center.y, radiusX, radiusY, 0, 0, 2 * Math.PI);
+              }
+
+              else {
+                const radius = Math.sqrt(Math.pow(cursorPosition.x - center.x, 2) + Math.pow(cursorPosition.y - center.y, 2));
+                t.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+              }
               t.stroke();
           }
       }
