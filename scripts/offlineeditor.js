@@ -953,6 +953,8 @@
               GameManager.game.currentScene.objects[name] = {objectPhysics, objectScenery, objectPowerups};
               GameSettings.objectRotate = 0;
               GameSettings.objectScale = 1;
+              GameSettings.objectStretchX = 1;
+              GameSettings.objectStretchY = 1;
               GameSettings.objectOffsetX = 0;
               GameSettings.objectOffsetY = 0;
               GameSettings.objectFlipX = !1;
@@ -1424,6 +1426,8 @@
             }
             GameSettings.objectRotate = 0;
             GameSettings.objectScale = 1;
+            GameSettings.objectStretchX = 1;
+            GameSettings.objectStretchY = 1;
             GameSettings.objectOffsetX = 0;
             GameSettings.objectOffsetY = 0;
             GameSettings.objectFlipX = !1;
@@ -1828,6 +1832,8 @@
               GameManager.game.currentScene.objects[name] = {objectPhysics, objectScenery, objectPowerups};
               GameSettings.objectRotate = 0;
               GameSettings.objectScale = 1;
+              GameSettings.objectStretchX = 1;
+              GameSettings.objectStretchY = 1;
               GameSettings.objectOffsetX = 0;
               GameSettings.objectOffsetY = 0;
               GameSettings.objectFlipX = !1;
