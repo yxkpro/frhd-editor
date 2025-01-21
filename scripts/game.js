@@ -17607,13 +17607,13 @@
               t.strokeText(scale + "x", s.x + r, s.y - r + 25 * i);
               t.strokeText("flip: " + flipX + flipY, s.x + r, s.y - r + 40 * i);
               t.strokeText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
-              t.strokeText("stretch: " + stretchX + "x" + stretchY, s.x + r, s.y - r + 70 * i);
+              t.strokeText("stretch: " + stretchX + "x, " + stretchY + "x", s.x + r, s.y - r + 70 * i);
           
               t.fillText(rotate + "°", s.x + r, s.y - r + 10 * i);
               t.fillText(scale + "x", s.x + r, s.y - r + 25 * i);
               t.fillText("flip: " + flipX + flipY + noFlip, s.x + r, s.y - r + 40 * i);
               t.fillText("(" + offsetX + "," + offsetY + ")", s.x + r, s.y - r + 55 * i);
-              t.fillText("stretch: " + stretchX + "x" + stretchY, s.x + r, s.y - r + 70 * i);
+              t.fillText("stretch: " + stretchX + "x, " + stretchY + "x", s.x + r, s.y - r + 70 * i);
           }
         }
         drawPowerupCursor(ctx, name, x, y, x2, y2, angle, scale) {
