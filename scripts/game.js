@@ -24389,6 +24389,7 @@
             this.modObjectScenery = this.objectScenery;
             this.modObjectPowerups = this.objectPowerups;
             this.cleanCode = false;
+            this.logged = false;
 
         }
         getCanvasOffset() {
@@ -25098,7 +25099,25 @@
         trackComplete() {
           this.verified = !this.track.dirty;
           this.completedTicks = this.playerManager.firstPlayer._scene.ticks;
+          this.logTrackComplete();
         }
+        logTrackComplete() {
+          if (this.logged || GameSettings.trackName === 'track.txt') return;
+          let completedTracks = JSON.parse(localStorage.getItem("completedTracks") || "[]");
+      
+          let trackData = {
+              trackName: this.game.settings.trackName.replace(/\.txt$/, "") || "track.txt",
+              slowmo: this.game.mod.getVar("slowmo") || false,
+              oldTimer: this.game.mod.getVar("oldTimer") || false,
+              rewind: this.game.mod.getVar("rewind") || false,
+              ticks: this.ticks || 0,
+          };
+      
+          completedTracks.push(trackData);
+          localStorage.setItem("completedTracks", JSON.stringify(completedTracks));
+          console.log((localStorage.getItem("completedTracks")))
+          this.logged = true;
+      }
         hideControlPlanel() {}
         showControlPlanel() {}
         command(...t) {

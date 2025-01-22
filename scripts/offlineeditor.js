@@ -31773,6 +31773,8 @@
                   "textarea.importDialog-code"
                 );
 
+              let completedTracks = JSON.parse(localStorage.getItem("completedTracks") || "[]");
+
               let previewImage = n.createElement("img", {
                 className: "importDialog-preview",
                 src:
@@ -31789,8 +31791,9 @@
               let trackList = n.createElement(
                 "div",
                 { className: "importDialog-tracklist" },
-                ...toRender.map((i) =>
-                  n.createElement(
+                ...toRender.map((i) => {
+                  let isCompleted = completedTracks.some(track => track.trackName === i.fullName.replace(/</g, ""));
+                  return n.createElement(
                     "p",
                     {
                       onClick: async() => {
@@ -31850,11 +31853,11 @@
                             let previewSrc = `/assets/images/objects/${i.fullName.replace(/</g, "")}.png`;
                             this.setState({ previewSrc });
                         }
-                    
-                    }
                     },
-                    i.displayName
-                  )
+                    style: { color: isCompleted ? '#1884cf' : 'inherit' }
+                    },
+                    i.displayName,
+                  )}
                 )
               );
               return n.createElement(
