@@ -31793,46 +31793,67 @@
                   n.createElement(
                     "p",
                     {
-                      onClick: () => {
+                      onClick: async() => {
+                        if (i.displayName === "random") {
+                          const randomTrack = this.state.matchList[Math.floor(Math.random() * this.state.matchList.length)];
+                          i = randomTrack;
+                        }
+
+                        if (i.displayName === "daily") {
+                          const specifiedDate = new Date();
+                          const formattedDate = specifiedDate.toISOString().slice(0, 10);
+                      
+                          try {
+                            const response = await fetch('assets/tracks/trackdata.json');
+                            if (!response.ok) {
+                              throw new Error('Failed to load trackdata.json');
+                            }
+                            const data = await response.json();
+                      
+                            const trackEntry = data.tracks.find(entry => entry.date === formattedDate);
+                            if (trackEntry && trackEntry.trackname) {
+                              i.displayName = i.fullName = trackEntry.trackname;
+                              console.log("daily track:", trackEntry);
+                            } else {
+                              i.displayName = i.fullName = "no daily found";
+                              console.log("no track entry found for today's date.");
+                            }
+                          } catch (error) {
+                            console.error('error loading trackdata:', error);
+                          }
+                        }
+
                         if (this.props.baseURL === "assets/tracks/") {
-                            importDialog.value = i.name.replace(/</g, "");
+                            importDialog.value = i.fullName.replace(/</g, "");
                             this.props.onInput();
                             this.handleChange({
                                 target: {
-                                    value: i.name.endsWith("/")
-                                        ? i.name
-                                        : i.name.substring(0, i.name.lastIndexOf("/") + 1),
+                                    value: i.fullName.endsWith("/")
+                                        ? i.fullName
+                                        : i.fullName.substring(0, i.fullName.lastIndexOf("/") + 1),
                                 },
                             });
-                    
-                            let trackId =
-                                typeof i === "object" && i["track-id"]
-                                    ? i["track-id"]
-                                    : null;
-                    
-                            let previewSrc = trackId
-                                ? `/assets/images/tracks/${i.name}.png` // `https://cdn.freeriderhd.com/free_rider_hd/tracks/prd/${trackId}/250x150-v12.png`
-                                : "/assets/images/objects/test.png";
-                    
+
+                            let previewSrc = `/assets/images/tracks/${i.fullName.replace(/</g, "")}.png`;
                             this.setState({ previewSrc });
                         } else {
-                            importDialog.value = i.name.replace(/</g, "");
+                            importDialog.value = i.fullName.replace(/</g, "");
                             this.props.onInput();
                             this.handleChange({
                                 target: {
-                                    value: i.name.endsWith("/")
-                                        ? i.name
-                                        : i.name.substring(0, i.name.lastIndexOf("/") + 1),
+                                    value: i.fullName.endsWith("/")
+                                        ? i.fullName
+                                        : i.fullName.substring(0, i.fullName.lastIndexOf("/") + 1),
                                 },
                             });
                     
-                            let previewSrc = `/assets/images/objects/${i.name.replace(/</g, "")}.png`;
+                            let previewSrc = `/assets/images/objects/${i.fullName.replace(/</g, "")}.png`;
                             this.setState({ previewSrc });
                         }
                     
                     }
                     },
-                    i.name
+                    i.displayName
                   )
                 )
               );
@@ -31855,7 +31876,7 @@
               document.querySelector('textarea.importDialog-code')?.removeEventListener?.('input', this.handleChange);
             },
             fetchData: function() {
-              fetch(this.props.baseURL + "tracklist-data.json")
+              fetch(this.props.baseURL + "tracklist.json")
                 .then((i) => i.json())
                 .then((i) => {
                   this.setState({ tracks: i.tracks || [] }, () => {
@@ -31870,56 +31891,6 @@
                 );
             },
             searchData: function(string) {
-              if (this.props.baseURL === "assets/tracks/") {
-              let tracks = this.state.tracks;
-              if (!tracks || !tracks?.length) {
-                this.setState({...this.state, matchList: []});
-                return;
-              }
-              let dirs = string.split('/'),
-                path = '';
-              while (dirs.length > 1) {
-                let current = dirs.shift(),
-                  found = false;
-                for (let i of tracks) {
-                  let name = typeof i === "string" ? i : i?.["track-name"];
-                  if (name === current) {
-                    tracks = i.tracks || [];
-                    found = true;
-                    path += current + "/";
-                    break;
-                  }
-                }
-                if (!found) {
-                  this.setState({...this.state, matchList: []});
-                  return;
-                }
-              }
-              let search = dirs[0],
-                matches = [];
-              for (let i of tracks) {
-                let isDir = typeof i === "object" && i?.["track-name"],
-                  name = isDir ? i["track-name"] : i,
-                  pos = name?.search(search);
-                if (pos > -1) {
-                  matches.push({
-                    name: path + name,
-                    pos,
-                    "track-id": isDir ? i["track-id"] : null,
-                  });
-                }
-              }
-              if (path !== "") {
-                matches.push({ name: "<<", pos: -1 });
-              }
-              // can just add .slice(0, n) here to limit the number of results
-              // currently sorting by match position to get something resembling relevance, but you can very easily change the sort / something similar to make it better
-              this.setState({
-                ...this.state,
-                matchList: matches.sort((a, b) => a.pos - b.pos),
-              });
-            }
-            else {
               let tracks = this.state.tracks;
               if (!tracks || !tracks?.length) {
                 this.setState({...this.state, matchList: []});
@@ -31950,16 +31921,19 @@
                   name = isDir ? i.name + '/' : i,
                   pos = name.search(search);
                 if (pos > -1) {
-                  matches.push({name: path + name, pos});
+                  matches.push({
+                    fullName: path + name,
+                    displayName: name.startsWith(path) ? name.slice(path.length) : name,
+                    pos,
+                  });
                 }
               }
               if (path !== '') {
-                matches.push({name: "<<", pos: -1});
+                matches.push({ fullName: "<<", displayName: "<<", pos: -1 });
               }
               // can just add .slice(0, n) here to limit the number of results
               // currently sorting by match position to get something resembling relevance, but you can very easily change the sort / something similar to make it better
               this.setState({...this.state, matchList: matches.sort((a, b) => a.pos - b.pos)});
-            }
             }
           });
         t.exports = r;

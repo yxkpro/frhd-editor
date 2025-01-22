@@ -24966,7 +24966,6 @@
           n = false;
         
           for (const powerup of t) {
-            console.log(powerup)
             if (!powerup.recorded && powerup.remove !== 0) {
               n = true;
               switch (powerup.name) {
@@ -27770,8 +27769,8 @@ function load() {
               const width = maxX - minX;
               const height = maxY - minY;
       
-              const centerX = minX + width / 2 + inflectionOffset.x;
-              const centerY = minY + height / 2 + inflectionOffset.y;
+              const centerX = minX + Math.floor(width / 2) + inflectionOffset.x;
+              const centerY = minY + Math.floor(height / 2) + inflectionOffset.y;
       
               this.center = vector(centerX, centerY);
               Object.assign(this.center, { centerX, centerY, width, height, minX, maxX, minY, maxY });
