@@ -31893,7 +31893,7 @@
             searchData: function(string) {
               let tracks = this.state.tracks;
               if (!tracks || !tracks?.length) {
-                this.setState({...this.state, matchList: []});
+                this.setState({...this.state, matchList: [], previewSrc: "/assets/images/objects/test.png"});
                 return;
               }
               let dirs = string.split('/'),
@@ -31910,22 +31910,28 @@
                   }
                 }
                 if (!found) {
-                  this.setState({...this.state, matchList: []});
+                  this.setState({ ...this.state, matchList: [], previewSrc: "/assets/images/objects/test.png" });
                   return;
                 }
               }
               let search = dirs[0],
                 matches = [];
+              let exactMatch = null;
               for (let i of tracks) {
                 let isDir = !!i?.name,
                   name = isDir ? i.name + '/' : i,
                   pos = name.search(search);
                 if (pos > -1) {
-                  matches.push({
+                  const match = {
                     fullName: path + name,
                     displayName: name.startsWith(path) ? name.slice(path.length) : name,
                     pos,
-                  });
+                  };
+                  matches.push(match);
+            
+                  if (name === string) {
+                    exactMatch = match;
+                  }
                 }
               }
               if (path !== '') {
@@ -31933,7 +31939,15 @@
               }
               // can just add .slice(0, n) here to limit the number of results
               // currently sorting by match position to get something resembling relevance, but you can very easily change the sort / something similar to make it better
-              this.setState({...this.state, matchList: matches.sort((a, b) => a.pos - b.pos)});
+              this.setState({ 
+                ...this.state, 
+                matchList: matches.sort((a, b) => a.pos - b.pos),
+                previewSrc: exactMatch 
+                  ? (this.props.baseURL === "assets/tracks/"
+                    ? `/assets/images/tracks/${exactMatch.fullName.replace(/</g, "")}.png`
+                    : `/assets/images/objects/${exactMatch.fullName.replace(/</g, "")}.png`)
+                  : "/assets/images/objects/test.png" 
+              });
             }
           });
         t.exports = r;
