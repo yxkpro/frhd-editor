@@ -1439,7 +1439,7 @@
           },
           renderRotateSensitivitySelect: function () {
             var e = GameSettings.rotateSensitivity,
-              t = [5, 15, 30, 45, 90];
+              t = [1, 5, 15, 30, 45, 90];
             return n.createElement("select", {
               ref: "rotateSensitivity",
               defaultValue: e,
@@ -32316,7 +32316,7 @@
                                 onChange: this.handleRotateChange,
                                 defaultValue: GameSettings.rotateFactor || 15,
                                 max: 90,
-                                min: 5,
+                                min: 0,
                                 step: 5,
                                 value: GameSettings.rotateFactor || this.state.rotateFactor
                               }),
@@ -32394,7 +32394,7 @@
             },
             handleRotateChange: function (rotation) {
               this.setState({ rotateFactor: rotation });
-              GameSettings.rotateFactor = rotation;
+              rotation > 0 ? (GameSettings.rotateFactor = rotation) : (GameSettings.rotateFactor = 1);
             },
             handleScaleChange: function (scale) {
               this.setState({ scaleFactor: scale });
