@@ -24584,6 +24584,7 @@
             this.camera.focusOnPlayer(),
             this.camera.fastforward(),
             this.score.update();
+            this.logged = false;
         }
         buttonDown(t) {
           const e = this.camera;
@@ -25215,7 +25216,8 @@
                 (this.importCode = e),
                 (this.clear = t[1]),
                 this.command("dialog", !1);
-                this.trackUpdated = true
+                this.trackUpdated = true;
+                this.logged = false;
               break;
             }
             case "add": {
