@@ -24552,6 +24552,7 @@
               if (this.playerManager.firstPlayer.complete && (this.playerManager.firstPlayer._scene.ticks < this.completedTicks)){
                   this.playerManager.firstPlayer.complete = false;
             }
+            (this.track.targetCount === 0) && this.logTrackComplete();
         }
         isStateDirty() {
           const t = this.oldState,
