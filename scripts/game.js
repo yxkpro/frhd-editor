@@ -19575,6 +19575,9 @@
               this.p1 = new t.Z(0,0),
               this.p2 = new t.Z(0,0),
               this.active = !1;
+              this.rotatingEllipse = false;
+              this.ellipseRotated = false;
+              this.rotationAngle = 0;
               const s = e.scene.settings.circle;
               this.shouldDrawMetadata = !1,
               this.addedObjects = [],
@@ -19597,6 +19600,7 @@
               this.addedObjects = []
           }
           press() {
+              if (this.rotatingEllipse) return;
               if (this.recordActionsToToolhandler(),
               !this.active) {
                   const t = this.mouse.touch.real;
@@ -19609,6 +19613,7 @@
           }
 
           hold() {
+              if (this.rotatingEllipse) return;
               const t = this.mouse.touch.real;
               if (this.p2.x = t.x,
               this.p2.y = t.y,
@@ -19624,6 +19629,10 @@
               this.toolHandler.moveCameraTowardsMouse()
           }
           release() {
+            if (GameSettings.ellipse && !this.ellipseRotated) {
+              this.rotatingEllipse = true;
+              return;
+            }
             if (this.active && this.toolHandler) {
                 const t = this.p1;
                 const e = this.p2;
@@ -19636,13 +19645,21 @@
                 const segments = Math.ceil(Math.max(4, Math.round(((radiusX + radiusY) * 0.5 / i) / 2) * 2));
                 const angleIncrement = (2 * Math.PI) / segments;
                 const addedObjects = [];
+                const rotation = this.rotationAngle || 0;
+                const cosAngle = Math.cos(rotation);
+                const sinAngle = Math.sin(rotation);
         
                 for (let j = 0; j < segments; j++) {
                     const angle = j * angleIncrement;
-                    const x1 = t.x + radiusX * Math.cos(angle);
-                    const y1 = t.y + radiusY * Math.sin(angle);
-                    const x2 = t.x + radiusX * Math.cos(angle + angleIncrement);
-                    const y2 = t.y + radiusY * Math.sin(angle + angleIncrement);
+                    let firstX1 = t.x + radiusX * Math.cos(angle);
+                    let firstY1 = t.y + radiusY * Math.sin(angle);
+                    let firstX2 = t.x + radiusX * Math.cos(angle + angleIncrement);
+                    let firstY2 = t.y + radiusY * Math.sin(angle + angleIncrement);
+
+                    let x1 = t.x + (firstX1 - t.x) * cosAngle - (firstY1 - t.y) * sinAngle;
+                    let y1 = t.y + (firstX1 - t.x) * sinAngle + (firstY1 - t.y) * cosAngle;
+                    let x2 = t.x + (firstX2 - t.x) * cosAngle - (firstY2 - t.y) * sinAngle;
+                    let y2 = t.y + (firstX2 - t.x) * sinAngle + (firstY2 - t.y) * cosAngle;
         
                     let lineObject;
         
@@ -19764,6 +19781,23 @@
                 this.toolHandler.snapPoint.y = e.y;
         
                 this.active = false;
+                this.ellipseRotated = false;
+                this.rotatingEllipse = false;
+                this.rotationAngle = 0;
+            }
+          }
+          rotateEllipse() {
+            const t = this.mouse.touch.real;
+            let rotation = Math.atan2(t.y - this.p1.y, t.x - this.p1.x);
+
+            if (this.toolHandler.gamepad.isButtonDown("ctrl") &&
+              (this.toolHandler.gamepad.isButtonDown("shift") || this.scene.game.mod.getVar("snap15"))) {
+              rotation = Math.round(12 * rotation/ Math.PI) * Math.PI / 12;
+            }
+
+            (this.rotationAngle = rotation);
+            if (this.mouse.touch.press) {
+              this.ellipseRotated = true;
             }
           }
           update() {
@@ -19782,6 +19816,7 @@
             this.p1 = t.snapPoint,
             this.hold())}
             this.shouldDrawMetadata = !!e.isButtonDown("ctrl");
+            this.rotatingEllipse && (this.rotateEllipse());
           }
           adjustSegmentLength(t) {
             let e = this.options.segmentLength;
@@ -19810,11 +19845,13 @@
                 , e = t.game.canvas.getContext("2d")
                 , s = t.camera.zoom;
               e.save(),
-              this.drawCursor(e),
-              this.active && (this.drawLine(e, s),
-              this.drawPoint(e, this.p1, s),
-              this.drawPoint(e, this.p2, s),
-              this.drawPointData(e, this.p2, s)),
+              this.drawCursor(e);
+              if (this.active || this.rotatingEllipse) {
+                this.drawLine(e, s);
+                this.drawPoint(e, this.p1, s);
+                this.drawPoint(e, this.p2, s);
+                this.drawPointData(e, this.p2, s);
+              }
               e.restore()
           }
           drawCursor(t) {
@@ -19933,7 +19970,7 @@
               if (GameSettings.ellipse) {
                 const radiusX = Math.abs(cursorPosition.x - center.x);
                 const radiusY = Math.abs(cursorPosition.y - center.y);
-                t.ellipse(center.x, center.y, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                t.ellipse(center.x, center.y, radiusX, radiusY, this.rotationAngle, 0, 2 * Math.PI);
               }
 
               else {
