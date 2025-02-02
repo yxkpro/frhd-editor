@@ -17372,6 +17372,7 @@
             this.checkSnap(),
             !GameSettings.snapClick && this.snapNear(),
             this.setObjectOptions();
+            this.currentTool !== "circle" && (this.tools.circle.rotatingEllipse = false);
         }
         checkGrid() {
           const t = this.scene.camera;
@@ -27284,7 +27285,7 @@
       }
       let xr = document.createElement("template");
       (xr.innerHTML =
-        '<div class="mod-menu-container"> <div style="display:grid;grid-template-columns:auto auto auto"> <div class="mod-menu"> </div> <div class="mod-v-seperator"></div> <div class="mod-description-container"> <div class="mod-setting-description invisible"></div> <div class="mod-title" onclick=\'window.open("https://community.freeriderhd.com/threads/14964/")\'> <div style="flex:0.5"></div> <div> <p style="font-family:monospace;font-size:14pt">Free Rider<br><span style="font-size:10pt">track editor v1.1</span></p><br><p style="font-family:monospace;font-size:8pt">credits:<br>Ness<br>Pie42<br>Polygon<br>Calculus<br>Char<br>Maxime<br>Pete</div></p><br><p style="font-family:monospace;font-size:8pt">click for app info</div></p> <div style="flex:1"></div> </div> </div> </div> </div> '),
+        '<div class="mod-menu-container"> <div style="display:grid;grid-template-columns:auto auto auto"> <div class="mod-menu"> </div> <div class="mod-v-seperator"></div> <div class="mod-description-container"> <div class="mod-setting-description invisible"></div> <div class="mod-title" onclick=\'window.open("https://github.com/yxkpro/frhd-editor/"), /*GameManager.command("dialog", "changeLog");*/ document.body.removeChild(GameManager.game.mod.ui.container);\'> <div style="flex:0.5"></div> <div> <p style="font-family:monospace;font-size:14pt">Free Rider<br><span style="font-size:10pt">track editor v1.1</span></p><br><p style="font-family:monospace;font-size:8pt">credits:<br>Ness<br>Pie42<br>Polygon<br>Calculus<br>Char<br>Maxime<br>Pete</div></p><br><p style="font-family:monospace;font-size:8pt">click for app info</div></p> <div style="flex:1"></div> </div> </div> </div> </div> '),
         (xr = xr.content);
       const br = {
         bool: (t, e, s, i) => new lr(t, s[e], i),
@@ -27363,7 +27364,7 @@
                       if (!this.container.contains(e.target)) {
                         document.removeEventListener("mousedown", t),
                           document.removeEventListener("pointerdown", t),
-                          document.body.removeChild(this.container);
+                          document.body.contains(this.container) && document.body.removeChild(this.container);
                         for (const t of this.arr)
                           t instanceof dr && t.opened && t.close();
                       }

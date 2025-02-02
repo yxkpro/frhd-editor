@@ -106,6 +106,16 @@ with the introduction of objects, there's an opportunity for trackmakers to shar
 
 if you guys have any questions, feel free to ask! and any bugs you find or ideas you have, let us know! this editor is for all of you.
 
+**2025-02-02**
+
+* add rotation for ellipse option
+
+**2025-01-22**
+
+* add localStorage logging of completed tracks, shown as blue tracks in tracklist
+
+* improve import dialog UI (random and daily and typing a track name all show track preview)
+
 **2025-01-19**
 
 * add ellipse option to circle tool
@@ -114,7 +124,7 @@ if you guys have any questions, feel free to ask! and any bugs you find or ideas
 
 **2025-01-08**
 
-* *add "always draw point data" mod
+* add "always draw point data" mod
 
 **2025-01-07**
 
@@ -124,7 +134,7 @@ if you guys have any questions, feel free to ask! and any bugs you find or ideas
 
 **2025-01-06**
 
-* *add "snap to 15" mod
+* add "snap to 15" mod
 
 **2025-01-03**
 
@@ -132,7 +142,7 @@ if you guys have any questions, feel free to ask! and any bugs you find or ideas
 
 **2024-12-31**
 
-* *first click on cube icon enables tool option, second click opens import dialog
+* first click on cube icon enables tool option, second click opens import dialog
 
 **2024-12-30**
 

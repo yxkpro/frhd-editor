@@ -2380,17 +2380,18 @@
       function (e, t) {
         var n = e("react"),
           r = n.createClass({
-            displayName: "HelpDialog",
+            displayName: "ChangeLog",
+            getInitialState: function () {
+              return { readmeContent: "Loading..." };
+            },
             closeDialog: function () {
-              "undefined" != typeof GameManager &&
-                GameManager.command("dialog", !1);
+              "undefined" != typeof GameManager && GameManager.command("dialog", !1);
             },
             render: function () {
               return n.createElement(
                 "div",
                 {
-                  className:
-                    "editorDialog-content editorDialog-content_changeLog",
+                  className: "editorDialog-content editorDialog-content_changeLog",
                 },
                 n.createElement(
                   "span",
@@ -2403,92 +2404,21 @@
                 n.createElement(
                   "h1",
                   { className: "editorDialog-content-title" },
-                  n.createElement("b", null, "Read Me")
-                ),
-                n.createElement(
-                  "div",
-                  { className: "line" },
-                  n.createElement(
-                    "b",
-                    null,
-                    "Welcome to the new and improved editor!"
-                  )
-                ),
-                n.createElement(
-                  "div",
-                  { className: "line" },
-                  "First let me say, the editor behind this dialog is in",
-                  n.createElement("b", null, " super alpha phase"),
-                  ". Meaning a lot of bugs may pop up. "
+                  n.createElement("b", null, "freerider.app")
                 ),
                 n.createElement(
                   "div",
                   { className: "box" },
-                  n.createElement(
-                    "div",
-                    { className: "line" },
-                    "The following items are still in the works:"
-                  ),
-                  n.createElement(
-                    "ul",
-                    null,
-                    n.createElement(
-                      "li",
-                      null,
-                      "Checkpoints (currently working on them now)"
-                    ),
-                    n.createElement("li", null, "Zoom to mouse"),
-                    n.createElement("li", null, "Redo & Undo"),
-                    n.createElement("li", null, "Tablet Controls"),
-                    n.createElement("li", null, "Uploading"),
-                    n.createElement("li", null, "Fullscreen"),
-                    n.createElement("li", null, "Sound")
-                  )
-                ),
-                n.createElement(
-                  "div",
-                  { className: "line" },
-                  "Autos created on here, may not work on current version of the game so creator beware."
-                ),
-                n.createElement(
-                  "div",
-                  { className: "line" },
-                  "Download Google Chrome Browser for best performance"
-                ),
-                n.createElement(
-                  "div",
-                  { className: "line" },
-                  "If you want to log a bug, ",
-                  n.createElement(
-                    "a",
-                    {
-                      href: "http://community.freeriderhd.com/threads/new-editor-release-and-bug-report.2391/",
-                      target: "_blank",
-                    },
-                    "visit this thread"
-                  ),
-                  " in the forum"
-                ),
-                n.createElement(
-                  "div",
-                  { className: "line" },
-                  "Please ",
-                  n.createElement(
-                    "b",
-                    null,
-                    n.createElement(
-                      "a",
-                      {
-                        href: "http://community.freeriderhd.com/threads/new-editor-release-and-bug-report.2391/",
-                        target: "_blank",
-                      },
-                      "read the first post"
-                    )
-                  ),
-                  " as to not log duplicate bugs"
+                  n.createElement("iframe", {
+                    src: "/README.md",
+                    width: "100%",
+                    height: "400px",
+                    style: { border: "none" },
+                  })
                 )
               );
-            },
+            }
+            
           });
         t.exports = r;
       },
