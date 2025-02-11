@@ -1664,7 +1664,7 @@ html.fullscreen #main_page {
 }
 
 .topMenu {
-    width: 100%;
+    width: 80%;
     height: 45px;
     background: #E2E2E2;
     border-bottom: 1px solid #000;
@@ -1684,7 +1684,7 @@ html.fullscreen #main_page {
 .topMenu-button .text {
     position: relative;
     top: 2px;
-    padding: 0 1px;
+    padding: 0 4px;
     display: none
 }
 
@@ -2496,8 +2496,13 @@ html.fullscreen #main_page {
     width: inherit
 }
 
-.editorDialog-content_changeLog {
-    margin-top: -189px
+.editorDialog {
+    width: 100%;
+    height: 90%;
+    position: absolute;
+    top: 5%;
+    background: rgba(0, 0, 0, 0);
+    z-index: 2;
 }
 
 .editorDialog-content_changeLog .editorDialog-content-title {
@@ -3045,7 +3050,7 @@ only screen and (min-device-pixel-ratio:3) {
     border: 1px solid transparent
 }
 
-@media (max-height: 720px) {
+@media (max-height: 1440px) {
     .leftMenu,
     .rightMenu {
         transform: scale(0.8);
@@ -3061,7 +3066,7 @@ only screen and (min-device-pixel-ratio:3) {
 
     .topMenu {
         top: -5px;
-        width: 125%;
+        width: 100%;
         transform: scale(0.8);
         transform-origin: left;
     }
@@ -3115,3 +3120,75 @@ only screen and (min-device-pixel-ratio:3) {
         display: none
     }
 }*/
+
+.landing {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    z-index: 100;
+}
+
+.changeLog {
+    width: 33.333%;
+    height: 111%;
+    right: -257px;
+    position: absolute;
+    top: -5%;
+    background: rgba(0, 0, 0, 0);
+    z-index: 2;
+  }
+
+.editorgui_icons-icon_sidebar_open:hover {
+    width: 14px;
+    height: 14px;
+    background-position: -365px -41px;
+    margin-top: 11px;
+    margin-bottom: 11px;
+    margin-left: 6px;
+    margin-right: 6px;
+    transform: rotate(180deg);
+}
+
+.editorgui_icons-icon_sidebar_open {
+    width: 14px;
+    height: 14px;
+    background-position: -385px -73px;
+    margin-top: 11px;
+    margin-bottom: 11px;
+    margin-left: 6px;
+    margin-right: 6px;
+    transform: rotate(180deg);
+}
+
+.editorgui_icons-icon_sidebar_close:hover {
+    width: 14px;
+    height: 14px;
+    background-position: -365px -41px;
+    margin-top: 11px;
+    margin-bottom: 11px;
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.editorgui_icons-icon_sidebar_close {
+    width: 14px;
+    height: 14px;
+    background-position: -385px -73px;
+    margin-top: 11px;
+    margin-bottom: 11px;
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+#forumIframe {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 25%;
+    height: 100vh;
+    border-style: solid;
+    border-bottom: none;
+    border-top: none;
+    border-width: 1px;
+}
