@@ -17372,7 +17372,7 @@
             this.checkSnap(),
             !GameSettings.snapClick && this.snapNear(),
             this.setObjectOptions();
-            this.currentTool !== "circle" && (this.tools.circle.rotatingEllipse = false);
+            this.currentTool !== "circle" && (this.tools.circle.rotatingEllipse = false, this.tools.circle.rotationAngle = 0);
         }
         checkGrid() {
           const t = this.scene.camera;
