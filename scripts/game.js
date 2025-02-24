@@ -12002,7 +12002,7 @@
             s.x = h(s.x / gridSize) * gridSize;
             s.y = h(s.y / gridSize) * gridSize;
           }
-          if (this.scene.toolHandler.options.snap && nearestPoint && ((nearestPoint.x !== this.scene.toolHandler.snapPointOld.x || nearestPoint.y !== this.scene.toolHandler.snapPointOld.y) || !GameSettings.snapNear)) {
+          if (this.scene.toolHandler.options.snap && nearestPoint && ((nearestPoint.x !== this.scene.toolHandler.snapPoint.x || nearestPoint.y !== this.scene.toolHandler.snapPoint.y) || (!GameSettings.snapClick || ((this.scene.toolHandler.currentTool === ("vehiclepowerup")) || (this.scene.toolHandler.currentTool === ("powerup")) || this.scene.toolHandler.currentTool === ("select") || this.scene.toolHandler.options.object))) && ((nearestPoint.x !== this.scene.toolHandler.snapPointOld.x || nearestPoint.y !== this.scene.toolHandler.snapPointOld.y) || !GameSettings.snapNear)) {
             s.x = nearestPoint.x;
             s.y = nearestPoint.y;
           }
@@ -18512,7 +18512,7 @@
               this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, e);
           });
           }
-          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+          if (this.toolHandler.options.grid || (this.toolHandler.options.snap && GameSettings.snapCursor)) {
             const i = 5 * e;
             t.beginPath(),
               t.moveTo(s.x, s.y - i),
@@ -18901,7 +18901,7 @@
                 this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, s);
             });
             }
-          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+          if (this.toolHandler.options.grid || (this.toolHandler.options.snap && GameSettings.snapCursor)) {
             const i = 5 * s;
             t.beginPath(),
               t.moveTo(e.x, e.y - i),
@@ -19441,7 +19441,7 @@
               this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, s);
             });
           }
-          if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+          if (this.toolHandler.options.grid || (this.toolHandler.options.snap && GameSettings.snapCursor)) {
             const i = 5 * s;
             t.beginPath();
             t.moveTo(e.x, e.y - i);
@@ -19904,7 +19904,7 @@
                     this.toolHandler.drawPowerupCursor(t, powerup.name, powerup.x, powerup.y, powerup.x2, powerup.y2, powerup.angle, s);
                 });
                 }
-              if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+              if (this.toolHandler.options.grid || (this.toolHandler.options.snap && GameSettings.snapCursor)) {
                   const i = 5 * s;
                   t.beginPath(),
                   t.moveTo(e.x, e.y - i),
@@ -20103,7 +20103,7 @@
           , s = this.camera.zoom
           , r = this.scene.game.pixelRatio;
 
-        if (this.toolHandler.options.grid || this.toolHandler.options.snap) {
+        if (this.toolHandler.options.grid || (this.toolHandler.options.snap && GameSettings.snapCursor)) {
           const z = 5 * s;
           t.beginPath();
           t.moveTo(v.x, v.y - z);

@@ -6629,6 +6629,15 @@
             }
             GameManager.command("redraw");
           },
+          changeSnapCursor: function(e) {
+            var selectedOption = e.target.value;
+            if (selectedOption === "Cross") {
+              GameSettings.snapCursor = true;
+            } else {
+              GameSettings.snapCursor = false;
+            }
+            GameManager.command("redraw");
+          },
           stopClickPropagation: function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -6656,6 +6665,22 @@
               ref: "snapType",
               defaultValue: snapType,
               onChange: this.changeSnapType,
+              onClick: this.stopClickPropagation
+            }, u.map(function (f) {
+              return n.createElement("option", {
+                key: f,
+                value: f
+              }, f)
+            }))
+          },
+          renderSnapCursorSelect: function () {
+            var f = GameSettings.snapCursor,
+              u = ["Cross", "Dot"];
+            var snapCursor = f ? "Cross" : "Dot";
+            return n.createElement("select", {
+              ref: "snapCursor",
+              defaultValue: snapCursor,
+              onChange: this.changeSnapCursor,
               onClick: this.stopClickPropagation
             }, u.map(function (f) {
               return n.createElement("option", {
@@ -6706,7 +6731,7 @@
               }
             }), n.createElement("span", {
               className: "name"
-            }, "Snap", o),  this.state.open ? n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect()) : null)
+            }, "Snap", o),  this.state.open ? n.createElement("div", {}, this.renderSnapSizeSelect(), this.renderSnapTypeSelect(), this.renderSnapCursorSelect()) : null)
           }
         });
       t.exports = a
