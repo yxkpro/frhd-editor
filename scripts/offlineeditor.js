@@ -32402,6 +32402,7 @@
                 iframe = document.createElement("iframe");
                 iframe.id = "forumIframe";
                 iframe.src = "https://k333892.invisionservice.com/";
+                iframe.sandbox = "allow-scripts allow-same-origin allow-modals allow-forms";
                 iframe.style.display = "block";
                 document.body.appendChild(iframe);
               }
@@ -32420,6 +32421,7 @@
                       "freeriderhd.com",
                       "www.freeriderhd.com",
                       "frhd.co",
+                      "k333892.invisionservice.com",
                     ];
                     if (!validHostnames.includes(hostname)) {
                       console.warn("invalid URL hostname:", hostname);
@@ -32433,7 +32435,10 @@
                     } else if (pathname.startsWith("/t/")) {
                       const parts = pathname.split("/t/")[1].split("-");
                       trackName = parts[0];
-                    }
+                    } else if (hostname === "k333892.invisionservice.com") {
+                      const parts = pathname.split("/free-rider/")[1].split("/");
+                      trackName = parts[0];
+                    } 
 
                     if (
                       !trackName ||
