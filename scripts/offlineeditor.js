@@ -366,6 +366,12 @@
                 t = this.props.data.toolOptions,
                 mobile = GameManager.game && (GameManager.game.currentScene.mod.getVar("mobile") || GameManager.game.currentScene.mod.getVar("play")),
                 f = "";
+                var sidebar = GameSettings.sidebar;
+                var width = sidebar ? "70%" : "100%";
+                var mediaWidth = sidebar ? "93.75%" : "125%";
+                var bottomMenuStyle = {
+                  width: window.innerHeight <= 1440 ? mediaWidth : width,
+                };
               switch (e) {
                 case "straightline":
                   f = n.createElement(c, { options: t });
@@ -399,7 +405,7 @@
                 GameSettings.isStandalone && (m = n.createElement(p, null)),
                 n.createElement(
                   "div",
-                  { className: "bottomMenu unselectable" },
+                  { className: "bottomMenu unselectable", style: bottomMenuStyle },
                   n.createElement(
                     "div",
                     { className: "clearfix" },
@@ -1679,7 +1685,7 @@
                     "span",
                     { className: "name" },
                     "",
-                    n.createElement("span", { className: "bottomMenu-bold" }, r, o), this.state.open && n.createElement("button", {
+                    n.createElement("span", { className: "name" }, r, o), this.state.open && n.createElement("button", {
                       className: "margin",
                       onClick: (event) => {
                         event.stopPropagation();
@@ -2809,6 +2815,7 @@
                 t = this.props.data.dialogOptions,
                 h = {},
                 f = "";
+                h.width = GameSettings.sidebar ? "75%" : "100%";
               switch (e) {
                 case "import":
                   f = n.createElement(r, null);
@@ -5950,6 +5957,8 @@
                 d = 48.6,
                 p = this.props.data.hideMenus,
                 fullscreen = GameSettings.editorFullscreen;
+              var sidebar = GameSettings.sidebar;
+              c.right = sidebar ? (window.innerHeight <= 1440 ? "calc(25% - 5px)" : "20%") : (window.innerHeight <= 1440 ? "-5px" : "0");
               switch ((p && (c.display = "none"), e)) {
                 case "straightline":
                   (c.marginTop = -((3 * d) / 2)),
@@ -7242,12 +7251,19 @@
           d = e("./zoomlevel"),
           p = e("./fullscreen"),
           h = e("./offlineeditor"),
+          x = e("./sidebar"),
           f = n.createClass({
             displayName: "TopMenu",
             render: function () {
+              var sidebar = GameSettings.sidebar;
+              var width = sidebar ? "80%" : "100%";
+              var mediaWidth = sidebar ? "93.75%" : "125%";
+              var topMenuStyle = {
+                width: window.innerHeight <= 1440 ? mediaWidth : width,
+              };
               return n.createElement(
                 "div",
-                { className: "topMenu unselectable" },
+                { className: "topMenu unselectable", style: topMenuStyle},
                 n.createElement(r, null),
                 n.createElement(o, null),
                 n.createElement(i, null),
@@ -7256,6 +7272,7 @@
                 this.showControls(),
                 //this.showOfflineEditorIcon(),
                 this.showFullscreen(),
+                n.createElement(x, null),
                 n.createElement(p, null),
                 n.createElement(u, null),
                 n.createElement(d, { percent: this.props.data.zoomPercentage }),
@@ -7308,6 +7325,7 @@
         "./reducezoom": 68,
         "./uploadtrack": 70,
         "./zoomlevel": 71,
+        "./sidebar": 243,
         react: 230,
       },
     ],
@@ -32357,7 +32375,170 @@
         t.exports = r;
       },
       { react: 230, "react-slider": 75 },
-    ]
+    ],
+    243: [
+      function (e, t) {
+        var n = e("react"),
+          r = n.createClass({
+            displayName: "Sidebar",
+            getInitialState: function () {
+              return { sidebar: false };
+            },
+            toggleSidebar: function () {
+              GameSettings.sidebar = !GameSettings.sidebar;
+              this.setState({ sidebar: GameSettings.sidebar });
+              this.toggleIframe();
+              this.addImportListener();
+            },
+            toggleIframe: function () {
+              let iframe = document.getElementById("forumIframe");
+
+              if (iframe) {
+                iframe.style.display =
+                  iframe.style.display === "none" && GameSettings.sidebar
+                    ? "block"
+                    : "none";
+              } else {
+                iframe = document.createElement("iframe");
+                iframe.id = "forumIframe";
+                iframe.src = "https://k333892.invisionservice.com/";
+                iframe.style.display = "block";
+                document.body.appendChild(iframe);
+              }
+            },
+            addImportListener() {
+              window.addEventListener("message", function (event) {
+                if (event.data.action === "linkClicked") {
+                  console.log("clicked link:", event.data.url);
+            
+                  try {
+                    const url = new URL(event.data.url);
+                    const { hostname, pathname, hash } = url;
+
+                    const validHostnames = [
+                      "freerider.app",
+                      "freeriderhd.com",
+                      "www.freeriderhd.com",
+                      "frhd.co",
+                    ];
+                    if (!validHostnames.includes(hostname)) {
+                      console.warn("invalid URL hostname:", hostname);
+                      return;
+                    }
+
+                    let trackName = "";
+
+                    if (hostname === "freerider.app" && hash) {
+                      trackName = hash.substring(1);
+                    } else if (pathname.startsWith("/t/")) {
+                      const parts = pathname.split("/t/")[1].split("-");
+                      trackName = parts[0];
+                    }
+
+                    if (
+                      !trackName ||
+                      trackName.includes("../") ||
+                      trackName.length > 40
+                    ) {
+                      return;
+                    }
+
+                    if (
+                      ![
+                        "1-4",
+                        "covid-19 dreamin",
+                        "demi-goddess demi-diety",
+                      ].includes(trackName)
+                    ) {
+                      trackName = trackName.replace(/-/g, " ");
+                    }
+
+                    trackName = decodeURIComponent(trackName);
+                    GameSettings.trackName = trackName;
+                    GameManager.command("import", trackName, true);
+
+                    const fetchUrl = `assets/tracks/${trackName}.txt`;
+                    fetch(fetchUrl)
+                      .then((response) => {
+                        if (!response.ok)
+                          throw new Error(
+                            "No track ID found, loading as track code."
+                          );
+                        return response.text();
+                      })
+                      .then((data) => {
+                        if (data) {
+                          console.log("Track data fetched:", data);
+                          GameManager.command("import", data, true);
+                          GameSettings.trackName = `${trackName}.txt`;
+                        } else {
+                          console.error("No track data found.");
+                        }
+                      })
+                      .catch((error) => {
+                        console.error("Primary fetch failed.", error);
+                        const script = document.createElement("script");
+                        script.src = `https://cdn.freeriderhd.com/free_rider_hd/tracks/prd/${trackName}/track-data-v1.js?callback=t`;
+
+                        script.onerror = () => {
+                          console.error("Fallback fetch failed.");
+                        };
+
+                        window.t = ({ code, title }) => {
+                          if (code) {
+                            GameSettings.trackName = title;
+                            GameManager.command("import", code, true);
+                            console.log("Track loaded from FRHD.");
+                          } else {
+                            console.error(
+                              "Failed to load track code from FRHD."
+                            );
+                          }
+                          delete window.t;
+                        };
+
+                        document.body.appendChild(script);
+                      });
+                  } catch (error) {
+                    console.error("Error processing URL:", error);
+                  }
+                }
+              });
+            },            
+            render: function () {
+              var e = this.state.sidebar,
+                t = "topMenu-button topMenu-button-right",
+                r = "editorgui_icons";
+              r += e
+                ? " editorgui_icons-icon_sidebar_close"
+                : " editorgui_icons-icon_sidebar_open";
+              return e
+                ? GameSettings.beta && n.createElement(
+                    "div",
+                    {
+                      className: t,
+                      onClick: this.toggleSidebar,
+                      title: "Forum",
+                    },
+                    n.createElement("span", { className: "text" }, "Forum"),
+                    n.createElement("span", { className: r })
+                  )
+                : GameSettings.beta && n.createElement(
+                    "div",
+                    {
+                      className: t,
+                      onClick: this.toggleSidebar,
+                      title: "Forum",
+                    },
+                    n.createElement("span", { className: r }),
+                    n.createElement("span", { className: "text" }, "Forum")
+                  );
+            },
+          });
+        t.exports = r;
+      },
+      { react: 230 },
+    ],
   },
   {},
   [3]
