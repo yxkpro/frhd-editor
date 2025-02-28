@@ -32376,8 +32376,7 @@
               } else {
                 iframe = document.createElement("iframe");
                 iframe.id = "forumIframe";
-                iframe.src = "https://freerider.freeflarum.com/";
-                iframe.sandbox = "allow-scripts allow-same-origin";
+                iframe.src = "https://k333892.invisionservice.com/";
                 iframe.style.display = "block";
                 document.body.appendChild(iframe);
               }
@@ -32489,7 +32488,7 @@
                 ? " editorgui_icons-icon_sidebar_close"
                 : " editorgui_icons-icon_sidebar_open";
               return e
-                ? n.createElement(
+                ? GameSettings.beta && n.createElement(
                     "div",
                     {
                       className: t,
@@ -32499,7 +32498,7 @@
                     n.createElement("span", { className: "text" }, "Forum"),
                     n.createElement("span", { className: r })
                   )
-                : n.createElement(
+                : GameSettings.beta && n.createElement(
                     "div",
                     {
                       className: t,
