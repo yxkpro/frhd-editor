@@ -32402,7 +32402,7 @@
                 iframe = document.createElement("iframe");
                 iframe.id = "forumIframe";
                 iframe.src = "https://k333892.invisionservice.com/";
-                iframe.sandbox = "allow-scripts allow-same-origin allow-modals allow-forms";
+                iframe.sandbox = "allow-scripts allow-same-origin allow-modals allow-forms allow-downloads";
                 iframe.style.display = "block";
                 document.body.appendChild(iframe);
               }
