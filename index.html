@@ -58,5 +58,42 @@
         return confirmationMessage;
     });
     </script>
+    
+    <script>
+        window.addEventListener('message', function (event) {
+            if (event.data.action === "linkClicked") {
+                const url = event.data.url;
+
+                try {
+                    const fetchUrl = url;
+                    fetch(fetchUrl)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("No track ID found, loading as track code.");
+                            }
+                            return response.text();
+                        })
+                        .then((data) => {
+                            if (data) {
+                                console.log("Track data fetched:", data);
+                                GameManager.command("import", data, true);
+                                GameSettings.trackName = `${trackName}.txt`;
+                            } else {
+                                console.error("No track data found.");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Primary fetch failed.", error);
+                        });
+                } catch (error) {
+                    console.error("Error processing URL:", error);
+                }
+            }
+        });
+    </script>
+    
+    <script>
+        window !== window.parent ? GameSettings.beta = false : GameSettings.beta = true;
+    </script>
 </body>
 </html>
