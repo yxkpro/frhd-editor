@@ -66,6 +66,7 @@
                 if (trackData) {
                     console.log("Track data received:", trackData);
                     GameManager.command("import", trackData, true);
+                    GameSettings.trackName = "";
                 } else {
                     console.error("No track data found.");
                 }
@@ -104,10 +105,8 @@
         });
     </script>
     
-    <!--
     <script>
         window !== window.parent ? GameSettings.beta = false : GameSettings.beta = true;
     </script>
-    -->
 </body>
 </html>
