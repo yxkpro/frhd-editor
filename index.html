@@ -60,33 +60,45 @@
     </script>
     
     <script>
-        window.addEventListener('message', function (event) {
-            if (event.data.action === "linkClicked") {
-                const url = event.data.url;
+        window.addEventListener("message", function (event) {
+            if (event.data.action === "importTrack") {
+                const trackData = event.data.content;
+                if (trackData) {
+                    console.log("Track data received:", trackData);
+                    GameManager.command("import", trackData, true);
+                } else {
+                    console.error("No track data found.");
+                }
+            } else if (event.data.action === "importGhost") {
+                const ghostData = event.data.content;
+                const positionDataArray = JSON.parse(ghostData);
 
-                try {
-                    const fetchUrl = url;
-                    fetch(fetchUrl)
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw new Error("No track ID found, loading as track code.");
-                            }
-                            return response.text();
-                        })
-                        .then((data) => {
-                            if (data) {
-                                console.log("Track data fetched:", data);
-                                GameManager.command("import", data, true);
-                                GameSettings.trackName = `${trackName}.txt`;
-                            } else {
-                                console.error("No track data found.");
-                            }
-                        })
-                        .catch((error) => {
-                            console.error("Primary fetch failed.", error);
-                        });
-                } catch (error) {
-                    console.error("Error processing URL:", error);
+                  const processedData = positionDataArray.map(entry => {
+                    const result = {
+                      _sceneTicks: entry._sceneTicks,
+                      _crashed: entry._crashed,
+                    };
+
+                    if (entry._baseVehicleType && entry._baseVehicle) {
+                      result._baseVehicleType = entry._baseVehicleType;
+                      result._baseVehicle = entry._baseVehicle;
+                    }
+
+                    if (entry._tempVehicleType && entry._tempVehicle) {
+                      result._tempVehicleType = entry._tempVehicleType;
+                      result._tempVehicle = entry._tempVehicle;
+                      result._tempVehicleTicks = entry._tempVehicleTicks;
+                    }
+
+                    return result;
+                  });
+
+                  GameManager.game.currentScene.ghostData = processedData;
+                if (ghostData) {
+                    console.log("Ghost data received:", processedData);
+                    GameManager.command("add race", processedData, true);
+                } else {
+                    console.error("No ghost data found.");
                 }
             }
         });
