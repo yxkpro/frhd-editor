@@ -27588,9 +27588,11 @@
         updateCanvasSize() {
           if (this.settings.editorFullscreen || this.settings.sidebar) {
             this.setSize();
+            this.currentScene.updateState();
           }
           else {
             this.setSize();
+            this.currentScene.updateState();
           }
         }
         addTrackFullscreenListener() {
