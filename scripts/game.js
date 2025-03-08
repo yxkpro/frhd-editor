@@ -24122,7 +24122,7 @@
           }
 
           else {
-            this.game.mod.vars.play = true;
+            //this.game.mod.vars.play = true;
             fetch(`assets/tracks/${GameSettings.trackName}.txt`)
               .then(response => {
                 if (!response.ok) {
@@ -25142,7 +25142,7 @@
           this.logTrackComplete();
         }
         logTrackComplete() {
-          if (this.logged || GameSettings.trackName === 'track.txt') return;
+          if (this.logged || !this.trackUpdated || GameSettings.trackName === 'track.txt') return;
           let completedTracks = JSON.parse(localStorage.getItem("completedTracks") || "[]");
       
           let trackData = {
