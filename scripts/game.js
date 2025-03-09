@@ -20206,19 +20206,27 @@
           super.init(e),
           (this.options = e.scene.settings.eraser),
           (this.eraserPoint = new t.Z()),
-          (this.erasedObjects = []);
+          (this.erasedObjects = []),
+          (this.addedObjects = []);
       }
       reset() {
         this.recordActionsToToolhandler();
       }
       press() {
-        this.recordActionsToToolhandler();
       }
       recordActionsToToolhandler() {
+        this.addedObjects.length > 0 &&
+          this.toolHandler.addActionToTimeline({
+            type: "add",
+            objects: this.addedObjects.flat(),
+            pointer: this.addedObjects.length,
+          }),
+          (this.addedObjects = []);
         this.erasedObjects.length > 0 &&
           this.toolHandler.addActionToTimeline({
             type: "remove",
-            objects: (0, e.flatten)(this.erasedObjects),
+            objects: this.erasedObjects.flat(),
+            pointer: this.addedObjects.length,
           }),
           (this.erasedObjects = []);
       }
@@ -20226,46 +20234,141 @@
         this.recordActionsToToolhandler();
       }
       hold() {
-        const t = this.mouse.touch,
-          e = this.scene.track;
-        this.eraserPoint = t.pos.toRealSnapped(this.scene);
-        const s = e.erase(
+        const touch = this.mouse.touch;
+        const track = this.scene.track;
+        this.eraserPoint = touch.pos.toRealSnapped(this.scene);
+        const eraserRadius = this.options.radius / this.scene.camera.zoom;
+
+        const erasedItems = track.erase(
           this.eraserPoint,
-          this.options.radius / this.scene.camera.zoom,
+          eraserRadius,
           this.options.types
         );
-        if (s.length > 0) {
-          this.erasedObjects.push(s);
+
+        if (erasedItems.length > 0) {
+          this.erasedObjects.push(erasedItems);
+
+          //record erased objects separately
+          this.recordActionsToToolhandler();
+
           if (GameSettings.lineTrim) {
-            s.forEach(line => {
-              if (e.powerups.includes(line)) {
-                    return;
-                }
-              const pointsList = this.calculatePoints(line);
-              if (pointsList.length >= 5) {
-                const midpointIndex = Math.floor(pointsList.length / 2);
-                const midPoint = pointsList[midpointIndex];
-                const p1 = pointsList[0];
-                const p2 = pointsList[pointsList.length - 1];
+            erasedItems.forEach(line => {
+              if (track.powerups.includes(line)) return;
 
-                let type = 'unknown';
-                if (e.physicsLines.includes(line)) {
-                  type = 'physics';
-                } else if (e.sceneryLines.includes(line)) {
-                  type = 'scenery';
+              let type = 'unknown';
+              if (track.physicsLines.includes(line)) type = 'physics';
+              else if (track.sceneryLines.includes(line)) type = 'scenery';
+
+              const p1 = line.p1;
+              const p2 = line.p2;
+              const closestPoint = this.findClosestPointOnLine(this.eraserPoint, p1, p2);
+
+              if (this.distanceBetweenPoints(closestPoint, this.eraserPoint) <= eraserRadius) {
+                const dirX = (p2.x - p1.x) / this.distanceBetweenPoints(p1, p2);
+                const dirY = (p2.y - p1.y) / this.distanceBetweenPoints(p1, p2);
+
+                const distP1ToClosest = this.distanceBetweenPoints(p1, closestPoint);
+                const distP2ToClosest = this.distanceBetweenPoints(p2, closestPoint);
+                const distToEdge = Math.sqrt(eraserRadius * eraserRadius -
+                  this.distanceBetweenPoints(closestPoint, this.eraserPoint) ** 2);
+
+                if (distP1ToClosest > (distToEdge + 10)) {
+                  const newEndpoint1 = {
+                    x: p1.x + dirX * (distP1ToClosest - distToEdge),
+                    y: p1.y + dirY * (distP1ToClosest - distToEdge)
+                  };
+                  if (this.distanceBetweenPoints(p1, newEndpoint1) >= 20) {
+                    this.addLine(p1, newEndpoint1, type);
+                  }
                 }
 
-                if (this.distanceBetweenPoints(p1, midPoint) >= 20) {
-                  this.addLine(p1, midPoint, type);
-                }
-                if (this.distanceBetweenPoints(p2, midPoint) >= 20) {
-                  this.addLine(p2, midPoint, type);
+                if (distP2ToClosest > (distToEdge + 10)) {
+                  const newEndpoint2 = {
+                    x: p2.x - dirX * (distP2ToClosest - distToEdge),
+                    y: p2.y - dirY * (distP2ToClosest - distToEdge)
+                  };
+                  if (this.distanceBetweenPoints(newEndpoint2, p2) >= 20) {
+                    this.addLine(newEndpoint2, p2, type);
+                  }
                 }
               }
             });
+
+            //after trimming, record added objects
+            this.recordActionsToToolhandler();
           }
         }
       }
+
+      pointIsInsideCircle(point, circleCenter, radius) {
+        return this.distanceBetweenPoints(point, circleCenter) <= radius;
+      }
+
+      findClosestPointOnLine(point, lineStart, lineEnd) {
+        const dx = lineEnd.x - lineStart.x;
+        const dy = lineEnd.y - lineStart.y;
+        const lineLengthSquared = dx * dx + dy * dy;
+
+        if (lineLengthSquared === 0) {
+          return lineStart;
+        }
+
+        const t = Math.max(0, Math.min(1, (
+          (point.x - lineStart.x) * dx +
+          (point.y - lineStart.y) * dy
+        ) / lineLengthSquared));
+
+        return {
+          x: lineStart.x + t * dx,
+          y: lineStart.y + t * dy
+        };
+      }
+
+      findCircleLineIntersections(cx, cy, radius, x1, y1, x2, y2) {
+        const results = [];
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+
+        const lineLength = Math.sqrt(dx * dx + dy * dy);
+        const dirX = dx / lineLength;
+        const dirY = dy / lineLength;
+
+        const t = dirX * (cx - x1) + dirY * (cy - y1);
+
+        const closestX = x1 + t * dirX;
+        const closestY = y1 + t * dirY;
+
+        const distX = closestX - cx;
+        const distY = closestY - cy;
+        const distSquared = distX * distX + distY * distY;
+
+        if (distSquared > radius * radius) {
+          return results;
+        }
+
+        const dt = Math.sqrt(radius * radius - distSquared);
+
+        const t1 = t - dt;
+        const t2 = t + dt;
+
+        if (t1 >= 0 && t1 <= lineLength) {
+          results.push({
+            x: x1 + t1 * dirX,
+            y: y1 + t1 * dirY
+          });
+        }
+
+        if (t2 >= 0 && t2 <= lineLength) {
+          results.push({
+            x: x1 + t2 * dirX,
+            y: y1 + t2 * dirY
+          });
+        }
+
+        return results;
+      }
+      
       distanceBetweenPoints(point1, point2) {
         return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
       }
@@ -20274,11 +20377,14 @@
           let n = !1;
           if (type === 'physics') {
             n = this.scene.track.addPhysicsLine(point1.x, point1.y, point2.x, point2.y);
+            this.addedObjects.push(n);
           } else if (type === 'scenery') {
             n = this.scene.track.addSceneryLine(point1.x, point1.y, point2.x, point2.y);
-          } 
-          this.toolHandler.addActionToTimeline({ type: "add", objects: [n] });
+            this.addedObjects.push(n);
+          }
+          return n;
         }
+        return !1;
       }
       calculatePoints(line) {
         const pointsList = [];
