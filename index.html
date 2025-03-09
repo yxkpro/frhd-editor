@@ -101,6 +101,16 @@
                 } else {
                     console.error("No ghost data found.");
                 }
+            } else if (event.data.action === "sectorStamp") {
+                const sectorStamp = event.data;
+                if (sectorStamp && sectorStamp.x !== undefined && sectorStamp.y !== undefined) {
+                    console.log("Sector Stamp received:", sectorStamp);
+
+                    GameManager.game.currentScene.camera.sectorStamp.x = sectorStamp.x;
+                    GameManager.game.currentScene.camera.sectorStamp.y = sectorStamp.y;
+                } else {
+                    console.error("No valid sector stamp data found.");
+                }
             }
         });
     </script>

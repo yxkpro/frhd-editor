@@ -12090,6 +12090,7 @@
             (this.desiredZoom = s.cameraStartZoom * e.game.pixelRatio),
             (this.zooming = !1),
             (this.position = new t.Z(0, 0)),
+            (this.sectorStamp = new t.Z(0, 0)),
             (this.zoomPercentage = this.getZoomAsPercentage()),
             (this.zoomPoint = !1);
         }
@@ -12138,6 +12139,20 @@
               } else {
                   e.y = 0;
               }
+          }
+          if (this.sectorStamp.x !== 0 || this.sectorStamp.y !== 0) {
+              const sectorSize = this.scene.settings.drawSectorSize;
+              
+              const nextSectorCol = this.sectorStamp.x;
+              const nextSectorRow = this.sectorStamp.y;
+              
+              this.position.x = nextSectorCol * sectorSize + (sectorSize / 2);
+              this.position.y = nextSectorRow * sectorSize + (sectorSize / 2);
+              
+              this.sectorStamp.x = 0;
+              this.sectorStamp.y = 0;
+              
+              this.unfocus();
           }
         }
         updateZoom() {
@@ -23532,6 +23547,7 @@
             o = Math.max(2 * t, 0.5),
             a = this.settings.sceneryLineColor,
             h = this.settings.physicsLineColor;
+   
           (n.width = i),
             (n.height = i),
             r.clearRect(0, 0, n.width, n.height),
@@ -23553,7 +23569,15 @@
               ((r.shadowOffsetX = r.shadowOffsetY = 2),
               (r.shadowBlur = Math.max(2, 10 * t)),
               (r.shadowColor = "#000")),
-            r.stroke(),
+            r.stroke();
+            
+            (this.settings.developerMode || this.scene.game.mod.getVar("gameData")) &&
+            ((r.font = `${Math.max(10, 18 * t)}px Arial`),
+            (r.fillStyle = "rgba(0, 0, 255, 0.7)"),
+            (r.textAlign = "center"),
+            (r.textBaseline = "middle"),
+            r.fillText(`${this.column},${this.row}`, i / 2, i / 2));
+
             this.settings.developerMode &&
               (r.beginPath(),
               (r.strokeStyle = "blue"),
@@ -24682,7 +24706,7 @@
             this.state.loading && this.loadingcircle.draw(),
             this.message.draw();
             this.drawInputDisplay();
-            //this.drawGameData();
+            this.drawGameData();
         }
         trackData() {
           this.trackcode = GameSettings.object ? this.getObjectCode() : this.track.getCode();
@@ -24763,7 +24787,6 @@
             trackSize
           };
         }
-        /*
         drawGameData() {
           if (this.game.mod.getVar("gameData")) {
             const t = this.game.canvas.getContext("2d");
@@ -24787,7 +24810,7 @@
               t.fillText("track: " + trackName, s.x, s.y - 15 * i);
             }
           }
-        }*/
+        }
         drawInputDisplay() {
           if (this.game.mod.getVar("inputDisplay")) {
           const t = this.game.canvas.getContext("2d");
@@ -26467,7 +26490,7 @@
           oldTimer: { default: !1 },
           frontBrake: { default: !1 },
           bikeData: { default: !1 },
-          //gameData: { default: !1 },
+          gameData: { default: !1 },
           inputDisplay: { default: !1 },
           hitboxes: { default: !1 },
           accurateEraser: { default: !1 },
@@ -26965,12 +26988,12 @@
             description:
               "Shows the metadata about the rider, including head angle and speed.",
           },
-        /*{
+          {
             key: "gameData",
             title: "Game Data",
             description:
               "Shows game data, including FPS.",
-          },*/
+          },
           {
             key: "hitboxes",
             title: "Visible Hitboxes",
