@@ -12090,7 +12090,11 @@
             (this.desiredZoom = s.cameraStartZoom * e.game.pixelRatio),
             (this.zooming = !1),
             (this.position = new t.Z(0, 0)),
-            (this.sectorStamp = new t.Z(0, 0)),
+            this.sectorStamp = {
+              point1: new t.Z(0, 0),
+              point2: new t.Z(0, 0)
+            };
+            (this.sectorStampText = ""),
             (this.zoomPercentage = this.getZoomAsPercentage()),
             (this.zoomPoint = !1);
         }
@@ -12140,19 +12144,22 @@
                   e.y = 0;
               }
           }
-          if (this.sectorStamp.x !== 0 || this.sectorStamp.y !== 0) {
-              const sectorSize = this.scene.settings.drawSectorSize;
+          if (this.sectorStamp.point1.x !== 0 || this.sectorStamp.point1.y !== 0) {
+            const centerX = (this.sectorStamp.point1.x + this.sectorStamp.point2.x) / 2;
+            const centerY = (this.sectorStamp.point1.y + this.sectorStamp.point2.y) / 2;
+            
+            this.position.x = centerX;
+            this.position.y = centerY;
+
+            console.log("Camera moved to center of stamp:", centerX, centerY);
               
-              const nextSectorCol = this.sectorStamp.x;
-              const nextSectorRow = this.sectorStamp.y;
+            //this.sectorStamp.point1.x = 0;
+            //this.sectorStamp.point1.y = 0;
+            //this.sectorStamp.point2.x = 0;
+            //this.sectorStamp.point2.y = 0;
               
-              this.position.x = nextSectorCol * sectorSize + (sectorSize / 2);
-              this.position.y = nextSectorRow * sectorSize + (sectorSize / 2);
-              
-              this.sectorStamp.x = 0;
-              this.sectorStamp.y = 0;
-              
-              this.unfocus();
+            this.unfocus();
+            this.scene.redraw();
           }
         }
         updateZoom() {
@@ -23901,6 +23908,7 @@
             (this.allowedVehicles = ["MTB", "BMX"]),
             (this.canvasPool = new $i(t)),
             (this.needsCleaning = !1),
+            (this.stampedAreas = []),
             this.createPowerupCache();
         }
         createPowerupCache() {
@@ -24388,6 +24396,60 @@
               s = t.row * a - v,
               r = t.powerupCanvasOffset * n;
             i.drawImage(t.powerupCanvas, e - r / 2, s - r / 2, a + r, a + r);
+          }
+
+          if (e.sectorStamp && (e.sectorStamp.point1.x || e.sectorStamp.point1.y)) {
+            i.save();
+
+            this.stampedAreas.push({
+              point1: { x: e.sectorStamp.point1.x, y: e.sectorStamp.point1.y },
+              point2: { x: e.sectorStamp.point2.x, y: e.sectorStamp.point2.y },
+              text: e.sectorStampText || ""
+            });
+
+            e.sectorStamp.point1.x = 0;
+            e.sectorStamp.point1.y = 0;
+            e.sectorStamp.point2.x = 0;
+            e.sectorStamp.point2.y = 0;
+            e.sectorStampText = "";
+
+            i.restore();
+          }
+
+          for (const stamp of this.stampedAreas) {
+            i.save();
+
+            const x1Screen = stamp.point1.x * n - m;
+            const y1Screen = stamp.point1.y * n - v;
+            const x2Screen = stamp.point2.x * n - m;
+            const y2Screen = stamp.point2.y * n - v;
+
+            const rectX = Math.min(x1Screen, x2Screen);
+            const rectY = Math.min(y1Screen, y2Screen);
+            const rectWidth = Math.abs(x2Screen - x1Screen);
+            const rectHeight = Math.abs(y2Screen - y1Screen);
+
+            i.beginPath();
+            i.strokeStyle = "#1884cf";
+            r.lineWidth = Math.max(2, 2 * n);
+            i.rect(rectX, rectY, rectWidth, rectHeight);
+            i.stroke();
+
+            if (stamp.text) {
+              const textX = rectX + rectWidth / 2;
+              const textY = rectY + rectHeight - 20 * n;
+
+              i.font = `bold ${20 * n}px Arial`; 
+              i.textAlign = "center";
+              i.textBaseline = "middle";
+              i.strokeStyle = "white";
+              i.lineWidth = Math.max(3, 3 * n);
+              i.strokeText(stamp.text, textX, textY);
+              i.fillStyle = "#1884cf";
+              i.fillText(stamp.text, textX, textY);
+            }
+
+            i.restore();
           }
         }
         closeSectors() {

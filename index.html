@@ -103,13 +103,16 @@
                 }
             } else if (event.data.action === "sectorStamp") {
                 const sectorStamp = event.data;
-                if (sectorStamp && sectorStamp.x !== undefined && sectorStamp.y !== undefined) {
-                    console.log("Sector Stamp received:", sectorStamp);
+                if (sectorStamp && sectorStamp.x1 !== undefined && sectorStamp.y1 !== undefined) {
+                    console.log("Stamp received:", sectorStamp);
 
-                    GameManager.game.currentScene.camera.sectorStamp.x = sectorStamp.x;
-                    GameManager.game.currentScene.camera.sectorStamp.y = sectorStamp.y;
+                    GameManager.game.currentScene.camera.sectorStamp.point1.x = sectorStamp.x1;
+                    GameManager.game.currentScene.camera.sectorStamp.point1.y = sectorStamp.y1;
+                    GameManager.game.currentScene.camera.sectorStamp.point2.x = sectorStamp.x2;
+                    GameManager.game.currentScene.camera.sectorStamp.point2.y = sectorStamp.y2;
+                    GameManager.game.currentScene.camera.sectorStampText = sectorStamp.comment || "";
                 } else {
-                    console.error("No valid sector stamp data found.");
+                    console.error("No valid stamp data found.");
                 }
             }
         });
