@@ -13834,9 +13834,11 @@
                   y.lineTo(r.x, r.y);
                   y.lineTo(i.x, i.y);
                   y.lineTo(e.x, e.y);
-                  y.fillStyle = y.strokeStyle;
-                  y.stroke();
+                  y.moveTo(s.x, s.y - 2);
+                  y.lineTo(i.x, i.y - 2);
+                  this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgb(255, 255, 255)" : y.fillStyle = GameSettings.hatColor;
                   y.fill();
+                  y.stroke();
                 } else { // crhead bmx
                     this.scene.game.mod.getVar("invisibleRider") ? y.fillStyle = "rgba(0,0,0,0)" : y.fillStyle = "rgb(255, 255, 255)",
                     y.beginPath(),
@@ -15451,13 +15453,16 @@
                   u.stroke(),
                   u.beginPath(),
                   u.moveTo(..._.transform(0.37, 1.19).toArray()),
-                  u.lineTo(..._.transform(0.28, 1.17).toArray()),
-                  u.lineTo(..._.transform(0.27, 1.39).toArray()),
-                  u.lineTo(..._.transform(0.04, 1.34).toArray()),
+                  u.lineTo(..._.transform(0.29, 1.17).toArray()),
+                  u.lineTo(..._.transform(0.28, 1.39).toArray()),
+                  u.lineTo(..._.transform(0.02, 1.34).toArray()),
                   u.lineTo(..._.transform(0.09, 1.15).toArray()),
                   u.lineTo(..._.transform(0.02, 1.14).toArray()),
-                  u.stroke(),
-                  u.fill();
+                  u.moveTo(..._.transform(0.28, 1.18).toArray()),
+                  u.lineTo(..._.transform(0.09, 1.16).toArray()),
+                  (this.scene.game.mod.getVar("invisibleRider") ? u.fillStyle = "rgb(255, 255, 255)" : u.fillStyle = GameSettings.hatColor),
+                  u.fill(),
+                  u.stroke();
               else { // crhead mtb
                 const t = _.transform(0.4, 1.15),
                   e = _.transform(0.1, 1.05);
@@ -17011,14 +17016,14 @@
             }
           }
           const e = [];
-          this.actionTimelinePointer >= 50 &&
+          this.actionTimelinePointer >= 200 &&
             (e.push(
               ...this.actionTimeline.splice(
                 0,
-                this.actionTimeline.length - 50 + 1
+                this.actionTimeline.length - 200 + 1
               )
             ),
-            (this.actionTimelinePointer = 49));
+            (this.actionTimelinePointer = 199));
           const s = e.length;
           e.push(...this.actionTimeline.splice(this.actionTimelinePointer)),
             this.actionTimeline.push(t),
@@ -17118,7 +17123,7 @@
             if (!old || !('pointer' in old) || old.pointer == 0)
                 this.actionTimelinePointer--;
             const t = this.actionTimeline[this.actionTimelinePointer];
-            t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
+            (t.type !== "lineTrim") && (t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i}));
             switch (t.type) {
               case "add":
                 let objects = t.objects;
@@ -17136,6 +17141,33 @@
               case "remove":
                 this.addObjects(t.objects);
                 break;
+                case "lineTrim":
+                  if (t && t.operations) {
+                    console.log("Reverting lineTrim with", t.operations.length, "operations");
+                    
+                    t.operations.forEach(operation => {
+                      console.log("Operation type:", operation.type, "Objects count:", operation.objects ? operation.objects.length : 0);
+                      
+                      if (operation.objects) {
+                        operation.objects = operation.objects.map(i => {
+                          while (i.newVersion) i = i.newVersion;
+                          return i;
+                        });
+                        
+                        switch (operation.type) {
+                          case "add":
+                            console.log("Removing objects:", operation.objects.length);
+                            this.removeObjects(operation.objects);
+                            break;
+                          case "remove":
+                            console.log("Adding objects:", operation.objects.length);
+                            this.addObjects(operation.objects);
+                            break;
+                        }
+                      }
+                    });
+                  }
+                  break;
               case 'transform':
                   if (t.pointer == 0) break;
                   if (this.gamepad.isButtonDown('shift')) {
@@ -17240,7 +17272,7 @@
             e = this.actionTimelinePointer;
           if (e < t.length) {
             const t = this.actionTimeline[e];
-            t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i});
+            (t.type !== "lineTrim") && (t.objects = t.objects.map(i => {while (i.newVersion) i = i.newVersion; return i}));
             switch (t.type) {
               case "add":
                 let objects = t.objects;
@@ -17262,6 +17294,29 @@
               case "remove":
                 this.removeObjects(t.objects);
                 this.actionTimelinePointer++;
+                break;
+                case "lineTrim":
+                  if (t && t.operations) {
+                    t.operations.forEach(operation => {
+                      if (operation.objects) {
+                        // Map the objects to handle newVersion for each operation
+                        operation.objects = operation.objects.map(i => {
+                          while (i.newVersion) i = i.newVersion;
+                          return i;
+                        });
+                        
+                        switch (operation.type) {
+                          case "add":
+                            this.addObjects(operation.objects);
+                            break;
+                          case "remove":
+                            this.removeObjects(operation.objects);
+                            break;
+                        }
+                      }
+                    })
+                    this.actionTimelinePointer++;
+                  }
                 break;
               case 'transform':
                   if (t.pointer == t.transformations.length) break;
@@ -20220,51 +20275,52 @@
         this.recordActionsToToolhandler();
       }
       press() {
+        this.recordActionsToToolhandler();
       }
       recordActionsToToolhandler() {
-        this.addedObjects.length > 0 &&
+        if (this.addedObjects.length > 0 || this.erasedObjects.length > 0) {
           this.toolHandler.addActionToTimeline({
-            type: "add",
-            objects: this.addedObjects.flat(),
-            pointer: this.addedObjects.length,
-          }),
-          (this.addedObjects = []);
-        this.erasedObjects.length > 0 &&
-          this.toolHandler.addActionToTimeline({
-            type: "remove",
-            objects: this.erasedObjects.flat(),
-            pointer: this.addedObjects.length,
-          }),
-          (this.erasedObjects = []);
+            type: "lineTrim",
+            operations: [
+              ...(this.addedObjects.length > 0 ? [{
+                type: "add", 
+                objects: (0, e.flatten)(this.addedObjects)
+              }] : []),
+              ...(this.erasedObjects.length > 0 ? [{
+                type: "remove", 
+                objects: (0, e.flatten)(this.erasedObjects)
+              }] : [])
+            ]
+          });
+          
+          this.addedObjects = [];
+          this.erasedObjects = [];
+        }
       }
       release() {
         this.recordActionsToToolhandler();
       }
       hold() {
-        const touch = this.mouse.touch;
-        const track = this.scene.track;
-        this.eraserPoint = touch.pos.toRealSnapped(this.scene);
-        const eraserRadius = this.options.radius / this.scene.camera.zoom;
-
-        const erasedItems = track.erase(
-          this.eraserPoint,
-          eraserRadius,
-          this.options.types
+        const t = this.mouse.touch,
+            e = this.scene.track;
+          this.eraserPoint = t.pos.toRealSnapped(this.scene);
+          const eraserRadius = this.options.radius / this.scene.camera.zoom;
+          const s = e.erase(
+            this.eraserPoint,
+            this.options.radius / this.scene.camera.zoom,
+            this.options.types
         );
 
-        if (erasedItems.length > 0) {
-          this.erasedObjects.push(erasedItems);
-
-          //record erased objects separately
-          this.recordActionsToToolhandler();
+        if (s.length > 0) {
+          this.erasedObjects.push(s);
 
           if (GameSettings.lineTrim) {
-            erasedItems.forEach(line => {
-              if (track.powerups.includes(line)) return;
+            s.forEach(line => {
+              if (e.powerups.includes(line)) return;
 
               let type = 'unknown';
-              if (track.physicsLines.includes(line)) type = 'physics';
-              else if (track.sceneryLines.includes(line)) type = 'scenery';
+              if (e.physicsLines.includes(line)) type = 'physics';
+              else if (e.sceneryLines.includes(line)) type = 'scenery';
 
               const p1 = line.p1;
               const p2 = line.p2;

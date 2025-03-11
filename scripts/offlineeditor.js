@@ -922,7 +922,7 @@
               navigator.clipboard.writeText(formattedUrl)
                   .then(() => {
                       console.log("Link copied to clipboard:", formattedUrl);
-                      alert("Link copied to clipboard!");
+                      alert("Link copied to clipboard! Post the link on the forums to share your stamp.");
                   })
                   .catch(err => {
                       console.error("Failed to copy link to clipboard:", err);
@@ -1026,9 +1026,6 @@
                             className: "margin",
                             onClick: this.selectionAsStamp
                         }, "COPY AS STAMP"))),
-
-                    
-                    
                     ), 
                     
                     /*n.createElement("div", {
