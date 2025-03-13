@@ -52,18 +52,18 @@
     </script>
 
     <script>
-    window.addEventListener('beforeunload', function (e) {
+        (window === window.parent) && (window.addEventListener('beforeunload', function (e) {
         const confirmationMessage = 'You have unsaved changes. Are you sure you want to leave without saving?';
         e.returnValue = confirmationMessage;
         return confirmationMessage;
-    });
+    }));
     </script>
     
     <script>
         window.addEventListener("message", function (event) {
             if (event.data.action === "importTrack") {
                 const trackData = event.data.content;
-                var title = event.data.title;
+                var title = event.data.title.toLowerCase();
                 if (trackData) {
                     console.log("Track data received:", trackData);
                     GameManager.command("import", trackData, true);
