@@ -32433,8 +32433,8 @@
               } else {
                 iframe = document.createElement("iframe");
                 iframe.id = "forumIframe";
-                iframe.src = "https://forum.freerider.app";
-                iframe.sandbox = "allow-scripts allow-same-origin allow-modals allow-forms allow-downloads";
+                iframe.src = "./discuss.html";
+                iframe.sandbox = "allow-scripts allow-same-origin allow-modals allow-forms allow-downloads allow-popups allow-top-navigation";
                 iframe.style.display = "block";
                 document.body.appendChild(iframe);
               }

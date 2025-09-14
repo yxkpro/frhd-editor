@@ -63,7 +63,7 @@
         window.addEventListener("message", function (event) {
             if (event.data.action === "importTrack") {
                 const trackData = event.data.content;
-                var title = event.data.title.toLowerCase();
+                var title = event.data.title ? event.data.title.toLowerCase() : null;
                 if (trackData) {
                     console.log("Track data received:", trackData);
                     GameManager.command("import", trackData, true);
@@ -142,5 +142,6 @@
     <script>
         window !== window.parent ? GameSettings.beta = false : GameSettings.beta = true;
     </script>
+
 </body>
 </html>
