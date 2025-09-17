@@ -23961,11 +23961,13 @@
             (this.physicsLines = []),
             (this.sceneryLines = []),
             (this.targets = []),
+            (this.currentFrame = 0),
             (this.allowedVehicles = ["MTB", "BMX"]),
             (this.canvasPool = new $i(t)),
             (this.needsCleaning = !1),
             (this.stampedAreas = []),
             this.createPowerupCache();
+            this.applyFrame(0);
         }
         createPowerupCache() {
           on.push(new ds(0, 0, 0, this)),
@@ -23984,21 +23986,95 @@
         recachePowerups(t) {
           for (const e of on) e.recache(t);
         }
+
+        clearCurrentFrame() {
+          this.sectors.drawSectors = [];
+          this.sectors.physicsSectors = [];
+          this.totalSectors.length = 0;
+          this.physicsLines.length = 0;
+          this.sceneryLines.length = 0;
+          this.powerups.length = 0;
+          this.targets.length = 0;
+          this.powerupsLookupTable = {};
+          this.targetCount = 0;
+          this.dirty = true;
+          try {
+            if (typeof this.undraw === "function") this.undraw();
+          } catch (err) {
+            console.warn("clearCurrentFrame: undraw failed", err);
+          }
+        }
         read(t) {
-          const e = t.split("#"),
-            s = e[0].split(",");
-          let i,
-            n = [],
-            r = [];
-          e.length > 3
-            ? ((n = e[1].split(",")), (r = e[2].split(",")), (i = e[3]))
-            : e.length > 2
-            ? ((n = e[1].split(",")), (r = e[2].split(",")))
-            : e.length > 1 && (r = e[1].split(",")),
-            this.addLines(s, this.addPhysicsLine),
-            this.addLines(n, this.addSceneryLine),
-            this.addPowerups(r),
-            this.scene.selectVehicle(i);
+          const frameStrings = t
+            .split(";")
+            .map((f) => f.trim())
+            .filter((f) => f.length > 0);
+          this.frames = [];
+
+          for (const frameStr of frameStrings) {
+            const e = frameStr.split("#"),
+              s = e[0] ? e[0].split(",") : [];
+            let n = [],
+              r = [],
+              i;
+
+            e.length > 3
+              ? ((n = e[1].split(",")), (r = e[2].split(",")), (i = e[3]))
+              : e.length > 2
+              ? ((n = e[1].split(",")), (r = e[2].split(",")))
+              : e.length > 1 && (r = e[1].split(","));
+
+            this.frames.push({
+              physics: s,
+              scenery: n,
+              powerups: r,
+              vehicle: i || "MTB",
+            });
+          }
+
+          this.currentFrame = 0;
+          if (this.frames.length > 0) {
+            this.applyFrame(0);
+          }
+        }
+
+        applyFrame(frameIndex) {
+          if (!this.frames || !this.frames[frameIndex]) return;
+          const f = this.frames[frameIndex];
+          console.log("applyFrame:", frameIndex, f);
+
+          this.clearCurrentFrame();
+
+          if (f.physics && f.physics.length)
+            this.addLines(f.physics, this.addPhysicsLine);
+          if (f.scenery && f.scenery.length)
+            this.addLines(f.scenery, this.addSceneryLine);
+
+          if (
+            f.powerups &&
+            f.powerups.length &&
+            !(f.powerups.length === 1 && f.powerups[0] === "")
+          ) {
+            this.addPowerups(f.powerups);
+          }
+
+          if (typeof this.recachePowerups === "function") {
+            this.recachePowerups(Math.max(this.camera.zoom || 1, 1));
+          }
+        }
+
+        updateAnimation() {
+          if (!this.frames || this.frames.length === 0) return;
+
+          const ticks = this.scene.ticks;
+          const frameDuration = 1;
+          const frameIndex =
+            Math.floor(ticks / frameDuration) % this.frames.length;
+
+          if (frameIndex !== this.currentFrame) {
+            this.currentFrame = frameIndex;
+            this.applyFrame(frameIndex);
+          }
         }
         addPowerups(t) {
           let powerups = [];
@@ -24074,7 +24150,7 @@
                     this.addPowerup(o);
                 }
               }
-              if (s[0] == 'W') powerups.push(r, o);
+              if (s[0] == "W") powerups.push(r, o);
               else powerups.push(n);
             }
           }
@@ -24244,16 +24320,30 @@
             s = this.sceneryLines;
           let i = "",
             n = !1;
-        
+
           const uniquePhysicsLines = new Set();
           const uniqueSceneryLines = new Set();
           const uniquePowerups = new Set();
-        
+
           for (const t of e) {
             if (!t.recorded && t.remove === 0) {
-              const code = (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32) + " " + t.getCode(this);
-              const codeReversed = t.getCode(this) + " " + (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32);
-              if (!this.scene.cleanCode || (!uniquePhysicsLines.has(code) && !uniquePhysicsLines.has(codeReversed))) {
+              const code =
+                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
+                " " +
+                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
+                " " +
+                t.getCode(this);
+              const codeReversed =
+                t.getCode(this) +
+                " " +
+                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
+                " " +
+                (t.p1.y - GameSettings.offsetPeteY).toString(32);
+              if (
+                !this.scene.cleanCode ||
+                (!uniquePhysicsLines.has(code) &&
+                  !uniquePhysicsLines.has(codeReversed))
+              ) {
                 uniquePhysicsLines.add(code);
                 n = !0;
                 i += code + ",";
@@ -24262,15 +24352,29 @@
           }
           n && (i = i.slice(0, -1));
           for (const t of e) t.recorded = !1;
-        
+
           i += "#";
           n = !1;
-        
+
           for (const t of s) {
             if (!t.recorded && t.remove === 0) {
-              const code = (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32) + " " + t.getCode(this);
-              const codeReversed = t.getCode(this) + " " + (t.p1.x - GameSettings.offsetPeteX).toString(32) + " " + (t.p1.y - GameSettings.offsetPeteY).toString(32);
-              if (!this.scene.cleanCode || (!uniqueSceneryLines.has(code) && !uniqueSceneryLines.has(codeReversed))) {
+              const code =
+                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
+                " " +
+                (t.p1.y - GameSettings.offsetPeteY).toString(32) +
+                " " +
+                t.getCode(this);
+              const codeReversed =
+                t.getCode(this) +
+                " " +
+                (t.p1.x - GameSettings.offsetPeteX).toString(32) +
+                " " +
+                (t.p1.y - GameSettings.offsetPeteY).toString(32);
+              if (
+                !this.scene.cleanCode ||
+                (!uniqueSceneryLines.has(code) &&
+                  !uniqueSceneryLines.has(codeReversed))
+              ) {
                 uniqueSceneryLines.add(code);
                 n = !0;
                 i += code + ",";
@@ -24279,14 +24383,17 @@
           }
           n && (i = i.slice(0, -1));
           for (const t of s) t.recorded = !1;
-        
+
           i += "#";
           n = !1;
-        
+
           for (const e of t) {
             if (e.remove === 0) {
               const code = e.getCode();
-              if (code && (!this.scene.cleanCode || !uniquePowerups.has(code))) {
+              if (
+                code &&
+                (!this.scene.cleanCode || !uniquePowerups.has(code))
+              ) {
                 uniquePowerups.add(code);
                 n = !0;
                 i += code + ",";
@@ -24294,10 +24401,12 @@
             }
           }
           n && (i = i.slice(0, -1));
-        
+
           i += "#";
-          i += this.scene.playerManager.firstPlayer._baseVehicle.vehicleName || "MTB";
-        
+          i +=
+            this.scene.playerManager.firstPlayer._baseVehicle.vehicleName ||
+            "MTB";
+
           this.scene.cleanCode = false;
           return i;
         }
@@ -24313,9 +24422,7 @@
               e = t.p1,
               s = t.p2;
             this.addPhysicsLine(e.x, e.y, s.x, s.y);
-          }
-
-          else {
+          } else {
             //this.game.mod.vars.play = true;
             fetch(`assets/tracks/${GameSettings.trackName}.txt`)
               .then(response => {
@@ -24349,7 +24456,7 @@
                 window.t = ({ code, title }) => {
                   if (code) {
                     GameSettings.trackName = title;
-                    console.log(title)
+                    console.log(title);
                     this.read(code);
                     console.log("track loaded from FRHD.");
                   } else {
@@ -24361,7 +24468,6 @@
                 document.body.appendChild(script);
               });
           }
-
         }
         erase(t, s, i) {
           this.dirty = !0;
@@ -24405,6 +24511,7 @@
           return void 0 !== r[i] && void 0 !== r[i][n] && (o = r[i][n]), o;
         }
         draw() {
+          this.updateAnimation();
           const t = this.scene,
             e = t.camera,
             s = t.screen,
@@ -24454,13 +24561,16 @@
             i.drawImage(t.powerupCanvas, e - r / 2, s - r / 2, a + r, a + r);
           }
 
-          if (e.sectorStamp && (e.sectorStamp.point1.x || e.sectorStamp.point1.y)) {
+          if (
+            e.sectorStamp &&
+            (e.sectorStamp.point1.x || e.sectorStamp.point1.y)
+          ) {
             i.save();
 
             this.stampedAreas.push({
               point1: { x: e.sectorStamp.point1.x, y: e.sectorStamp.point1.y },
               point2: { x: e.sectorStamp.point2.x, y: e.sectorStamp.point2.y },
-              text: e.sectorStampText || ""
+              text: e.sectorStampText || "",
             });
 
             e.sectorStamp.point1.x = 0;
@@ -24495,7 +24605,7 @@
               const textX = rectX + rectWidth / 2;
               const textY = rectY + rectHeight - 20 * n;
 
-              i.font = `bold ${20 * n}px Arial`; 
+              i.font = `bold ${20 * n}px Arial`;
               i.textAlign = "center";
               i.textBaseline = "middle";
               i.strokeStyle = "white";
