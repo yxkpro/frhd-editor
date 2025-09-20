@@ -16115,14 +16115,25 @@ function Rtt(trackUrl) {
 function xc(n, e) {
   const t = e.dataset.url;
   const bookmark = e.querySelector("a.bookmark");
-  if (bookmark && !t.includes("freerider.app") && !t.includes("spotify.com") && !t.includes("bandcamp.com")) {
+  if (bookmark && !t.includes("freeriderhd.com") && !t.includes("freerider.app") && !t.includes("spotify.com") && !t.includes("bandcamp.com")) {
     return;
   }
-  e.innerHTML = "";
   const i = document.createElement("iframe");
 
-if (t.includes("freerider.app") || t.includes("freeriderhd.com") || t.includes("frhd.co")) {
+  if (t.includes("freeriderhd.com") || t.includes("frhd.co")) {
+    if (bookmark) {
+      // Prevent normal navigation
+      bookmark.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        Rtt(t); // call your import
+      });
+    }
+    return; // keep the existing embed HTML intact
+  }
+
   e.innerHTML = "";
+
+  if (t.includes("freerider.app")) {
 
   const trackNameMatch = t.match(/#(.+)$/);
   let trackName = trackNameMatch ? decodeURIComponent(trackNameMatch[1]) : "unknown";
@@ -17077,7 +17088,7 @@ async function T0(n, e) {
     ).default),
     Yr.highlightBlock(e);
 }
-const Ws = 500;
+const Ws = 800;
 function wc({ content: n }) {
   const e = q(null),
     t = q(null),
