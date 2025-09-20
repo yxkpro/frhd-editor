@@ -16122,63 +16122,54 @@ function xc(n, e) {
   const i = document.createElement("iframe");
 
 if (t.includes("freerider.app") || t.includes("freeriderhd.com") || t.includes("frhd.co")) {
-    e.innerHTML = "";
+  e.innerHTML = "";
 
-    const trackNameMatch = t.match(/#(.+)$/);
-    const urlTrackName = trackNameMatch ? trackNameMatch[1] : "unknown";
+  const trackNameMatch = t.match(/#(.+)$/);
+  let trackName = trackNameMatch ? decodeURIComponent(trackNameMatch[1]) : "unknown";
 
-    const url1 = `https://freerider.app/assets/images/tracks/${urlTrackName}.png`;
-    const url2 = `https://freerider.app/assets/images/tracks/${urlTrackName.replace(/%20/g, " ")}.png`;
+  const imageUrl = `https://freerider.app/assets/images/tracks/${encodeURIComponent(trackName)}.png`;
 
-    const img = document.createElement("img");
-    img.src = url1;
-    img.alt = urlTrackName;
-    img.style.width = "100%";
-    img.style.fontFamily = "sans-serif";
-    img.style.cursor = "pointer";
-    img.style.objectFit = "contain";
-    img.style.display = "flex";
-    img.style.borderRadius = "var(--ht-box-radius)";
-    img.style.overflow = "hidden";
-    img.style.boxShadow = "var(--ht-box-shadow)";
-    img.style.whiteSpace = "normal";
-    img.style.textDecoration = "none";
-    img.style.color = "inherit";
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.alt = trackName;
+  img.style.width = "100%";
+  img.style.cursor = "pointer";
+  img.style.objectFit = "contain";
+  img.style.borderRadius = "var(--ht-box-radius)";
+  img.style.overflow = "hidden";
+  img.style.boxShadow = "var(--ht-box-shadow)";
+  img.style.whiteSpace = "normal";
+  img.style.textDecoration = "none";
+  img.style.color = "inherit";
 
-    img.onerror = () => {
-        img.src = url2;
-    };
+  fetch("assets/tracks/tracklist-data.json")
+    .then((res) => res.json())
+    .then((trackdata) => {
+      const match = trackdata.tracks.find((tr) => tr["track-name"] === trackName);
 
-    // Fetch track data for tooltip
-    fetch("assets/tracks/tracklist-data.json")
-      .then((res) => res.json())
-      .then((trackdata) => {
-        const match = trackdata.tracks.find(
-          (t) => t["track-name"] === urlTrackName
-        );
-        const title = match ? match["track-name"] : urlTrackName;
-        const author = match ? match.creator || "unknown" : "unknown";
+      const title = match ? match["track-name"] : trackName;
+      const author = match ? match.creator || "unknown" : "unknown";
 
-        // Set the tooltip text
-        img.title = `${title} by ${author}`;
-      })
-      .catch(() => {
-        img.title = urlTrackName;
-      });
-
-    const wrapper = document.createElement("div");
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-    wrapper.appendChild(img);
-
-    // Clicking the image triggers your import logic
-    img.addEventListener("click", () => {
-        Rtt(t); // call the import function
+      img.title = `${title} by ${author}`;
+    })
+    .catch(() => {
+      img.title = trackName;
     });
 
-    e.appendChild(wrapper);
-    return;
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "relative";
+  wrapper.style.display = "inline-block";
+  wrapper.appendChild(img);
+
+  img.addEventListener("click", () => {
+    Rtt(t);
+  });
+
+  e.appendChild(wrapper);
+  return;
 }
+
+
 
 
 

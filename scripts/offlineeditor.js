@@ -3781,9 +3781,8 @@
               const creator = trackInfo.creator || "unknown";
 
               const imageUrl = `https://freerider.app/assets/images/tracks/${trackName}.png`;
-              const trackUrl = `https://freerider.app/#${trackName
-                .replace(/'/g, "")
-                .replace(/ /g, "-")}`;
+              const safeTrackName = trackName.replace(/'/g, "");
+              const trackUrl = `https://freerider.app/#${encodeURIComponent(safeTrackName)}`;
 
               nowPlayingDiv.style.display = "block";
               nowPlayingDiv.style.position = "relative";
@@ -32679,9 +32678,7 @@
                       return;
                     }
 
-                    if (!["1-4", "covid-19 dreamin", "demi-goddess demi-diety"].includes(trackName)) {
-                      trackName = trackName.replace(/-/g, " ");
-                    }
+                    trackName = decodeURIComponent(trackName);
 
                     trackName = decodeURIComponent(trackName);
                     GameSettings.trackName = trackName;
