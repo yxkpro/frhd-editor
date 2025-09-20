@@ -27,6 +27,35 @@
 </head>
 <body>
 
+    <style>
+#now-playing {
+  display: none;
+  width: auto;
+  position: relative;
+}
+
+#now-playing img {
+  height: 100%;
+  width: 99%;
+  object-fit: contain;
+  cursor: pointer;
+  display: flex;
+  border-radius: var(--ht-box-radius);
+  overflow: hidden;
+  box-shadow: var(--ht-box-shadow);
+  white-space: normal;
+  text-decoration: none;
+  color: inherit;
+}   
+</style>
+
+<div id="now-playing">
+  <span id="track-data"></span><br>
+  <a id="link" href="#">
+    <img id="thumbnail" src=""/>
+  </a>
+</div>
+
 <div id="comments-container">
 <script async src="embed.js" type="module"></script>
 <hyvor-talk-comments

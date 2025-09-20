@@ -68,6 +68,13 @@
                     console.log("Track data received:", trackData);
                     GameManager.command("import", trackData, true);
                     GameSettings.trackName = title;
+                        fetch('assets/tracks/tracklist-data.json')
+                        .then(res => res.json())
+                        .then(trackdata => {
+                          const match = trackdata.tracks.find(t => t["track-name"] === trackName);
+                          console.log(match)
+                          this.updateNowPlaying(match || { "track-name": trackName });
+                        })
                 } else {
                     console.error("No track data found.");
                 }

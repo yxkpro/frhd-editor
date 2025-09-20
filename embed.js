@@ -17502,6 +17502,7 @@ function wr({ id: n, replies: e = null, canReply: t, onReply: r }) {
                                   className: "action-button comment-link-copy",
                                   onClick: Rt,
                                   title: "Import Track",
+                                  style: { color: "#1884cf" },
                                   children: "Import Track",
                                 }) : null,
                                 u(I0, { commentId: o.id }),
