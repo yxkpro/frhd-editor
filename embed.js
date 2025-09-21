@@ -16115,7 +16115,7 @@ function Rtt(trackUrl) {
 function xc(n, e) {
   const t = e.dataset.url;
   const bookmark = e.querySelector("a.bookmark");
-  if (bookmark && !t.includes("freeriderhd.com") && !t.includes("freerider.app") && !t.includes("spotify.com") && !t.includes("bandcamp.com")) {
+  if (bookmark && !t.includes("freeriderhd.com") && !t.includes("freerider.app") && !t.includes("soundcloud.com") && !t.includes("spotify.com") && !t.includes("bandcamp.com")) {
     return;
   }
   const i = document.createElement("iframe");
@@ -16180,9 +16180,34 @@ function xc(n, e) {
   return;
 }
 
+  if (t.includes("soundcloud.com")) {
+    const trackUrl = encodeURIComponent(t);
+    const embedUrl = `https://w.soundcloud.com/player/?url=${trackUrl}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`;
 
+    const scIframe = document.createElement("iframe");
+    scIframe.width = "100%";
+    scIframe.height = "300";
+    scIframe.scrolling = "no";
+    scIframe.frameBorder = "no";
+    scIframe.allow = "autoplay";
+    scIframe.src = embedUrl;
+    scIframe.loading = "lazy";
 
-
+    e.appendChild(scIframe);
+    const infoDiv = document.createElement("div");
+    infoDiv.style.cssText = `
+        font-size: 10px; color: #cccccc;
+        line-break: anywhere; word-break: normal;
+        overflow: hidden; white-space: nowrap;
+        text-overflow: ellipsis;
+        font-family: Interstate, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Garuda, Verdana, Tahoma, sans-serif;
+        font-weight: 100;
+    `;
+    infoDiv.innerHTML = `<a href="${t}" target="_blank" style="color:#cccccc;text-decoration:none;">SoundCloud Track</a>`;
+    
+    e.appendChild(infoDiv);
+    return;
+  }
 
   //spotify
   if (t.includes("open.spotify.com")) {
@@ -19542,40 +19567,3 @@ class wg extends HTMLElement {
 }
 customElements.get("hyvor-talk-comments") === void 0 &&
   customElements.define("hyvor-talk-comments", wg);
-
-  // Attach this function after the content HTML is rendered
-function hijackTrackLinks(container) {
-  if (!container) return;
-
-  const links = container.querySelectorAll("a[href], x-embed[data-url]");
-  
-  links.forEach(link => {
-    let url = link.getAttribute("href") || link.getAttribute("data-url");
-    if (!url) return;
-
-    const isTrackLink = url.startsWith("https://freerider.app") ||
-                        url.startsWith("https://www.freerider.app") ||
-                        url.startsWith("https://freeriderhd.com") ||
-                        url.startsWith("https://www.freeriderhd.com") ||
-                        url.startsWith("https://frhd.co") ||
-                        url.startsWith("https://www.frhd.co");
-
-    if (isTrackLink) {
-      // Prevent default navigation
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        // Reuse your import function
-        Rt();
-      });
-
-      // Optional: make it look like a button
-      link.style.cursor = "pointer";
-      link.style.color = "#1884cf";
-      link.title = "Click to import track";
-    }
-  });
-}
-
-const commentDiv = document.getElementById("commentContent"); // where your HTML is
-commentDiv.innerHTML = commentDiv.content_html;
-hijackTrackLinks(commentDiv);
