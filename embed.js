@@ -15825,37 +15825,87 @@ function Zm({ editor: n, onClose: e }) {
   function d(h, p = "") {
     pc(n.view, h, p), e();
   }
-  function f() {
-    r(!0);
-    const h = s.current && s.current.files,
-      p = h ? h[0] : null;
-    if (!p) return;
-    if (
-      p.type !== "image/jpeg" &&
-      p.type !== "image/png" &&
-      p.type !== "image/gif" &&
-      p.type !== "image/webp"
-    )
-      return c("Only PNG , GIF and JPEG images are allowed");
-    const m = 5;
-    if (p.size > m * 1e6) return c(`Image is too large (Max ${m}MB)`);
-    const g = new FormData();
-    g.append("image", p),
-      D.call({
-        context: a,
-        method: "post",
-        endpoint: "/media/upload",
-        data: g,
-        complete: () => {
-          r(!1);
-        },
-        success: (x) => {
-          d(x.url, p.name);
-        },
-        error: () =>
-          c("Unable to upload. Please check your network connection."),
-      });
+   async function f() {
+  r(true);
+  const h = s.current && s.current.files;
+  const p = h ? h[0] : null;
+  if (!p) {
+    r(false);
+    return;
   }
+
+  // --- Image Upload Logic ---
+  if (
+    p.type === "image/jpeg" ||
+    p.type === "image/png" ||
+    p.type === "image/gif" ||
+    p.type === "image/webp"
+  ) {
+    const m = 5;
+    if (p.size > m * 1e6) {
+      r(false);
+      return c(`Image is too large (Max ${m}MB)`);
+    }
+
+    const g = new FormData();
+    g.append("image", p);
+
+    D.call({
+      context: a,
+      method: "post",
+      endpoint: "/media/upload",
+      data: g,
+      complete: () => r(false),
+      success: (x) => d(x.url, p.name),
+      error: () =>
+        c("Unable to upload. Please check your network connection."),
+    });
+    return;
+  }
+
+  // --- Text File Upload Logic ---
+  if (p.type === "text/plain") {
+    try {
+      // Convert the file to base64 in the browser
+      const base64Content = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(p);
+      });
+
+      const res = await fetch("https://nextjs-boilerplate-rho-five-46.vercel.app/api/upload", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    fileName: p.name,
+    fileContent: base64Content,
+    fileType: p.type, // <--- Add this line
+  }),
+});
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const { url, name } = await res.json();
+      const { tr, schema } = n.view.state;
+      const newTextNode = schema.text(name, [
+        schema.marks.link.create({ href: url }),
+      ]);
+      const newNode = schema.nodes.paragraph.create({}, newTextNode);
+      n.view.dispatch(tr.replaceSelectionWith(newNode));
+    } catch (err) {
+      console.error(err);
+      c("Unable to upload text file. Please check your network connection.");
+    } finally {
+      r(false);
+    }
+    return;
+  }
+
+  r(false);
+  c("Only PNG, GIF, JPEG, WEBP images or plain text files are allowed");
+}
+
   return u("div", {
     className: "panel-image",
     children: t
@@ -15875,7 +15925,7 @@ function Zm({ editor: n, onClose: e }) {
                   type: "file",
                   onChange: f,
                   style: { display: "none" },
-                  accept: "image/*",
+                  accept: "image/*,text/plain",
                 }),
               ],
             }),
@@ -17404,6 +17454,9 @@ function wr({ id: n, replies: e = null, canReply: t, onReply: r }) {
       const link = tempDiv.querySelector("a[href]");
     if (link) {
         const linkUrl = link.getAttribute("href");
+        const linkName = link.textContent;
+        const url = new URL(linkUrl);
+        const hostname = url.hostname;
         if (
             linkUrl &&
             (linkUrl.startsWith("https://freerider.app") ||
@@ -17411,9 +17464,10 @@ function wr({ id: n, replies: e = null, canReply: t, onReply: r }) {
              linkUrl.startsWith("https://freeriderhd.com") ||
              linkUrl.startsWith("https://www.freeriderhd.com") ||
              linkUrl.startsWith("https://frhd.co") ||
-             linkUrl.startsWith("https://www.frhd.co"))
+             linkUrl.startsWith("https://www.frhd.co")) ||
+             hostname.endsWith(".gofile.io")
         ) 
-        message = { action: "linkClicked", url: linkUrl };
+        message = { action: "linkClicked", url: linkUrl, name: linkName};
       }
     }
 
@@ -17468,6 +17522,8 @@ function wr({ id: n, replies: e = null, canReply: t, onReply: r }) {
     const link = tempDiv.querySelector("a[href]");
     if (link) {
         const linkUrl = link.getAttribute("href");
+        const url = new URL(linkUrl);
+        const hostname = url.hostname;
         if (
             linkUrl &&
             (linkUrl.startsWith("https://freerider.app") ||
@@ -17475,7 +17531,8 @@ function wr({ id: n, replies: e = null, canReply: t, onReply: r }) {
              linkUrl.startsWith("https://freeriderhd.com") ||
              linkUrl.startsWith("https://www.freeriderhd.com") ||
              linkUrl.startsWith("https://frhd.co") ||
-             linkUrl.startsWith("https://www.frhd.co"))
+             linkUrl.startsWith("https://www.frhd.co")) ||
+             hostname.endsWith(".gofile.io")
         ) {
             return true;
         }

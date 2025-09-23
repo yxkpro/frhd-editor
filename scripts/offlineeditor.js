@@ -3777,10 +3777,19 @@
               const nowPlayingDiv = iframeDoc.getElementById("now-playing");
               if (!nowPlayingDiv) return;
 
-              const trackName = trackInfo["track-name"] || trackInfo;
-              const creator = trackInfo.creator || "unknown";
+              let trackName = trackInfo["track-name"] || trackInfo;
+              console.log(trackName)
+              const creator = trackInfo.creator && trackInfo.creator !== "unknown"
+                ? ` <small>by ${trackInfo.creator}</small>`
+                : "";
 
-              const imageUrl = `https://freerider.app/assets/images/tracks/${trackName}.png`;
+              let imageUrl = `https://freerider.app/assets/images/tracks/${trackName}.png`;
+
+              if (trackName.endsWith(".txt")) {
+              trackName = trackName.slice(0, -4);
+              imageUrl = 'https://freerider.app/assets/images/tracks/freeriderapp.png';
+              }
+
               const safeTrackName = trackName.replace(/'/g, "");
               const trackUrl = `https://freerider.app/#${encodeURIComponent(safeTrackName)}`;
 
@@ -3800,8 +3809,8 @@
                   max-width:90%;
                   font-family:sans-serif;
                 ">
-                <strong>${trackName} </strong>
-                <small>by ${creator}</small>
+                <strong>${trackName}</strong>
+                <small>${creator}</small>
                 </div>
                 <div id="copy-link-btn" style="
                 position:absolute;
@@ -3819,7 +3828,6 @@
                 Copy link
                 </div>
                 `;
-
               const copyBtn = iframeDoc.getElementById("copy-link-btn");
               copyBtn.addEventListener("click", () => {
                 navigator.clipboard.writeText(trackUrl).then(() => {
@@ -32562,13 +32570,21 @@
               const nowPlayingDiv = iframeDoc.getElementById("now-playing");
               if (!nowPlayingDiv) return;
 
-              const trackName = trackInfo["track-name"] || trackInfo;
-              const creator = trackInfo.creator || "unknown";
+              let trackName = trackInfo["track-name"] || trackInfo;
+              const creator = trackInfo.creator && trackInfo.creator !== "unknown"
+                ? ` <small>by ${trackInfo.creator}</small>`
+                : "";
               /*const trackUrl = `https://freerider.app/#${trackName
                 .replace(/'/g, "")
                 .replace(/ /g, "-")}`;*/
 
+              
               let imageUrl = `https://freerider.app/assets/images/tracks/${trackName}.png`;
+
+              if (trackName.endsWith(".txt")) {
+              trackName = trackName.slice(0, -4);
+              imageUrl = '/assets/images/tracks/freerider.png';
+              }
 
               if (trackInfo.id) {
                 const frhdUrl = await this.getFRHDImage(trackInfo.id);
@@ -32593,10 +32609,24 @@
                   max-width:90%;
                   font-family:sans-serif;
                 ">
-                <strong>${trackName} </strong>
-                <small>by ${creator}</small>
+                <strong>${trackName}</strong>
+                <small>${creator}</small>
                 </div>
-                </a>
+                <div id="copy-link-btn" style="
+                position:absolute;
+                bottom:10px;
+                right:10px;
+                background-color: rgba(255,255,255,0.8);
+                color: #000;
+                padding:2px 6px;
+                border-radius:3px;
+                font-size:12px;
+                cursor:pointer;
+                font-family:sans-serif;
+                user-select: none;
+                ">
+                Copy link
+                </div>
                 `;
             },
 
@@ -32644,7 +32674,7 @@
             addImportListener() {
               window.addEventListener("message", (event) => {
                 if (event.data.action === "linkClicked") {
-                  console.log("clicked link:", event.data.url);
+                  console.log("clicked link:", event.data.url, event.data.name);
 
                   try {
                     const url = new URL(event.data.url);
@@ -32656,10 +32686,11 @@
                       "www.freeriderhd.com",
                       "frhd.co",
                       "k333892.invisionservice.com",
+                      "gofile.io",
                     ];
-                    if (!validHostnames.includes(hostname)) {
+                    
+                    if (!validHostnames.includes(hostname) || !hostname.endsWith(".gofile.io")) {
                       console.warn("invalid URL hostname:", hostname);
-                      return;
                     }
 
                     let trackName = "";
@@ -32673,6 +32704,30 @@
                       const parts = pathname.split("/free-rider/")[1].split("/");
                       trackName = parts[0];
                     }
+
+                    if (hostname.endsWith(".gofile.io")) {
+                    console.log("Processing Gofile.io URL directly");
+                    
+                    fetch(event.data.url)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Gofile fetch failed.");
+                            }
+                            return response.text();
+                        })
+                        .then((data) => {
+                            console.log("Track data fetched from Gofile:", data);
+                            GameManager.command("import", data, true);
+                            GameSettings.trackName = event.data.name || "untitled";
+                            this.updateNowPlaying({ "track-name": event.data.name || "untitled" });
+
+                        })
+                        .catch((error) => {
+                            console.error("Failed to load Gofile track.", error);
+                        });
+                    
+                    return;
+                }
 
                     if (!trackName || trackName.includes("../") || trackName.length > 40) {
                       return;
