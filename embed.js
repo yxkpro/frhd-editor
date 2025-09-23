@@ -15918,7 +15918,7 @@ function Zm({ editor: n, onClose: e }) {
                 u(te, {
                   scale: "medium",
                   onClick: () => s.current && s.current.click(),
-                  children: k(a, "upload_image"),
+                  children: "Upload File",
                 }),
                 u("input", {
                   ref: s,
